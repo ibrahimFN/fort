@@ -123,10 +123,10 @@ Android     : AND
 
 APIキー  
 ```
-Discordアカウントが必要  
+Discordアカウントが必要
+```
 [ここ](https://discordapp.com/invite/AqzEcMm "Fortnite-API.com 招待リンク")からサーバーに参加  
 [このサイト](https://fortnite-api.com/profile "Fortnite-API.com")からAPIキーを生成、コピーしてconfigのapi-keyに張り付ける  
-```
 
 variant  
 ```
