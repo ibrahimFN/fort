@@ -102,9 +102,36 @@ bag                  : bag [バッグ名] バッグ名でバッグを検索す�
 pickaxe              : pickaxe [ツルハシ名] ツルハシ名でツルハシを検索する
 emote                : emote [エモート名] エモート名でエモートを検索する
 set                  : set [セット名] セット名でアイテムを検索する
-variant              : variant [ID] [variant] [数値] variant/数値は3つまで設定可 スタイル情報を設定する
+variant              : variant [ID] [variant] [数値] variant/数値は3つまで設定可 スタイル情報を設定する 後述
 skinasset            : skinasset [アセットパス] スキンをアセットパスから設定する
 bagasset             : bagasset [アセットパス] バッグをアセットパスから設定する
 pickasset            : pickasset [アセットパス] ツルハシをアセットパスから設定する
 emoteasset           : emoteasset [アセットパス] エモートをアセットパスから設定する
+```
+
+# その他
+プラットフォーム  
+```
+Windows     : WIN
+Mac         : MAC
+PlayStation : PSN
+XBox        : XBL
+Switch      : SWT
+IOS         : IOS
+Android     : AND
+```
+
+APIキー  
+```
+Discordアカウントが必要  
+[ここ](https://discordapp.com/invite/AqzEcMm "Fortnite-API.com 招待リンク")からサーバーに参加  
+[このサイト](https://fortnite-api.com/profile "Fortnite-API.com")からAPIキーを生成、コピーしてconfigのapi-keyに張り付ける  
+```
+
+variant  
+```
+pattern/numeric/clothing_color/jersey_color/parts/progressive/particle/material/emissive
+基本的にはmaterialやprogressive,partsなどか多く使われている
+紫スカルトルーパーの場合は clothing_color 1
+jersey_color はサッカースキンで使われます
 ```
