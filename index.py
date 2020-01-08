@@ -2,6 +2,7 @@
 try:
     from fortnitepy import ClientPartyMember
     from functools import partial
+    from threading import Timer
     import unicodedata
     import fortnitepy
     import datetime
@@ -63,6 +64,14 @@ if data['debug'] is True:
 
 def now_():
     return datetime.datetime.now().strftime('%H:%M:%S')
+
+def inviteaccept():
+    print(f'[{now_()}] 招待を承諾に設定')
+    data['fortnite']['acceptinvite']=True
+
+def inviteinterval():
+    print(f'[{now_()}] 招待の受付を再開します')
+    client.acceptinvite=True
 
 def reload_configs():
     global data
@@ -249,6 +258,7 @@ except ValueError as e:
 
 headers={'x-api-key': data['api-key']}
 client.eid=data['fortnite']['eid'].upper()
+client.acceptinvite=True
 client.stopcheck=False
 client.prevoutfit=None
 client.prevoutfitvariants=None
@@ -417,54 +427,188 @@ async def event_party_invite(invitation):
         else:
             print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待')
 
-    if data['fortnite']['acceptinvite'] is True:
-        try:
-            await invitation.accept()
-            if data['loglevel'] == 'normal':
-                if invitation.sender.display_name is None:
-                    print(f'[{now_()}] None からの招待を承諾')
+    if not client.owner is None:
+        if not client.owner.id in client.user.party.members.keys():
+            if data['fortnite']['acceptinvite'] is True:
+                if client.acceptinvite is True:
+                    try:
+                        await invitation.accept()
+                        client.acceptinvite=False
+                        try:
+                            client.timer.cancel()
+                        except Exception as e:
+                            if data['loglevel'] == 'debug':
+                                print(crayons.red(e))
+                        client.timer=Timer(data['fortnite']['interval'], inviteinterval, ())
+                        client.timer.start()
+                        if data['loglevel'] == 'normal':
+                            if invitation.sender.display_name is None:
+                                print(f'[{now_()}] None からの招待を承諾')
+                            else:
+                                print(f'[{now_()}] {invitation.sender.display_name} からの招待を承諾')
+                        else:
+                            if invitation.sender.display_name is None:
+                                print(f'[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待を承諾')
+                            else:
+                                print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を承諾')
+                    except fortnitepy.Forbidden as e:
+                        if data['loglevel'] == 'debug':
+                            print(crayons.red(e))
+                        print(crayons.red('以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)'))
+                    except fortnitepy.HTTPException as e:
+                        if data['loglevel'] == 'debug':
+                            print(crayons.red(e))
+                        print(crayons.red('パーティー招待の承諾リクエストを処理中にエラーが発生しました。'))
+                    except Exception as e:
+                        print(crayons.red(type(e)))
+                        print(crayons.red(e))
                 else:
-                    print(f'[{now_()}] {invitation.sender.display_name} からの招待を承諾')
+                    try:
+                        await invitation.decline()
+                        await invitation.sender.send(f"招待を承諾してから{str(data['fortnite']['interval'])}秒間は招待を拒否します")
+                        if data['loglevel'] == 'normal':
+                            if invitation.sender.display_name is None:
+                                print(f"[{now_()}] None からの招待を{str(data['fortnite']['interval'])}秒拒否")
+                            else:
+                                print(f"[{now_()}] {invitation.sender.display_name} からの招待を{str(data['fortnite']['interval'])}秒拒否")
+                        else:
+                            if invitation.sender.display_name is None:
+                                print(f"[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
+                            else:
+                                print(f"[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
+                    except fortnitepy.PartyError as e:
+                        if data['loglevel'] == 'debug':
+                            print(crayons.red(e))
+                        print(crayons.red('受信したnet_clとクライアントのnet_clが一致しません。'))
+                    except fortnitepy.HTTPException as e:
+                        if data['loglevel'] == 'debug':
+                            print(crayons.red(e))
+                        print(crayons.red('パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
+                    except Exception as e:
+                        print(crayons.red(type(e)))
+                        print(crayons.red(e))
             else:
-                if invitation.sender.display_name is None:
-                    print(f'[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待を承諾')
-                else:
-                    print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を承諾')
-        except fortnitepy.Forbidden as e:
-            if data['loglevel'] == 'debug':
+                try:
+                    await invitation.decline()
+                    if data['loglevel'] == 'normal':
+                        if invitation.sender.display_name is None:
+                            print(f'[{now_()}] None からの招待を拒否')
+                        else:
+                            print(f'[{now_()}] {invitation.sender.display_name} からの招待を拒否')
+                    else:
+                        if invitation.sender.display_name is None:
+                            print(f'[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待を拒否')
+                        else:
+                            print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を拒否')
+                except fortnitepy.PartyError as e:
+                    if data['loglevel'] == 'debug':
+                        print(crayons.red(e))
+                    print(crayons.red('受信したnet_clとクライアントのnet_clが一致しません。'))
+                except fortnitepy.HTTPException as e:
+                    if data['loglevel'] == 'debug':
+                        print(crayons.red(e))
+                    print(crayons.red('パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
+                except Exception as e:
+                    print(crayons.red(type(e)))
+                    print(crayons.red(e))
+        else:
+            try:
+                await invitation.decline()
+                await invitation.sender.send('所有者がパーティーにいるため招待を拒否します')
+            except fortnitepy.PartyError as e:
+                if data['loglevel'] == 'debug':
+                    print(crayons.red(e))
+                print(crayons.red('受信したnet_clとクライアントのnet_clが一致しません。'))
+            except fortnitepy.HTTPException as e:
+                if data['loglevel'] == 'debug':
+                    print(crayons.red(e))
+                print(crayons.red('パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
+            except Exception as e:
+                print(crayons.red(type(e)))
                 print(crayons.red(e))
-            print(crayons.red('以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)'))
-        except fortnitepy.HTTPException as e:
-            if data['loglevel'] == 'debug':
-                print(crayons.red(e))
-            print(crayons.red('パーティー招待の承諾リクエストを処理中にエラーが発生しました。'))
-        except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
     else:
-        try:
-            await invitation.decline()
-            if data['loglevel'] == 'normal':
-                if invitation.sender.display_name is None:
-                    print(f'[{now_()}] None からの招待を拒否')
-                else:
-                    print(f'[{now_()}] {invitation.sender.display_name} からの招待を拒否')
+        if data['fortnite']['acceptinvite'] is True:
+            if client.acceptinvite is True:
+                try:
+                    await invitation.accept()
+                    client.acceptinvite=False
+                    try:
+                        client.timer.cancel()
+                    except Exception as e:
+                        if data['loglevel'] == 'debug':
+                            print(crayons.red(e))
+                    client.timer=Timer(data['fortnite']['interval'], inviteinterval, ())
+                    client.timer.start()
+                    if data['loglevel'] == 'normal':
+                        if invitation.sender.display_name is None:
+                            print(f'[{now_()}] None からの招待を承諾')
+                        else:
+                            print(f'[{now_()}] {invitation.sender.display_name} からの招待を承諾')
+                    else:
+                        if invitation.sender.display_name is None:
+                            print(f'[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待を承諾')
+                        else:
+                            print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を承諾')
+                except fortnitepy.Forbidden as e:
+                    if data['loglevel'] == 'debug':
+                        print(crayons.red(e))
+                    print(crayons.red('以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)'))
+                except fortnitepy.HTTPException as e:
+                    if data['loglevel'] == 'debug':
+                        print(crayons.red(e))
+                    print(crayons.red('パーティー招待の承諾リクエストを処理中にエラーが発生しました。'))
+                except Exception as e:
+                    print(crayons.red(type(e)))
+                    print(crayons.red(e))
             else:
-                if invitation.sender.display_name is None:
-                    print(f'[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待を拒否')
+                try:
+                    await invitation.decline()
+                    await invitation.sender.send(f"招待を承諾してから{str(data['fortnite']['interval'])}秒間は招待を拒否します")
+                    if data['loglevel'] == 'normal':
+                        if invitation.sender.display_name is None:
+                            print(f"[{now_()}] None からの招待を{str(data['fortnite']['interval'])}秒拒否")
+                        else:
+                            print(f"[{now_()}] {invitation.sender.display_name} からの招待を{str(data['fortnite']['interval'])}秒拒否")
+                    else:
+                        if invitation.sender.display_name is None:
+                            print(f"[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
+                        else:
+                            print(f"[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
+                except fortnitepy.PartyError as e:
+                    if data['loglevel'] == 'debug':
+                        print(crayons.red(e))
+                    print(crayons.red('受信したnet_clとクライアントのnet_clが一致しません。'))
+                except fortnitepy.HTTPException as e:
+                    if data['loglevel'] == 'debug':
+                        print(crayons.red(e))
+                    print(crayons.red('パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
+                except Exception as e:
+                    print(crayons.red(type(e)))
+                    print(crayons.red(e))
+        else:
+            try:
+                await invitation.decline()
+                if data['loglevel'] == 'normal':
+                    if invitation.sender.display_name is None:
+                        print(f'[{now_()}] None からの招待を拒否')
+                    else:
+                        print(f'[{now_()}] {invitation.sender.display_name} からの招待を拒否')
                 else:
-                    print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を拒否')
-        except fortnitepy.PartyError as e:
-            if data['loglevel'] == 'debug':
+                    if invitation.sender.display_name is None:
+                        print(f'[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待を拒否')
+                    else:
+                        print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を拒否')
+            except fortnitepy.PartyError as e:
+                if data['loglevel'] == 'debug':
+                    print(crayons.red(e))
+                print(crayons.red('受信したnet_clとクライアントのnet_clが一致しません。'))
+            except fortnitepy.HTTPException as e:
+                if data['loglevel'] == 'debug':
+                    print(crayons.red(e))
+                print(crayons.red('パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
+            except Exception as e:
+                print(crayons.red(type(e)))
                 print(crayons.red(e))
-            print(crayons.red('受信したnet_clとクライアントのnet_clが一致しません。'))
-        except fortnitepy.HTTPException as e:
-            if data['loglevel'] == 'debug':
-                print(crayons.red(e))
-            print(crayons.red('パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
-        except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
 
 @client.event
 async def event_friend_request(request):
@@ -1005,6 +1149,36 @@ async def event_friend_message(message):
         except Exception as e:
             print(crayons.red(type(e)))
             print(crayons.red(e))
+            await message.reply('エラー')
+
+    elif args[0] in commands['wait'].split(','):
+        try:
+            if not client.owner is None:
+                if client.owner.id in client.user.party.members.keys() and not message.author.id == client.owner.id:
+                    await message.reply('現在利用できません')
+                else:
+                    data['fortnite']['acceptinvite']=False
+                    try:
+                        client.timer_.cancel()
+                    except Exception as e:
+                        if data['loglevel'] == 'debug':
+                            print(crayons.red(e))
+                    client.timer_=Timer(data['fortnite']['waitinterval'], inviteaccept, ())
+                    client.timer_.start()
+                    await message.reply(f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")
+            else:
+                data['fortnite']['acceptinvite']=False
+                try:
+                    timer_.cancel()
+                except Exception as e:
+                    if data['loglevel'] == 'debug':
+                        print(crayons.red(e))
+                timer_=Timer(data['fortnite']['waitinterval'], inviteaccept, ())
+                timer_.start()
+                await message.reply(f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")
+        except Exception as e:
+            if data['loglevel'] == 'debug':
+                print(crayons.red(e))
             await message.reply('エラー')
 
     elif args[0] in commands['join'].split(','):
