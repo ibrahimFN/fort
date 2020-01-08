@@ -39,6 +39,9 @@ emotemimic          : 他人のエモートを真似るかどうかの設定 tru
 acceptinvite        : ボットが招待を承諾するかどうかの設定 所有者からの招待は常に承諾 true か false
 acceptfriend        : ボットがフレンド申請を承諾するかどうかの設定 true か false か None
 addfriend           : ボットがパーティーメンバーにフレンド申請を送るかどうかの設定
+inviteinterval      : 招待を承諾した後intervalの秒数だけ招待を拒否するようにするかどうかの設定 true か false
+interval            : 招待を承諾した後招待を拒否する秒数
+waitinterval        : waitコマンドで招待を拒否する秒数
 caseinsensitive     : コマンドを大文字小文字、平仮名片仮名を区別しないかどうかの設定 true か false
 api-key             : Fortnite-API.comのAPIキー 後述
 loglevel            : ログにどのくらいの情報を流すか normal か info か debug
@@ -64,6 +67,7 @@ acceptinvite         : acceptinvite [true / false] パーティー招待を承�
 acceptfriend         : acceptfriend [true / false] フレンド申請を承諾するかどうかの設定
 joinmessageenable    : joinmessageenable [true / false] パーティーに誰かが参加した時のメッセージを出すかどうかの設定
 randommessageenable  : randommessageenable [true / false] パーティーに誰かが参加したときのランダムメッセージを出すかどうかの設定
+wait                 : configのwaitintervalの秒数だけ招待を拒否する
 join                 : join [パーティーID] パーティーに参加する
 leave                : パーティーを離脱する
 invite               : invite [ユーザー名 / ユーザーID] ユーザーをパーティーに招待する
