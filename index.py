@@ -16,8 +16,8 @@ try:
     import sys
     import os
 except ModuleNotFoundError as e:
-    print(crayons.red(e))
-    print(crayons.red('モジュールの読み込みに失敗しました。INSTALL.bat を実行してください。問題が修正されない場合はこちらまで連絡をください\nTwitter @gomashioepic\nDiscord gomashio#4335'))
+    print(e)
+    print('モジュールの読み込みに失敗しました。INSTALL.bat を実行してください。問題が修正されない場合はこちらまで連絡をください\nTwitter @gomashioepic\nDiscord gomashio#4335')
     exit()
 
 try:
