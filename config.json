@@ -25,7 +25,10 @@
 		"emotemimic": false,
 		"acceptinvite": true,
 		"acceptfriend": true,
-		"addfriend": false
+		"addfriend": false,
+		"inviteinterval": true,
+		"interval": 10,
+		"waitinterval": 10
 	},
 	"caseinsensitive": true,
 	"api-key": "APIキー",
