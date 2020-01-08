@@ -3002,6 +3002,36 @@ async def event_party_message(message):
             print(crayons.red(e))
             await message.reply('エラー')
 
+    elif args[0] in commands['wait'].split(','):
+        try:
+            if not client.owner is None:
+                if client.owner.id in client.user.party.members.keys() and not message.author.id == client.owner.id:
+                    await message.reply('現在利用できません')
+                else:
+                    data['fortnite']['acceptinvite']=False
+                    try:
+                        client.timer_.cancel()
+                    except Exception as e:
+                        if data['loglevel'] == 'debug':
+                            print(crayons.red(e))
+                    client.timer_=Timer(data['fortnite']['waitinterval'], inviteaccept, ())
+                    client.timer_.start()
+                    await message.reply(f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")
+            else:
+                data['fortnite']['acceptinvite']=False
+                try:
+                    timer_.cancel()
+                except Exception as e:
+                    if data['loglevel'] == 'debug':
+                        print(crayons.red(e))
+                timer_=Timer(data['fortnite']['waitinterval'], inviteaccept, ())
+                timer_.start()
+                await message.reply(f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")
+        except Exception as e:
+            if data['loglevel'] == 'debug':
+                print(crayons.red(e))
+            await message.reply('エラー')
+
     elif args[0] in commands['join'].split(','):
         try:
             await client.join_to_party(party_id=args[1])
