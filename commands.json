@@ -13,6 +13,7 @@
 	"acceptfriend": "acceptfriend",
 	"joinmessageenable": "joinmessage",
 	"randommessageenable": "randommessage",
+	"wait": "wait",
 	"join": "join",
 	"leave": "leave",
 	"invite": "invite",
