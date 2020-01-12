@@ -1,4 +1,4 @@
-# -*- coding: utf-8-sig -*-
+# -*- coding: utf-8 -*-
 try:
     from fortnitepy import ClientPartyMember
     from functools import partial
@@ -22,7 +22,7 @@ except ModuleNotFoundError as e:
     exit()
 
 try:
-    with open('config.json', 'r', encoding='utf-8-sig') as f:
+    with open('config.json', 'r', encoding='utf-8') as f:
         data = json.load(f)
         if data['loglevel'] == 'debug':
             print(f'\n{data}')
@@ -36,7 +36,7 @@ except FileNotFoundError as e:
     exit()
 
 try:
-    with open('commands.json', 'r', encoding='utf-8-sig') as f:
+    with open('commands.json', 'r', encoding='utf-8') as f:
         commands=json.load(f)
         commands=dict((k.lower(), v.lower()) for k,v in commands.items())
         if data['loglevel'] == 'debug':
@@ -78,7 +78,7 @@ def reload_configs():
     global commands
     global headers
     try:
-        with open('config.json', 'r', encoding='utf-8-sig') as f:
+        with open('config.json', 'r', encoding='utf-8') as f:
             data=json.load(f)
             if data['loglevel'] == 'debug':
                 print(f'\n{data}')
@@ -95,7 +95,7 @@ def reload_configs():
         data['loglevel']='normal'
 
     try:
-        with open('commands.json', 'r', encoding='utf-8-sig') as f:
+        with open('commands.json', 'r', encoding='utf-8') as f:
             commands=json.load(f)
             commands=dict((k.lower(), v.lower()) for k,v in commands.items())
             if data['loglevel'] == 'debug':
@@ -108,6 +108,24 @@ def reload_configs():
         print(crayons.red(e))
         print(crayons.red('commands.json ファイルが存在しません。'))
         return None
+    allcosmen=requests.get('https://fortnite-api.com/cosmetics/br?language=en', headers=headers)
+    allcosmja=requests.get('https://fortnite-api.com/cosmetics/br?language=ja', headers=headers)
+    try:
+        with open('allen.json', 'x', encoding='utf-8') as f:
+            pass
+    except FileExistsError as e:
+        if data['loglevel'] == 'debug':
+            print(crayons.red(e))
+    try:
+        with open('allja.json', 'x', encoding='utf-8') as f:
+            pass
+    except FileExistsError as e:
+        if data['loglevel'] == 'debug':
+            print(crayons.red(e))
+    with open('allen.json', 'r+', encoding='utf-8') as f:
+        f.write(allcosmen.text)
+    with open('allja.json', 'r+', encoding='utf-8') as f:
+        f.write(allcosmja.text)
     return 'Success'
 
 async def is_itemname(lang, itemname):
@@ -123,9 +141,13 @@ async def is_itemname(lang, itemname):
     itemlist=[]
     TF='False'
     if lang == 'en':
+        if not os.path.isfile('allen.json'):
+            print(crayons.red(f"allen.json ファイルが見つかりません。手動で作成した後、[{commands['reload']}] コマンドを使用してください。"))
         with open('allen.json', 'r', encoding='utf-8') as f:
             alldata = json.load(f)
     if lang == 'ja':
+        if not os.path.isfile('allja.json'):
+            print(crayons.red(f"allja.json ファイルが見つかりません。手動で作成した後、[{commands['reload']}] コマンドを使用してください。"))
         with open('allja.json', 'r', encoding='utf-8') as f:
             alldata = json.load(f)
     try:
@@ -154,9 +176,13 @@ async def search_item_with_type(lang, itemname, itemtype):
     itemlist=[]
     TF='False'
     if lang == 'en':
+        if not os.path.isfile('allen.json'):
+            print(crayons.red(f"allen.json ファイルが見つかりません。手動で作成した後、[{commands['reload']}] コマンドを使用してください。"))
         with open('allen.json', 'r', encoding='utf-8') as f:
             alldata = json.load(f)
     if lang == 'ja':
+        if not os.path.isfile('allja.json'):
+            print(crayons.red(f"allja.json ファイルが見つかりません。手動で作成した後、[{commands['reload']}] コマンドを使用してください。"))
         with open('allja.json', 'r', encoding='utf-8') as f:
             alldata = json.load(f)
     try:
@@ -186,9 +212,13 @@ async def search_set_item(lang, setname):
     itemlist=[]
     TF='False'
     if lang == 'en':
+        if not os.path.isfile('allen.json'):
+            print(crayons.red(f"allen.json ファイルが見つかりません。手動で作成した後、[{commands['reload']}] コマンドを使用してください。"))
         with open('allen.json', 'r', encoding='utf-8') as f:
             alldata = json.load(f)
     if lang == 'ja':
+        if not os.path.isfile('allja.json'):
+            print(crayons.red(f"allja.json ファイルが見つかりません。手動で作成した後、[{commands['reload']}] コマンドを使用してください。"))
         with open('allja.json', 'r', encoding='utf-8') as f:
             alldata = json.load(f)
     try:
@@ -218,9 +248,13 @@ async def search_item_with_id(lang, itemid):
     itemlist=[]
     TF='False'
     if lang == 'en':
+        if not os.path.isfile('allen.json'):
+            print(crayons.red(f"allen.json ファイルが見つかりません。手動で作成した後、[{commands['reload']}] コマンドを使用してください。"))
         with open('allen.json', 'r', encoding='utf-8') as f:
             alldata = json.load(f)
     if lang == 'ja':
+        if not os.path.isfile('allja.json'):
+            print(crayons.red(f"allja.json ファイルが見つかりません。手動で作成した後、[{commands['reload']}] コマンドを使用してください。"))
         with open('allja.json', 'r', encoding='utf-8') as f:
             alldata = json.load(f)
     try:
@@ -303,7 +337,7 @@ async def event_ready():
             except Exception as e:
                 print(crayons.red(type(e)))
                 print(crayons.red(e))
-            print(crayons.red(f"[{now_()}] 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{data['reload']}] コマンドで再読み込みしてください。"))
+            print(crayons.red(f"[{now_()}] 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{commands['reload']}] コマンドで再読み込みしてください。"))
         else:
             if data['loglevel'] == 'normal':
                 print(crayons.green(f'[{now_()}] 所有者: {client.owner.display_name}'))
@@ -348,12 +382,18 @@ async def event_ready():
 
     allcosmen=requests.get('https://fortnite-api.com/cosmetics/br?language=en', headers=headers)
     allcosmja=requests.get('https://fortnite-api.com/cosmetics/br?language=ja', headers=headers)
-    if not os.path.isfile('allen.json'):
+    try:
         with open('allen.json', 'x', encoding='utf-8') as f:
             pass
-    if not os.path.isfile('allja.json'):
+    except FileExistsError as e:
+        if data['loglevel'] == 'debug':
+            print(crayons.red(e))
+    try:
         with open('allja.json', 'x', encoding='utf-8') as f:
             pass
+    except FileExistsError as e:
+        if data['loglevel'] == 'debug':
+            print(crayons.red(e))
     with open('allen.json', 'r+', encoding='utf-8') as f:
         f.write(allcosmen.text)
     with open('allja.json', 'r+', encoding='utf-8') as f:
