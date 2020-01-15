@@ -27,9 +27,55 @@ try:
         data = json.load(f)
         if data['loglevel'] == 'debug':
             print(f'\n{data}')
+        errorcheck=data['fortnite']
+        errorcheck=data['fortnite']['email']
+        errorcheck=data['fortnite']['password']
+        errorcheck=data['fortnite']['owner']
+        errorcheck=data['fortnite']['platform']
+        errorcheck=data['fortnite']['cid']
+        errorcheck=data['fortnite']['bid']
+        errorcheck=data['fortnite']['pickaxe_id']
+        errorcheck=data['fortnite']['eid']
+        errorcheck=data['fortnite']['playlist']
+        errorcheck=data['fortnite']['banner']
+        errorcheck=data['fortnite']['banner_color']
+        errorcheck=data['fortnite']['level']
+        errorcheck=data['fortnite']['tier']
+        errorcheck=data['fortnite']['xpboost']
+        errorcheck=data['fortnite']['friendxpboost']
+        errorcheck=data['fortnite']['status']
+        errorcheck=data['fortnite']['partychat']
+        errorcheck=data['fortnite']['joinmessage']
+        errorcheck=data['fortnite']['randommessage']
+        errorcheck=data['fortnite']['joinmessageenable']
+        errorcheck=data['fortnite']['randommessageenable']
+        errorcheck=data['fortnite']['skinmimic']
+        errorcheck=data['fortnite']['emotemimic']
+        errorcheck=data['fortnite']['acceptinvite']
+        errorcheck=data['fortnite']['acceptfriend']
+        errorcheck=data['fortnite']['addfriend']
+        errorcheck=data['fortnite']['inviteinterval']
+        errorcheck=data['fortnite']['interval']
+        errorcheck=data['fortnite']['waitinterval']
+        errorcheck=data['caseinsensitive']
+        errorcheck=data['api-key']
+        errorcheck=data['loglevel']
+        errorcheck=data['debug']
+        errorcheck=requests.get('https://fortnite-api.com/cosmetics/br/search?name=API-KEY-CHECK',headers={'x-api-key': data['api-key']}).json()
+        if errorcheck['status'] == 401:
+            print(crayons.red('APIキーが無効です。正しい値を入力してください。'))
+            exit()
+        if errorcheck['status'] == 503:
+            print(crayons.red('APIがダウンしているため、一部コマンドが機能しません。しばらく待ってからもう一度起動してみてください'))
+except KeyError as e:
+    print(crayons.red(traceback.format_exc()))
+    print(crayons.red('config.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。'))
+    print(crayons.red(str(e)))
+    exit()
 except json.decoder.JSONDecodeError as e:
     print(crayons.red(traceback.format_exc()))
     print(crayons.red('config.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
+    print(crayons.red(str(e).replace('Expecting ','不明な',1).replace('Invalid control character at','無効なコントロール文字: ').replace('value','値',1).replace('delimiter','区切り',1).replace('line','行:',1).replace('column','文字:').replace('char','文字: ',1)))
     exit()
 except FileNotFoundError as e:
     print(crayons.red(traceback.format_exc()))
