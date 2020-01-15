@@ -5,6 +5,7 @@ try:
     from threading import Timer
     import unicodedata
     import fortnitepy
+    import traceback
     import datetime
     import requests
     import aiohttp
@@ -17,7 +18,7 @@ try:
     import sys
     import os
 except ModuleNotFoundError as e:
-    print(e)
+    print(traceback.format_exc())
     print('モジュールの読み込みに失敗しました。INSTALL.bat を実行してください。問題が修正されない場合はこちらまで連絡をください\nTwitter @gomashioepic\nDiscord gomashio#4335')
     exit()
 
@@ -27,11 +28,11 @@ try:
         if data['loglevel'] == 'debug':
             print(f'\n{data}')
 except json.decoder.JSONDecodeError as e:
-    print(crayons.red(e))
+    print(crayons.red(traceback.format_exc()))
     print(crayons.red('config.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
     exit()
 except FileNotFoundError as e:
-    print(crayons.red(e))
+    print(crayons.red(traceback.format_exc()))
     print(crayons.red('config.json ファイルが存在しません。'))
     exit()
 
@@ -42,10 +43,10 @@ try:
         if data['loglevel'] == 'debug':
             print(f'\n{commands}\n')
 except json.decoder.JSONDecodeError as e:
-    print(crayons.red(e))
+    print(crayons.red(traceback.format_exc()))
     print(crayons.red('commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
 except FileNotFoundError as e:
-    print(crayons.red(e))
+    print(crayons.red(traceback.format_exc()))
     print(crayons.red('commands.json ファイルが存在しません。'))
     exit()
 
@@ -83,11 +84,11 @@ def reload_configs():
             if data['loglevel'] == 'debug':
                 print(f'\n{data}')
     except json.decoder.JSONDecodeError as e:
-        print(crayons.red(e))
+        print(crayons.red(traceback.format_exc()))
         print(crayons.red('config.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
         return None
     except FileNotFoundError as e:
-        print(crayons.red(e))
+        print(crayons.red(traceback.format_exc()))
         print(crayons.red('config.json ファイルが存在しません。'))
         return None
     headers={'x-api-key': data['api-key']}
@@ -101,11 +102,11 @@ def reload_configs():
             if data['loglevel'] == 'debug':
                 print(f'\n{commands}\n')
     except json.decoder.JSONDecodeError as e:
-        print(crayons.red(e))
+        print(crayons.red(traceback.format_exc()))
         print(crayons.red('commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
         return None
     except FileNotFoundError as e:
-        print(crayons.red(e))
+        print(crayons.red(traceback.format_exc()))
         print(crayons.red('commands.json ファイルが存在しません。'))
         return None
     return 'Success'
@@ -137,8 +138,7 @@ async def is_itemname(lang, itemname):
                 TF='True'
         return TF, itemlist
     except Exception as e:
-        print(crayons.red(type(e)))
-        print(crayons.red(e))
+        print(crayons.red(traceback.format_exc()))
         return TF
 
 async def search_item_with_type(lang, itemname, itemtype):
@@ -169,8 +169,7 @@ async def search_item_with_type(lang, itemname, itemtype):
                     TF='True'
         return TF, itemlist
     except Exception as e:
-        print(crayons.red(type(e)))
-        print(crayons.red(e))
+        print(crayons.red(traceback.format_exc()))
         return TF
 
 async def search_set_item(lang, setname):
@@ -201,8 +200,7 @@ async def search_set_item(lang, setname):
                     TF='True'
         return TF, itemlist
     except Exception as e:
-        print(crayons.red(type(e)))
-        print(crayons.red(e))
+        print(crayons.red(traceback.format_exc()))
         return TF
 
 async def search_item_with_id(lang, itemid):
@@ -232,8 +230,7 @@ async def search_item_with_id(lang, itemid):
                 TF='True'
         return TF, itemlist
     except Exception as e:
-        print(crayons.red(type(e)))
-        print(crayons.red(e))
+        print(crayons.red(traceback.format_exc()))
         return TF
 
 try:
@@ -252,7 +249,7 @@ try:
         ]
     )
 except ValueError as e:
-    print(crayons.red(e))
+    print(crayons.red(traceback.format_exc()))
     print(crayons.red(f'アカウント情報を設定中にエラーが発生しました。configのfortnite部分の設定が間違っている可能性があります。'))
     exit()
 
@@ -298,11 +295,9 @@ async def event_ready():
                 await client.add_friend(owner.id)
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(type(e)))
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
             except Exception as e:
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             print(crayons.red(f"[{now_()}] 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{data['reload']}] コマンドで再読み込みしてください。"))
         else:
             if data['loglevel'] == 'normal':
@@ -311,11 +306,10 @@ async def event_ready():
                 print(crayons.green(f'[{now_()}] 所有者: {client.owner.display_name} / {client.owner.id}'))
     except fortnitepy.HTTPException as e:
         if data['loglevel'] == 'debug':
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
         print(crayons.red(f'[{now_()}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
     except Exception as e:
-        print(crayons.red(type(e)))
-        print(crayons.red(e))
+        print(crayons.red(traceback.format_exc()))
     
     if not client.owner is None:
         await client.owner.send('ここをクリックして招待')
@@ -331,20 +325,18 @@ async def event_ready():
                     await pending.accept()
                 except fortnitepy.HTTPException as e:
                     if data['loglevel'] == 'debug':
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
                     await pending.decline()
                 except Exception as e:
-                    print(crayons.red(type(e)))
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
             else:
                 try:
                     await pending.decline()
                 except fortnitepy.HTTPException as e:
                     if data['loglevel'] == 'debug':
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
                 except Exception as e:
-                    print(crayons.red(type(e)))
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
 
     allcosmen=requests.get('https://fortnite-api.com/cosmetics/br?language=en', headers=headers)
     allcosmja=requests.get('https://fortnite-api.com/cosmetics/br?language=ja', headers=headers)
@@ -380,20 +372,18 @@ async def event_restart():
                     await pending.accept()
                 except fortnitepy.HTTPException as e:
                     if data['loglevel'] == 'debug':
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
                     await pending.decline()
                 except Exception as e:
-                    print(crayons.red(type(e)))
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
             else:
                 try:
                     await pending.decline()
                 except fortnitepy.HTTPException as e:
                     if data['loglevel'] == 'debug':
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
                 except Exception as e:
-                    print(crayons.red(type(e)))
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
     print(crayons.green('正常に再ログインが完了しました'))
 
 @client.event
@@ -406,15 +396,14 @@ async def event_party_invite(invitation):
                 await invitation.accept()
             except fortnitepy.Forbidden as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 print(crayons.red('以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)'))
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 print(crayons.red('パーティー招待の承諾リクエストを処理中にエラーが発生しました。'))
             except Exception as e:
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             return
     if data['loglevel'] == 'normal':
         if invitation.sender.display_name is None:
@@ -438,7 +427,7 @@ async def event_party_invite(invitation):
                             client.timer.cancel()
                         except Exception as e:
                             if data['loglevel'] == 'debug':
-                                print(crayons.red(e))
+                                print(crayons.red(traceback.format_exc()))
                         client.timer=Timer(data['fortnite']['interval'], inviteinterval, ())
                         client.timer.start()
                         if data['loglevel'] == 'normal':
@@ -453,15 +442,14 @@ async def event_party_invite(invitation):
                                 print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を承諾')
                     except fortnitepy.Forbidden as e:
                         if data['loglevel'] == 'debug':
-                            print(crayons.red(e))
+                            print(crayons.red(traceback.format_exc()))
                         print(crayons.red('以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)'))
                     except fortnitepy.HTTPException as e:
                         if data['loglevel'] == 'debug':
-                            print(crayons.red(e))
+                            print(crayons.red(traceback.format_exc()))
                         print(crayons.red('パーティー招待の承諾リクエストを処理中にエラーが発生しました。'))
                     except Exception as e:
-                        print(crayons.red(type(e)))
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
                 else:
                     try:
                         await invitation.decline()
@@ -478,15 +466,14 @@ async def event_party_invite(invitation):
                                 print(f"[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
                     except fortnitepy.PartyError as e:
                         if data['loglevel'] == 'debug':
-                            print(crayons.red(e))
+                            print(crayons.red(traceback.format_exc()))
                         print(crayons.red('受信したnet_clとクライアントのnet_clが一致しません。'))
                     except fortnitepy.HTTPException as e:
                         if data['loglevel'] == 'debug':
-                            print(crayons.red(e))
+                            print(crayons.red(traceback.format_exc()))
                         print(crayons.red('パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
                     except Exception as e:
-                        print(crayons.red(type(e)))
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
             else:
                 try:
                     await invitation.decline()
@@ -502,30 +489,28 @@ async def event_party_invite(invitation):
                             print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を拒否')
                 except fortnitepy.PartyError as e:
                     if data['loglevel'] == 'debug':
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
                     print(crayons.red('受信したnet_clとクライアントのnet_clが一致しません。'))
                 except fortnitepy.HTTPException as e:
                     if data['loglevel'] == 'debug':
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
                     print(crayons.red('パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
                 except Exception as e:
-                    print(crayons.red(type(e)))
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
         else:
             try:
                 await invitation.decline()
                 await invitation.sender.send('所有者がパーティーにいるため招待を拒否します')
             except fortnitepy.PartyError as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 print(crayons.red('受信したnet_clとクライアントのnet_clが一致しません。'))
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 print(crayons.red('パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
             except Exception as e:
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
     else:
         if data['fortnite']['acceptinvite'] is True:
             if client.acceptinvite is True:
@@ -536,7 +521,7 @@ async def event_party_invite(invitation):
                         client.timer.cancel()
                     except Exception as e:
                         if data['loglevel'] == 'debug':
-                            print(crayons.red(e))
+                            print(crayons.red(traceback.format_exc()))
                     client.timer=Timer(data['fortnite']['interval'], inviteinterval, ())
                     client.timer.start()
                     if data['loglevel'] == 'normal':
@@ -551,15 +536,14 @@ async def event_party_invite(invitation):
                             print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を承諾')
                 except fortnitepy.Forbidden as e:
                     if data['loglevel'] == 'debug':
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
                     print(crayons.red('以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)'))
                 except fortnitepy.HTTPException as e:
                     if data['loglevel'] == 'debug':
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
                     print(crayons.red('パーティー招待の承諾リクエストを処理中にエラーが発生しました。'))
                 except Exception as e:
-                    print(crayons.red(type(e)))
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
             else:
                 try:
                     await invitation.decline()
@@ -576,15 +560,14 @@ async def event_party_invite(invitation):
                             print(f"[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
                 except fortnitepy.PartyError as e:
                     if data['loglevel'] == 'debug':
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
                     print(crayons.red('受信したnet_clとクライアントのnet_clが一致しません。'))
                 except fortnitepy.HTTPException as e:
                     if data['loglevel'] == 'debug':
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
                     print(crayons.red('パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
                 except Exception as e:
-                    print(crayons.red(type(e)))
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
         else:
             try:
                 await invitation.decline()
@@ -600,15 +583,14 @@ async def event_party_invite(invitation):
                         print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を拒否')
             except fortnitepy.PartyError as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 print(crayons.red('受信したnet_clとクライアントのnet_clが一致しません。'))
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 print(crayons.red('パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
             except Exception as e:
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
 
 @client.event
 async def event_friend_request(request):
@@ -641,21 +623,19 @@ async def event_friend_request(request):
             await request.accept()
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             print(crayons.red('フレンド申請の承諾リクエストを処理中にエラーが発生しました。'))
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
     elif data['fortnite']['acceptfriend'] is False:
         try:
             await request.decline()
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             print('フレンド申請の拒否リクエストを処理中にエラーが発生しました。')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
 
 @client.event
 async def event_friend_add(friend):
@@ -720,11 +700,10 @@ async def event_party_member_join(member):
                 await client.add_friend(member)
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 print('フレンド申請の送信リクエストを処理中にエラーが発生しました。')
             except Exception as e:
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
 
     await asyncio.sleep(0.2)
 
@@ -733,8 +712,7 @@ async def event_party_member_join(member):
             await client.user.party.send(data['fortnite']['joinmessage'])
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
     if data['fortnite']['randommessageenable'] is True:
             try:
                 randommessage=random.choice(data['fortnite']['randommessage'].split(','))
@@ -742,21 +720,20 @@ async def event_party_member_join(member):
                 await client.user.party.send(randommessage)
             except Exception as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(type(e)))
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
 
     try:
         await client.user.party.me.clear_emote()
         await client.user.party.me.set_emote(asset=client.eid)
     except Exception as e:
         if data['loglevel'] == 'debug':
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
     else:
         try:
             await client.user.party.me.set_emote(asset=client.eid)
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
 
 @client.event
 async def event_party_member_leave(member):
@@ -779,12 +756,11 @@ async def event_party_member_leave(member):
                 await client.add_friend(member)
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 print(crayons.red('フレンド申請の承諾リクエストを処理中にエラーが発生しました。'))
                 continue
             except Exception as e:
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
 
 @client.event
 async def event_party_member_kick(member):
@@ -822,7 +798,7 @@ async def event_party_member_promote(old_leader,new_leader):
             await client.user.party.set_playlist(data['fortnite']['playlist'])
         except fortnitepy.Frobidden as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
     if data['loglevel'] == 'normal':
         if old_leader.display_name is None:
             if new_leader.display_name is None:
@@ -865,14 +841,12 @@ async def event_party_member_update(member):
                 try:
                     await client.user.party.me.set_outfit(asset='CID_NONE')
                 except Exception as e:
-                    print(crayons.red(type(e)))
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
             else:
                 try:
                     await client.user.party.me.set_outfit(asset=member.outfit.upper(),variants=member.outfit_variants)
                 except Exception as e:
-                    print(crayons.red(type(e)))
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
     if not member.backpack == client.prevbackpack or not member.backpack_variants == client.prevbackpackvariants:
         if not data['loglevel'] == 'normal':
             print(member.backpack)
@@ -881,14 +855,12 @@ async def event_party_member_update(member):
                 try:
                     await client.user.party.me.set_backpack(asset='BID_NONE')
                 except Exception as e:
-                    print(crayons.red(type(e)))
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
             else:
                 try:
                     await client.user.party.me.set_backpack(asset=member.backpack.upper(),variants=member.backpack_variants)
                 except Exception as e:
-                    print(crayons.red(type(e)))
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
     if not member.pickaxe == client.prevpickaxe or not member.pickaxe_variants == client.prevpickaxevariants:
         if not data['loglevel'] == 'normal':
             print(member.pickaxe)
@@ -897,14 +869,12 @@ async def event_party_member_update(member):
                 try:
                     await client.user.party.me.set_pickaxe(asset='PICKAXE_ID_NONE')
                 except Exception as e:
-                    print(crayons.red(type(e)))
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
             else:
                 try:
                     await client.user.party.me.set_pickaxe(asset=member.pickaxe.upper(),variants=member.pickaxe_variants)
                 except Exception as e:
-                    print(crayons.red(type(e)))
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
     client.prevoutfit=member.outfit
     client.prevoutfitvariants=member.outfit_variants
     client.prevbackpack=member.backpack
@@ -920,13 +890,11 @@ async def event_party_member_update(member):
                 try:
                     await client.user.party.me.clear_emote()
                 except Exception as e:
-                    print(crayons.red(type(e)))
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
             try:
                 await client.user.party.me.set_emote(asset=member.emote.upper())
             except Exception as e:
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
 
 
 @client.event
@@ -970,8 +938,7 @@ async def event_friend_message(message):
                 os.chdir(os.getcwd())
                 os.execv(os.sys.executable,['python','index.py'])
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['relogin'].split(','):
@@ -979,12 +946,11 @@ async def event_friend_message(message):
             await message.reply('アカウントに再ログインします...')
             await client.restart()
         except fortnitepy.AuthException as e:
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             print(crayons.red(f'[{now_()}] メールアドレスまたはパスワードが間違っています。'))
             exit()
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             print(crayons.red(f'[{now_()}] アカウントの読み込みに失敗しました。もう一度試してみてください。'))
             exit()
 
@@ -1004,10 +970,10 @@ async def event_friend_message(message):
                         await client.add_friend(owner.id)
                     except fortnitepy.HTTPException as e:
                         if data['loglevel'] == 'debug':
-                            print(crayons.red(e))
+                            print(crayons.red(traceback.format_exc()))
                     except Exception as e:
                         if data['loglevel'] == 'debug':
-                            print(crayons.red(e))
+                            print(crayons.red(traceback.format_exc()))
                     print(crayons.red(f'[{now_()}] 所有者とフレンドではありません。フレンドになってからもう一度起動してください。'))
                 else:
                     if data['loglevel'] == 'normal':
@@ -1016,11 +982,10 @@ async def event_friend_message(message):
                         print(crayons.green(f'[{now_()}] 所有者: {client.owner.display_name} / {client.owner.id}'))
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 print(crayons.red(f'[{now_()}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['friendcount'].split(','):
@@ -1028,8 +993,7 @@ async def event_friend_message(message):
             print(f'フレンド数: {len(client.friends)}')
             await message.reply(f'フレンド数: {len(client.friends)}')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['skinmimic'].split(','):
@@ -1042,11 +1006,10 @@ async def event_friend_message(message):
                 await message.reply('スキンミミックをオフに設定')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['skinmimic']}] [[{commands['true']}] / [{commands['false']}]]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['emotemimic'].split(','):
@@ -1059,11 +1022,10 @@ async def event_friend_message(message):
                 await message.reply('エモートミミックをオフに設定')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['emotemimic']}] [[{commands['true']}] / [{commands['false']}]]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['partychat'].split(','):
@@ -1076,11 +1038,10 @@ async def event_friend_message(message):
                 await message.reply('パーティーチャットからのコマンド受付をオフに設定')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['party']}] [[{commands['true']}] / [{commands['false']}]]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['acceptinvite'].split(','):
@@ -1093,11 +1054,10 @@ async def event_friend_message(message):
                 await message.reply('招待を拒否に設定')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['acceptinvite']}] [[{commands['true']}] / [{commands['false']}]]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['acceptfriend'].split(','):
@@ -1110,11 +1070,10 @@ async def event_friend_message(message):
                 await message.reply('フレンド申請を拒否に設定')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['acceptfriend']}] [[{commands['true']}] / [{commands['false']}]]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['joinmessageenable'].split(','):
@@ -1127,11 +1086,10 @@ async def event_friend_message(message):
                 await message.reply('パーティー参加時のメッセージをオフに設定')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['joinmessageenable']}] [[{commands['true']}] / [{commands['false']}]]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['randommessageenable'].split(','):
@@ -1144,11 +1102,10 @@ async def event_friend_message(message):
                 await message.reply('パーティー参加時のランダムメッセージをオフに設定')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['randommessageenable']}] [[{commands['true']}] / [{commands['false']}]]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['wait'].split(','):
@@ -1162,7 +1119,7 @@ async def event_friend_message(message):
                         client.timer_.cancel()
                     except Exception as e:
                         if data['loglevel'] == 'debug':
-                            print(crayons.red(e))
+                            print(crayons.red(traceback.format_exc()))
                     client.timer_=Timer(data['fortnite']['waitinterval'], inviteaccept, ())
                     client.timer_.start()
                     await message.reply(f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")
@@ -1172,13 +1129,13 @@ async def event_friend_message(message):
                     timer_.cancel()
                 except Exception as e:
                     if data['loglevel'] == 'debug':
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
                 timer_=Timer(data['fortnite']['waitinterval'], inviteaccept, ())
                 timer_.start()
                 await message.reply(f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['join'].split(','):
@@ -1186,23 +1143,22 @@ async def event_friend_message(message):
             await client.join_to_party(party_id=args[1])
         except fortnitepy.PartyError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('既にこのパーティーのメンバーです')
         except fortnitepy.NotFound as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーが見つかりません')
         except fortnitepy.Forbidden as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーがプライベートです')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['join']}] [party_id]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['leave'].split(','):
@@ -1211,11 +1167,10 @@ async def event_friend_message(message):
             await message.reply('パーティーを離脱')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティー離脱のリクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['invite'].split(','):
@@ -1224,7 +1179,7 @@ async def event_friend_message(message):
                 user=await client.fetch_profile(rawcontent)
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
                 return
             friend=client.get_friend(user.id)
@@ -1241,19 +1196,18 @@ async def event_friend_message(message):
                         await message.reply(f'{friend.display_name} / {friend.id} をパーティー {client.user.party.id} に招待')
                 except fortnitepy.PartyError as e:
                     if data['loglevel'] == 'debug':
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
                     await message.reply('パーティーが満員か、既にパーティーにいます')
                 except fortnitepy.HTTPException as e:
                     if data['loglevel'] == 'debug':
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
                     await message.reply('パーティー招待の送信リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['invite']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['inviteme'].split(','):
@@ -1261,15 +1215,14 @@ async def event_friend_message(message):
             await message.author.invite()
         except fortnitepy.PartyError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーが満員か、既にパーティーにいます')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティー招待の送信リクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['message'].split(','):
@@ -1289,15 +1242,14 @@ async def event_friend_message(message):
                     await message.reply(f'{friend.display_name} / {friend.id} にメッセージ {send[1]} を送信')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['message']}] [ユーザー名 / ユーザーID] : [内容]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['partymessage'].split(','):
@@ -1309,11 +1261,10 @@ async def event_friend_message(message):
                 await message.reply(f'パーティー {client.user.party.id} にメッセージ {rawcontent} を送信')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['partymessage']}] [内容]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['status'].split(','):
@@ -1322,11 +1273,10 @@ async def event_friend_message(message):
             await message.reply(f'ステータスを {rawcontent} に設定')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['status']}] [内容]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['banner'].split(','):
@@ -1334,15 +1284,14 @@ async def event_friend_message(message):
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_banner,args[1],args[2],client.user.party.me.banner[2]))
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('バナー情報の設定リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['banner']}] [バナーID] [バナーの色]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['level'].split(','):
@@ -1351,19 +1300,18 @@ async def event_friend_message(message):
             await message.reply(f'レベルを {args[1]} に設定')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('レベルの設定リクエストを処理中にエラーが発生しました')
         except ValueError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('数字を入力してください')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['level']}] [レベル]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
     
     elif args[0] in commands['bp'].split(','):
@@ -1372,15 +1320,14 @@ async def event_friend_message(message):
             await message.reply(f'バトルパス情報を ティア: {args[1]} XPブースト: {args[2]} フレンドXPブースト: {args[3]} に設定')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('バトルパス情報の設定リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['bp']}] [ティア] [XPブースト] [フレンドXPブースト]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['user'].split(','):
@@ -1397,15 +1344,14 @@ async def event_friend_message(message):
                     await message.reply(f'{user.display_name} / {user.id}')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['user']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['info'].split(','):
@@ -1546,11 +1492,10 @@ async def event_friend_message(message):
                         await message.reply('見つかりません')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['friend'].split(','):
@@ -1581,15 +1526,14 @@ async def event_friend_message(message):
                         await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['friend']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['pending'].split(','):
@@ -1608,14 +1552,13 @@ async def event_friend_message(message):
                             await message.reply(f'{friend.display_name} / {friend.id} をフレンドに追加')
                     except fortnitepy.HTTPException as e:
                         if data['loglevel'] == 'debug':
-                            print(crayons.red(e))
+                            print(crayons.red(traceback.format_exc()))
                         if friend.display_name is None:
                             await message.reply(f'None / {friend.id} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
                         else:
                             await message.reply(f'{friend.display_name} / {friend.id} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
                     except Exception as e:
-                        print(crayons.red(type(e)))
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
                         await message.reply('エラー')
                         continue
             elif args[1] in commands['false'].split(','):
@@ -1628,23 +1571,21 @@ async def event_friend_message(message):
                             await message.reply(f'{friend.display_name} / {friend.id} のフレンド申請を拒否')
                     except fortnitepy.HTTPException as e:
                         if data['loglevel'] == 'debug':
-                            print(crayons.red(e))
+                            print(crayons.red(traceback.format_exc()))
                         if friend.display_name is None:
                             await message.reply(f'None / {friend.id} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
                         else:
                             await message.reply(f'{friend.display_name} / {friend.id} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
                     except Exception as e:
-                        print(crayons.red(type(e)))
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
                         await message.reply('エラー')
                         continue
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['pending']}] [[{commands['true']}] / [{commands['false']}]]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['addfriend'].split(','):
@@ -1653,7 +1594,7 @@ async def event_friend_message(message):
                 user=await client.fetch_profile(rawcontent)
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
                 return
             if user is None:
@@ -1669,15 +1610,14 @@ async def event_friend_message(message):
                         await message.reply(f'{user.display_name} / {user.id} にフレンド申請を送信')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('フレンド申請の送信リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['addfriend']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['removefriend'].split(','):
@@ -1686,7 +1626,7 @@ async def event_friend_message(message):
                 user=await client.fetch_profile(rawcontent)
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
                 return
             if user is None:
@@ -1702,15 +1642,14 @@ async def event_friend_message(message):
                         await message.reply(f'{user.display_name} / {user.id} をフレンドから削除')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('フレンドの削除リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['removefriend']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['acceptpending'].split(','):
@@ -1719,7 +1658,7 @@ async def event_friend_message(message):
                 user=await client.fetch_profile(rawcontent)
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
                 return
             if user is None:
@@ -1743,15 +1682,14 @@ async def event_friend_message(message):
                             print(f'[{now_()}] {user.display_name} / {user.id} のフレンド申請を承諾')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('フレンドの追加リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['acceptpending']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['declinepending'].split(','):
@@ -1760,7 +1698,7 @@ async def event_friend_message(message):
                 user=await client.fetch_profile(rawcontent)
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
                 return
             if user is None:
@@ -1784,15 +1722,14 @@ async def event_friend_message(message):
                             print(f'[{now_()}] {user.display_name} / {user.id} のフレンド申請を拒否')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('フレンド申請の拒否リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['declinepending']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['blockfriend'].split(','):
@@ -1801,7 +1738,7 @@ async def event_friend_message(message):
                 user=await client.fetch_profile(rawcontent)
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
             if user is None:
                 await message.reply('ユーザーが見つかりません')
@@ -1824,15 +1761,14 @@ async def event_friend_message(message):
                     await message.reply('既にユーザーをブロックしています')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('フレンドのブロックリクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['blockfriend']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['unblockfriend'].split(','):
@@ -1841,7 +1777,7 @@ async def event_friend_message(message):
                 user=await client.fetch_profile(rawcontent)
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
             if user is None:
                 await message.reply('ユーザーが見つかりません')
@@ -1864,15 +1800,14 @@ async def event_friend_message(message):
                     await message.reply('ユーザーをブロックしていません')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('ブロックしたユーザーのブロック解除リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['unblockfriend']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['promote'].split(','):
@@ -1881,7 +1816,7 @@ async def event_friend_message(message):
                 user=await client.fetch_profile(rawcontent)
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
             if user is None:
                 await message.reply('ユーザーが見つかりません')
@@ -1897,23 +1832,22 @@ async def event_friend_message(message):
                         await message.reply(f'{user.display_name} / {user.id} に譲渡')
         except fortnitepy.Forbidden as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーリーダーではありません')
         except fortnitepy.PartyError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('既にパーティーリーダーです')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーリーダーの譲渡リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['promote']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['promoteme'].split(','):
@@ -1925,19 +1859,18 @@ async def event_friend_message(message):
                 await member.promote()
         except fortnitepy.Forbidden as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーリーダーではありません')
         except fortnitepy.PartyError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('既にパーティーリーダーです')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーリーダーの譲渡リクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['kick'].split(','):
@@ -1946,7 +1879,7 @@ async def event_friend_message(message):
                 user=await client.fetch_profile(rawcontent)
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
             if user is None:
                 await message.reply('ユーザーが見つかりません')
@@ -1962,23 +1895,22 @@ async def event_friend_message(message):
                         await message.reply(f'{user.display_name} / {user.id} をキック')
         except fortnitepy.Forbidden as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーリーダーではありません')
         except fortnitepy.PartyError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('自分をキックすることはできません')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーメンバーのキックリクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['kick']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['kickme'].split(','):
@@ -1990,43 +1922,39 @@ async def event_friend_message(message):
                 await member.kick()
         except fortnitepy.Forbidden as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーリーダーではありません')
         except fortnitepy.PartyError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('自分をキックすることはできません')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーメンバーのキックリクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['ready'].split(','):
         try:
             await client.user.party.me.set_ready(True)
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
     
     elif args[0] in commands['unready'].split(','):
         try:
             await client.user.party.me.set_ready(False)
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['sitout'].split(','):
         try:
             await client.user.party.me.set_ready(None)
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['stop'].split(','):
@@ -2035,8 +1963,7 @@ async def event_friend_message(message):
             await client.user.party.me.clear_emote()
             await message.reply('停止しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['allskin'].split(','):
@@ -2053,8 +1980,7 @@ async def event_friend_message(message):
                     await asyncio.sleep(2)
             await message.reply('全てのスキンを表示し終わりました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['allemote'].split(','):
@@ -2072,8 +1998,7 @@ async def event_friend_message(message):
             else:
                 await message.reply('全てのエモートを表示し終わりました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['id'].split(','):
@@ -2171,11 +2096,10 @@ async def event_friend_message(message):
                     await message.reply('見つかりません')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['skin'].split(','):
@@ -2209,11 +2133,10 @@ async def event_friend_message(message):
                     await message.reply('見つかりません')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['bag'].split(','):
@@ -2250,11 +2173,10 @@ async def event_friend_message(message):
                     await message.reply('見つかりません')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['pickaxe'].split(','):
@@ -2290,11 +2212,10 @@ async def event_friend_message(message):
                     await message.reply('見つかりません')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['emote'].split(','):
@@ -2330,11 +2251,10 @@ async def event_friend_message(message):
                     await message.reply('見つかりません')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['set'].split(','):
@@ -2403,11 +2323,10 @@ async def event_friend_message(message):
                     await message.reply('見つかりません')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['variant'].split(','):
@@ -2449,12 +2368,11 @@ async def event_friend_message(message):
                 await message.reply(f"[{commands['variant']}] [variant] [数値]\nvariantと数値は3つまで設定可")
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['skinasset'].split(','):
@@ -2462,16 +2380,15 @@ async def event_friend_message(message):
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,rawcontent))
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['skinasset']}] [アセットパス]")
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['bagasset'].split(','):
@@ -2479,16 +2396,15 @@ async def event_friend_message(message):
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,rawcontent))
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['bagasset']}] [アセットパス]")
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['pickaxeasset'].split(','):
@@ -2496,16 +2412,15 @@ async def event_friend_message(message):
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,rawcontent))
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['pickaxeasset']}] [アセットパス]")
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['emoteasset'].split(','):
@@ -2514,16 +2429,15 @@ async def event_friend_message(message):
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_emote,rawcontent))
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['emoteasset']}] [アセットパス]")
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0].startswith('cid_'):
@@ -2532,12 +2446,11 @@ async def event_friend_message(message):
             await message.reply(f'スキンを {rawargs[0]} に設定')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0].startswith('bid_'):
@@ -2546,12 +2459,11 @@ async def event_friend_message(message):
             await message.reply(f'バッグを {rawargs[0]} に設定')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0].startswith('pickaxe_id'):
@@ -2560,12 +2472,11 @@ async def event_friend_message(message):
             await message.reply(f'ツルハシを {rawargs[0]} に設定')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0].startswith('eid_'):
@@ -2577,12 +2488,11 @@ async def event_friend_message(message):
             client.eid=args[0]
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0].startswith('playlist_'):
@@ -2592,12 +2502,11 @@ async def event_friend_message(message):
             data['fortnite']['playlist']=rawargs[0]
         except fortnitepy.Forbidden as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーリーダーではありません')
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     else:
@@ -2648,17 +2557,16 @@ async def event_friend_message(message):
                 return
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('有効な数字を入力してください')
             return
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
             return
 
@@ -2708,13 +2616,12 @@ async def event_friend_message(message):
                 return
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
             return
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
             return
 
@@ -2764,13 +2671,12 @@ async def event_friend_message(message):
                 return
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
             return
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
             return
 
@@ -2823,8 +2729,7 @@ async def event_party_message(message):
                 os.chdir(os.getcwd())
                 os.execv(os.sys.executable,['python','index.py'])
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['relogin'].split(','):
@@ -2832,12 +2737,11 @@ async def event_party_message(message):
             await message.reply('アカウントに再ログインします...')
             await client.restart()
         except fortnitepy.AuthException as e:
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             print(crayons.red(f'[{now_()}] メールアドレスまたはパスワードが間違っています。'))
             exit()
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             print(crayons.red(f'[{now_()}] アカウントの読み込みに失敗しました。もう一度試してみてください。'))
             exit()
 
@@ -2857,10 +2761,10 @@ async def event_party_message(message):
                         await client.add_friend(owner.id)
                     except fortnitepy.HTTPException as e:
                         if data['loglevel'] == 'debug':
-                            print(crayons.red(e))
+                            print(crayons.red(traceback.format_exc()))
                     except Exception as e:
                         if data['loglevel'] == 'debug':
-                            print(crayons.red(e))
+                            print(crayons.red(traceback.format_exc()))
                     print(crayons.red(f'[{now_()}] 所有者とフレンドではありません。フレンドになってからもう一度起動してください。'))
                 else:
                     if data['loglevel'] == 'normal':
@@ -2869,11 +2773,10 @@ async def event_party_message(message):
                         print(crayons.green(f'[{now_()}] 所有者: {client.owner.display_name} / {client.owner.id}'))
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 print(crayons.red(f'[{now_()}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['friendcount'].split(','):
@@ -2881,8 +2784,7 @@ async def event_party_message(message):
             print(f'フレンド数: {len(client.friends)}')
             await message.reply(f'フレンド数: {len(client.friends)}')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['skinmimic'].split(','):
@@ -2895,11 +2797,10 @@ async def event_party_message(message):
                 await message.reply('スキンミミックをオフに設定')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['skinmimic']}] [[{commands['true']}] / [{commands['false']}]]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['emotemimic'].split(','):
@@ -2912,11 +2813,10 @@ async def event_party_message(message):
                 await message.reply('エモートミミックをオフに設定')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['emotemimic']}] [[{commands['true']}] / [{commands['false']}]]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['partychat'].split(','):
@@ -2929,11 +2829,10 @@ async def event_party_message(message):
                 await message.reply('パーティーチャットからのコマンド受付をオフに設定')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['party']}] [[{commands['true']}] / [{commands['false']}]]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['acceptinvite'].split(','):
@@ -2946,11 +2845,10 @@ async def event_party_message(message):
                 await message.reply('招待を拒否に設定')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['acceptinvite']}] [[{commands['true']}] / [{commands['false']}]]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['acceptfriend'].split(','):
@@ -2963,11 +2861,10 @@ async def event_party_message(message):
                 await message.reply('フレンド申請を拒否に設定')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['acceptfriend']}] [[{commands['true']}] / [{commands['false']}]]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['joinmessageenable'].split(','):
@@ -2980,11 +2877,10 @@ async def event_party_message(message):
                 await message.reply('パーティー参加時のメッセージをオフに設定')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['joinmessageenable']}] [[{commands['true']}] / [{commands['false']}]]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['randommessageenable'].split(','):
@@ -2997,11 +2893,10 @@ async def event_party_message(message):
                 await message.reply('パーティー参加時のランダムメッセージをオフに設定')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['randommessageenable']}] [[{commands['true']}] / [{commands['false']}]]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['wait'].split(','):
@@ -3015,7 +2910,7 @@ async def event_party_message(message):
                         client.timer_.cancel()
                     except Exception as e:
                         if data['loglevel'] == 'debug':
-                            print(crayons.red(e))
+                            print(crayons.red(traceback.format_exc()))
                     client.timer_=Timer(data['fortnite']['waitinterval'], inviteaccept, ())
                     client.timer_.start()
                     await message.reply(f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")
@@ -3025,13 +2920,13 @@ async def event_party_message(message):
                     timer_.cancel()
                 except Exception as e:
                     if data['loglevel'] == 'debug':
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
                 timer_=Timer(data['fortnite']['waitinterval'], inviteaccept, ())
                 timer_.start()
                 await message.reply(f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['join'].split(','):
@@ -3039,23 +2934,22 @@ async def event_party_message(message):
             await client.join_to_party(party_id=args[1])
         except fortnitepy.PartyError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('既にこのパーティーのメンバーです')
         except fortnitepy.NotFound as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーが見つかりません')
         except fortnitepy.Forbidden as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーがプライベートです')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['join']}] [party_id]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['leave'].split(','):
@@ -3064,11 +2958,10 @@ async def event_party_message(message):
             await message.reply('パーティーを離脱')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティー離脱のリクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['invite'].split(','):
@@ -3077,7 +2970,7 @@ async def event_party_message(message):
                 user=await client.fetch_profile(rawcontent)
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
                 return
             friend=client.get_friend(user.id)
@@ -3094,19 +2987,18 @@ async def event_party_message(message):
                         await message.reply(f'{friend.display_name} / {friend.id} をパーティー {client.user.party.id} に招待')
                 except fortnitepy.PartyError as e:
                     if data['loglevel'] == 'debug':
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
                     await message.reply('パーティーが満員か、既にパーティーにいます')
                 except fortnitepy.HTTPException as e:
                     if data['loglevel'] == 'debug':
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
                     await message.reply('パーティー招待の送信リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['invite']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['inviteme'].split(','):
@@ -3114,15 +3006,14 @@ async def event_party_message(message):
             await message.author.invite()
         except fortnitepy.PartyError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーが満員か、既にパーティーにいます')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティー招待の送信リクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['message'].split(','):
@@ -3142,15 +3033,14 @@ async def event_party_message(message):
                     await message.reply(f'{friend.display_name} / {friend.id} にメッセージ {send[1]} を送信')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['message']}] [ユーザー名 / ユーザーID] : [内容]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['partymessage'].split(','):
@@ -3162,11 +3052,10 @@ async def event_party_message(message):
                 await message.reply(f'パーティー {client.user.party.id} にメッセージ {rawcontent} を送信')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['partymessage']}] [内容]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['status'].split(','):
@@ -3175,11 +3064,10 @@ async def event_party_message(message):
             await message.reply(f'ステータスを {rawcontent} に設定')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['status']}] [内容]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['banner'].split(','):
@@ -3187,15 +3075,14 @@ async def event_party_message(message):
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_banner,args[1],args[2],client.user.party.me.banner[2]))
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('バナー情報の設定リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['banner']}] [バナーID] [バナーの色]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['level'].split(','):
@@ -3204,19 +3091,18 @@ async def event_party_message(message):
             await message.reply(f'レベルを {args[1]} に設定')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('レベルの設定リクエストを処理中にエラーが発生しました')
         except ValueError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('数字を入力してください')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['level']}] [レベル]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
     
     elif args[0] in commands['bp'].split(','):
@@ -3225,15 +3111,14 @@ async def event_party_message(message):
             await message.reply(f'バトルパス情報を ティア: {args[1]} XPブースト: {args[2]} フレンドXPブースト: {args[3]} に設定')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('バトルパス情報の設定リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['bp']}] [ティア] [XPブースト] [フレンドXPブースト]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['user'].split(','):
@@ -3250,15 +3135,14 @@ async def event_party_message(message):
                     await message.reply(f'{user.display_name} / {user.id}')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['user']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['info'].split(','):
@@ -3399,11 +3283,10 @@ async def event_party_message(message):
                         await message.reply('見つかりません')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['friend'].split(','):
@@ -3434,15 +3317,14 @@ async def event_party_message(message):
                         await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['friend']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['pending'].split(','):
@@ -3461,14 +3343,13 @@ async def event_party_message(message):
                             await message.reply(f'{friend.display_name} / {friend.id} をフレンドに追加')
                     except fortnitepy.HTTPException as e:
                         if data['loglevel'] == 'debug':
-                            print(crayons.red(e))
+                            print(crayons.red(traceback.format_exc()))
                         if friend.display_name is None:
                             await message.reply(f'None / {friend.id} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
                         else:
                             await message.reply(f'{friend.display_name} / {friend.id} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
                     except Exception as e:
-                        print(crayons.red(type(e)))
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
                         await message.reply('エラー')
                         continue
             elif args[1] in commands['false'].split(','):
@@ -3481,23 +3362,21 @@ async def event_party_message(message):
                             await message.reply(f'{friend.display_name} / {friend.id} のフレンド申請を拒否')
                     except fortnitepy.HTTPException as e:
                         if data['loglevel'] == 'debug':
-                            print(crayons.red(e))
+                            print(crayons.red(traceback.format_exc()))
                         if friend.display_name is None:
                             await message.reply(f'None / {friend.id} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
                         else:
                             await message.reply(f'{friend.display_name} / {friend.id} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
                     except Exception as e:
-                        print(crayons.red(type(e)))
-                        print(crayons.red(e))
+                        print(crayons.red(traceback.format_exc()))
                         await message.reply('エラー')
                         continue
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['pending']}] [[{commands['true']}] / [{commands['false']}]]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['addfriend'].split(','):
@@ -3506,7 +3385,7 @@ async def event_party_message(message):
                 user=await client.fetch_profile(rawcontent)
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
                 return
             if user is None:
@@ -3522,15 +3401,14 @@ async def event_party_message(message):
                         await message.reply(f'{user.display_name} / {user.id} にフレンド申請を送信')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('フレンド申請の送信リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['addfriend']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['removefriend'].split(','):
@@ -3539,7 +3417,7 @@ async def event_party_message(message):
                 user=await client.fetch_profile(rawcontent)
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
                 return
             if user is None:
@@ -3555,15 +3433,14 @@ async def event_party_message(message):
                         await message.reply(f'{user.display_name} / {user.id} をフレンドから削除')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('フレンドの削除リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['removefriend']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['acceptpending'].split(','):
@@ -3572,7 +3449,7 @@ async def event_party_message(message):
                 user=await client.fetch_profile(rawcontent)
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
                 return
             if user is None:
@@ -3596,15 +3473,14 @@ async def event_party_message(message):
                             print(f'[{now_()}] {user.display_name} / {user.id} のフレンド申請を承諾')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('フレンドの追加リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['acceptpending']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['declinepending'].split(','):
@@ -3613,7 +3489,7 @@ async def event_party_message(message):
                 user=await client.fetch_profile(rawcontent)
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
                 return
             if user is None:
@@ -3637,15 +3513,14 @@ async def event_party_message(message):
                             print(f'[{now_()}] {user.display_name} / {user.id} のフレンド申請を拒否')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('フレンド申請の拒否リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['declinepending']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['blockfriend'].split(','):
@@ -3654,7 +3529,7 @@ async def event_party_message(message):
                 user=await client.fetch_profile(rawcontent)
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
             if user is None:
                 await message.reply('ユーザーが見つかりません')
@@ -3677,15 +3552,14 @@ async def event_party_message(message):
                     await message.reply('既にユーザーをブロックしています')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('フレンドのブロックリクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['blockfriend']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['unblockfriend'].split(','):
@@ -3694,7 +3568,7 @@ async def event_party_message(message):
                 user=await client.fetch_profile(rawcontent)
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
             if user is None:
                 await message.reply('ユーザーが見つかりません')
@@ -3717,15 +3591,14 @@ async def event_party_message(message):
                     await message.reply('ユーザーをブロックしていません')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('ブロックしたユーザーのブロック解除リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['unblockfriend']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['promote'].split(','):
@@ -3734,7 +3607,7 @@ async def event_party_message(message):
                 user=await client.fetch_profile(rawcontent)
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
             if user is None:
                 await message.reply('ユーザーが見つかりません')
@@ -3750,23 +3623,22 @@ async def event_party_message(message):
                         await message.reply(f'{user.display_name} / {user.id} に譲渡')
         except fortnitepy.Forbidden as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーリーダーではありません')
         except fortnitepy.PartyError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('既にパーティーリーダーです')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーリーダーの譲渡リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['promote']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['promoteme'].split(','):
@@ -3778,19 +3650,18 @@ async def event_party_message(message):
                 await member.promote()
         except fortnitepy.Forbidden as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーリーダーではありません')
         except fortnitepy.PartyError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('既にパーティーリーダーです')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーリーダーの譲渡リクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['kick'].split(','):
@@ -3799,7 +3670,7 @@ async def event_party_message(message):
                 user=await client.fetch_profile(rawcontent)
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
-                    print(crayons.red(e))
+                    print(crayons.red(traceback.format_exc()))
                 await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
             if user is None:
                 await message.reply('ユーザーが見つかりません')
@@ -3815,23 +3686,22 @@ async def event_party_message(message):
                         await message.reply(f'{user.display_name} / {user.id} をキック')
         except fortnitepy.Forbidden as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーリーダーではありません')
         except fortnitepy.PartyError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('自分をキックすることはできません')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーメンバーのキックリクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['kick']}] [ユーザー名 / ユーザーID]")
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['kickme'].split(','):
@@ -3843,43 +3713,39 @@ async def event_party_message(message):
                 await member.kick()
         except fortnitepy.Forbidden as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーリーダーではありません')
         except fortnitepy.PartyError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('自分をキックすることはできません')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーメンバーのキックリクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['ready'].split(','):
         try:
             await client.user.party.me.set_ready(True)
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
     
     elif args[0] in commands['unready'].split(','):
         try:
             await client.user.party.me.set_ready(False)
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['sitout'].split(','):
         try:
             await client.user.party.me.set_ready(None)
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['stop'].split(','):
@@ -3888,8 +3754,7 @@ async def event_party_message(message):
             await client.user.party.me.clear_emote()
             await message.reply('停止しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['allskin'].split(','):
@@ -3906,8 +3771,7 @@ async def event_party_message(message):
                     await asyncio.sleep(2)
             await message.reply('全てのスキンを表示し終わりました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['allemote'].split(','):
@@ -3925,8 +3789,7 @@ async def event_party_message(message):
             else:
                 await message.reply('全てのエモートを表示し終わりました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['id'].split(','):
@@ -4024,11 +3887,10 @@ async def event_party_message(message):
                     await message.reply('見つかりません')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['skin'].split(','):
@@ -4062,11 +3924,10 @@ async def event_party_message(message):
                     await message.reply('見つかりません')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['bag'].split(','):
@@ -4103,11 +3964,10 @@ async def event_party_message(message):
                     await message.reply('見つかりません')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['pickaxe'].split(','):
@@ -4143,11 +4003,10 @@ async def event_party_message(message):
                     await message.reply('見つかりません')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['emote'].split(','):
@@ -4183,11 +4042,10 @@ async def event_party_message(message):
                     await message.reply('見つかりません')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['set'].split(','):
@@ -4256,11 +4114,10 @@ async def event_party_message(message):
                     await message.reply('見つかりません')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
-            print(crayons.red(type(e)))
-            print(crayons.red(e))
+            print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['variant'].split(','):
@@ -4302,12 +4159,11 @@ async def event_party_message(message):
                 await message.reply(f"[{commands['variant']}] [variant] [数値]\nvariantと数値は3つまで設定可")
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['skinasset'].split(','):
@@ -4315,16 +4171,15 @@ async def event_party_message(message):
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,rawcontent))
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['skinasset']}] [アセットパス]")
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['bagasset'].split(','):
@@ -4332,16 +4187,15 @@ async def event_party_message(message):
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,rawcontent))
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['bagasset']}] [アセットパス]")
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['pickaxeasset'].split(','):
@@ -4349,16 +4203,15 @@ async def event_party_message(message):
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,rawcontent))
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['pickaxeasset']}] [アセットパス]")
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['emoteasset'].split(','):
@@ -4367,16 +4220,15 @@ async def event_party_message(message):
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_emote,rawcontent))
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply(f"[{commands['emoteasset']}] [アセットパス]")
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0].startswith('cid_'):
@@ -4385,12 +4237,11 @@ async def event_party_message(message):
             await message.reply(f'スキンを {rawargs[0]} に設定')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0].startswith('bid_'):
@@ -4399,12 +4250,11 @@ async def event_party_message(message):
             await message.reply(f'バッグを {rawargs[0]} に設定')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0].startswith('pickaxe_id'):
@@ -4413,12 +4263,11 @@ async def event_party_message(message):
             await message.reply(f'ツルハシを {rawargs[0]} に設定')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0].startswith('eid_'):
@@ -4430,12 +4279,11 @@ async def event_party_message(message):
             client.eid=args[0]
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0].startswith('playlist_'):
@@ -4445,12 +4293,11 @@ async def event_party_message(message):
             data['fortnite']['playlist']=rawargs[0]
         except fortnitepy.Forbidden as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('パーティーリーダーではありません')
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
     else:
@@ -4501,17 +4348,16 @@ async def event_party_message(message):
                 return
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('有効な数字を入力してください')
             return
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
             return
 
@@ -4561,13 +4407,12 @@ async def event_party_message(message):
                 return
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
             return
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
             return
 
@@ -4617,23 +4462,22 @@ async def event_party_message(message):
                 return
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
             return
         except Exception as e:
             if data['loglevel'] == 'debug':
-                print(crayons.red(type(e)))
-                print(crayons.red(e))
+                print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
             return
 
 try:
     client.run()
 except fortnitepy.AuthException as e:
-    print(crayons.red(e))
+    print(crayons.red(traceback.format_exc()))
     print(crayons.red(f'[{now_()}] メールアドレスまたはパスワードが間違っています。'))
     exit()
 except Exception as e:
-    print(crayons.red(e))
+    print(crayons.red(traceback.format_exc()))
     print(crayons.red(f'[{now_()}] アカウントの読み込みに失敗しました。もう一度試してみてください。'))
     exit()
