@@ -2058,19 +2058,40 @@ async def event_friend_message(message):
                 else:
                     for count,item in enumerate(client.ismesjaitem[1]):
                         if item[2] == 'outfit':
-                            await message.reply(f'{count+1} スキン: {item[0]}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'スキン: {item[0]}: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} スキン: {item[0]}: {item[1]}')
                         if item[2] == 'backpack':
-                            await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'バッグ: {item[0]}: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
                         if item[2] == 'pet':
-                            await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'バッグ: {item[0]}: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
                         if item[2] == 'pickaxe':
-                            await message.reply(f'{count+1} ツルハシ: {item[0]}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'ツルハシ: {item[0]}: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} ツルハシ: {item[0]}: {item[1]}')
                         if item[2] == 'emote':
-                            await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'エモート: {item[0]}: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
                         if item[2] == 'emoji':
-                            await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'エモート: {item[0]}: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
                         if item[2] == 'toy':
-                            await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'エモート: {item[0]}: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
                     if len(client.ismesjaitem[1]) == 1:
                         if client.ismesjaitem[1][0][2] == 'outfit':
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][0][0]))
@@ -2082,8 +2103,9 @@ async def event_friend_message(message):
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][0][0]))
                             await client.user.party.me.set_emote('EID_IceKing')
                         if client.ismesjaitem[1][0][2] == 'emote':
-                            if client.user.party.me.emote.lower() == client.ismesjaitem[1][0][0].lower():
-                                await client.user.party.me.clear_emote()
+                            if not client.user.party.me.emote is None:
+                                if client.user.party.me.emote.lower() == client.ismesjaitem[1][0][0].lower():
+                                    await client.user.party.me.clear_emote()
                             await client.user.party.me.set_emote(client.ismesjaitem[1][0][0])
                             client.eid=client.ismesjaitem[1][0][0]
                         if client.ismesjaitem[1][0][2] == 'emoji':
@@ -2102,19 +2124,40 @@ async def event_friend_message(message):
                     else:
                         for count,item in enumerate(client.ismesenitem[1]):
                             if item[2] == 'outfit':
-                                await message.reply(f'{count+1} スキン: {item[0]}: {item[1]}')
+                                if len(client.ismesenitem[1]) == 1:
+                                    await message.reply(f'スキン: {item[0]}: {item[1]}')
+                                else:
+                                    await message.reply(f'{count+1} スキン: {item[0]}: {item[1]}')
                             if item[2] == 'backpack':
-                                await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
+                                if len(client.ismesenitem[1]) == 1:
+                                    await message.reply(f'バッグ: {item[0]}: {item[1]}')
+                                else:
+                                    await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
                             if item[2] == 'pet':
-                                await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
+                                if len(client.ismesenitem[1]) == 1:
+                                    await message.reply(f'バッグ: {item[0]}: {item[1]}')
+                                else:
+                                    await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
                             if item[2] == 'pickaxe':
-                                await message.reply(f'{count+1} ツルハシ: {item[0]}: {item[1]}')
+                                if len(client.ismesenitem[1]) == 1:
+                                    await message.reply(f'ツルハシ: {item[0]}: {item[1]}')
+                                else:
+                                    await message.reply(f'{count+1} ツルハシ: {item[0]}: {item[1]}')
                             if item[2] == 'emote':
-                                await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
+                                if len(client.ismesenitem[1]) == 1:
+                                    await message.reply(f'エモート: {item[0]}: {item[1]}')
+                                else:
+                                    await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
                             if item[2] == 'emoji':
-                                await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
+                                if len(client.ismesenitem[1]) == 1:
+                                    await message.reply(f'エモート: {item[0]}: {item[1]}')
+                                else:
+                                    await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
                             if item[2] == 'toy':
-                                await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
+                                if len(client.ismesenitem[1]) == 1:
+                                    await message.reply(f'エモート: {item[0]}: {item[1]}')
+                                else:
+                                    await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
                         if len(client.ismesenitem[1]) == 1:
                             if client.ismesjaitem[1][0][2] == 'outfit':
                                 await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][0][0]))
@@ -2126,8 +2169,9 @@ async def event_friend_message(message):
                                 await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][0][0]))
                                 await client.user.party.me.set_emote('EID_IceKing')
                             if client.ismesjaitem[1][0][2] == 'emote':
-                                if client.user.party.me.emote.lower() == client.ismesjaitem[1][0][0].lower():
-                                    await client.user.party.me.clear_emote()
+                                if not client.user.party.me.emote is None:
+                                    if client.user.party.me.emote.lower() == client.ismesjaitem[1][0][0].lower():
+                                        await client.user.party.me.clear_emote()
                                 await client.user.party.me.set_emote(client.ismesjaitem[1][0][0])
                                 client.eid=client.ismesjaitem[1][0][0]
                             if client.ismesjaitem[1][0][2] == 'emoji':
@@ -2158,7 +2202,10 @@ async def event_friend_message(message):
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
                 else:
                     for count,item in enumerate(client.ismesjaitem[1]):
-                        await message.reply(f'{count+1}: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'{item[1]}')
+                        else:
+                            await message.reply(f'{count+1}: {item[1]}')
                     if len(client.ismesjaitem[1]) == 1:
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][0][0]))
                     if len(client.ismesjaitem[1]) > 1:
@@ -2170,7 +2217,10 @@ async def event_friend_message(message):
                         await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
                     else:
                         for count,item in enumerate(client.ismesenitem[1]):
-                            await message.reply(f'{count+1}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'{item[1]}')
+                            else:
+                                await message.reply(f'{count+1}: {item[1]}')
                         if len(client.ismesenitem[1]) == 1:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesenitem[1][0][0]))
                         if len(client.ismesenitem[1]) > 1:
@@ -2195,7 +2245,10 @@ async def event_friend_message(message):
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
                 else:
                     for count,item in enumerate(client.ismesjaitem[1]):
-                        await message.reply(f'{count+1}: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'{item[1]}')
+                        else:
+                            await message.reply(f'{count+1}: {item[1]}')
                     if len(client.ismesjaitem[1]) == 1:
                         if client.ismesjaitem[1][0][2] == 'backpack':
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesjaitem[1][0][0]))
@@ -2210,7 +2263,10 @@ async def event_friend_message(message):
                         await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
                     else:
                         for count,item in enumerate(client.ismesenitem[1]):
-                            await message.reply(f'{count+1}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'{item[1]}')
+                            else:
+                                await message.reply(f'{count+1}: {item[1]}')
                         if len(client.ismesenitem[1]) == 1:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesenitem[1][0][0]))
                         if len(client.ismesenitem[1]) > 1:
@@ -2235,7 +2291,10 @@ async def event_friend_message(message):
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
                 else:
                     for count,item in enumerate(client.ismesjaitem[1]):
-                        await message.reply(f'{count+1}: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'{item[1]}')
+                        else:
+                            await message.reply(f'{count+1}: {item[1]}')
                     if len(client.ismesjaitem[1]) == 1:
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][0][0]))
                         await client.user.party.me.set_emote('EID_IceKing')
@@ -2248,7 +2307,10 @@ async def event_friend_message(message):
                         await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
                     else:
                         for count,item in enumerate(client.ismesenitem[1]):
-                            await message.reply(f'{count+1}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'{item[1]}')
+                            else:
+                                await message.reply(f'{count+1}: {item[1]}')
                         if len(client.ismesenitem[1]) == 1:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesenitem[1][0][0]))
                             await client.user.party.me.set_emote('EID_IceKing')
@@ -2274,7 +2336,10 @@ async def event_friend_message(message):
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
                 else:
                     for count,item in enumerate(client.ismesjaitem[1]):
-                        await message.reply(f'{count+1}: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'{item[1]}')
+                        else:
+                            await message.reply(f'{count+1}: {item[1]}')
                     if len(client.ismesjaitem[1]) == 1:
                         await client.user.party.me.set_emote(client.ismesjaitem[1][0][0])
                         client.eid=client.ismesjaitem[1][0][0]
@@ -2287,7 +2352,10 @@ async def event_friend_message(message):
                         await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
                     else:
                         for count,item in enumerate(client.ismesenitem[1]):
-                            await message.reply(f'{count+1}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'{item[1]}')
+                            else:
+                                await message.reply(f'{count+1}: {item[1]}')
                         if len(client.ismesenitem[1]) == 1:
                             await client.user.party.me.set_emote(client.ismesenitem[1][0][0])
                             client.eid=client.ismesenitem[1][0][0]
@@ -2311,28 +2379,49 @@ async def event_friend_message(message):
             if client.ismesjaitem[0] == 'True':
                 for count,item in enumerate(client.ismesjaitem[1]):
                     if item[2] == 'outfit':
-                        await message.reply(f'{count+1} スキン: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'スキン: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} スキン: {item[1]}')
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,item[0]))
                     if item[2] == 'backpack':
-                        await message.reply(f'{count+1} バッグ: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'バッグ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[1]}')
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,item[0]))
                     if item[2] == 'pet':
-                        await message.reply(f'{count+1} バッグ: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'バッグ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[1]}')
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,f'/Game/Athena/Items/Cosmetics/PetCarriers/{item[0]}.{item[0]}'))
                     if item[2] == 'pickaxe':
-                        await message.reply(f'{count+1} ツルハシ: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'ツルハシ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} ツルハシ: {item[1]}')
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,item[0]))
                         await client.user.party.me.set_emote('EID_IceKing')
                     if item[2] == 'emote':
-                        await message.reply(f'{count+1} エモート: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
                         await client.user.party.me.set_emote(item[0])
                         client.eid=item[0]
                     if item[2] == 'emoji':
-                        await message.reply(f'{count+1} エモート: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}'
                     if item[2] == 'toy':
-                        await message.reply(f'{count+1} エモート: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}'
                         
@@ -2341,28 +2430,49 @@ async def event_friend_message(message):
                 if client.ismesenitem[0] == 'True':
                     for count,item in enumerate(client.ismesenitem[1]):
                         if item[2] == 'outfit':
-                            await message.reply(f'{count+1} スキン: {item[1]}')
+                            if len(client.ismesenitem[1]) == 1:
+                                await message.reply(f'スキン: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} スキン: {item[1]}')
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,item[0]))
                         if item[2] == 'backpack':
-                            await message.reply(f'{count+1} バッグ: {item[1]}')
+                            if len(client.ismesenitem[1]) == 1:
+                                await message.reply(f'バッグ: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} バッグ: {item[1]}')
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,item[0]))
                         if item[2] == 'pet':
-                            await message.reply(f'{count+1} バッグ: {item[1]}')
+                            if len(client.ismesenitem[1]) == 1:
+                                await message.reply(f'バッグ: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} バッグ: {item[1]}')
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,f'/Game/Athena/Items/Cosmetics/PetCarriers/{item[0]}.{item[0]}'))
                         if item[2] == 'pickaxe':
-                            await message.reply(f'{count+1} ツルハシ: {item[1]}')
+                            if len(client.ismesenitem[1]) == 1:
+                                await message.reply(f'ツルハシ: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} ツルハシ: {item[1]}')
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,item[0]))
                             await client.user.party.me.set_emote('EID_IceKing')
                         if item[2] == 'emote':
-                            await message.reply(f'{count+1} エモート: {item[1]}')
+                            if len(client.ismesenitem[1]) == 1:
+                                await message.reply(f'エモート: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} エモート: {item[1]}')
                             await client.user.party.me.set_emote(item[0])
                             client.eid=item[0]
                         if item[2] == 'emoji':
-                            await message.reply(f'{count+1} エモート: {item[1]}')
+                            if len(client.ismesenitem[1]) == 1:
+                                await message.reply(f'エモート: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} エモート: {item[1]}')
                             await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}')
                             client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}'
                         if item[2] == 'toy':
-                            await message.reply(f'{count+1} エモート: {item[1]}')
+                            if len(client.ismesenitem[1]) == 1:
+                                await message.reply(f'エモート: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} エモート: {item[1]}')
                             await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}')
                             client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}'
                 else:
@@ -2527,8 +2637,9 @@ async def event_friend_message(message):
 
     elif args[0].startswith('eid_'):
         try:
-            if client.user.party.me.emote.lower() == args[0]:
-                await client.user.party.me.clear_emote()
+            if not client.user.party.me.emote is None:
+                if client.user.party.me.emote.lower() == args[0]:
+                    await client.user.party.me.clear_emote()
             await client.user.party.me.set_emote(args[0].upper())
             await message.reply(f'エモートを {rawargs[0]} に設定')
             client.eid=args[0]
@@ -2568,8 +2679,9 @@ async def event_friend_message(message):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][int(args[0])-1][0]))
                     await client.user.party.me.set_emote('EID_IceKing')
                 if client.ismesjaitem[1][int(args[0])-1][2] == 'emote':
-                    if client.user.party.me.emote.lower() == client.ismesjaitem[1][int(args[0])-1][0].lower():
-                        await client.user.party.me.clear_emote()
+                    if not client.user.party.me.emote is None:
+                        if client.user.party.me.emote.lower() == client.ismesjaitem[1][int(args[0])-1][0].lower():
+                            await client.user.party.me.clear_emote()
                     await client.user.party.me.set_emote(client.ismesjaitem[1][int(args[0])-1][0])
                     client.eid=client.ismesjaitem[1][int(args[0])-1][0]
                 if client.ismesjaitem[1][int(args[0])-1][2] == 'emoji':
@@ -2590,8 +2702,9 @@ async def event_friend_message(message):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesenitem[1][int(args[0])-1][0]))
                     await client.user.party.me.set_emote('EID_IceKing')
                 if client.ismesenitem[1][int(args[0])-1][2] == 'emote':
-                    if client.user.party.me.emote.lower() == client.ismesenitem[1][int(args[0])-1][0].lower():
-                        await client.user.party.me.clear_emote()
+                    if not client.user.party.me.emote is None:
+                        if client.user.party.me.emote.lower() == client.ismesenitem[1][int(args[0])-1][0].lower():
+                            await client.user.party.me.clear_emote()
                     await client.user.party.me.set_emote(client.ismesenitem[1][int(args[0])-1][0])
                     client.eid=client.ismesenitem[1][int(args[0])-1][0]
                 if client.ismesenitem[1][int(args[0])-1][2] == 'emoji':
@@ -2623,19 +2736,40 @@ async def event_friend_message(message):
                     return await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
                 for count,item in enumerate(client.ismesjaitem[1]):
                     if item[2] == 'outfit':
-                        await message.reply(f'{count+1} スキン: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'スキン: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} スキン: {item[1]}')
                     if item[2] == 'backpack':
-                        await message.reply(f'{count+1} バッグ: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'バッグ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[1]}')
                     if item[2] == 'pet':
-                        await message.reply(f'{count+1} バッグ: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'バッグ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[1]}')
                     if item[2] == 'pickaxe':
-                        await message.reply(f'{count+1} ツルハシ: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'ツルハシ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} ツルハシ: {item[1]}')
                     if item[2] == 'emote':
-                        await message.reply(f'{count+1} エモート: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
                     if item[2] == 'emoji':
-                        await message.reply(f'{count+1} エモート: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
                     if item[2] == 'toy':
-                        await message.reply(f'{count+1} エモート: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
                 if len(client.ismesjaitem[1]) == 1:
                     if client.ismesjaitem[1][0][2] == 'outfit':
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][0][0]))
@@ -2647,8 +2781,9 @@ async def event_friend_message(message):
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][0][0]))
                         await client.user.party.me.set_emote('EID_IceKing')
                     if client.ismesjaitem[1][0][2] == 'emote':
-                        if client.user.party.me.emote.lower() == client.ismesjaitem[1][0][0].lower():
-                            await client.user.party.me.clear_emote()
+                        if not client.user.party.me.emote is None:
+                            if client.user.party.me.emote.lower() == client.ismesjaitem[1][0][0].lower():
+                                await client.user.party.me.clear_emote()
                         await client.user.party.me.set_emote(client.ismesjaitem[1][0][0])
                         client.eid=client.ismesjaitem[1][0][0]
                     if client.ismesjaitem[1][0][2] == 'emoji':
@@ -2678,19 +2813,40 @@ async def event_friend_message(message):
                     return await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
                 for count,item in enumerate(client.ismesenitem[1]):
                     if item[2] == 'outfit':
-                        await message.reply(f'{count+1} スキン: {item[1]}')
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'スキン: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} スキン: {item[1]}')
                     if item[2] == 'backpack':
-                        await message.reply(f'{count+1} バッグ: {item[1]}')
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'バッグ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[1]}')
                     if item[2] == 'pet':
-                        await message.reply(f'{count+1} バッグ: {item[1]}')
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'バッグ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[1]}')
                     if item[2] == 'pickaxe':
-                        await message.reply(f'{count+1} ツルハシ: {item[1]}')
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'ツルハシ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} ツルハシ: {item[1]}')
                     if item[2] == 'emote':
-                        await message.reply(f'{count+1} エモート: {item[1]}')
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
                     if item[2] == 'emoji':
-                        await message.reply(f'{count+1} エモート: {item[1]}')
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
                     if item[2] == 'toy':
-                        await message.reply(f'{count+1} エモート: {item[1]}')
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
                 if len(client.ismesenitem[1]) == 1:
                     if client.ismesenitem[1][0][2] == 'outfit':
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesenitem[1][0][0]))
@@ -2702,8 +2858,9 @@ async def event_friend_message(message):
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesenitem[1][0][0]))
                         await client.user.party.me.set_emote('EID_IceKing')
                     if client.ismesenitem[1][0][2] == 'emote':
-                        if client.user.party.me.emote.lower() == client.ismesenitem[1][0][0].lower():
-                            await client.user.party.me.clear_emote()
+                        if not client.user.party.me.emote is None:
+                            if client.user.party.me.emote.lower() == client.ismesenitem[1][0][0].lower():
+                                await client.user.party.me.clear_emote()
                         await client.user.party.me.set_emote(client.ismesenitem[1][0][0])
                         client.eid=client.ismesenitem[1][0][0]
                     if client.ismesenitem[1][0][2] == 'emoji':
@@ -3849,19 +4006,40 @@ async def event_party_message(message):
                 else:
                     for count,item in enumerate(client.ismesjaitem[1]):
                         if item[2] == 'outfit':
-                            await message.reply(f'{count+1} スキン: {item[0]}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'スキン: {item[0]}: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} スキン: {item[0]}: {item[1]}')
                         if item[2] == 'backpack':
-                            await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'バッグ: {item[0]}: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
                         if item[2] == 'pet':
-                            await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'バッグ: {item[0]}: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
                         if item[2] == 'pickaxe':
-                            await message.reply(f'{count+1} ツルハシ: {item[0]}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'ツルハシ: {item[0]}: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} ツルハシ: {item[0]}: {item[1]}')
                         if item[2] == 'emote':
-                            await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'エモート: {item[0]}: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
                         if item[2] == 'emoji':
-                            await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'エモート: {item[0]}: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
                         if item[2] == 'toy':
-                            await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'エモート: {item[0]}: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
                     if len(client.ismesjaitem[1]) == 1:
                         if client.ismesjaitem[1][0][2] == 'outfit':
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][0][0]))
@@ -3873,8 +4051,9 @@ async def event_party_message(message):
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][0][0]))
                             await client.user.party.me.set_emote('EID_IceKing')
                         if client.ismesjaitem[1][0][2] == 'emote':
-                            if client.user.party.me.emote.lower() == client.ismesjaitem[1][0][0].lower():
-                                await client.user.party.me.clear_emote()
+                            if not client.user.party.me.emote is None:
+                                if client.user.party.me.emote.lower() == client.ismesjaitem[1][0][0].lower():
+                                    await client.user.party.me.clear_emote()
                             await client.user.party.me.set_emote(client.ismesjaitem[1][0][0])
                             client.eid=client.ismesjaitem[1][0][0]
                         if client.ismesjaitem[1][0][2] == 'emoji':
@@ -3893,19 +4072,40 @@ async def event_party_message(message):
                     else:
                         for count,item in enumerate(client.ismesenitem[1]):
                             if item[2] == 'outfit':
-                                await message.reply(f'{count+1} スキン: {item[0]}: {item[1]}')
+                                if len(client.ismesenitem[1]) == 1:
+                                    await message.reply(f'スキン: {item[0]}: {item[1]}')
+                                else:
+                                    await message.reply(f'{count+1} スキン: {item[0]}: {item[1]}')
                             if item[2] == 'backpack':
-                                await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
+                                if len(client.ismesenitem[1]) == 1:
+                                    await message.reply(f'バッグ: {item[0]}: {item[1]}')
+                                else:
+                                    await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
                             if item[2] == 'pet':
-                                await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
+                                if len(client.ismesenitem[1]) == 1:
+                                    await message.reply(f'バッグ: {item[0]}: {item[1]}')
+                                else:
+                                    await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
                             if item[2] == 'pickaxe':
-                                await message.reply(f'{count+1} ツルハシ: {item[0]}: {item[1]}')
+                                if len(client.ismesenitem[1]) == 1:
+                                    await message.reply(f'ツルハシ: {item[0]}: {item[1]}')
+                                else:
+                                    await message.reply(f'{count+1} ツルハシ: {item[0]}: {item[1]}')
                             if item[2] == 'emote':
-                                await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
+                                if len(client.ismesenitem[1]) == 1:
+                                    await message.reply(f'エモート: {item[0]}: {item[1]}')
+                                else:
+                                    await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
                             if item[2] == 'emoji':
-                                await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
+                                if len(client.ismesenitem[1]) == 1:
+                                    await message.reply(f'エモート: {item[0]}: {item[1]}')
+                                else:
+                                    await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
                             if item[2] == 'toy':
-                                await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
+                                if len(client.ismesenitem[1]) == 1:
+                                    await message.reply(f'エモート: {item[0]}: {item[1]}')
+                                else:
+                                    await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
                         if len(client.ismesenitem[1]) == 1:
                             if client.ismesjaitem[1][0][2] == 'outfit':
                                 await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][0][0]))
@@ -3917,8 +4117,9 @@ async def event_party_message(message):
                                 await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][0][0]))
                                 await client.user.party.me.set_emote('EID_IceKing')
                             if client.ismesjaitem[1][0][2] == 'emote':
-                                if client.user.party.me.emote.lower() == client.ismesjaitem[1][0][0].lower():
-                                    await client.user.party.me.clear_emote()
+                                if not client.user.party.me.emote is None:
+                                    if client.user.party.me.emote.lower() == client.ismesjaitem[1][0][0].lower():
+                                        await client.user.party.me.clear_emote()
                                 await client.user.party.me.set_emote(client.ismesjaitem[1][0][0])
                                 client.eid=client.ismesjaitem[1][0][0]
                             if client.ismesjaitem[1][0][2] == 'emoji':
@@ -3949,7 +4150,10 @@ async def event_party_message(message):
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
                 else:
                     for count,item in enumerate(client.ismesjaitem[1]):
-                        await message.reply(f'{count+1}: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'{item[1]}')
+                        else:
+                            await message.reply(f'{count+1}: {item[1]}')
                     if len(client.ismesjaitem[1]) == 1:
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][0][0]))
                     if len(client.ismesjaitem[1]) > 1:
@@ -3961,7 +4165,10 @@ async def event_party_message(message):
                         await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
                     else:
                         for count,item in enumerate(client.ismesenitem[1]):
-                            await message.reply(f'{count+1}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'{item[1]}')
+                            else:
+                                await message.reply(f'{count+1}: {item[1]}')
                         if len(client.ismesenitem[1]) == 1:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesenitem[1][0][0]))
                         if len(client.ismesenitem[1]) > 1:
@@ -3986,7 +4193,10 @@ async def event_party_message(message):
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
                 else:
                     for count,item in enumerate(client.ismesjaitem[1]):
-                        await message.reply(f'{count+1}: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'{item[1]}')
+                        else:
+                            await message.reply(f'{count+1}: {item[1]}')
                     if len(client.ismesjaitem[1]) == 1:
                         if client.ismesjaitem[1][0][2] == 'backpack':
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesjaitem[1][0][0]))
@@ -4001,7 +4211,10 @@ async def event_party_message(message):
                         await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
                     else:
                         for count,item in enumerate(client.ismesenitem[1]):
-                            await message.reply(f'{count+1}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'{item[1]}')
+                            else:
+                                await message.reply(f'{count+1}: {item[1]}')
                         if len(client.ismesenitem[1]) == 1:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesenitem[1][0][0]))
                         if len(client.ismesenitem[1]) > 1:
@@ -4026,7 +4239,10 @@ async def event_party_message(message):
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
                 else:
                     for count,item in enumerate(client.ismesjaitem[1]):
-                        await message.reply(f'{count+1}: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'{item[1]}')
+                        else:
+                            await message.reply(f'{count+1}: {item[1]}')
                     if len(client.ismesjaitem[1]) == 1:
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][0][0]))
                         await client.user.party.me.set_emote('EID_IceKing')
@@ -4039,7 +4255,10 @@ async def event_party_message(message):
                         await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
                     else:
                         for count,item in enumerate(client.ismesenitem[1]):
-                            await message.reply(f'{count+1}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'{item[1]}')
+                            else:
+                                await message.reply(f'{count+1}: {item[1]}')
                         if len(client.ismesenitem[1]) == 1:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesenitem[1][0][0]))
                             await client.user.party.me.set_emote('EID_IceKing')
@@ -4065,7 +4284,10 @@ async def event_party_message(message):
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
                 else:
                     for count,item in enumerate(client.ismesjaitem[1]):
-                        await message.reply(f'{count+1}: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'{item[1]}')
+                        else:
+                            await message.reply(f'{count+1}: {item[1]}')
                     if len(client.ismesjaitem[1]) == 1:
                         await client.user.party.me.set_emote(client.ismesjaitem[1][0][0])
                         client.eid=client.ismesjaitem[1][0][0]
@@ -4078,7 +4300,10 @@ async def event_party_message(message):
                         await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
                     else:
                         for count,item in enumerate(client.ismesenitem[1]):
-                            await message.reply(f'{count+1}: {item[1]}')
+                            if len(client.ismesjaitem[1]) == 1:
+                                await message.reply(f'{item[1]}')
+                            else:
+                                await message.reply(f'{count+1}: {item[1]}')
                         if len(client.ismesenitem[1]) == 1:
                             await client.user.party.me.set_emote(client.ismesenitem[1][0][0])
                             client.eid=client.ismesenitem[1][0][0]
@@ -4102,28 +4327,49 @@ async def event_party_message(message):
             if client.ismesjaitem[0] == 'True':
                 for count,item in enumerate(client.ismesjaitem[1]):
                     if item[2] == 'outfit':
-                        await message.reply(f'{count+1} スキン: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'スキン: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} スキン: {item[1]}')
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,item[0]))
                     if item[2] == 'backpack':
-                        await message.reply(f'{count+1} バッグ: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'バッグ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[1]}')
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,item[0]))
                     if item[2] == 'pet':
-                        await message.reply(f'{count+1} バッグ: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'バッグ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[1]}')
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,f'/Game/Athena/Items/Cosmetics/PetCarriers/{item[0]}.{item[0]}'))
                     if item[2] == 'pickaxe':
-                        await message.reply(f'{count+1} ツルハシ: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'ツルハシ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} ツルハシ: {item[1]}')
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,item[0]))
                         await client.user.party.me.set_emote('EID_IceKing')
                     if item[2] == 'emote':
-                        await message.reply(f'{count+1} エモート: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
                         await client.user.party.me.set_emote(item[0])
                         client.eid=item[0]
                     if item[2] == 'emoji':
-                        await message.reply(f'{count+1} エモート: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}'
                     if item[2] == 'toy':
-                        await message.reply(f'{count+1} エモート: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}'
                         
@@ -4132,28 +4378,49 @@ async def event_party_message(message):
                 if client.ismesenitem[0] == 'True':
                     for count,item in enumerate(client.ismesenitem[1]):
                         if item[2] == 'outfit':
-                            await message.reply(f'{count+1} スキン: {item[1]}')
+                            if len(client.ismesenitem[1]) == 1:
+                                await message.reply(f'スキン: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} スキン: {item[1]}')
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,item[0]))
                         if item[2] == 'backpack':
-                            await message.reply(f'{count+1} バッグ: {item[1]}')
+                            if len(client.ismesenitem[1]) == 1:
+                                await message.reply(f'バッグ: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} バッグ: {item[1]}')
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,item[0]))
                         if item[2] == 'pet':
-                            await message.reply(f'{count+1} バッグ: {item[1]}')
+                            if len(client.ismesenitem[1]) == 1:
+                                await message.reply(f'バッグ: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} バッグ: {item[1]}')
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,f'/Game/Athena/Items/Cosmetics/PetCarriers/{item[0]}.{item[0]}'))
                         if item[2] == 'pickaxe':
-                            await message.reply(f'{count+1} ツルハシ: {item[1]}')
+                            if len(client.ismesenitem[1]) == 1:
+                                await message.reply(f'ツルハシ: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} ツルハシ: {item[1]}')
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,item[0]))
                             await client.user.party.me.set_emote('EID_IceKing')
                         if item[2] == 'emote':
-                            await message.reply(f'{count+1} エモート: {item[1]}')
+                            if len(client.ismesenitem[1]) == 1:
+                                await message.reply(f'エモート: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} エモート: {item[1]}')
                             await client.user.party.me.set_emote(item[0])
                             client.eid=item[0]
                         if item[2] == 'emoji':
-                            await message.reply(f'{count+1} エモート: {item[1]}')
+                            if len(client.ismesenitem[1]) == 1:
+                                await message.reply(f'エモート: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} エモート: {item[1]}')
                             await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}')
                             client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}'
                         if item[2] == 'toy':
-                            await message.reply(f'{count+1} エモート: {item[1]}')
+                            if len(client.ismesenitem[1]) == 1:
+                                await message.reply(f'エモート: {item[1]}')
+                            else:
+                                await message.reply(f'{count+1} エモート: {item[1]}')
                             await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}')
                             client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}'
                 else:
@@ -4318,8 +4585,9 @@ async def event_party_message(message):
 
     elif args[0].startswith('eid_'):
         try:
-            if client.user.party.me.emote.lower() == args[0]:
-                await client.user.party.me.clear_emote()
+            if not client.user.party.me.emote is None:
+                if client.user.party.me.emote.lower() == args[0]:
+                    await client.user.party.me.clear_emote()
             await client.user.party.me.set_emote(args[0].upper())
             await message.reply(f'エモートを {rawargs[0]} に設定')
             client.eid=args[0]
@@ -4359,8 +4627,9 @@ async def event_party_message(message):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][int(args[0])-1][0]))
                     await client.user.party.me.set_emote('EID_IceKing')
                 if client.ismesjaitem[1][int(args[0])-1][2] == 'emote':
-                    if client.user.party.me.emote.lower() == client.ismesjaitem[1][int(args[0])-1][0].lower():
-                        await client.user.party.me.clear_emote()
+                    if not client.user.party.me.emote is None:
+                        if client.user.party.me.emote.lower() == client.ismesjaitem[1][int(args[0])-1][0].lower():
+                            await client.user.party.me.clear_emote()
                     await client.user.party.me.set_emote(client.ismesjaitem[1][int(args[0])-1][0])
                     client.eid=client.ismesjaitem[1][int(args[0])-1][0]
                 if client.ismesjaitem[1][int(args[0])-1][2] == 'emoji':
@@ -4381,8 +4650,9 @@ async def event_party_message(message):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesenitem[1][int(args[0])-1][0]))
                     await client.user.party.me.set_emote('EID_IceKing')
                 if client.ismesenitem[1][int(args[0])-1][2] == 'emote':
-                    if client.user.party.me.emote.lower() == client.ismesenitem[1][int(args[0])-1][0].lower():
-                        await client.user.party.me.clear_emote()
+                    if not client.user.party.me.emote is None:
+                        if client.user.party.me.emote.lower() == client.ismesenitem[1][int(args[0])-1][0].lower():
+                            await client.user.party.me.clear_emote()
                     await client.user.party.me.set_emote(client.ismesenitem[1][int(args[0])-1][0])
                     client.eid=client.ismesenitem[1][int(args[0])-1][0]
                 if client.ismesenitem[1][int(args[0])-1][2] == 'emoji':
@@ -4414,19 +4684,40 @@ async def event_party_message(message):
                     return await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
                 for count,item in enumerate(client.ismesjaitem[1]):
                     if item[2] == 'outfit':
-                        await message.reply(f'{count+1} スキン: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'スキン: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} スキン: {item[1]}')
                     if item[2] == 'backpack':
-                        await message.reply(f'{count+1} バッグ: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'バッグ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[1]}')
                     if item[2] == 'pet':
-                        await message.reply(f'{count+1} バッグ: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'バッグ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[1]}')
                     if item[2] == 'pickaxe':
-                        await message.reply(f'{count+1} ツルハシ: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'ツルハシ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} ツルハシ: {item[1]}')
                     if item[2] == 'emote':
-                        await message.reply(f'{count+1} エモート: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
                     if item[2] == 'emoji':
-                        await message.reply(f'{count+1} エモート: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
                     if item[2] == 'toy':
-                        await message.reply(f'{count+1} エモート: {item[1]}')
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
                 if len(client.ismesjaitem[1]) == 1:
                     if client.ismesjaitem[1][0][2] == 'outfit':
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][0][0]))
@@ -4438,8 +4729,9 @@ async def event_party_message(message):
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][0][0]))
                         await client.user.party.me.set_emote('EID_IceKing')
                     if client.ismesjaitem[1][0][2] == 'emote':
-                        if client.user.party.me.emote.lower() == client.ismesjaitem[1][0][0].lower():
-                            await client.user.party.me.clear_emote()
+                        if not client.user.party.me.emote is None:
+                            if client.user.party.me.emote.lower() == client.ismesjaitem[1][0][0].lower():
+                                await client.user.party.me.clear_emote()
                         await client.user.party.me.set_emote(client.ismesjaitem[1][0][0])
                         client.eid=client.ismesjaitem[1][0][0]
                     if client.ismesjaitem[1][0][2] == 'emoji':
@@ -4469,19 +4761,40 @@ async def event_party_message(message):
                     return await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
                 for count,item in enumerate(client.ismesenitem[1]):
                     if item[2] == 'outfit':
-                        await message.reply(f'{count+1} スキン: {item[1]}')
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'スキン: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} スキン: {item[1]}')
                     if item[2] == 'backpack':
-                        await message.reply(f'{count+1} バッグ: {item[1]}')
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'バッグ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[1]}')
                     if item[2] == 'pet':
-                        await message.reply(f'{count+1} バッグ: {item[1]}')
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'バッグ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[1]}')
                     if item[2] == 'pickaxe':
-                        await message.reply(f'{count+1} ツルハシ: {item[1]}')
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'ツルハシ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} ツルハシ: {item[1]}')
                     if item[2] == 'emote':
-                        await message.reply(f'{count+1} エモート: {item[1]}')
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
                     if item[2] == 'emoji':
-                        await message.reply(f'{count+1} エモート: {item[1]}')
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
                     if item[2] == 'toy':
-                        await message.reply(f'{count+1} エモート: {item[1]}')
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
                 if len(client.ismesenitem[1]) == 1:
                     if client.ismesenitem[1][0][2] == 'outfit':
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesenitem[1][0][0]))
@@ -4493,8 +4806,9 @@ async def event_party_message(message):
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesenitem[1][0][0]))
                         await client.user.party.me.set_emote('EID_IceKing')
                     if client.ismesenitem[1][0][2] == 'emote':
-                        if client.user.party.me.emote.lower() == client.ismesenitem[1][0][0].lower():
-                            await client.user.party.me.clear_emote()
+                        if not client.user.party.me.emote is None:
+                            if client.user.party.me.emote.lower() == client.ismesenitem[1][0][0].lower():
+                                await client.user.party.me.clear_emote()
                         await client.user.party.me.set_emote(client.ismesenitem[1][0][0])
                         client.eid=client.ismesenitem[1][0][0]
                     if client.ismesenitem[1][0][2] == 'emoji':
