@@ -1034,6 +1034,9 @@ async def event_friend_message(message):
             print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
 
+    elif args[0] == 'get':
+        await message.reply(f'{client.user.party.leader.display_name}\n{client.user.party.leader.pickaxe}\n{client.user.party.leader.pickaxe_variants}')
+
     elif args[0] in commands['friendcount'].split(','):
         try:
             print(f'フレンド数: {len(client.friends)}')
@@ -2489,13 +2492,10 @@ async def event_friend_message(message):
         try:
             if len(args) == 4:
                 if args[1].startswith('cid_'):
-                    print('cid_')
                     variants=client.user.party.me.create_variants(item='AthenaCharacter',**{args[2]: int(args[3])})
                 elif args[1].startswith('bid_') or args[1].startswith('petcarrier_'):
-                    print('bid_ or petcarrier_')
                     variants=client.user.party.me.create_variants(item='AthenaBackpack',**{args[2]: int(args[3])})
                 elif args[1].startswith('pickaxe_id_'):
-                    print('pickaxe_id_')
                     variants=client.user.party.me.create_variants(item='AthenaPickaxe',**{args[2]: int(args[3])})
             elif len(args) == 6:
                 if args[1].startswith('cid_'):
@@ -2520,6 +2520,7 @@ async def event_friend_message(message):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,asset=f'/Game/Athena/Items/Cosmetics/PetCarriers/{args[1].upper()}.{args[1].upper()}',variants=variants))
                 elif args[1].startswith('pickaxe_id'):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,asset=args[1].upper(),variants=variants))
+                    await client.user.party.me.set_emote('EID_IceKing')
             else:
                 await message.reply(f"[{commands['variant']}] [variant] [数値]\nvariantと数値は3つまで設定可")
         except fortnitepy.HTTPException as e:
@@ -2566,6 +2567,7 @@ async def event_friend_message(message):
     elif args[0] in commands['pickaxeasset'].split(','):
         try:
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,rawcontent))
+            await client.user.party.me.set_emote('EID_IceKing')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
                 print(crayons.red(traceback.format_exc()))
@@ -2582,7 +2584,7 @@ async def event_friend_message(message):
     elif args[0] in commands['emoteasset'].split(','):
         try:
             await client.user.party.me.clear_emote()
-            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_emote,rawcontent))
+            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_emote,args[1]))
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
                 print(crayons.red(traceback.format_exc()))
@@ -2625,6 +2627,7 @@ async def event_friend_message(message):
     elif args[0].startswith('pickaxe_id'):
         try:
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,args[0].upper()))
+            await client.user.party.me.set_emote('EID_IceKing')
             await message.reply(f'ツルハシを {rawargs[0]} に設定')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
@@ -4437,13 +4440,10 @@ async def event_party_message(message):
         try:
             if len(args) == 4:
                 if args[1].startswith('cid_'):
-                    print('cid_')
                     variants=client.user.party.me.create_variants(item='AthenaCharacter',**{args[2]: int(args[3])})
                 elif args[1].startswith('bid_') or args[1].startswith('petcarrier_'):
-                    print('bid_ or petcarrier_')
                     variants=client.user.party.me.create_variants(item='AthenaBackpack',**{args[2]: int(args[3])})
                 elif args[1].startswith('pickaxe_id_'):
-                    print('pickaxe_id_')
                     variants=client.user.party.me.create_variants(item='AthenaPickaxe',**{args[2]: int(args[3])})
             elif len(args) == 6:
                 if args[1].startswith('cid_'):
@@ -4468,6 +4468,7 @@ async def event_party_message(message):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,asset=f'/Game/Athena/Items/Cosmetics/PetCarriers/{args[1].upper()}.{args[1].upper()}',variants=variants))
                 elif args[1].startswith('pickaxe_id'):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,asset=args[1].upper(),variants=variants))
+                    await client.user.party.me.set_emote('EID_IceKing')
             else:
                 await message.reply(f"[{commands['variant']}] [variant] [数値]\nvariantと数値は3つまで設定可")
         except fortnitepy.HTTPException as e:
@@ -4514,6 +4515,7 @@ async def event_party_message(message):
     elif args[0] in commands['pickaxeasset'].split(','):
         try:
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,rawcontent))
+            await client.user.party.me.set_emote('EID_IceKing')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
                 print(crayons.red(traceback.format_exc()))
@@ -4530,7 +4532,7 @@ async def event_party_message(message):
     elif args[0] in commands['emoteasset'].split(','):
         try:
             await client.user.party.me.clear_emote()
-            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_emote,rawcontent))
+            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_emote,args[1]))
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
                 print(crayons.red(traceback.format_exc()))
@@ -4573,6 +4575,7 @@ async def event_party_message(message):
     elif args[0].startswith('pickaxe_id'):
         try:
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,args[0].upper()))
+            await client.user.party.me.set_emote('EID_IceKing')
             await message.reply(f'ツルハシを {rawargs[0]} に設定')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
