@@ -109,6 +109,20 @@ if data['debug'] is True:
     handler.setFormatter(logging.Formatter('\u001b[35m %(asctime)s:%(levelname)s:%(name)s: %(message)s \u001b[0m'))
     logger.addHandler(handler)
 
+filename = 'device_auths.json'
+
+def get_device_auth_details():
+    if os.path.isfile(filename):
+        with open(filename, 'r') as fp:
+            return json.load(fp)
+    return {}
+
+def store_device_auth_details(email, details):
+    existing = get_device_auth_details()
+    existing[email] = details
+    with open(filename, 'w') as fp:
+        json.dump(existing, fp)
+
 def now_():
     return datetime.datetime.now().strftime('%H:%M:%S')
 
@@ -280,19 +294,25 @@ async def search_item_with_id(lang, itemid):
         return TF
 
 try:
+    device_auth_details = get_device_auth_details().get(data['fortnite']['email'], {})
     client = fortnitepy.Client(
-        email=data['fortnite']['email'],
-        password=data['fortnite']['password'],
-        platform=fortnitepy.Platform(data['fortnite']['platform'].upper()),
-        status=data['fortnite']['status'],
-        default_party_member_config=[
-            partial(fortnitepy.ClientPartyMember.set_outfit, data['fortnite']['cid'].replace('cid','CID',1)),
-            partial(fortnitepy.ClientPartyMember.set_backpack, data['fortnite']['bid'].replace('bid','BID',1)),
-            partial(fortnitepy.ClientPartyMember.set_pickaxe, data['fortnite']['pickaxe_id'].replace('pickaxe_id','Pickaxe_ID',1)),
-            partial(fortnitepy.ClientPartyMember.set_emote, data['fortnite']['eid'].replace('eid','EID',1)),
-            partial(fortnitepy.ClientPartyMember.set_battlepass_info, has_purchased=True, level=data['fortnite']['tier'], self_boost_xp=data['fortnite']['xpboost'], friend_boost_xp=data['fortnite']['friendxpboost']),
-            partial(fortnitepy.ClientPartyMember.set_banner, icon=data['fortnite']['banner'], color=data['fortnite']['banner_color'], season_level=data['fortnite']['level']),
-        ]
+        auth=fortnitepy.AdvancedAuth(
+            email=data['fortnite']['email'],
+            password=data['fortnite']['password'],
+            platform=fortnitepy.Platform(data['fortnite']['platform'].upper()),
+            status=data['fortnite']['status'],
+            prompt_exchange_code=True,
+            delete_existing_device_auths=True,
+            default_party_member_config=[
+                partial(fortnitepy.ClientPartyMember.set_outfit, data['fortnite']['cid'].replace('cid','CID',1)),
+                partial(fortnitepy.ClientPartyMember.set_backpack, data['fortnite']['bid'].replace('bid','BID',1)),
+                partial(fortnitepy.ClientPartyMember.set_pickaxe, data['fortnite']['pickaxe_id'].replace('pickaxe_id','Pickaxe_ID',1)),
+                partial(fortnitepy.ClientPartyMember.set_emote, data['fortnite']['eid'].replace('eid','EID',1)),
+                partial(fortnitepy.ClientPartyMember.set_battlepass_info, has_purchased=True, level=data['fortnite']['tier'], self_boost_xp=data['fortnite']['xpboost'], friend_boost_xp=data['fortnite']['friendxpboost']),
+                partial(fortnitepy.ClientPartyMember.set_banner, icon=data['fortnite']['banner'], color=data['fortnite']['banner_color'], season_level=data['fortnite']['level']),
+            ],
+            **device_auth_details
+        )
     )
 except ValueError as e:
     print(crayons.red(traceback.format_exc()))
@@ -324,6 +344,10 @@ if data['debug'] is True:
     print(crayons.green('デバッグ: オン'))
 else:
     print(crayons.green('デバッグ: オフ'))
+
+@client.event
+async def event_device_auth_generate(details, email):
+    store_device_auth_details(email, details)
 
 @client.event
 async def event_ready():
@@ -458,9 +482,9 @@ async def event_party_invite(invitation):
             print(f'[{now_()}] {invitation.sender.display_name} からのパーティー招待')
     else:
         if invitation.sender.display_name is None:
-            print(f'[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待')
+            print(f'[{now_()}] None / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待')
         else:
-            print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待')
+            print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待')
 
     if not client.owner is None:
         if not client.owner.id in client.user.party.members.keys():
@@ -483,9 +507,9 @@ async def event_party_invite(invitation):
                                 print(f'[{now_()}] {invitation.sender.display_name} からの招待を承諾')
                         else:
                             if invitation.sender.display_name is None:
-                                print(f'[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待を承諾')
+                                print(f'[{now_()}] None / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を承諾')
                             else:
-                                print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を承諾')
+                                print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を承諾')
                     except fortnitepy.Forbidden as e:
                         if data['loglevel'] == 'debug':
                             print(crayons.red(traceback.format_exc()))
@@ -507,9 +531,9 @@ async def event_party_invite(invitation):
                                 print(f"[{now_()}] {invitation.sender.display_name} からの招待を{str(data['fortnite']['interval'])}秒拒否")
                         else:
                             if invitation.sender.display_name is None:
-                                print(f"[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
+                                print(f"[{now_()}] None / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
                             else:
-                                print(f"[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
+                                print(f"[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
                     except fortnitepy.PartyError as e:
                         if data['loglevel'] == 'debug':
                             print(crayons.red(traceback.format_exc()))
@@ -530,9 +554,9 @@ async def event_party_invite(invitation):
                             print(f'[{now_()}] {invitation.sender.display_name} からの招待を拒否')
                     else:
                         if invitation.sender.display_name is None:
-                            print(f'[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待を拒否')
+                            print(f'[{now_()}] None / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を拒否')
                         else:
-                            print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を拒否')
+                            print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を拒否')
                 except fortnitepy.PartyError as e:
                     if data['loglevel'] == 'debug':
                         print(crayons.red(traceback.format_exc()))
@@ -577,9 +601,9 @@ async def event_party_invite(invitation):
                             print(f'[{now_()}] {invitation.sender.display_name} からの招待を承諾')
                     else:
                         if invitation.sender.display_name is None:
-                            print(f'[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待を承諾')
+                            print(f'[{now_()}] None / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を承諾')
                         else:
-                            print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を承諾')
+                            print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を承諾')
                 except fortnitepy.Forbidden as e:
                     if data['loglevel'] == 'debug':
                         print(crayons.red(traceback.format_exc()))
@@ -601,9 +625,9 @@ async def event_party_invite(invitation):
                             print(f"[{now_()}] {invitation.sender.display_name} からの招待を{str(data['fortnite']['interval'])}秒拒否")
                     else:
                         if invitation.sender.display_name is None:
-                            print(f"[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
+                            print(f"[{now_()}] None / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
                         else:
-                            print(f"[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
+                            print(f"[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
                 except fortnitepy.PartyError as e:
                     if data['loglevel'] == 'debug':
                         print(crayons.red(traceback.format_exc()))
@@ -624,9 +648,9 @@ async def event_party_invite(invitation):
                         print(f'[{now_()}] {invitation.sender.display_name} からの招待を拒否')
                 else:
                     if invitation.sender.display_name is None:
-                        print(f'[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待を拒否')
+                        print(f'[{now_()}] None / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を拒否')
                     else:
-                        print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を拒否')
+                        print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を拒否')
             except fortnitepy.PartyError as e:
                 if data['loglevel'] == 'debug':
                     print(crayons.red(traceback.format_exc()))
@@ -721,9 +745,9 @@ async def event_friend_remove(friend):
             print(f'[{now_()}] {friend.display_name} がフレンドから削除')
     else:
         if friend.display_name is None:
-            print(f'[{now_()}] None / {friend.id} がフレンドから削除')
+            print(f'[{now_()}] None / {friend.id} [{friend.last_presence.party.platform}] がフレンドから削除')
         else:
-            print(f'[{now_()}] {friend.display_name} / {friend.id} がフレンドから削除')
+            print(f'[{now_()}] {friend.display_name} / {friend.id} [{friend.last_presence.party.platform}] がフレンドから削除')
 
 @client.event
 async def event_party_member_join(member):
@@ -962,9 +986,9 @@ async def event_friend_message(message):
             print(f'[{now_()}] {message.author.display_name} | {message.content}')
     else:
         if message.author.display_name is None:
-            print(f'[{now_()}] None / {message.author.id} | {message.content}')
+            print(f'[{now_()}] None / {message.author.id} [{friend.last_presence.party.platform}] | {message.content}')
         else:
-            print(f'[{now_()}] {message.author.display_name} / {message.author.id} | {message.content}')
+            print(f'[{now_()}] {message.author.display_name} [{friend.last_presence.party.platform}] / {message.author.id} | {message.content}')
 
     if args[0] in commands['prev'].split(','):
         args = jaconv.kata2hira(client.prevmessage.lower()).split()
@@ -4838,7 +4862,7 @@ try:
     client.run()
 except fortnitepy.AuthException as e:
     print(crayons.red(traceback.format_exc()))
-    print(crayons.red(f'[{now_()}] メールアドレスまたはパスワードが間違っています。'))
+    print(crayons.red(f'[{now_()}] アカウントにログインできません。'))
     exit()
 except Exception as e:
     print(crayons.red(traceback.format_exc()))
