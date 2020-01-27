@@ -4861,6 +4861,11 @@ async def event_party_message(message):
 try:
     client.run()
 except fortnitepy.AuthException as e:
+    print(e.args)
+    if "errors.com.epicgames.account.oauth.exchange_code_not_found" in e.args[0]:
+        print(crayons.red(traceback.format_exc()))
+        print(f'[{now_()}] exchange_codeを\nhttps://www.epicgames.com/\nでボットのアカウントにログインし、\nhttps://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fexchange\nで取得してください。')
+        exit()
     print(crayons.red(traceback.format_exc()))
     print(crayons.red(f'[{now_()}] アカウントにログインできません。'))
     exit()
