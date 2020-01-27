@@ -10,8 +10,8 @@ INSTALL.batを実行する
 configに情報を書き込む  
 commandsに好きなコマンド名を書き込む  
 RUN.batを実行する  
-exchange_codeを[公式サイト](https://www.epicgames.com, "epicgames.com")でボットのアカウントにログインし、
-[ログイン](https://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fexchange, "ログイン")で取得してください。
+exchange_codeを[公式サイト](https://www.epicgames.com "epicgames.com")でボットのアカウントにログインし、
+[ログイン](https://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fexchange "ログイン")で取得してください。
 
 # config
 ```
