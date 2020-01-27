@@ -296,23 +296,23 @@ async def search_item_with_id(lang, itemid):
 try:
     device_auth_details = get_device_auth_details().get(data['fortnite']['email'], {})
     client = fortnitepy.Client(
+        platform=fortnitepy.Platform(data['fortnite']['platform'].upper()),
+        status=data['fortnite']['status'],
         auth=fortnitepy.AdvancedAuth(
             email=data['fortnite']['email'],
             password=data['fortnite']['password'],
-            platform=fortnitepy.Platform(data['fortnite']['platform'].upper()),
-            status=data['fortnite']['status'],
             prompt_exchange_code=True,
             delete_existing_device_auths=True,
-            default_party_member_config=[
-                partial(fortnitepy.ClientPartyMember.set_outfit, data['fortnite']['cid'].replace('cid','CID',1)),
-                partial(fortnitepy.ClientPartyMember.set_backpack, data['fortnite']['bid'].replace('bid','BID',1)),
-                partial(fortnitepy.ClientPartyMember.set_pickaxe, data['fortnite']['pickaxe_id'].replace('pickaxe_id','Pickaxe_ID',1)),
-                partial(fortnitepy.ClientPartyMember.set_emote, data['fortnite']['eid'].replace('eid','EID',1)),
-                partial(fortnitepy.ClientPartyMember.set_battlepass_info, has_purchased=True, level=data['fortnite']['tier'], self_boost_xp=data['fortnite']['xpboost'], friend_boost_xp=data['fortnite']['friendxpboost']),
-                partial(fortnitepy.ClientPartyMember.set_banner, icon=data['fortnite']['banner'], color=data['fortnite']['banner_color'], season_level=data['fortnite']['level']),
-            ],
             **device_auth_details
-        )
+        ),
+        default_party_member_config=[
+            partial(fortnitepy.ClientPartyMember.set_outfit, data['fortnite']['cid'].replace('cid','CID',1)),
+            partial(fortnitepy.ClientPartyMember.set_backpack, data['fortnite']['bid'].replace('bid','BID',1)),
+            partial(fortnitepy.ClientPartyMember.set_pickaxe, data['fortnite']['pickaxe_id'].replace('pickaxe_id','Pickaxe_ID',1)),
+            partial(fortnitepy.ClientPartyMember.set_emote, data['fortnite']['eid'].replace('eid','EID',1)),
+            partial(fortnitepy.ClientPartyMember.set_battlepass_info, has_purchased=True, level=data['fortnite']['tier'], self_boost_xp=data['fortnite']['xpboost'], friend_boost_xp=data['fortnite']['friendxpboost']),
+            partial(fortnitepy.ClientPartyMember.set_banner, icon=data['fortnite']['banner'], color=data['fortnite']['banner_color'], season_level=data['fortnite']['level']),
+        ],
     )
 except ValueError as e:
     print(crayons.red(traceback.format_exc()))
@@ -359,25 +359,28 @@ async def event_ready():
     try:
         client.owner=None
         owner=await client.fetch_profile(data['fortnite']['owner'])
-        client.owner=client.get_friend(owner.id)
-        if client.owner is None:
-            try:
-                await client.add_friend(owner.id)
-            except fortnitepy.HTTPException as e:
-                if data['loglevel'] == 'debug':
-                    print(crayons.red(traceback.format_exc()))
-            except Exception as e:
-                print(crayons.red(traceback.format_exc()))
-            print(crayons.red(f"[{now_()}] 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{data['reload']}] コマンドで再読み込みしてください。"))
+        if owner is None:
+            print(crayons.red(f'[{now_()}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
         else:
-            if data['loglevel'] == 'normal':
-                print(crayons.green(f'[{now_()}] 所有者: {client.owner.display_name}'))
+            client.owner=client.get_friend(owner.id)
+            if client.owner is None:
+                try:
+                    await client.add_friend(owner.id)
+                except fortnitepy.HTTPException as e:
+                    if data['loglevel'] == 'debug':
+                        print(crayons.red(traceback.format_exc()))
+                except Exception as e:
+                    print(crayons.red(traceback.format_exc()))
+                print(crayons.red(f"[{now_()}] 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{data['reload']}] コマンドで再読み込みしてください。"))
             else:
-                print(crayons.green(f'[{now_()}] 所有者: {client.owner.display_name} / {client.owner.id}'))
+                if data['loglevel'] == 'normal':
+                    print(crayons.green(f'[{now_()}] 所有者: {client.owner.display_name}'))
+                else:
+                    print(crayons.green(f'[{now_()}] 所有者: {client.owner.display_name} / {client.owner.id}'))
     except fortnitepy.HTTPException as e:
         if data['loglevel'] == 'debug':
             print(crayons.red(traceback.format_exc()))
-        print(crayons.red(f'[{now_()}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
+        print(crayons.red(f'[{now_()}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
     except Exception as e:
         print(crayons.red(traceback.format_exc()))
     
@@ -482,9 +485,9 @@ async def event_party_invite(invitation):
             print(f'[{now_()}] {invitation.sender.display_name} からのパーティー招待')
     else:
         if invitation.sender.display_name is None:
-            print(f'[{now_()}] None / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待')
+            print(f'[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待')
         else:
-            print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待')
+            print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待')
 
     if not client.owner is None:
         if not client.owner.id in client.user.party.members.keys():
@@ -507,9 +510,9 @@ async def event_party_invite(invitation):
                                 print(f'[{now_()}] {invitation.sender.display_name} からの招待を承諾')
                         else:
                             if invitation.sender.display_name is None:
-                                print(f'[{now_()}] None / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を承諾')
+                                print(f'[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待を承諾')
                             else:
-                                print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を承諾')
+                                print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を承諾')
                     except fortnitepy.Forbidden as e:
                         if data['loglevel'] == 'debug':
                             print(crayons.red(traceback.format_exc()))
@@ -531,9 +534,9 @@ async def event_party_invite(invitation):
                                 print(f"[{now_()}] {invitation.sender.display_name} からの招待を{str(data['fortnite']['interval'])}秒拒否")
                         else:
                             if invitation.sender.display_name is None:
-                                print(f"[{now_()}] None / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
+                                print(f"[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
                             else:
-                                print(f"[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
+                                print(f"[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
                     except fortnitepy.PartyError as e:
                         if data['loglevel'] == 'debug':
                             print(crayons.red(traceback.format_exc()))
@@ -554,9 +557,9 @@ async def event_party_invite(invitation):
                             print(f'[{now_()}] {invitation.sender.display_name} からの招待を拒否')
                     else:
                         if invitation.sender.display_name is None:
-                            print(f'[{now_()}] None / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を拒否')
+                            print(f'[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待を拒否')
                         else:
-                            print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を拒否')
+                            print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を拒否')
                 except fortnitepy.PartyError as e:
                     if data['loglevel'] == 'debug':
                         print(crayons.red(traceback.format_exc()))
@@ -601,9 +604,9 @@ async def event_party_invite(invitation):
                             print(f'[{now_()}] {invitation.sender.display_name} からの招待を承諾')
                     else:
                         if invitation.sender.display_name is None:
-                            print(f'[{now_()}] None / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を承諾')
+                            print(f'[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待を承諾')
                         else:
-                            print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を承諾')
+                            print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を承諾')
                 except fortnitepy.Forbidden as e:
                     if data['loglevel'] == 'debug':
                         print(crayons.red(traceback.format_exc()))
@@ -625,9 +628,9 @@ async def event_party_invite(invitation):
                             print(f"[{now_()}] {invitation.sender.display_name} からの招待を{str(data['fortnite']['interval'])}秒拒否")
                     else:
                         if invitation.sender.display_name is None:
-                            print(f"[{now_()}] None / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
+                            print(f"[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
                         else:
-                            print(f"[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
+                            print(f"[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
                 except fortnitepy.PartyError as e:
                     if data['loglevel'] == 'debug':
                         print(crayons.red(traceback.format_exc()))
@@ -648,9 +651,9 @@ async def event_party_invite(invitation):
                         print(f'[{now_()}] {invitation.sender.display_name} からの招待を拒否')
                 else:
                     if invitation.sender.display_name is None:
-                        print(f'[{now_()}] None / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を拒否')
+                        print(f'[{now_()}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待を拒否')
                     else:
-                        print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} [{invitation.sender.last_presence.party.platform}] からパーティー {invitation.party.id} への招待を拒否')
+                        print(f'[{now_()}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を拒否')
             except fortnitepy.PartyError as e:
                 if data['loglevel'] == 'debug':
                     print(crayons.red(traceback.format_exc()))
@@ -745,9 +748,9 @@ async def event_friend_remove(friend):
             print(f'[{now_()}] {friend.display_name} がフレンドから削除')
     else:
         if friend.display_name is None:
-            print(f'[{now_()}] None / {friend.id} [{friend.last_presence.party.platform}] がフレンドから削除')
+            print(f'[{now_()}] None / {friend.id} がフレンドから削除')
         else:
-            print(f'[{now_()}] {friend.display_name} / {friend.id} [{friend.last_presence.party.platform}] がフレンドから削除')
+            print(f'[{now_()}] {friend.display_name} / {friend.id} がフレンドから削除')
 
 @client.event
 async def event_party_member_join(member):
@@ -986,9 +989,9 @@ async def event_friend_message(message):
             print(f'[{now_()}] {message.author.display_name} | {message.content}')
     else:
         if message.author.display_name is None:
-            print(f'[{now_()}] None / {message.author.id} [{friend.last_presence.party.platform}] | {message.content}')
+            print(f'[{now_()}] None / {message.author.id}| {message.content}')
         else:
-            print(f'[{now_()}] {message.author.display_name} [{friend.last_presence.party.platform}] / {message.author.id} | {message.content}')
+            print(f'[{now_()}] {message.author.display_name}/ {message.author.id} | {message.content}')
 
     if args[0] in commands['prev'].split(','):
         args = jaconv.kata2hira(client.prevmessage.lower()).split()
@@ -1034,26 +1037,29 @@ async def event_friend_message(message):
             try:
                 client.owner=None
                 owner=await client.fetch_profile(data['fortnite']['owner'])
-                client.owner=client.get_friend(owner.id)
-                if client.owner is None:
-                    try:
-                        await client.add_friend(owner.id)
-                    except fortnitepy.HTTPException as e:
-                        if data['loglevel'] == 'debug':
-                            print(crayons.red(traceback.format_exc()))
-                    except Exception as e:
-                        if data['loglevel'] == 'debug':
-                            print(crayons.red(traceback.format_exc()))
-                    print(crayons.red(f'[{now_()}] 所有者とフレンドではありません。フレンドになってからもう一度起動してください。'))
+                if owner is None:
+                    print(crayons.red(f'[{now_()}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
                 else:
-                    if data['loglevel'] == 'normal':
-                        print(crayons.green(f'[{now_()}] 所有者: {client.owner.display_name}'))
+                    client.owner=client.get_friend(owner.id)
+                    if client.owner is None:
+                        try:
+                            await client.add_friend(owner.id)
+                        except fortnitepy.HTTPException as e:
+                            if data['loglevel'] == 'debug':
+                                print(crayons.red(traceback.format_exc()))
+                        except Exception as e:
+                            if data['loglevel'] == 'debug':
+                                print(crayons.red(traceback.format_exc()))
+                        print(crayons.red(f'[{now_()}] 所有者とフレンドではありません。フレンドになってからもう一度起動してください。'))
                     else:
-                        print(crayons.green(f'[{now_()}] 所有者: {client.owner.display_name} / {client.owner.id}'))
+                        if data['loglevel'] == 'normal':
+                            print(crayons.green(f'[{now_()}] 所有者: {client.owner.display_name}'))
+                        else:
+                            print(crayons.green(f'[{now_()}] 所有者: {client.owner.display_name} / {client.owner.id}'))
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
                     print(crayons.red(traceback.format_exc()))
-                print(crayons.red(f'[{now_()}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
+                print(crayons.red(f'[{now_()}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
         except Exception as e:
             print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
@@ -1255,26 +1261,29 @@ async def event_friend_message(message):
                     print(crayons.red(traceback.format_exc()))
                 await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
                 return
-            friend=client.get_friend(user.id)
-            if friend is None:
-                friend=client.get_friend(rawcontent)
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+            else:
+                friend=client.get_friend(user.id)
                 if friend is None:
-                    await message.reply('ユーザーが見つかりません')
-            if not friend is None:
-                try:
-                    await friend.invite()
-                    if data['loglevel'] == 'normal':
-                        await message.reply(f'{friend.display_name} をパーティーに招待')
-                    else:
-                        await message.reply(f'{friend.display_name} / {friend.id} をパーティー {client.user.party.id} に招待')
-                except fortnitepy.PartyError as e:
-                    if data['loglevel'] == 'debug':
-                        print(crayons.red(traceback.format_exc()))
-                    await message.reply('パーティーが満員か、既にパーティーにいます')
-                except fortnitepy.HTTPException as e:
-                    if data['loglevel'] == 'debug':
-                        print(crayons.red(traceback.format_exc()))
-                    await message.reply('パーティー招待の送信リクエストを処理中にエラーが発生しました')
+                    friend=client.get_friend(rawcontent)
+                    if friend is None:
+                        await message.reply('ユーザーとフレンドではありません')
+                if not friend is None:
+                    try:
+                        await friend.invite()
+                        if data['loglevel'] == 'normal':
+                            await message.reply(f'{friend.display_name} をパーティーに招待')
+                        else:
+                            await message.reply(f'{friend.display_name} / {friend.id} をパーティー {client.user.party.id} に招待')
+                    except fortnitepy.PartyError as e:
+                        if data['loglevel'] == 'debug':
+                            print(crayons.red(traceback.format_exc()))
+                        await message.reply('パーティーが満員か、既にパーティーにいます')
+                    except fortnitepy.HTTPException as e:
+                        if data['loglevel'] == 'debug':
+                            print(crayons.red(traceback.format_exc()))
+                        await message.reply('パーティー招待の送信リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
                 print(crayons.red(traceback.format_exc()))
@@ -1302,17 +1311,20 @@ async def event_friend_message(message):
         try:
             send=rawcontent.split(' : ')
             user=await client.fetch_profile(send[0])
-            friend=client.get_friend(user.id)
-            if friend is None:
-                friend=client.get_friend(send[0])
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+            else:
+                friend=client.get_friend(user.id)
                 if friend is None:
-                    await message.reply('ユーザーが見つかりません')
-            if not friend is None:
-                await friend.send(send[1])
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{friend.display_name} にメッセージ {send[1]} を送信')
-                else:
-                    await message.reply(f'{friend.display_name} / {friend.id} にメッセージ {send[1]} を送信')
+                    friend=client.get_friend(send[0])
+                    if friend is None:
+                        await message.reply('ユーザーとフレンドではありません')
+                if not friend is None:
+                    await friend.send(send[1])
+                    if data['loglevel'] == 'normal':
+                        await message.reply(f'{friend.display_name} にメッセージ {send[1]} を送信')
+                    else:
+                        await message.reply(f'{friend.display_name} / {friend.id} にメッセージ {send[1]} を送信')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
                 print(crayons.red(traceback.format_exc()))
@@ -2985,29 +2997,35 @@ async def event_party_message(message):
             try:
                 client.owner=None
                 owner=await client.fetch_profile(data['fortnite']['owner'])
-                client.owner=client.get_friend(owner.id)
-                if client.owner is None:
-                    try:
-                        await client.add_friend(owner.id)
-                    except fortnitepy.HTTPException as e:
-                        if data['loglevel'] == 'debug':
-                            print(crayons.red(traceback.format_exc()))
-                    except Exception as e:
-                        if data['loglevel'] == 'debug':
-                            print(crayons.red(traceback.format_exc()))
-                    print(crayons.red(f'[{now_()}] 所有者とフレンドではありません。フレンドになってからもう一度起動してください。'))
+                if owner is None:
+                    print(crayons.red(f'[{now_()}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
                 else:
-                    if data['loglevel'] == 'normal':
-                        print(crayons.green(f'[{now_()}] 所有者: {client.owner.display_name}'))
+                    client.owner=client.get_friend(owner.id)
+                    if client.owner is None:
+                        try:
+                            await client.add_friend(owner.id)
+                        except fortnitepy.HTTPException as e:
+                            if data['loglevel'] == 'debug':
+                                print(crayons.red(traceback.format_exc()))
+                        except Exception as e:
+                            if data['loglevel'] == 'debug':
+                                print(crayons.red(traceback.format_exc()))
+                        print(crayons.red(f'[{now_()}] 所有者とフレンドではありません。フレンドになってからもう一度起動してください。'))
                     else:
-                        print(crayons.green(f'[{now_()}] 所有者: {client.owner.display_name} / {client.owner.id}'))
+                        if data['loglevel'] == 'normal':
+                            print(crayons.green(f'[{now_()}] 所有者: {client.owner.display_name}'))
+                        else:
+                            print(crayons.green(f'[{now_()}] 所有者: {client.owner.display_name} / {client.owner.id}'))
             except fortnitepy.HTTPException as e:
                 if data['loglevel'] == 'debug':
                     print(crayons.red(traceback.format_exc()))
-                print(crayons.red(f'[{now_()}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
+                print(crayons.red(f'[{now_()}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
         except Exception as e:
             print(crayons.red(traceback.format_exc()))
             await message.reply('エラー')
+
+    elif args[0] == 'get':
+        await message.reply(f'{client.user.party.leader.display_name}\n{client.user.party.leader.pickaxe}\n{client.user.party.leader.pickaxe_variants}')
 
     elif args[0] in commands['friendcount'].split(','):
         try:
@@ -3203,26 +3221,29 @@ async def event_party_message(message):
                     print(crayons.red(traceback.format_exc()))
                 await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
                 return
-            friend=client.get_friend(user.id)
-            if friend is None:
-                friend=client.get_friend(rawcontent)
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+            else:
+                friend=client.get_friend(user.id)
                 if friend is None:
-                    await message.reply('ユーザーが見つかりません')
-            if not friend is None:
-                try:
-                    await friend.invite()
-                    if data['loglevel'] == 'normal':
-                        await message.reply(f'{friend.display_name} をパーティーに招待')
-                    else:
-                        await message.reply(f'{friend.display_name} / {friend.id} をパーティー {client.user.party.id} に招待')
-                except fortnitepy.PartyError as e:
-                    if data['loglevel'] == 'debug':
-                        print(crayons.red(traceback.format_exc()))
-                    await message.reply('パーティーが満員か、既にパーティーにいます')
-                except fortnitepy.HTTPException as e:
-                    if data['loglevel'] == 'debug':
-                        print(crayons.red(traceback.format_exc()))
-                    await message.reply('パーティー招待の送信リクエストを処理中にエラーが発生しました')
+                    friend=client.get_friend(rawcontent)
+                    if friend is None:
+                        await message.reply('ユーザーとフレンドではありません')
+                if not friend is None:
+                    try:
+                        await friend.invite()
+                        if data['loglevel'] == 'normal':
+                            await message.reply(f'{friend.display_name} をパーティーに招待')
+                        else:
+                            await message.reply(f'{friend.display_name} / {friend.id} をパーティー {client.user.party.id} に招待')
+                    except fortnitepy.PartyError as e:
+                        if data['loglevel'] == 'debug':
+                            print(crayons.red(traceback.format_exc()))
+                        await message.reply('パーティーが満員か、既にパーティーにいます')
+                    except fortnitepy.HTTPException as e:
+                        if data['loglevel'] == 'debug':
+                            print(crayons.red(traceback.format_exc()))
+                        await message.reply('パーティー招待の送信リクエストを処理中にエラーが発生しました')
         except IndexError as e:
             if data['loglevel'] == 'debug':
                 print(crayons.red(traceback.format_exc()))
@@ -3250,17 +3271,20 @@ async def event_party_message(message):
         try:
             send=rawcontent.split(' : ')
             user=await client.fetch_profile(send[0])
-            friend=client.get_friend(user.id)
-            if friend is None:
-                friend=client.get_friend(send[0])
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+            else:
+                friend=client.get_friend(user.id)
                 if friend is None:
-                    await message.reply('ユーザーが見つかりません')
-            if not friend is None:
-                await friend.send(send[1])
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{friend.display_name} にメッセージ {send[1]} を送信')
-                else:
-                    await message.reply(f'{friend.display_name} / {friend.id} にメッセージ {send[1]} を送信')
+                    friend=client.get_friend(send[0])
+                    if friend is None:
+                        await message.reply('ユーザーとフレンドではありません')
+                if not friend is None:
+                    await friend.send(send[1])
+                    if data['loglevel'] == 'normal':
+                        await message.reply(f'{friend.display_name} にメッセージ {send[1]} を送信')
+                    else:
+                        await message.reply(f'{friend.display_name} / {friend.id} にメッセージ {send[1]} を送信')
         except fortnitepy.HTTPException as e:
             if data['loglevel'] == 'debug':
                 print(crayons.red(traceback.format_exc()))
