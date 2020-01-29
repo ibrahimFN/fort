@@ -108,6 +108,7 @@ try:
 except json.decoder.JSONDecodeError:
     print(red(traceback.format_exc()))
     print(red('commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
+    exit()
 except FileNotFoundError:
     print(red(traceback.format_exc()))
     print(red('commands.json ファイルが存在しません。'))
