@@ -453,6 +453,17 @@ async def event_party_invite(invitation):
                                 print(f'[{now_()}] [{client.user.display_name}] None / {invitation.sender.id} からパーティー {invitation.party.id} への招待を承諾')
                             else:
                                 print(f'[{now_()}] [{client.user.display_name}] {invitation.sender.display_name} / {invitation.sender.id} からパーティー {invitation.party.id} への招待を承諾')
+                    except KeyError:
+                        if data['loglevel'] == 'debug':
+                            print(red(traceback.format_exc()))
+                    except fortnitepy.PartyError:
+                        if data['loglevel'] == 'debug':
+                            print(red(traceback.format_exc()))
+                        print(red(f'[{now_()}] [{client.user.display_name}] 既にパーティーのメンバーです。'))
+                    except fortnitepy.HTTPException:
+                        if data['loglevel'] == 'debug':
+                            print(red(traceback.format_exc()))
+                        print(red(f'[{now_()}] [{client.user.display_name}] メンバーが見つかりません。'))
                     except fortnitepy.Forbidden:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
