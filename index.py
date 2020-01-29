@@ -108,7 +108,6 @@ try:
 except json.decoder.JSONDecodeError:
     print(red(traceback.format_exc()))
     print(red('commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
-    exit()
 except FileNotFoundError:
     print(red(traceback.format_exc()))
     print(red('commands.json ファイルが存在しません。'))
@@ -804,9 +803,9 @@ async def event_party_member_kick(member):
                 print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client.user.display_name}] {member.party.leader.display_name} / {member.party.leader.id} [{member.party.leader.platform}/{member.party.leader.input}] が {member.display_name} / {member.id} [{member.platform}/{member.input}] がパーティーからキック\n人数: {member.party.member_count}'))
 
 async def event_party_member_promote(old_leader,new_leader):
-    client=old_leader.client
     if old_leader is None or new_leader is None:
         return
+    client=new_leader.client
     if new_leader.id == client.user.id:
         try:
             await client.user.party.set_playlist(data['fortnite']['playlist'])
@@ -2571,7 +2570,8 @@ async def event_friend_message(message):
     elif args[0] in commands['emoteasset'].split(','):
         try:
             await client.user.party.me.clear_emote()
-            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_emote,args[1]))
+            await client.user.party.me.set_emote(args[1])
+            client.eid=args[1]
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2630,7 +2630,7 @@ async def event_friend_message(message):
             if not client.user.party.me.emote is None:
                 if client.user.party.me.emote.lower() == args[0]:
                     await client.user.party.me.clear_emote()
-            await client.user.party.me.set_emote(args[0].upper())
+            await client.user.party.me.set_emote(args[0])
             await message.reply(f'エモートを {rawargs[0]} に設定')
             client.eid=args[0]
         except fortnitepy.HTTPException:
@@ -4530,7 +4530,7 @@ async def event_party_message(message):
     elif args[0] in commands['emoteasset'].split(','):
         try:
             await client.user.party.me.clear_emote()
-            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_emote,args[1]))
+            await client.user.party.me.set_emote(args[1])
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4854,7 +4854,6 @@ for email, password in credentials.items():
                 partial(fortnitepy.ClientPartyMember.set_outfit, data['fortnite']['cid'].replace('cid','CID',1)),
                 partial(fortnitepy.ClientPartyMember.set_backpack, data['fortnite']['bid'].replace('bid','BID',1)),
                 partial(fortnitepy.ClientPartyMember.set_pickaxe, data['fortnite']['pickaxe_id'].replace('pickaxe_id','Pickaxe_ID',1)),
-                partial(fortnitepy.ClientPartyMember.set_emote, data['fortnite']['eid'].replace('eid','EID',1)),
                 partial(fortnitepy.ClientPartyMember.set_battlepass_info, has_purchased=True, level=data['fortnite']['tier'], self_boost_xp=data['fortnite']['xpboost'], friend_boost_xp=data['fortnite']['friendxpboost']),
                 partial(fortnitepy.ClientPartyMember.set_banner, icon=data['fortnite']['banner'], color=data['fortnite']['banner_color'], season_level=data['fortnite']['level']),
             ],
@@ -4863,7 +4862,7 @@ for email, password in credentials.items():
         print(red(traceback.format_exc()))
         print(red(f'アカウント情報を設定中にエラーが発生しました。configのfortnite部分の設定が間違っている可能性があります。'))
         continue
-    client.eid=data['fortnite']['eid'].upper()
+    client.eid=data['fortnite']['eid']
     client.acceptinvite_interval=True
     client.stopcheck=False
     client.prevoutfit=None
