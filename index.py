@@ -235,6 +235,8 @@ async def is_itemname(lang, itemname):
             if jaconv.hira2kata(itemname.lower()) in jaconv.hira2kata(item['name'].lower()):
                 itemlist.append([item['id'],item['name'],item['type'],item['description'],item['displayRarity']])
                 TF='True'
+        if data['loglevel'] == 'debug':
+            print(f'{lang}: {itemname}\n{itemlist}')
         return TF, itemlist
     except Exception:
         print(red(traceback.format_exc()))
@@ -266,6 +268,8 @@ async def search_item_with_type(lang, itemname, itemtype):
                 if jaconv.hira2kata(itemname.lower()) in jaconv.hira2kata(item['name'].lower()):
                     itemlist.append([item['id'],item['name'],item['type'],item['description'],item['displayRarity']])
                     TF='True'
+        if data['loglevel'] == 'debug':
+            print(f'{lang}: {itemtype} {itemname}\n{itemlist}')
         return TF, itemlist
     except Exception:
         print(red(traceback.format_exc()))
@@ -297,6 +301,8 @@ async def search_set_item(lang, setname):
                 if jaconv.hira2kata(setname.lower()) in jaconv.hira2kata(item['set'].lower()):
                     itemlist.append([item['id'],item['name'],item['type'],item['description'],item['displayRarity']])
                     TF='True'
+        if data['loglevel'] == 'debug':
+            print(f'{lang}: {setname}\n{itemlist}')
         return TF, itemlist
     except Exception:
         print(red(traceback.format_exc()))
@@ -327,6 +333,8 @@ async def search_item_with_id(lang, itemid):
             if itemid.lower() in item['id']:
                 itemlist.append([item['id'],item['name'],item['type'],item['description'],item['displayRarity']])
                 TF='True'
+        if data['loglevel'] == 'debug':
+            print(f'{lang}: {itemid}\n{itemlist}')
         return TF, itemlist
     except Exception:
         print(red(traceback.format_exc()))
@@ -2051,8 +2059,9 @@ async def event_friend_message(message):
         if rawcontent == '':
             return await message.reply(f"[{commands['id']}] [ID]")
         try:
-            client.ismesjaitem=await search_item_with_id('ja', rawcontent)
-            if client.ismesjaitem[0] == 'True':
+            isitem = await search_item_with_id("ja", rawcontent)
+            if isitem[0] == 'True':
+                client.ismesjaitem=isitem
                 if len(client.ismesjaitem[1]) > 29:
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
                 else:
@@ -2117,73 +2126,7 @@ async def event_friend_message(message):
                     if len(client.ismesjaitem[1]) > 1:
                         await message.reply('数字を入力することでそのアイテムに設定します')
             else:
-                client.ismesenitem=await search_item_with_id('en', rawcontent)
-                if client.ismesenitem[0] == 'True':
-                    if len(client.ismesenitem[1]) > 29:
-                        await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
-                    else:
-                        for count,item in enumerate(client.ismesenitem[1]):
-                            if item[2] == 'outfit':
-                                if len(client.ismesenitem[1]) == 1:
-                                    await message.reply(f'スキン: {item[0]}: {item[1]}')
-                                else:
-                                    await message.reply(f'{count+1} スキン: {item[0]}: {item[1]}')
-                            if item[2] == 'backpack':
-                                if len(client.ismesenitem[1]) == 1:
-                                    await message.reply(f'バッグ: {item[0]}: {item[1]}')
-                                else:
-                                    await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
-                            if item[2] == 'pet':
-                                if len(client.ismesenitem[1]) == 1:
-                                    await message.reply(f'バッグ: {item[0]}: {item[1]}')
-                                else:
-                                    await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
-                            if item[2] == 'pickaxe':
-                                if len(client.ismesenitem[1]) == 1:
-                                    await message.reply(f'ツルハシ: {item[0]}: {item[1]}')
-                                else:
-                                    await message.reply(f'{count+1} ツルハシ: {item[0]}: {item[1]}')
-                            if item[2] == 'emote':
-                                if len(client.ismesenitem[1]) == 1:
-                                    await message.reply(f'エモート: {item[0]}: {item[1]}')
-                                else:
-                                    await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
-                            if item[2] == 'emoji':
-                                if len(client.ismesenitem[1]) == 1:
-                                    await message.reply(f'エモート: {item[0]}: {item[1]}')
-                                else:
-                                    await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
-                            if item[2] == 'toy':
-                                if len(client.ismesenitem[1]) == 1:
-                                    await message.reply(f'エモート: {item[0]}: {item[1]}')
-                                else:
-                                    await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
-                        if len(client.ismesenitem[1]) == 1:
-                            if client.ismesjaitem[1][0][2] == 'outfit':
-                                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][0][0]))
-                            if client.ismesjaitem[1][0][2] == 'backpack':
-                                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesjaitem[1][0][0]))
-                            if client.ismesjaitem[1][0][2] == 'pet':
-                                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,f'/Game/Athena/Items/Cosmetics/PetCarriers/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'))
-                            if client.ismesjaitem[1][0][2] == 'pickaxe':
-                                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][0][0]))
-                                await client.user.party.me.set_emote('EID_IceKing')
-                            if client.ismesjaitem[1][0][2] == 'emote':
-                                if not client.user.party.me.emote is None:
-                                    if client.user.party.me.emote.lower() == client.ismesjaitem[1][0][0].lower():
-                                        await client.user.party.me.clear_emote()
-                                await client.user.party.me.set_emote(client.ismesjaitem[1][0][0])
-                                client.eid=client.ismesjaitem[1][0][0]
-                            if client.ismesjaitem[1][0][2] == 'emoji':
-                                await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}')
-                                client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'
-                            if client.ismesjaitem[1][0][2] == 'toy':
-                                await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}')
-                                client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'
-                        if len(client.ismesenitem[1]) > 1:
-                            await message.reply('数字を入力することでそのアイテムに設定します')
-                else:
-                    await message.reply('見つかりません')
+                await message.reply('見つかりません')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2196,8 +2139,9 @@ async def event_friend_message(message):
         if rawcontent == '':
             return await message.reply(f"[{commands['skin']}] [スキン名]")
         try:
-            client.ismesjaitem=await search_item_with_type('ja', rawcontent, 'outfit')
-            if client.ismesjaitem[0] == 'True':
+            isitem = await search_item_with_type("ja", rawcontent, "outfit")
+            if isitem[0] == 'True':
+                client.ismesjaitem=isitem
                 if len(client.ismesjaitem[1]) > 29:
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
                 else:
@@ -2211,13 +2155,14 @@ async def event_friend_message(message):
                     if len(client.ismesjaitem[1]) > 1:
                         await message.reply('数字を入力することでそのアイテムに設定します')
             else:
-                client.ismesenitem=await search_item_with_type('en', rawcontent, 'outfit')
-                if client.ismesenitem[0] == 'True':
+                isitem = await search_item_with_type("en", rawcontent, "outfit")
+                if isitem[0] == 'True':
+                    client.ismesenitem=isitem
                     if len(client.ismesenitem[1]) > 29:
                         await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
                     else:
                         for count,item in enumerate(client.ismesenitem[1]):
-                            if len(client.ismesjaitem[1]) == 1:
+                            if len(client.ismesenitem[1]) == 1:
                                 await message.reply(f'{item[1]}')
                             else:
                                 await message.reply(f'{count+1}: {item[1]}')
@@ -2239,8 +2184,9 @@ async def event_friend_message(message):
         if rawcontent == '':
             return await message.reply(f"[{commands['bag']}] [バッグ名]")
         try:
-            client.ismesjaitem=await search_item_with_type('ja', rawcontent, 'backpack,pet')
-            if client.ismesjaitem[0] == 'True':
+            isitem = await search_item_with_type("ja", rawcontent, "backpack,pet")
+            if isitem[0] == 'True':
+                client.ismesjaitem=isitem
                 if len(client.ismesjaitem[1]) > 29:
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
                 else:
@@ -2257,13 +2203,14 @@ async def event_friend_message(message):
                     if len(client.ismesjaitem[1]) > 1:
                         await message.reply('数字を入力することでそのアイテムに設定します')
             else:
-                client.ismesenitem=await search_item_with_type('en', rawcontent, 'backpack,pet')
-                if client.ismesenitem[0] == 'True':
+                isitem = await search_item_with_type("en", rawcontent, "backpack,pet")
+                if isitem[0] == 'True':
+                    client.ismesenitem=isitem
                     if len(client.ismesenitem[1]) > 29:
                         await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
                     else:
                         for count,item in enumerate(client.ismesenitem[1]):
-                            if len(client.ismesjaitem[1]) == 1:
+                            if len(client.ismesenitem[1]) == 1:
                                 await message.reply(f'{item[1]}')
                             else:
                                 await message.reply(f'{count+1}: {item[1]}')
@@ -2285,8 +2232,9 @@ async def event_friend_message(message):
         if rawcontent == '':
             return await message.reply(f"[{commands['pickaxe']}] [ツルハシ名]]")
         try:
-            client.ismesjaitem=await search_item_with_type('ja', rawcontent, 'pickaxe')
-            if client.ismesjaitem[0] == 'True':
+            isitem = await search_item_with_type("ja", rawcontent, "pickaxe")
+            if isitem[0] == 'True':
+                client.ismesjaitem=isitem
                 if len(client.ismesjaitem[1]) > 29:
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
                 else:
@@ -2301,13 +2249,14 @@ async def event_friend_message(message):
                     if len(client.ismesjaitem[1]) > 1:
                         await message.reply('数字を入力することでそのアイテムに設定します')
             else:
-                client.ismesenitem=await search_item_with_type('en', rawcontent, 'pickaxe')
-                if client.ismesenitem[0] == 'True':
+                isitem = await search_item_with_type("en", rawcontent, "pickaxe")
+                if isitem[0] == 'True':
+                    client.ismesenitem=isitem
                     if len(client.ismesenitem[1]) > 29:
                         await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
                     else:
                         for count,item in enumerate(client.ismesenitem[1]):
-                            if len(client.ismesjaitem[1]) == 1:
+                            if len(client.ismesenitem[1]) == 1:
                                 await message.reply(f'{item[1]}')
                             else:
                                 await message.reply(f'{count+1}: {item[1]}')
@@ -2330,8 +2279,9 @@ async def event_friend_message(message):
         if rawcontent == '':
             return await message.reply(f"[{commands['emote']}] [エモート名]]")
         try:
-            client.ismesjaitem=await search_item_with_type('ja', rawcontent, 'emote')
-            if client.ismesjaitem[0] == 'True':
+            isitem = await search_item_with_type("ja", rawcontent, "emote")
+            if isitem[0] == 'True':
+                client.ismesjaitem=isitem
                 if len(client.ismesjaitem[1]) > 29:
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
                 else:
@@ -2346,13 +2296,14 @@ async def event_friend_message(message):
                     if len(client.ismesjaitem[1]) > 1:
                         await message.reply('数字を入力することでそのアイテムに設定します')
             else:
-                client.ismesenitem=await search_item_with_type('en', rawcontent, 'emote')
-                if client.ismesenitem[0] == 'True':
+                isitem = await search_item_with_type("en", rawcontent, "emote")
+                if isitem[0] == 'True':
+                    client.ismesenitem=isitem
                     if len(client.ismesenitem[1]) > 29:
                         await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
                     else:
                         for count,item in enumerate(client.ismesenitem[1]):
-                            if len(client.ismesjaitem[1]) == 1:
+                            if len(client.ismesenitem[1]) == 1:
                                 await message.reply(f'{item[1]}')
                             else:
                                 await message.reply(f'{count+1}: {item[1]}')
@@ -2375,8 +2326,9 @@ async def event_friend_message(message):
         if rawcontent == '':
             return await message.reply(f"[{commands['set']}] [セット名]]")
         try:
-            client.ismesjaitem=await search_set_item('ja', rawcontent)
-            if client.ismesjaitem[0] == 'True':
+            isitem = await search_set_item("ja", rawcontent)
+            if isitem[0] == 'True':
+                client.ismesjaitem=isitem
                 for count,item in enumerate(client.ismesjaitem[1]):
                     if item[2] == 'outfit':
                         if len(client.ismesjaitem[1]) == 1:
@@ -2424,10 +2376,11 @@ async def event_friend_message(message):
                             await message.reply(f'{count+1} エモート: {item[1]}')
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}'
-                        
+                    
             else:
-                client.ismesenitem=await search_set_item('en', rawcontent)
-                if client.ismesenitem[0] == 'True':
+                isitem = await search_set_item("en", rawcontent)
+                if isitem[0] == 'True':
+                    client.ismesenitem=isitem
                     for count,item in enumerate(client.ismesenitem[1]):
                         if item[2] == 'outfit':
                             if len(client.ismesenitem[1]) == 1:
@@ -2582,7 +2535,6 @@ async def event_friend_message(message):
         try:
             await client.user.party.me.clear_emote()
             await client.user.party.me.set_emote(args[1])
-            client.eid=args[1]
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2641,7 +2593,7 @@ async def event_friend_message(message):
             if not client.user.party.me.emote is None:
                 if client.user.party.me.emote.lower() == args[0]:
                     await client.user.party.me.clear_emote()
-            await client.user.party.me.set_emote(args[0])
+            await client.user.party.me.set_emote(args[0].upper())
             await message.reply(f'エモートを {rawargs[0]} に設定')
             client.eid=args[0]
         except fortnitepy.HTTPException:
@@ -2669,52 +2621,60 @@ async def event_friend_message(message):
 
     else:
         try:
-            if args[0].isdigit() and client.ismesjaitem[0] == 'True':
-                if client.ismesjaitem[1][int(args[0])-1][2] == 'outfit':
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][int(args[0])-1][0]))
-                if client.ismesjaitem[1][int(args[0])-1][2] == 'backpack':
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesjaitem[1][int(args[0])-1][0]))
-                if client.ismesjaitem[1][int(args[0])-1][2] == 'pet':
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,f'/Game/Athena/Items/Cosmetics/PetCarriers/{client.ismesjaitem[1][int(args[0])-1][0]}.{client.ismesjaitem[1][int(args[0])-1][0]}'))
-                if client.ismesjaitem[1][int(args[0])-1][2] == 'pickaxe':
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][int(args[0])-1][0]))
-                    await client.user.party.me.set_emote('EID_IceKing')
-                if client.ismesjaitem[1][int(args[0])-1][2] == 'emote':
-                    if not client.user.party.me.emote is None:
-                        if client.user.party.me.emote.lower() == client.ismesjaitem[1][int(args[0])-1][0].lower():
-                            await client.user.party.me.clear_emote()
-                    await client.user.party.me.set_emote(client.ismesjaitem[1][int(args[0])-1][0])
-                    client.eid=client.ismesjaitem[1][int(args[0])-1][0]
-                if client.ismesjaitem[1][int(args[0])-1][2] == 'emoji':
-                    await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][int(args[0])-1][0]}.{client.ismesjaitem[1][int(args[0])-1][0]}')
-                    client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][int(args[0])-1][0]}.{client.ismesjaitem[1][int(args[0])-1][0]}'
-                if client.ismesjaitem[1][int(args[0])-1][2] == 'toy':
-                    await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][int(args[0])-1][0]}.{client.ismesjaitem[1][int(args[0])-1][0]}')
-                    client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][int(args[0])-1][0]}.{client.ismesjaitem[1][int(args[0])-1][0]}'
-                return
-            if args[0].isdigit() and client.ismesenitem[0] == 'True':
-                if client.ismesenitem[1][int(args[0])-1][2] == 'outfit':
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesenitem[1][int(args[0])-1][0]))
-                if client.ismesenitem[1][int(args[0])-1][2] == 'backpack':
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesenitem[1][int(args[0])-1][0]))
-                if client.ismesenitem[1][int(args[0])-1][2] == 'pet':
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,f'/Game/Athena/Items/Cosmetics/PetCarriers/{client.ismesenitem[1][int(args[0])-1][0]}.{client.ismesenitem[1][int(args[0])-1][0]}'))
-                if client.ismesenitem[1][int(args[0])-1][2] == 'pickaxe':
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesenitem[1][int(args[0])-1][0]))
-                    await client.user.party.me.set_emote('EID_IceKing')
-                if client.ismesenitem[1][int(args[0])-1][2] == 'emote':
-                    if not client.user.party.me.emote is None:
-                        if client.user.party.me.emote.lower() == client.ismesenitem[1][int(args[0])-1][0].lower():
-                            await client.user.party.me.clear_emote()
-                    await client.user.party.me.set_emote(client.ismesenitem[1][int(args[0])-1][0])
-                    client.eid=client.ismesenitem[1][int(args[0])-1][0]
-                if client.ismesenitem[1][int(args[0])-1][2] == 'emoji':
-                    await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesenitem[1][int(args[0])-1][0]}.{client.ismesenitem[1][int(args[0])-1][0]}')
-                    client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesenitem[1][int(args[0])-1][0]}.{client.ismesenitem[1][int(args[0])-1][0]}'
-                if client.ismesenitem[1][int(args[0])-1][2] == 'toy':
-                    await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesenitem[1][int(args[0])-1][0]}.{client.ismesenitem[1][int(args[0])-1][0]}')
-                    client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesenitem[1][int(args[0])-1][0]}.{client.ismesenitem[1][int(args[0])-1][0]}'
-                return
+            try:
+                if args[0].isdigit() and client.ismesjaitem[0] == 'True':
+                    if client.ismesjaitem[1][int(args[0])-1][2] == 'outfit':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][int(args[0])-1][0]))
+                    if client.ismesjaitem[1][int(args[0])-1][2] == 'backpack':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesjaitem[1][int(args[0])-1][0]))
+                    if client.ismesjaitem[1][int(args[0])-1][2] == 'pet':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,f'/Game/Athena/Items/Cosmetics/PetCarriers/{client.ismesjaitem[1][int(args[0])-1][0]}.{client.ismesjaitem[1][int(args[0])-1][0]}'))
+                    if client.ismesjaitem[1][int(args[0])-1][2] == 'pickaxe':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][int(args[0])-1][0]))
+                        await client.user.party.me.set_emote('EID_IceKing')
+                    if client.ismesjaitem[1][int(args[0])-1][2] == 'emote':
+                        if not client.user.party.me.emote is None:
+                            if client.user.party.me.emote.lower() == client.ismesjaitem[1][int(args[0])-1][0].lower():
+                                await client.user.party.me.clear_emote()
+                        await client.user.party.me.set_emote(client.ismesjaitem[1][int(args[0])-1][0])
+                        client.eid=client.ismesjaitem[1][int(args[0])-1][0]
+                    if client.ismesjaitem[1][int(args[0])-1][2] == 'emoji':
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][int(args[0])-1][0]}.{client.ismesjaitem[1][int(args[0])-1][0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][int(args[0])-1][0]}.{client.ismesjaitem[1][int(args[0])-1][0]}'
+                    if client.ismesjaitem[1][int(args[0])-1][2] == 'toy':
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][int(args[0])-1][0]}.{client.ismesjaitem[1][int(args[0])-1][0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][int(args[0])-1][0]}.{client.ismesjaitem[1][int(args[0])-1][0]}'
+                    return
+            except AttributeError:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+            try:
+                if args[0].isdigit() and client.ismesenitem[0] == 'True':
+                    if client.ismesenitem[1][int(args[0])-1][2] == 'outfit':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesenitem[1][int(args[0])-1][0]))
+                    if client.ismesenitem[1][int(args[0])-1][2] == 'backpack':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesenitem[1][int(args[0])-1][0]))
+                    if client.ismesenitem[1][int(args[0])-1][2] == 'pet':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,f'/Game/Athena/Items/Cosmetics/PetCarriers/{client.ismesenitem[1][int(args[0])-1][0]}.{client.ismesenitem[1][int(args[0])-1][0]}'))
+                    if client.ismesenitem[1][int(args[0])-1][2] == 'pickaxe':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesenitem[1][int(args[0])-1][0]))
+                        await client.user.party.me.set_emote('EID_IceKing')
+                    if client.ismesenitem[1][int(args[0])-1][2] == 'emote':
+                        if not client.user.party.me.emote is None:
+                            if client.user.party.me.emote.lower() == client.ismesenitem[1][int(args[0])-1][0].lower():
+                                await client.user.party.me.clear_emote()
+                        await client.user.party.me.set_emote(client.ismesenitem[1][int(args[0])-1][0])
+                        client.eid=client.ismesenitem[1][int(args[0])-1][0]
+                    if client.ismesenitem[1][int(args[0])-1][2] == 'emoji':
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesenitem[1][int(args[0])-1][0]}.{client.ismesenitem[1][int(args[0])-1][0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesenitem[1][int(args[0])-1][0]}.{client.ismesenitem[1][int(args[0])-1][0]}'
+                    if client.ismesenitem[1][int(args[0])-1][2] == 'toy':
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesenitem[1][int(args[0])-1][0]}.{client.ismesenitem[1][int(args[0])-1][0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesenitem[1][int(args[0])-1][0]}.{client.ismesenitem[1][int(args[0])-1][0]}'
+                    return
+            except AttributeError:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4011,8 +3971,9 @@ async def event_party_message(message):
         if rawcontent == '':
             return await message.reply(f"[{commands['id']}] [ID]")
         try:
-            client.ismesjaitem=await search_item_with_id('ja', rawcontent)
-            if client.ismesjaitem[0] == 'True':
+            isitem = await search_item_with_id("ja", rawcontent)
+            if isitem[0] == 'True':
+                client.ismesjaitem=isitem
                 if len(client.ismesjaitem[1]) > 29:
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
                 else:
@@ -4077,73 +4038,7 @@ async def event_party_message(message):
                     if len(client.ismesjaitem[1]) > 1:
                         await message.reply('数字を入力することでそのアイテムに設定します')
             else:
-                client.ismesenitem=await search_item_with_id('en', rawcontent)
-                if client.ismesenitem[0] == 'True':
-                    if len(client.ismesenitem[1]) > 29:
-                        await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
-                    else:
-                        for count,item in enumerate(client.ismesenitem[1]):
-                            if item[2] == 'outfit':
-                                if len(client.ismesenitem[1]) == 1:
-                                    await message.reply(f'スキン: {item[0]}: {item[1]}')
-                                else:
-                                    await message.reply(f'{count+1} スキン: {item[0]}: {item[1]}')
-                            if item[2] == 'backpack':
-                                if len(client.ismesenitem[1]) == 1:
-                                    await message.reply(f'バッグ: {item[0]}: {item[1]}')
-                                else:
-                                    await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
-                            if item[2] == 'pet':
-                                if len(client.ismesenitem[1]) == 1:
-                                    await message.reply(f'バッグ: {item[0]}: {item[1]}')
-                                else:
-                                    await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
-                            if item[2] == 'pickaxe':
-                                if len(client.ismesenitem[1]) == 1:
-                                    await message.reply(f'ツルハシ: {item[0]}: {item[1]}')
-                                else:
-                                    await message.reply(f'{count+1} ツルハシ: {item[0]}: {item[1]}')
-                            if item[2] == 'emote':
-                                if len(client.ismesenitem[1]) == 1:
-                                    await message.reply(f'エモート: {item[0]}: {item[1]}')
-                                else:
-                                    await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
-                            if item[2] == 'emoji':
-                                if len(client.ismesenitem[1]) == 1:
-                                    await message.reply(f'エモート: {item[0]}: {item[1]}')
-                                else:
-                                    await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
-                            if item[2] == 'toy':
-                                if len(client.ismesenitem[1]) == 1:
-                                    await message.reply(f'エモート: {item[0]}: {item[1]}')
-                                else:
-                                    await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
-                        if len(client.ismesenitem[1]) == 1:
-                            if client.ismesjaitem[1][0][2] == 'outfit':
-                                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][0][0]))
-                            if client.ismesjaitem[1][0][2] == 'backpack':
-                                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesjaitem[1][0][0]))
-                            if client.ismesjaitem[1][0][2] == 'pet':
-                                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,f'/Game/Athena/Items/Cosmetics/PetCarriers/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'))
-                            if client.ismesjaitem[1][0][2] == 'pickaxe':
-                                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][0][0]))
-                                await client.user.party.me.set_emote('EID_IceKing')
-                            if client.ismesjaitem[1][0][2] == 'emote':
-                                if not client.user.party.me.emote is None:
-                                    if client.user.party.me.emote.lower() == client.ismesjaitem[1][0][0].lower():
-                                        await client.user.party.me.clear_emote()
-                                await client.user.party.me.set_emote(client.ismesjaitem[1][0][0])
-                                client.eid=client.ismesjaitem[1][0][0]
-                            if client.ismesjaitem[1][0][2] == 'emoji':
-                                await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}')
-                                client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'
-                            if client.ismesjaitem[1][0][2] == 'toy':
-                                await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}')
-                                client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'
-                        if len(client.ismesenitem[1]) > 1:
-                            await message.reply('数字を入力することでそのアイテムに設定します')
-                else:
-                    await message.reply('見つかりません')
+                await message.reply('見つかりません')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4156,8 +4051,9 @@ async def event_party_message(message):
         if rawcontent == '':
             return await message.reply(f"[{commands['skin']}] [スキン名]")
         try:
-            client.ismesjaitem=await search_item_with_type('ja', rawcontent, 'outfit')
-            if client.ismesjaitem[0] == 'True':
+            isitem = await search_item_with_type("ja", rawcontent, "outfit")
+            if isitem[0] == 'True':
+                client.ismesjaitem=isitem
                 if len(client.ismesjaitem[1]) > 29:
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
                 else:
@@ -4171,13 +4067,14 @@ async def event_party_message(message):
                     if len(client.ismesjaitem[1]) > 1:
                         await message.reply('数字を入力することでそのアイテムに設定します')
             else:
-                client.ismesenitem=await search_item_with_type('en', rawcontent, 'outfit')
-                if client.ismesenitem[0] == 'True':
+                isitem = await search_item_with_type("en", rawcontent, "outfit")
+                if isitem[0] == 'True':
+                    client.ismesenitem=isitem
                     if len(client.ismesenitem[1]) > 29:
                         await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
                     else:
                         for count,item in enumerate(client.ismesenitem[1]):
-                            if len(client.ismesjaitem[1]) == 1:
+                            if len(client.ismesenitem[1]) == 1:
                                 await message.reply(f'{item[1]}')
                             else:
                                 await message.reply(f'{count+1}: {item[1]}')
@@ -4199,8 +4096,9 @@ async def event_party_message(message):
         if rawcontent == '':
             return await message.reply(f"[{commands['bag']}] [バッグ名]")
         try:
-            client.ismesjaitem=await search_item_with_type('ja', rawcontent, 'backpack,pet')
-            if client.ismesjaitem[0] == 'True':
+            isitem = await search_item_with_type("ja", rawcontent, "backpack,pet")
+            if isitem[0] == 'True':
+                client.ismesjaitem=isitem
                 if len(client.ismesjaitem[1]) > 29:
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
                 else:
@@ -4217,13 +4115,14 @@ async def event_party_message(message):
                     if len(client.ismesjaitem[1]) > 1:
                         await message.reply('数字を入力することでそのアイテムに設定します')
             else:
-                client.ismesenitem=await search_item_with_type('en', rawcontent, 'backpack,pet')
-                if client.ismesenitem[0] == 'True':
+                isitem = await search_item_with_type("en", rawcontent, "backpack,pet")
+                if isitem[0] == 'True':
+                    client.ismesenitem=isitem
                     if len(client.ismesenitem[1]) > 29:
                         await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
                     else:
                         for count,item in enumerate(client.ismesenitem[1]):
-                            if len(client.ismesjaitem[1]) == 1:
+                            if len(client.ismesenitem[1]) == 1:
                                 await message.reply(f'{item[1]}')
                             else:
                                 await message.reply(f'{count+1}: {item[1]}')
@@ -4245,8 +4144,9 @@ async def event_party_message(message):
         if rawcontent == '':
             return await message.reply(f"[{commands['pickaxe']}] [ツルハシ名]]")
         try:
-            client.ismesjaitem=await search_item_with_type('ja', rawcontent, 'pickaxe')
-            if client.ismesjaitem[0] == 'True':
+            isitem = await search_item_with_type("ja", rawcontent, "pickaxe")
+            if isitem[0] == 'True':
+                client.ismesjaitem=isitem
                 if len(client.ismesjaitem[1]) > 29:
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
                 else:
@@ -4261,13 +4161,14 @@ async def event_party_message(message):
                     if len(client.ismesjaitem[1]) > 1:
                         await message.reply('数字を入力することでそのアイテムに設定します')
             else:
-                client.ismesenitem=await search_item_with_type('en', rawcontent, 'pickaxe')
-                if client.ismesenitem[0] == 'True':
+                isitem = await search_item_with_type("en", rawcontent, "pickaxe")
+                if isitem[0] == 'True':
+                    client.ismesenitem=isitem
                     if len(client.ismesenitem[1]) > 29:
                         await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
                     else:
                         for count,item in enumerate(client.ismesenitem[1]):
-                            if len(client.ismesjaitem[1]) == 1:
+                            if len(client.ismesenitem[1]) == 1:
                                 await message.reply(f'{item[1]}')
                             else:
                                 await message.reply(f'{count+1}: {item[1]}')
@@ -4290,8 +4191,9 @@ async def event_party_message(message):
         if rawcontent == '':
             return await message.reply(f"[{commands['emote']}] [エモート名]]")
         try:
-            client.ismesjaitem=await search_item_with_type('ja', rawcontent, 'emote')
-            if client.ismesjaitem[0] == 'True':
+            isitem = await search_item_with_type("ja", rawcontent, "emote")
+            if isitem[0] == 'True':
+                client.ismesjaitem=isitem
                 if len(client.ismesjaitem[1]) > 29:
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
                 else:
@@ -4306,13 +4208,14 @@ async def event_party_message(message):
                     if len(client.ismesjaitem[1]) > 1:
                         await message.reply('数字を入力することでそのアイテムに設定します')
             else:
-                client.ismesenitem=await search_item_with_type('en', rawcontent, 'emote')
-                if client.ismesenitem[0] == 'True':
+                isitem = await search_item_with_type("en", rawcontent, "emote")
+                if isitem[0] == 'True':
+                    client.ismesenitem=isitem
                     if len(client.ismesenitem[1]) > 29:
                         await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
                     else:
                         for count,item in enumerate(client.ismesenitem[1]):
-                            if len(client.ismesjaitem[1]) == 1:
+                            if len(client.ismesenitem[1]) == 1:
                                 await message.reply(f'{item[1]}')
                             else:
                                 await message.reply(f'{count+1}: {item[1]}')
@@ -4335,8 +4238,9 @@ async def event_party_message(message):
         if rawcontent == '':
             return await message.reply(f"[{commands['set']}] [セット名]]")
         try:
-            client.ismesjaitem=await search_set_item('ja', rawcontent)
-            if client.ismesjaitem[0] == 'True':
+            isitem = await search_set_item("ja", rawcontent)
+            if isitem[0] == 'True':
+                client.ismesjaitem=isitem
                 for count,item in enumerate(client.ismesjaitem[1]):
                     if item[2] == 'outfit':
                         if len(client.ismesjaitem[1]) == 1:
@@ -4384,10 +4288,11 @@ async def event_party_message(message):
                             await message.reply(f'{count+1} エモート: {item[1]}')
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}'
-                        
+                    
             else:
-                client.ismesenitem=await search_set_item('en', rawcontent)
-                if client.ismesenitem[0] == 'True':
+                isitem = await search_set_item("en", rawcontent)
+                if isitem[0] == 'True':
+                    client.ismesenitem=isitem
                     for count,item in enumerate(client.ismesenitem[1]):
                         if item[2] == 'outfit':
                             if len(client.ismesenitem[1]) == 1:
@@ -4628,52 +4533,60 @@ async def event_party_message(message):
 
     else:
         try:
-            if args[0].isdigit() and client.ismesjaitem[0] == 'True':
-                if client.ismesjaitem[1][int(args[0])-1][2] == 'outfit':
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][int(args[0])-1][0]))
-                if client.ismesjaitem[1][int(args[0])-1][2] == 'backpack':
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesjaitem[1][int(args[0])-1][0]))
-                if client.ismesjaitem[1][int(args[0])-1][2] == 'pet':
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,f'/Game/Athena/Items/Cosmetics/PetCarriers/{client.ismesjaitem[1][int(args[0])-1][0]}.{client.ismesjaitem[1][int(args[0])-1][0]}'))
-                if client.ismesjaitem[1][int(args[0])-1][2] == 'pickaxe':
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][int(args[0])-1][0]))
-                    await client.user.party.me.set_emote('EID_IceKing')
-                if client.ismesjaitem[1][int(args[0])-1][2] == 'emote':
-                    if not client.user.party.me.emote is None:
-                        if client.user.party.me.emote.lower() == client.ismesjaitem[1][int(args[0])-1][0].lower():
-                            await client.user.party.me.clear_emote()
-                    await client.user.party.me.set_emote(client.ismesjaitem[1][int(args[0])-1][0])
-                    client.eid=client.ismesjaitem[1][int(args[0])-1][0]
-                if client.ismesjaitem[1][int(args[0])-1][2] == 'emoji':
-                    await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][int(args[0])-1][0]}.{client.ismesjaitem[1][int(args[0])-1][0]}')
-                    client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][int(args[0])-1][0]}.{client.ismesjaitem[1][int(args[0])-1][0]}'
-                if client.ismesjaitem[1][int(args[0])-1][2] == 'toy':
-                    await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][int(args[0])-1][0]}.{client.ismesjaitem[1][int(args[0])-1][0]}')
-                    client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][int(args[0])-1][0]}.{client.ismesjaitem[1][int(args[0])-1][0]}'
-                return
-            if args[0].isdigit() and client.ismesenitem[0] == 'True':
-                if client.ismesenitem[1][int(args[0])-1][2] == 'outfit':
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesenitem[1][int(args[0])-1][0]))
-                if client.ismesenitem[1][int(args[0])-1][2] == 'backpack':
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesenitem[1][int(args[0])-1][0]))
-                if client.ismesenitem[1][int(args[0])-1][2] == 'pet':
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,f'/Game/Athena/Items/Cosmetics/PetCarriers/{client.ismesenitem[1][int(args[0])-1][0]}.{client.ismesenitem[1][int(args[0])-1][0]}'))
-                if client.ismesenitem[1][int(args[0])-1][2] == 'pickaxe':
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesenitem[1][int(args[0])-1][0]))
-                    await client.user.party.me.set_emote('EID_IceKing')
-                if client.ismesenitem[1][int(args[0])-1][2] == 'emote':
-                    if not client.user.party.me.emote is None:
-                        if client.user.party.me.emote.lower() == client.ismesenitem[1][int(args[0])-1][0].lower():
-                            await client.user.party.me.clear_emote()
-                    await client.user.party.me.set_emote(client.ismesenitem[1][int(args[0])-1][0])
-                    client.eid=client.ismesenitem[1][int(args[0])-1][0]
-                if client.ismesenitem[1][int(args[0])-1][2] == 'emoji':
-                    await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesenitem[1][int(args[0])-1][0]}.{client.ismesenitem[1][int(args[0])-1][0]}')
-                    client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesenitem[1][int(args[0])-1][0]}.{client.ismesenitem[1][int(args[0])-1][0]}'
-                if client.ismesenitem[1][int(args[0])-1][2] == 'toy':
-                    await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesenitem[1][int(args[0])-1][0]}.{client.ismesenitem[1][int(args[0])-1][0]}')
-                    client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesenitem[1][int(args[0])-1][0]}.{client.ismesenitem[1][int(args[0])-1][0]}'
-                return
+            try:
+                if args[0].isdigit() and client.ismesjaitem[0] == 'True':
+                    if client.ismesjaitem[1][int(args[0])-1][2] == 'outfit':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][int(args[0])-1][0]))
+                    if client.ismesjaitem[1][int(args[0])-1][2] == 'backpack':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesjaitem[1][int(args[0])-1][0]))
+                    if client.ismesjaitem[1][int(args[0])-1][2] == 'pet':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,f'/Game/Athena/Items/Cosmetics/PetCarriers/{client.ismesjaitem[1][int(args[0])-1][0]}.{client.ismesjaitem[1][int(args[0])-1][0]}'))
+                    if client.ismesjaitem[1][int(args[0])-1][2] == 'pickaxe':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][int(args[0])-1][0]))
+                        await client.user.party.me.set_emote('EID_IceKing')
+                    if client.ismesjaitem[1][int(args[0])-1][2] == 'emote':
+                        if not client.user.party.me.emote is None:
+                            if client.user.party.me.emote.lower() == client.ismesjaitem[1][int(args[0])-1][0].lower():
+                                await client.user.party.me.clear_emote()
+                        await client.user.party.me.set_emote(client.ismesjaitem[1][int(args[0])-1][0])
+                        client.eid=client.ismesjaitem[1][int(args[0])-1][0]
+                    if client.ismesjaitem[1][int(args[0])-1][2] == 'emoji':
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][int(args[0])-1][0]}.{client.ismesjaitem[1][int(args[0])-1][0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][int(args[0])-1][0]}.{client.ismesjaitem[1][int(args[0])-1][0]}'
+                    if client.ismesjaitem[1][int(args[0])-1][2] == 'toy':
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][int(args[0])-1][0]}.{client.ismesjaitem[1][int(args[0])-1][0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][int(args[0])-1][0]}.{client.ismesjaitem[1][int(args[0])-1][0]}'
+                    return
+            except AttributeError:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+            try:
+                if args[0].isdigit() and client.ismesenitem[0] == 'True':
+                    if client.ismesenitem[1][int(args[0])-1][2] == 'outfit':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesenitem[1][int(args[0])-1][0]))
+                    if client.ismesenitem[1][int(args[0])-1][2] == 'backpack':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesenitem[1][int(args[0])-1][0]))
+                    if client.ismesenitem[1][int(args[0])-1][2] == 'pet':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,f'/Game/Athena/Items/Cosmetics/PetCarriers/{client.ismesenitem[1][int(args[0])-1][0]}.{client.ismesenitem[1][int(args[0])-1][0]}'))
+                    if client.ismesenitem[1][int(args[0])-1][2] == 'pickaxe':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesenitem[1][int(args[0])-1][0]))
+                        await client.user.party.me.set_emote('EID_IceKing')
+                    if client.ismesenitem[1][int(args[0])-1][2] == 'emote':
+                        if not client.user.party.me.emote is None:
+                            if client.user.party.me.emote.lower() == client.ismesenitem[1][int(args[0])-1][0].lower():
+                                await client.user.party.me.clear_emote()
+                        await client.user.party.me.set_emote(client.ismesenitem[1][int(args[0])-1][0])
+                        client.eid=client.ismesenitem[1][int(args[0])-1][0]
+                    if client.ismesenitem[1][int(args[0])-1][2] == 'emoji':
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesenitem[1][int(args[0])-1][0]}.{client.ismesenitem[1][int(args[0])-1][0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesenitem[1][int(args[0])-1][0]}.{client.ismesenitem[1][int(args[0])-1][0]}'
+                    if client.ismesenitem[1][int(args[0])-1][2] == 'toy':
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesenitem[1][int(args[0])-1][0]}.{client.ismesenitem[1][int(args[0])-1][0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesenitem[1][int(args[0])-1][0]}.{client.ismesenitem[1][int(args[0])-1][0]}'
+                    return
+            except AttributeError:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
