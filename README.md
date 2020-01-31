@@ -61,6 +61,7 @@ prev                 : 一つ前のコマンドを繰り返す
 restart              : プログラムを再起動する
 relogin              : アカウントに再ログインする
 reload               : configとcommandsを再読み込みする
+get                  : パーティーリーダーのアイテム各種の情報を取得する
 friendcount          : 現在のフレンド数を表示する
 skinmimic            : skinmimic [true / false] 他人のスキンを真似るかどうかの設定
 emotemimic           : emotemimic [true / false] 他人のエモートを真似るかどうかの設定
@@ -92,6 +93,8 @@ acceptpending        : acceptpending [ユーザー名 / ユーザーID] ユー�
 declinepending       : declinepending [ユーザー名 / ユーザーID] ユーザーからのフレンド申請を拒否する
 blockfriend          : blockfriend[ユーザー名 / ユーザーID] ユーザーをブロックする
 unblockfriend        : unblockfriend [ユーザー名 / ユーザーID] ユーザーをブロック解除する
+chatban              : chatban [ユーザー名 / ユーザーID] : [理由(任意)] ユーザーをチャットバンする
+chatbanme            : メッセージの送り主をチャットバンする
 promote              : promote [ユーザー名 / ユーザーID] ユーザーにパーティーリーダーを譲渡する
 promoteme            : メッセージの送り主にパーティーリーダーを譲渡する
 kick                 : kick [ユーザー名 / ユーザーID] ユーザーをキックする
