@@ -955,6 +955,55 @@ async def event_party_member_update(member):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
 
+async def event_party_member_disconnect(member):
+    client=member.client
+    if member is None:
+        return
+    if data['loglevel'] == 'normal':
+        if member.display_name is None:
+            print(magenta(f'[{now_()}] [パーティー] [{client.user.display_name}] None の接続が切断'))
+        else:
+            print(magenta(f'[{now_()}] [パーティー] [{client.user.display_name}] {member.display_name} の接続が切断'))
+    else:
+        if member.display_name is None:
+            print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client.user.display_name}] None / {member.id} [{platform_to_str(member.platform)}/{member.input}] の接続が切断'))
+        else:
+            print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client.user.display_name}] {member.display_name} / {member.id} [{platform_to_str(member.platform)}/{member.input}] の接続が切断'))
+
+async def event_party_member_chatban(member, reason):
+    client=member.client
+    if member is None:
+        return
+    if data['loglevel'] == 'normal':
+        if member.display_name is None:
+            if reason is None:
+                print(magenta(f'[{now_()}] [パーティー] [{client.user.display_name}] None がチャットバン'))
+            else:
+                print(magenta(f'[{now_()}] [パーティー] [{client.user.display_name}] None がチャットバン | 理由: {reason}'))
+        else:
+            if reason is None:
+                print(magenta(f'[{now_()}] [パーティー] [{client.user.display_name}] {member.display_name} がチャットバン'))
+            else:
+                print(magenta(f'[{now_()}] [パーティー] [{client.user.display_name}] {member.display_name} がチャットバン | 理由: {reason}'))
+    else:
+        if member.display_name is None:
+            if reason is None:
+                print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client.user.display_name}] None / {member.id} [{platform_to_str(member.platform)}/{member.input}] がチャットバン'))
+            else:
+                print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client.user.display_name}] None / {member.id} [{platform_to_str(member.platform)}/{member.input}] がチャットバン | 理由: {reason}'))
+        else:
+            if reason is None:
+                print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client.user.display_name}] {member.display_name} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がチャットバン'))
+            else:
+                print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client.user.display_name}] {member.display_name} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がチャットバン | 理由: {reason}'))
+
+async def event_party_update(party):
+    client=party.client
+    if party is None:
+        return
+    if not data['loglevel'] == 'normal':
+        print(magenta(f'[{now_()}] [パーティー/{party.id}] [{client.user.display_name}] パーティー更新'))
+
 #========================================================================================================================
 #========================================================================================================================
 #========================================================================================================================
@@ -972,15 +1021,9 @@ async def event_friend_message(message):
     rawcontent2 = ' '.join(rawargs[2:])
     user=None
     if data['loglevel'] == 'normal':
-        if message.author.display_name is None:
-            print(f'[{now_()}] [{client.user.display_name}] None | {message.content}')
-        else:
-            print(f'[{now_()}] [{client.user.display_name}] {message.author.display_name} | {message.content}')
+        print(f'[{now_()}] [{client.user.display_name}] {str(message.author.display_name)} | {message.content}')
     else:
-        if message.author.display_name is None:
-            print(f'[{now_()}] [{client.user.display_name}] None / {message.author.id} [{platform_to_str(message.author.platform)}] | {message.content}')
-        else:
-            print(f'[{now_()}] [{client.user.display_name}] {message.author.display_name}/ {message.author.id} [{platform_to_str(message.author.platform)}] | {message.content}')
+        print(f'[{now_()}] [{client.user.display_name}] {str(message.author.display_name)}/ {message.author.id} [{platform_to_str(message.author.platform)}] | {message.content}')
 
     if args[0] in commands['prev'].split(','):
         args = jaconv.kata2hira(client.prevmessage.lower()).split()
@@ -1022,38 +1065,71 @@ async def event_friend_message(message):
                 await message.reply('正常に読み込みが完了しました')
             else:
                 await message.reply('エラー')
+                return
+            client.owner=None
             try:
-                client.owner=None
                 owner=await client.fetch_profile(data['fortnite']['owner'])
-                if owner is None:
-                    print(red(f'[{now_()}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
-                else:
-                    client.owner=client.get_friend(owner.id)
-                    if client.owner is None:
-                        try:
-                            await client.add_friend(owner.id)
-                        except fortnitepy.HTTPException:
-                            if data['loglevel'] == 'debug':
-                                print(red(traceback.format_exc()))
-                        except Exception:
-                            if data['loglevel'] == 'debug':
-                                print(red(traceback.format_exc()))
-                        print(red(f'[{now_()}] 所有者とフレンドではありません。フレンドになってからもう一度起動してください。'))
-                    else:
-                        if data['loglevel'] == 'normal':
-                            print(green(f'[{now_()}] 所有者: {client.owner.display_name}'))
-                        else:
-                            print(green(f'[{now_()}] 所有者: {client.owner.display_name} / {client.owner.id}'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                 print(red(f'[{now_()}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                return
+            if owner is None:
+                print(red(f'[{now_()}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
+                return
+            client.owner=client.get_friend(owner.id)
+            if client.owner is None:
+                try:
+                    await client.add_friend(owner.id)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    print(red(f'[{now_()}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
+                except Exception:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                print(red(f'[{now_()}] 所有者とフレンドではありません。フレンドになってからもう一度起動してください。'))
+                return
+            if data['loglevel'] == 'normal':
+                print(green(f'[{now_()}] 所有者: {client.owner.display_name}'))
+            else:
+                print(green(f'[{now_()}] 所有者: {client.owner.display_name} / {client.owner.id}'))
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['get'].split(','):
-        await message.reply(f'{client.user.party.leader.display_name}\n{client.user.party.leader.pickaxe}\n{client.user.party.leader.pickaxe_variants}')
+        try:
+            if rawcontent == '':
+                await message.reply(f"[{commands['get']}] [ユーザー名/ユーザーID]")
+                return
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
+                if not user.id in client.user.party.members.keys():
+                    await message.reply('ユーザーがパーティーにいません')
+                    return
+                member=client.user.party.members.get(user.id)
+                print(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
+                await message.reply(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
+            else:
+                if not message.author.id in client.user.party.members.keys():
+                    await message.reply('ユーザーがパーティーにいません')
+                    return
+                member=client.user.party.members.get(message.author.id)
+                print(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
+                await message.reply(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
+        except Exception:
+            print(red(traceback.format_exc()))
+            await message.reply('エラー')
 
     elif args[0] in commands['friendcount'].split(','):
         try:
@@ -1177,35 +1253,76 @@ async def event_friend_message(message):
 
     elif args[0] in commands['wait'].split(','):
         try:
-            if not client.owner is None:
-                if client.owner.id in client.user.party.members.keys() and not message.author.id == client.owner.id:
-                    await message.reply('現在利用できません')
-                else:
-                    client.acceptinvite=False
-                    try:
-                        client.timer_.cancel()
-                    except Exception:
-                        if data['loglevel'] == 'debug':
-                            print(red(traceback.format_exc()))
-                    client.timer_=Timer(data['fortnite']['waitinterval'], inviteaccept, [client])
-                    client.timer_.start()
-                    await message.reply(f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")
-            else:
+            if client.owner is None:
                 client.acceptinvite=False
                 try:
                     client.timer_.cancel()
-                except Exception:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
+                except AttributeError:
+                    pass
                 client.timer_=Timer(data['fortnite']['waitinterval'], inviteaccept, [client])
                 client.timer_.start()
                 await message.reply(f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")
+            else:
+                if client.owner.id in client.user.party.members.keys() and not message.author.id == client.owner.id:
+                    await message.reply('現在利用できません')
+                    return
+                client.acceptinvite=False
+                try:
+                    client.timer_.cancel()
+                except AttributeError:
+                    pass
+                client.timer_=Timer(data['fortnite']['waitinterval'], inviteaccept, [client])
+                client.timer_.start()
+                await message.reply(f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")             
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['join'].split(','):
+        try:
+            if rawcontent == '':
+                await message.reply(f"[{commands['join']}] [ユーザー名/ユーザーID]")
+                return
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
+                friend=client.get_friend(user.id)
+                if friend is None:
+                    await message.reply('ユーザーとフレンドではありません')
+                else:
+                    await friend.join_party()
+            else:
+                await message.author.join_party()
+        except fortnitepy.PartyError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+            await message.reply('既にパーティーのメンバーです')
+        except fortnitepy.NotFound:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+            await message.reply('パーティーが見つかりません')
+        except fortnitepy.Forbidden:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+            await message.reply('パーティーがプライベートです')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+            await message.reply('パーティーの参加リクエストを処理中にエラーが発生しました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            await message.reply('エラー')
+
+    elif args[0] in commands['joinid'].split(','):
         try:
             await client.join_to_party(party_id=args[1])
         except fortnitepy.PartyError:
@@ -1223,7 +1340,7 @@ async def event_friend_message(message):
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['join']}] [party_id]")
+            await message.reply(f"[{commands['join']}] [パーティーID]")
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
@@ -1242,47 +1359,39 @@ async def event_friend_message(message):
 
     elif args[0] in commands['invite'].split(','):
         try:
-            try:
-                user=await client.fetch_profile(rawcontent)
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+            if rawcontent == '':
+                await message.reply(f"[{commands['invite']}] [ユーザー名 / ユーザーID]")
                 return
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
                 friend=client.get_friend(user.id)
                 if friend is None:
-                    friend=client.get_friend(rawcontent)
-                    if friend is None:
-                        await message.reply('ユーザーとフレンドではありません')
-                if not friend is None:
-                    try:
-                        await friend.invite()
-                        if data['loglevel'] == 'normal':
-                            await message.reply(f'{friend.display_name} をパーティーに招待')
-                        else:
-                            await message.reply(f'{friend.display_name} / {friend.id} をパーティー {client.user.party.id} に招待')
-                    except fortnitepy.PartyError:
-                        if data['loglevel'] == 'debug':
-                            print(red(traceback.format_exc()))
-                        await message.reply('パーティーが満員か、既にパーティーにいます')
-                    except fortnitepy.HTTPException:
-                        if data['loglevel'] == 'debug':
-                            print(red(traceback.format_exc()))
-                        await message.reply('パーティー招待の送信リクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['invite']}] [ユーザー名 / ユーザーID]")
-        except Exception:
-            print(red(traceback.format_exc()))
-            await message.reply('エラー')
-
-    elif args[0] in commands['inviteme'].split(','):
-        try:
-            await message.author.invite()
+                    await message.reply('ユーザーとフレンドではありません')
+                    return
+                await friend.invite()
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(friend.display_name)} をパーティーに招待')
+                else:
+                    await message.reply(f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
+            else:
+                friend=client.get_friend(message.author.id)
+                if friend is None:
+                    await message.reply('ユーザーとフレンドではありません')
+                    return
+                await friend.invite()
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(friend.display_name)} をパーティーに招待')
+                else:
+                    await message.reply(f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -1297,22 +1406,40 @@ async def event_friend_message(message):
 
     elif args[0] in commands['message'].split(','):
         try:
+            if rawcontent == '':
+                await message.reply(f"[{commands['message']}] [ユーザー名 / ユーザーID] : [内容]")
+                return
             send=rawcontent.split(' : ')
-            user=await client.fetch_profile(send[0])
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
+            if not send[0] in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(send[0])
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
                 friend=client.get_friend(user.id)
                 if friend is None:
-                    friend=client.get_friend(send[0])
-                    if friend is None:
-                        await message.reply('ユーザーとフレンドではありません')
-                if not friend is None:
-                    await friend.send(send[1])
-                    if data['loglevel'] == 'normal':
-                        await message.reply(f'{friend.display_name} にメッセージ {send[1]} を送信')
-                    else:
-                        await message.reply(f'{friend.display_name} / {friend.id} にメッセージ {send[1]} を送信')
+                    await message.reply('ユーザーとフレンドではありません')
+                    return
+                await friend.send(send[1])
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
+                else:
+                    await message.reply(f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
+            else:
+                friend=client.get_friend(message.author.id)
+                if friend is None:
+                    await message.reply('ユーザーとフレンドではありません')
+                    return
+                await friend.send(send[1])
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
+                else:
+                    await message.reply(f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -1327,19 +1454,18 @@ async def event_friend_message(message):
 
     elif args[0] in commands['partymessage'].split(','):
         try:
+            if rawcontent == '':
+                await message.reply(f"[{commands['partymessage']}] [内容]")
+                return
             await client.user.party.send(rawcontent)
             if data['loglevel'] == 'normal':
                 await message.reply(f'パーティーにメッセージ {rawcontent} を送信')
             else:
                 await message.reply(f'パーティー {client.user.party.id} にメッセージ {rawcontent} を送信')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['partymessage']}] [内容]")
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
-
+                
     elif args[0] in commands['status'].split(','):
         try:
             await client.set_status(rawcontent)
@@ -1405,62 +1531,74 @@ async def event_friend_message(message):
 
     elif args[0] in commands['user'].split(','):
         try:
-            user=await client.fetch_profile(rawcontent)
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
-                if user.display_name is None:
-                    print(f'None / {user.id}')
-                    await message.reply(f'None / {user.id}')
+            if rawcontent == '':
+                await message.reply(f"[{commands['user']}] [ユーザー名 / ユーザーID]")
+                return
+            if not rawcontent in commands['me'].split(','):
+                user=await client.fetch_profile(rawcontent)
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
+                if data['loglevel'] == 'normal':
+                    print(f'{str(user.display_name)}')
+                    await message.reply(f'{str(user.display_name)}')
                 else:
-                    print(f'{user.display_name} / {user.id}')
-                    await message.reply(f'{user.display_name} / {user.id}')
+                    print(f'{str(user.display_name)} / {user.id}')
+                    await message.reply(f'{str(user.display_name)} / {user.id}')
+            else:
+                if data['loglevel'] == 'normal':
+                    print(f'{str(message.author.display_name)}')
+                    await message.reply(f'{str(message.author.display_name)}')
+                else:
+                    print(f'{str(message.author.display_name)} / {message.author.id}')
+                    await message.reply(f'{str(message.author.display_name)} / {message.author.id}')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
             await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['user']}] [ユーザー名 / ユーザーID]")
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['friend'].split(','):
         try:
-            user=await client.fetch_profile(rawcontent)
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
+            if rawcontent == '':
+                await message.reply(f"[{commands['friend']}] [ユーザー名 / ユーザーID]")
+                return
+            if not rawcontent in commands['me'].split(','):
+                user=await client.fetch_profile(rawcontent)
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
                 friend=client.get_friend(user.id)
                 if friend is None:
                     await message.reply('ユーザーとフレンドではありません')
+                    return
+                if friend.nickname is None:
+                    print(f'{str(friend.display_name)} / {friend.id}')
+                    await message.reply(f'{str(friend.display_name)} / {friend.id}')
                 else:
-                    if friend.nickname is None:
-                        if friend.display_name is None:
-                            print(f'None / {friend.id}')
-                            await message.reply(f'None / {friend.id}')
-                        else:
-                            print(f'{friend.display_name} / {friend.id}')
-                            await message.reply(f'{friend.display_name} / {friend.id}')
-                    else:
-                        if friend.display_name is None:
-                            print(f'{friend.nickname}(None) / {friend.id}')
-                            await message.reply(f'{friend.nickname}(None) / {friend.id}')
-                        else:
-                            print(f'{friend.nickname}({friend.display_name}) / {friend.id}')
-                            await message.reply(f'{friend.nickname}({friend.display_name}) / {friend.id}')
-                    if not friend.last_logout is None:
-                        await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
+                    print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+                    await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+                if not friend.last_logout is None:
+                    await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
+            else:
+                friend=client.get_friend(message.author.id)
+                if friend is None:
+                    await message.reply('ユーザーとフレンドではありません')
+                    return
+                if friend.nickname is None:
+                    print(f'{str(friend.display_name)} / {friend.id}')
+                    await message.reply(f'{str(friend.display_name)} / {friend.id}')
+                else:
+                    print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+                    await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+                if not friend.last_logout is None:
+                    await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
             await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['friend']}] [ユーザー名 / ユーザーID]")
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
@@ -1468,96 +1606,109 @@ async def event_friend_message(message):
     elif args[0] in commands['info'].split(','):
         try:
             if args[1] in commands['info_party'].split(','):
+                print(f'{client.user.party.id}\n人数: {client.user.party.member_count}')
                 await message.reply(f'{client.user.party.id}\n人数: {client.user.party.member_count}')
                 for member in client.user.party.members.values():
-                    if member.display_name is None:
-                        await message.reply(f'None / {member.id}')
+                    if data['loglevel'] == 'normal':
+                        print(f'{str(member.display_name)}')
+                        await message.reply(f'{str(member.display_name)}')
                     else:
-                        await message.reply(f'{member.display_name} / {member.id}')
+                        print(f'{str(member.display_name)} / {member.id}')
+                        await message.reply(f'{str(member.display_name)} / {member.id}')
             elif args[1] in commands['info_item'].split(','):
                 if rawcontent2 == '':
-                    return await message.reply(f"[{commands['info']}] [{commands['info_item']}] [アイテム名]")
+                    await message.reply(f"[{commands['info']}] [{commands['info_item']}] [アイテム名]")
+                    return
                 items=await is_itemname('ja', rawcontent2)
                 if items[0] == 'True':
+                    client.ismesjaitem=items
                     if len(items[1]) > 29:
                         await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
-                    else:
-                        for item in items[1]:
-                            await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                            print(item[0])
-                else:
-                    client.ismesenitem=await is_itemname('en', rawcontent2)
-                    if client.ismesenitem[0] == 'True':
-                        if len(client.ismesenitem[1]) > 29:
-                            await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
-                        else:
-                            for item in client.ismesenitem[1]:
-                                await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                    else:
-                        await message.reply('見つかりません')
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                        print(item[0])
+                    return
+                items=await is_itemname('en', rawcontent2)
+                if items[0] == 'True':
+                    client.ismesenitem=items
+                    if len(items[1]) > 29:
+                        await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                        print(item[0])
+                    return
+                await message.reply('見つかりません')
             elif args[1] in commands['id'].split(','):
                 if rawcontent2 == '':
-                    return await message.reply(f"[{commands['info']}] [{commands['id']}] [ID]")
+                    await message.reply(f"[{commands['info']}] [{commands['id']}] [ID]")
+                    return
                 items=await search_item_with_id('ja', rawcontent2)
                 if items[0] == 'True':
+                    client.ismesjaitem=items
                     if len(items[1]) > 29:
                         await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
-                    else:
-                        for item in items[1]:
-                            await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                            print(item[0])
-                else:
-                    client.ismesenitem=await search_item_with_id('en', rawcontent2)
-                    if client.ismesenitem[0] == 'True':
-                        if len(client.ismesenitem[1]) > 29:
-                            await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
-                        else:
-                            for item in client.ismesenitem[1]:
-                                await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                    else:
-                        await message.reply('見つかりません')
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                        print(item[0])
+                    return
+                items=await search_item_with_id('en', rawcontent2)
+                if items[0] == 'True':
+                    client.ismesenitem=items
+                    if len(items[1]) > 29:
+                        await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                        print(item[0])
+                    return
+                await message.reply('見つかりません')
             elif args[1] in commands['skin'].split(','):
                 if rawcontent2 == '':
-                    return await message.reply(f"[{commands['info']}] [{commands['skin']}] [スキン名]")
+                    await message.reply(f"[{commands['info']}] [{commands['skin']}] [スキン名]")
+                    return
                 items=await search_item_with_type('ja', rawcontent2, 'outfit')
                 if items[0] == 'True':
                     if len(items[1]) > 29:
                         await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
-                    else:
-                        for item in items[1]:
-                            await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                            print(item[0])
-                else:
-                    client.ismesenitem=await search_item_with_type('en', rawcontent2, 'outfit')
-                    if client.ismesenitem[0] == 'True':
-                        if len(client.ismesenitem[1]) > 29:
-                            await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
-                        else:
-                            for item in client.ismesenitem[1]:
-                                await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                    else:
-                        await message.reply('見つかりません')
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                        print(item[0])
+                    return
+                items=await search_item_with_type('en', rawcontent2, 'outfit')
+                if items[0] == 'True':
+                    if len(items[1]) > 29:
+                        await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                    return
+                await message.reply('見つかりません')
             elif args[1] in commands['bag'].split(','):
                 if rawcontent2 == '':
-                    return await message.reply(f"[{commands['info']}] [{commands['bag']}] [バッグ名]")
+                    await message.reply(f"[{commands['info']}] [{commands['bag']}] [バッグ名]")
+                    return
                 items=await search_item_with_type('ja', rawcontent2, 'backpack,pet')
                 if items[0] == 'True':
                     if len(items[1]) > 29:
                         await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
-                    else:
-                        for item in items[1]:
-                            await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                            print(item[0])
-                else:
-                    client.ismesenitem=await search_item_with_type('en', rawcontent2, 'backpack,pet')
-                    if client.ismesenitem[0] == 'True':
-                        if len(client.ismesenitem[1]) > 29:
-                            await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
-                        else:
-                            for item in client.ismesenitem[1]:
-                                await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                    else:
-                        await message.reply('見つかりません')
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                        print(item[0])
+                    return
+                items=await search_item_with_type('en', rawcontent2, 'outfit')
+                if items[0] == 'True':
+                    if len(items[1]) > 29:
+                        await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                    return
+                await message.reply('見つかりません')
             elif args[1] in commands['pickaxe'].split(','):
                 if rawcontent2 == '':
                     return await message.reply(f"[{commands['info']}] [{commands['pickaxe']}] [ツルハシ名]")
@@ -1565,20 +1716,20 @@ async def event_friend_message(message):
                 if items[0] == 'True':
                     if len(items[1]) > 29:
                         await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
                         print(item[0])
-                    else:
-                        for item in items[1]:
-                            await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                else:
-                    client.ismesenitem=await search_item_with_type('en', rawcontent2, 'pickaxe')
-                    if client.ismesenitem[0] == 'True':
-                        if len(client.ismesenitem[1]) > 29:
-                            await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
-                        else:
-                            for item in client.ismesenitem[1]:
-                                await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                    else:
-                        await message.reply('見つかりません')
+                    return
+                items=await search_item_with_type('en', rawcontent2, 'outfit')
+                if items[0] == 'True':
+                    if len(items[1]) > 29:
+                        await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                    return
+                await message.reply('見つかりません')
             elif args[1] in commands['emote'].split(','):
                 if rawcontent2 == '':
                     return await message.reply(f"[{commands['info']}] [{commands['emote']}] [エモート名]")
@@ -1586,25 +1737,20 @@ async def event_friend_message(message):
                 if items[0] == 'True':
                     if len(items[1]) > 29:
                         await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
-                    else:
-                        for item in items[1]:
-                            await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                            print(item[0])
-                else:
-                    client.ismesenitem=await search_item_with_type('en', rawcontent2, 'emote,emoji,toy')
-                    if client.ismesenitem[0] == 'True':
-                        if len(client.ismesenitem[1]) > 29:
-                            await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
-                        else:
-                            for item in client.ismesenitem[1]:
-                                await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                                print(item[0])
-                    else:
-                        await message.reply('見つかりません')
-        except fortnitepy.HTTPException:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                        print(item[0])
+                    return
+                items=await search_item_with_type('en', rawcontent2, 'outfit')
+                if items[0] == 'True':
+                    if len(items[1]) > 29:
+                        await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                    return
+                await message.reply('見つかりません')
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
@@ -1619,17 +1765,18 @@ async def event_friend_message(message):
                 for pending in pendings:
                     try:
                         await pending.accept()
-                        if friend.display_name is None:
-                            await message.reply(f'None / {friend.id} をフレンドに追加')
+                        if data['loglevel'] == 'normal':
+                            await message.reply(f'{str(friend.display_name)} をフレンドに追加')
                         else:
-                            await message.reply(f'{friend.display_name} / {friend.id} をフレンドに追加')
+                            await message.reply(f'{str(friend.display_name)} / {friend.id} をフレンドに追加')
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
-                        if friend.display_name is None:
-                            await message.reply(f'None / {friend.id} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
+                        if data['loglevel'] == 'normal':
+                            await message.reply(f'{str(friend.dispaly_name)} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
                         else:
-                            await message.reply(f'{friend.display_name} / {friend.id} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
+                            await message.reply(f'{str(friend.display_name)} / {friend.id} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
+                        continue
                     except Exception:
                         print(red(traceback.format_exc()))
                         await message.reply('エラー')
@@ -1638,17 +1785,18 @@ async def event_friend_message(message):
                 for pending in pendings:
                     try:
                         await pending.decline()
-                        if friend.display_name is None:
-                            await message.reply(f'None / {friend.id} のフレンド申請を拒否')
+                        if data['loglevel'] == 'normal':
+                            await message.reply(f'{str(friend.display_name)} のフレンド申請を拒否')
                         else:
-                            await message.reply(f'{friend.display_name} / {friend.id} のフレンド申請を拒否')
+                            await message.reply(f'{str(friend.display_name)} / {friend.id} のフレンド申請を拒否')
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
-                        if friend.display_name is None:
-                            await message.reply(f'None / {friend.id} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
+                        if data['loglevel'] == 'normal':
+                            await message.reply(f'{str(friend.display_name)} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
                         else:
-                            await message.reply(f'{friend.display_name} / {friend.id} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
+                            await message.reply(f'{str(friend.display_name)} / {friend.id} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
+                        continue
                     except Exception:
                         print(red(traceback.format_exc()))
                         await message.reply('エラー')
@@ -1663,275 +1811,296 @@ async def event_friend_message(message):
 
     elif args[0] in commands['addfriend'].split(','):
         try:
-            try:
-                user=await client.fetch_profile(rawcontent)
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+            if rawcontent == '':
+                await message.reply(f"[{commands['addfriend']}] [ユーザー名 / ユーザーID]")
                 return
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
                 if client.has_friend(user.id) is True:
                     await message.reply('既にユーザーとフレンドです')
+                    return
+                await client.add_friend(user.id)
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(user.display_name)} にフレンド申請を送信')
                 else:
-                    await client.add_friend(user.id)
-                    if user.display_name is None:
-                        await message.reply(f'None / {user.id} にフレンド申請を送信')
-                    else:
-                        await message.reply(f'{user.display_name} / {user.id} にフレンド申請を送信')
+                    await message.reply(f'{str(user.display_name)} / {user.id} にフレンド申請を送信')
+            else:
+                if client.has_friend(message.author.id) is True:
+                    await message.reply('既にユーザーとフレンドです')
+                    return
+                await client.add_friend(message.author.id)
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(message.author.display_name)} にフレンド申請を送信')
+                else:
+                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} にフレンド申請を送信')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
             await message.reply('フレンド申請の送信リクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['addfriend']}] [ユーザー名 / ユーザーID]")
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['removefriend'].split(','):
         try:
-            try:
-                user=await client.fetch_profile(rawcontent)
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+            if rawcontent == '':
+                await message.reply(f"[{commands['removefriend']}] [ユーザー名 / ユーザーID]")
                 return
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
                 if client.has_friend(user.id) is False:
                     await message.reply('ユーザーとフレンドではありません')
+                    return
+                await client.remove_or_decline_friend(user.id)
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(user.display_name)} をフレンドから削除')
                 else:
-                    await client.remove_or_decline_friend(user.id)
-                    if user.display_name is None:
-                        await message.reply(f'None / {user.id} をフレンドから削除')
-                    else:
-                        await message.reply(f'{user.display_name} / {user.id} をフレンドから削除')
+                    await message.reply(f'{str(user.display_name)} / {user.id} をフレンドから削除')
+            else:
+                if client.has_friend(message.author.id) is False:
+                    await message.reply('ユーザーとフレンドではありません')
+                    return
+                await client.remove_or_decline_friend(message.author.id)
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(message.author.display_name)} をフレンドから削除')
+                else:
+                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をフレンドから削除')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
-            await message.reply('フレンドの削除リクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['removefriend']}] [ユーザー名 / ユーザーID]")
+            await message.reply('フレンドの削除リクエストを処理中にエラーが発生しました')    
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['acceptpending'].split(','):
         try:
-            try:
-                user=await client.fetch_profile(rawcontent)
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+            if rawcontent == '':
+                await message.reply(f"[{commands['acceptpending']}] [ユーザー名 / ユーザーID]")
                 return
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
                 if client.is_pending(user.id) is False:
                     await message.reply('ユーザーからのフレンド申請がありません')
+                    return
+                await client.accept_friend(user.id)
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(user.display_name)} をフレンドに追加')
                 else:
-                    await client.accept_friend(user.id)
-                    if user.display_name is None:
-                        await message.reply(f'None / {user.id} をフレンドに追加')
-                        if data['loglevel'] == 'normal':
-                            print(f'[{now_()}] None のフレンド申請を承諾')
-                        else:
-                            print(f'[{now_()}] None / {user.id} のフレンド申請を承諾')
-                    else:
-                        await message.reply(f'{user.display_name} / {user.id} をフレンドに追加')
-                        if data['loglevel'] == 'normal':
-                            print(f'[{now_()}] {user.display_name} のフレンド申請を承諾')
-                        else:
-                            print(f'[{now_()}] {user.display_name} / {user.id} のフレンド申請を承諾')
+                    await message.reply(f'{str(user.display_name)} / {user.id} をフレンドに追加')       
+            else:
+                if client.is_pending(message.author.id) is False:
+                    await message.reply('ユーザーからのフレンド申請がありません')
+                    return
+                await client.accept_friend(message.author.id)
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(message.author.display_name)} をフレンドに追加')
+                else:
+                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をフレンドに追加')    
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
             await message.reply('フレンドの追加リクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['acceptpending']}] [ユーザー名 / ユーザーID]")
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['declinepending'].split(','):
         try:
-            try:
-                user=await client.fetch_profile(rawcontent)
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+            if rawcontent == '':
+                await message.reply(f"[{commands['declinepending']}] [ユーザー名 / ユーザーID]")
                 return
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
                 if client.is_pending(user.id) is False:
                     await message.reply('ユーザーからのフレンド申請がありません')
+                    return
+                await client.remove_or_decline_friend(user.id)
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(user.display_name)} のフレンド申請を拒否')
                 else:
-                    await client.remove_or_decline_friend(user.id)
-                    if user.display_name is None:
-                        await message.reply(f'None / {user.id} のフレンド申請を拒否')
-                        if data['loglevel'] == 'normal':
-                            print(f'[{now_()}] None のフレンド申請を拒否')
-                        else:
-                            print(f'[{now_()}] None / {user.id} のフレンド申請を拒否')
-                    else:
-                        await message.reply(f'{user.display_name} / {user.id} のフレンド申請を拒否')
-                        if data['loglevel'] == 'normal':
-                            print(f'[{now_()}] {user.display_name} のフレンド申請を拒否')
-                        else:
-                            print(f'[{now_()}] {user.display_name} / {user.id} のフレンド申請を拒否')
+                    await message.reply(f'{str(user.display_name)} / {user.id} のフレンド申請を拒否')
+            else:
+                if client.is_pending(message.author.id) is False:
+                    await message.reply('ユーザーからのフレンド申請がありません')
+                    return
+                await client.remove_or_decline_friend(message.author.id)
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(message.author.display_name)} のフレンド申請を拒否')
+                else:
+                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} のフレンド申請を拒否')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
             await message.reply('フレンド申請の拒否リクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['declinepending']}] [ユーザー名 / ユーザーID]")
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['blockfriend'].split(','):
         try:
-            try:
-                user=await client.fetch_profile(rawcontent)
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
-                if not user.id in client.blocked_users.keys():
-                    await client.block_user(user.id)
-                    if user.display_name is None:
-                        await message.reply(f'None / {user.id} をブロック')
-                        if data['loglevel'] == 'normal':
-                            print(f'[{now_()}] None をブロック')
-                        else:
-                            print(f'[{now_()}] None / {user.id} をブロック')
-                    else:
-                        await message.reply(f'{user.display_name} / {user.id} をブロック')
-                        if data['loglevel'] == 'normal':
-                            print(f'[{now_()}] {user.display_name} をブロック')
-                        else:
-                            print(f'[{now_()}] {user.display_name} / {user.id} をブロック')
-                else:
+            if rawcontent == '':
+                await message.reply(f"[{commands['blockfriend']}] [ユーザー名 / ユーザーID]")
+                return
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
+                if user.id in client.blocked_users.keys():
                     await message.reply('既にユーザーをブロックしています')
+                    return
+                await client.block_user(user.id)
+                if user.display_name is None:
+                    await message.reply(f'None / {user.id} をブロック')
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(user.display_name)} をブロック')
+                else:
+                    await message.reply(f'{str(user.display_name)} / {user.id} をブロック')
+            else:
+                if message.author.id in client.blocked_users.keys():
+                    await message.reply('既にユーザーをブロックしています')
+                    return
+                await client.block_user(message.author.id)
+                if message.author.display_name is None:
+                    await message.reply(f'None / {message.author.id} をブロック')
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(message.author.display_name)} をブロック')
+                else:
+                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をブロック')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
             await message.reply('フレンドのブロックリクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['blockfriend']}] [ユーザー名 / ユーザーID]")
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['unblockfriend'].split(','):
         try:
-            try:
-                user=await client.fetch_profile(rawcontent)
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
-                if user.id in client.blocked_users.keys():
-                    await client.unblock_user(user.id)
-                    if user.display_name is None:
-                        await message.reply(f'None / {user.id} をブロック解除')
-                        if data['loglevel'] == 'normal':
-                            print(f'[{now_()}] None をブロック解除')
-                        else:
-                            print(f'[{now_()}] None / {user.id} をブロック解除')
-                    else:
-                        await message.reply(f'{user.display_name} / {user.id} をブロック解除')
-                        if data['loglevel'] == 'normal':
-                            print(f'[{now_()}] {user.display_name} をブロック解除')
-                        else:
-                            print(f'[{now_()}] {user.display_name} / {user.id} をブロック解除')
-                else:
+            if rawcontent == '':
+                await message.reply(f"[{commands['unblockfriend']}] [ユーザー名 / ユーザーID]")
+                return
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
+                if not user.id in client.blocked_users.keys():
                     await message.reply('ユーザーをブロックしていません')
+                    return
+                await client.unblock_user(user.id)
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(user.display_name)} をブロック解除')
+                else:
+                    await message.reply(f'{str(user.display_name)} / {user.id} をブロック解除')
+            else:
+                if not message.author.id in client.blocked_users.keys():
+                    await message.reply('ユーザーをブロックしていません')
+                    return
+                await client.unblock_user(message.author.id)
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(message.author.display_name)} をブロック解除')
+                else:
+                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をブロック解除')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
             await message.reply('ブロックしたユーザーのブロック解除リクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['unblockfriend']}] [ユーザー名 / ユーザーID]")
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['chatban'].split(','):
         try:
+            if rawcontent == '':
+                await message.reply(f"[{commands['chatban']}] [ユーザー名 / ユーザーID] : [理由(任意)]")
+                return
             reason=rawcontent.split(' : ')
-            user=await client.fetch_profile(reason[0])
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
+            if not reason[0] in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(reason[0])
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
                 if not user.id in client.user.party.members.keys():
                     await message.reply('ユーザーがパーティーにいません')
+                    return
+                member=client.user.party.members.get(user.id)
+                try:
+                    await member.chatban(reason[1])
+                except IndexError:
+                    await member.chatban()
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(user.display_name)} をバン')
                 else:
-                    member=client.user.party.members.get(user.id)
-                    try:
-                        await member.chatban(reason[1])
-                    except IndexError:
-                        await member.chatban()
-                    if user.display_name is None:
-                        await message.reply(f'None / {user.id} をバン')
-                    else:
-                        await message.reply(f'{user.display_name} / {user.id} をバン')
-        except fortnitepy.Forbidden:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply('パーティーリーダーではありません')
-        except fortnitepy.NotFound:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply('メンバーが見つかりません')
-        except ValueError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply('既にバンされています')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['chatban']}] [ユーザー名 / ユーザーID] : [理由(任意)]")
-        except Exception:
-            print(red(traceback.format_exc()))
-            await message.reply('エラー')
-
-    elif args[0] in commands['chatbanme'].split(','):
-        try:
-            if not message.author.id in client.user.party.members.keys():
-                await message.reply('ユーザーがパーティーにいません')
+                    await message.reply(f'{str(user.display_name)} / {user.id} をバン')
             else:
+                if not message.author.id in client.user.party.members.keys():
+                    await message.reply('ユーザーがパーティーにいません')
+                    return
                 member=client.user.party.members.get(message.author.id)
                 try:
                     await member.chatban(reason[1])
                 except IndexError:
                     await member.chatban()
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(message.author.display_name)} をバン')
+                else:
+                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をバン')
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -1950,51 +2119,39 @@ async def event_friend_message(message):
 
     elif args[0] in commands['promote'].split(','):
         try:
-            try:
-                user=await client.fetch_profile(rawcontent)
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
+            if rawcontent == '':
+                await message.reply(f"[{commands['promote']}] [ユーザー名 / ユーザーID]")
+                return
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
                 if not user.id in client.user.party.members.keys():
                     await message.reply('ユーザーがパーティーにいません')
+                    return
+                member=client.user.party.members.get(user.id)
+                await member.promote()
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(user.display_name)} に譲渡')
                 else:
-                    member=client.user.party.members.get(user.id)
-                    await member.promote()
-                    if user.display_name is None:
-                        await message.reply(f'None / {user.id} に譲渡')
-                    else:
-                        await message.reply(f'{user.display_name} / {user.id} に譲渡')
-        except fortnitepy.Forbidden:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply('パーティーリーダーではありません')
-        except fortnitepy.PartyError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply('既にパーティーリーダーです')
-        except fortnitepy.HTTPException:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply('パーティーリーダーの譲渡リクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['promote']}] [ユーザー名 / ユーザーID]")
-        except Exception:
-            print(red(traceback.format_exc()))
-            await message.reply('エラー')
-
-    elif args[0] in commands['promoteme'].split(','):
-        try:
-            if not message.author.id in client.user.party.members.keys():
-                await message.reply('ユーザーがパーティーにいません')
+                    await message.reply(f'{str(user.display_name)} / {user.id} に譲渡')
             else:
+                if not message.author.id in client.user.party.members.keys():
+                    await message.reply('ユーザーがパーティーにいません')
+                    return
                 member=client.user.party.members.get(message.author.id)
                 await member.promote()
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(message.author.display_name)} に譲渡')
+                else:
+                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} に譲渡')
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2013,51 +2170,39 @@ async def event_friend_message(message):
 
     elif args[0] in commands['kick'].split(','):
         try:
-            try:
-                user=await client.fetch_profile(rawcontent)
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
+            if rawcontent == '':
+                await message.reply(f"[{commands['kick']}] [ユーザー名 / ユーザーID]")
+                return
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
                 if not user.id in client.user.party.members.keys():
                     await message.reply('ユーザーがパーティーにいません')
+                    return
+                member=client.user.party.members.get(user.id)
+                await member.kick()
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(user.display_name)} をキック')
                 else:
-                    member=client.user.party.members.get(user.id)
-                    await member.kick()
-                    if user.display_name is None:
-                        await message.reply(f'None / {user.id} をキック')
-                    else:
-                        await message.reply(f'{user.display_name} / {user.id} をキック')
-        except fortnitepy.Forbidden:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply('パーティーリーダーではありません')
-        except fortnitepy.PartyError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply('自分をキックすることはできません')
-        except fortnitepy.HTTPException:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply('パーティーメンバーのキックリクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['kick']}] [ユーザー名 / ユーザーID]")
-        except Exception:
-            print(red(traceback.format_exc()))
-            await message.reply('エラー')
-
-    elif args[0] in commands['kickme'].split(','):
-        try:
-            if not message.author.id in client.user.party.members.keys():
-                await message.reply('ユーザーがパーティーにいません')
+                    await message.reply(f'{str(user.display_name)} / {user.id} をキック')
             else:
+                if not message.author.id in client.user.party.members.keys():
+                    await message.reply('ユーザーがパーティーにいません')
+                    return
                 member=client.user.party.members.get(message.author.id)
                 await member.kick()
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(message.author.display_name)} をキック')
+                else:
+                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をキック')
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2112,9 +2257,8 @@ async def event_friend_message(message):
             with open('allen.json', 'r', encoding='utf-8') as f:
                 allskin = json.load(f)
             for item in allskin['data']:
-                if client.stopcheck == True:
+                if client.stopcheck is True:
                     client.stopcheck=False
-                    await message.reply('停止しました')
                     break
                 if item['type'] == 'outfit':
                     await client.user.party.me.set_outfit(item['id'])
@@ -2129,9 +2273,8 @@ async def event_friend_message(message):
             with open('allen.json', 'r', encoding='utf-8') as f:
                 allemote = json.load(f)
             for item in allemote['data']:
-                if client.stopcheck == True:
+                if client.stopcheck is True:
                     client.stopcheck=False
-                    await message.reply('停止しました')
                     break
                 if item['type'] == 'emote':
                     await client.user.party.me.set_emote(item['id'])
@@ -2144,74 +2287,80 @@ async def event_friend_message(message):
 
     elif args[0] in commands['id'].split(','):
         if rawcontent == '':
-            return await message.reply(f"[{commands['id']}] [ID]")
+            await message.reply(f"[{commands['id']}] [ID]")
+            return
         try:
             isitem = await search_item_with_id("ja", rawcontent)
             if isitem[0] == 'True':
                 client.ismesjaitem=isitem
                 if len(client.ismesjaitem[1]) > 29:
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
-                else:
-                    for count,item in enumerate(client.ismesjaitem[1]):
-                        if item[2] == 'outfit':
-                            if len(client.ismesjaitem[1]) == 1:
-                                await message.reply(f'スキン: {item[0]}: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} スキン: {item[0]}: {item[1]}')
-                        if item[2] == 'backpack':
-                            if len(client.ismesjaitem[1]) == 1:
-                                await message.reply(f'バッグ: {item[0]}: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
-                        if item[2] == 'pet':
-                            if len(client.ismesjaitem[1]) == 1:
-                                await message.reply(f'バッグ: {item[0]}: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
-                        if item[2] == 'pickaxe':
-                            if len(client.ismesjaitem[1]) == 1:
-                                await message.reply(f'ツルハシ: {item[0]}: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} ツルハシ: {item[0]}: {item[1]}')
-                        if item[2] == 'emote':
-                            if len(client.ismesjaitem[1]) == 1:
-                                await message.reply(f'エモート: {item[0]}: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
-                        if item[2] == 'emoji':
-                            if len(client.ismesjaitem[1]) == 1:
-                                await message.reply(f'エモート: {item[0]}: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
-                        if item[2] == 'toy':
-                            if len(client.ismesjaitem[1]) == 1:
-                                await message.reply(f'エモート: {item[0]}: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
-                    if len(client.ismesjaitem[1]) == 1:
-                        if client.ismesjaitem[1][0][2] == 'outfit':
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][0][0]))
-                        if client.ismesjaitem[1][0][2] == 'backpack':
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesjaitem[1][0][0]))
-                        if client.ismesjaitem[1][0][2] == 'pet':
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.ismesjaitem[1][0][0]))
-                        if client.ismesjaitem[1][0][2] == 'pickaxe':
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][0][0]))
-                            await client.user.party.me.set_emote('EID_IceKing')
-                        if client.ismesjaitem[1][0][2] == 'emote':
-                            if not client.user.party.me.emote is None:
-                                if client.user.party.me.emote.lower() == client.ismesjaitem[1][0][0].lower():
-                                    await client.user.party.me.clear_emote()
-                            await client.user.party.me.set_emote(client.ismesjaitem[1][0][0])
-                            client.eid=client.ismesjaitem[1][0][0]
-                        if client.ismesjaitem[1][0][2] == 'emoji':
-                            await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}')
-                            client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'
-                        if client.ismesjaitem[1][0][2] == 'toy':
-                            await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}')
-                            client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'
-                    if len(client.ismesjaitem[1]) > 1:
-                        await message.reply('数字を入力することでそのアイテムに設定します')
+                    return
+                for count,item in enumerate(client.ismesjaitem[1]):
+                    if item[2] == 'outfit':
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'スキン: {item[0]}: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} スキン: {item[0]}: {item[1]}')
+                    if item[2] == 'backpack':
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'バッグ: {item[0]}: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
+                    if item[2] == 'pet':
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'バッグ: {item[0]}: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
+                    if item[2] == 'pickaxe':
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'ツルハシ: {item[0]}: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} ツルハシ: {item[0]}: {item[1]}')
+                    if item[2] == 'emote':
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'エモート: {item[0]}: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
+                    if item[2] == 'emoji':
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'エモート: {item[0]}: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
+                    if item[2] == 'toy':
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'エモート: {item[0]}: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
+                if len(client.ismesjaitem[1]) == 1:
+                    if not data['loglevel'] == 'normal':
+                        print(client.ismesjaitem[1][0][0])
+                    if client.ismesjaitem[1][0][2] == 'outfit':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][0][0]))
+                    if client.ismesjaitem[1][0][2] == 'backpack':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesjaitem[1][0][0]))
+                    if client.ismesjaitem[1][0][2] == 'pet':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.ismesjaitem[1][0][0]))
+                    if client.ismesjaitem[1][0][2] == 'pickaxe':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][0][0]))
+                        if not client.user.party.me.emote is None:
+                            if client.user.party.me.emote.lower() == 'eid_iceking':
+                                await client.user.party.me.clear_emote()
+                        await client.user.party.me.set_emote('EID_IceKing')
+                    if client.ismesjaitem[1][0][2] == 'emote':
+                        if not client.user.party.me.emote is None:
+                            if client.user.party.me.emote.lower() == client.ismesjaitem[1][0][0].lower():
+                                await client.user.party.me.clear_emote()
+                        await client.user.party.me.set_emote(client.ismesjaitem[1][0][0])
+                        client.eid=client.ismesjaitem[1][0][0]
+                    if client.ismesjaitem[1][0][2] == 'emoji':
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'
+                    if client.ismesjaitem[1][0][2] == 'toy':
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'
+                if len(client.ismesjaitem[1]) > 1:
+                    await message.reply('数字を入力することでそのアイテムに設定します')
             else:
                 await message.reply('見つかりません')
         except fortnitepy.HTTPException:
@@ -2224,41 +2373,46 @@ async def event_friend_message(message):
 
     elif args[0] in commands['skin'].split(','):
         if rawcontent == '':
-            return await message.reply(f"[{commands['skin']}] [スキン名]")
+            await message.reply(f"[{commands['skin']}] [スキン名]")
+            return
         try:
             isitem = await search_item_with_type("ja", rawcontent, "outfit")
             if isitem[0] == 'True':
                 client.ismesjaitem=isitem
                 if len(client.ismesjaitem[1]) > 29:
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
-                else:
-                    for count,item in enumerate(client.ismesjaitem[1]):
-                        if len(client.ismesjaitem[1]) == 1:
-                            await message.reply(f'{item[1]}')
-                        else:
-                            await message.reply(f'{count+1}: {item[1]}')
+                    return
+                for count,item in enumerate(client.ismesjaitem[1]):
                     if len(client.ismesjaitem[1]) == 1:
-                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][0][0]))
-                    if len(client.ismesjaitem[1]) > 1:
-                        await message.reply('数字を入力することでそのアイテムに設定します')
-            else:
-                isitem = await search_item_with_type("en", rawcontent, "outfit")
-                if isitem[0] == 'True':
-                    client.ismesenitem=isitem
-                    if len(client.ismesenitem[1]) > 29:
-                        await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
+                        await message.reply(f'{item[1]}')
                     else:
-                        for count,item in enumerate(client.ismesenitem[1]):
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'{item[1]}')
-                            else:
-                                await message.reply(f'{count+1}: {item[1]}')
-                        if len(client.ismesenitem[1]) == 1:
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesenitem[1][0][0]))
-                        if len(client.ismesenitem[1]) > 1:
-                            await message.reply('数字を入力することでそのアイテムに設定します')
-                else:
-                    await message.reply('見つかりません')
+                        await message.reply(f'{count+1}: {item[1]}')
+                if len(client.ismesjaitem[1]) == 1:
+                    if not data['loglevel'] == 'normal':
+                        print(client.ismesjaitem[1][0][0])
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][0][0]))
+                if len(client.ismesjaitem[1]) > 1:
+                    await message.reply('数字を入力することでそのアイテムに設定します')
+                return
+            isitem = await search_item_with_type("en", rawcontent, "outfit")
+            if isitem[0] == 'True':
+                client.ismesenitem=isitem
+                if len(client.ismesenitem[1]) > 29:
+                    await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
+                    return
+                for count,item in enumerate(client.ismesenitem[1]):
+                    if len(client.ismesenitem[1]) == 1:
+                        await message.reply(f'{item[1]}')
+                    else:
+                        await message.reply(f'{count+1}: {item[1]}')
+                if len(client.ismesenitem[1]) == 1:
+                    if not data['loglevel'] == 'normal':
+                        print(client.ismesjaitem[1][0][0])
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesenitem[1][0][0]))
+                if len(client.ismesenitem[1]) > 1:
+                    await message.reply('数字を入力することでそのアイテムに設定します')
+                return
+            await message.reply('見つかりません')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2269,47 +2423,52 @@ async def event_friend_message(message):
 
     elif args[0] in commands['bag'].split(','):
         if rawcontent == '':
-            return await message.reply(f"[{commands['bag']}] [バッグ名]")
+            await message.reply(f"[{commands['bag']}] [バッグ名]")
+            return
         try:
             isitem = await search_item_with_type("ja", rawcontent, "backpack,pet")
             if isitem[0] == 'True':
                 client.ismesjaitem=isitem
                 if len(client.ismesjaitem[1]) > 29:
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
+                    return
+                for count,item in enumerate(client.ismesjaitem[1]):
+                    if len(client.ismesjaitem[1]) == 1:
+                        await message.reply(f'{item[1]}')
+                    else:
+                        await message.reply(f'{count+1}: {item[1]}')
+                if len(client.ismesjaitem[1]) == 1:
+                    if not data['loglevel'] == 'normal':
+                        print(client.ismesjaitem[1][0][0])
+                    if client.ismesjaitem[1][0][2] == 'backpack':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesjaitem[1][0][0]))
+                    if client.ismesjaitem[1][0][2] == 'pet':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.ismesjaitem[1][0][0]))
+                if len(client.ismesjaitem[1]) > 1:
+                    await message.reply('数字を入力することでそのアイテムに設定します')
+                return
+            isitem = await search_item_with_type("en", rawcontent, "backpack,pet")
+            if isitem[0] == 'True':
+                client.ismesenitem=isitem
+                if len(client.ismesenitem[1]) > 29:
+                    await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
                 else:
-                    for count,item in enumerate(client.ismesjaitem[1]):
-                        if len(client.ismesjaitem[1]) == 1:
+                    for count,item in enumerate(client.ismesenitem[1]):
+                        if len(client.ismesenitem[1]) == 1:
                             await message.reply(f'{item[1]}')
                         else:
                             await message.reply(f'{count+1}: {item[1]}')
-                    if len(client.ismesjaitem[1]) == 1:
-                        if client.ismesjaitem[1][0][2] == 'backpack':
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesjaitem[1][0][0]))
-                        if client.ismesjaitem[1][0][2] == 'pet':
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.ismesjaitem[1][0][0]))
-                    if len(client.ismesjaitem[1]) > 1:
+                    if len(client.ismesenitem[1]) == 1:
+                        if not data['loglevel'] == 'normal':
+                            print(client.ismesjaitem[1][0][0])
+                        if client.ismesenitem[1][0][2] == 'backpack':
+                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesenitem[1][0][0]))
+                        if client.ismesenitem[1][0][2] == 'pet':
+                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.ismesenitem[1][0][0]))
+                    if len(client.ismesenitem[1]) > 1:
                         await message.reply('数字を入力することでそのアイテムに設定します')
-            else:
-                isitem = await search_item_with_type("en", rawcontent, "backpack,pet")
-                if isitem[0] == 'True':
-                    client.ismesenitem=isitem
-                    if len(client.ismesenitem[1]) > 29:
-                        await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
-                    else:
-                        for count,item in enumerate(client.ismesenitem[1]):
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'{item[1]}')
-                            else:
-                                await message.reply(f'{count+1}: {item[1]}')
-                        if len(client.ismesenitem[1]) == 1:
-                            if client.ismesenitem[1][0][2] == 'backpack':
-                                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesenitem[1][0][0]))
-                            if client.ismesenitem[1][0][2] == 'pet':
-                                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.ismesenitem[1][0][0]))
-                        if len(client.ismesenitem[1]) > 1:
-                            await message.reply('数字を入力することでそのアイテムに設定します')
-                else:
-                    await message.reply('見つかりません')
+                return
+            await message.reply('見つかりません')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2320,43 +2479,51 @@ async def event_friend_message(message):
 
     elif args[0] in commands['pickaxe'].split(','):
         if rawcontent == '':
-            return await message.reply(f"[{commands['pickaxe']}] [ツルハシ名]]")
+            await message.reply(f"[{commands['pickaxe']}] [ツルハシ名]")
+            return
         try:
             isitem = await search_item_with_type("ja", rawcontent, "pickaxe")
             if isitem[0] == 'True':
                 client.ismesjaitem=isitem
                 if len(client.ismesjaitem[1]) > 29:
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
-                else:
-                    for count,item in enumerate(client.ismesjaitem[1]):
-                        if len(client.ismesjaitem[1]) == 1:
-                            await message.reply(f'{item[1]}')
-                        else:
-                            await message.reply(f'{count+1}: {item[1]}')
+                    return
+                for count,item in enumerate(client.ismesjaitem[1]):
                     if len(client.ismesjaitem[1]) == 1:
-                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][0][0]))
-                        await client.user.party.me.set_emote('EID_IceKing')
-                    if len(client.ismesjaitem[1]) > 1:
-                        await message.reply('数字を入力することでそのアイテムに設定します')
-            else:
-                isitem = await search_item_with_type("en", rawcontent, "pickaxe")
-                if isitem[0] == 'True':
-                    client.ismesenitem=isitem
-                    if len(client.ismesenitem[1]) > 29:
-                        await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
+                        await message.reply(f'{item[1]}')
                     else:
-                        for count,item in enumerate(client.ismesenitem[1]):
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'{item[1]}')
-                            else:
-                                await message.reply(f'{count+1}: {item[1]}')
-                        if len(client.ismesenitem[1]) == 1:
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesenitem[1][0][0]))
-                            await client.user.party.me.set_emote('EID_IceKing')
-                        if len(client.ismesenitem[1]) > 1:
-                            await message.reply('数字を入力することでそのアイテムに設定します')
-                else:
-                    await message.reply('見つかりません')
+                        await message.reply(f'{count+1}: {item[1]}')
+                if len(client.ismesjaitem[1]) == 1:
+                    if not data['loglevel'] == 'normal':
+                        print(client.ismesjaitem[1][0][0])
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][0][0]))
+                    if not client.user.party.me.emote is None:
+                        if client.user.party.me.emote.lower() == 'eid_iceking':
+                            await client.user.party.me.clear_emote()
+                    await client.user.party.me.set_emote('EID_IceKing')
+                if len(client.ismesjaitem[1]) > 1:
+                    await message.reply('数字を入力することでそのアイテムに設定します')
+                return
+            isitem = await search_item_with_type("en", rawcontent, "pickaxe")
+            if isitem[0] == 'True':
+                client.ismesenitem=isitem
+                if len(client.ismesenitem[1]) > 29:
+                    await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
+                    return
+                for count,item in enumerate(client.ismesenitem[1]):
+                    if len(client.ismesenitem[1]) == 1:
+                        await message.reply(f'{item[1]}')
+                    else:
+                        await message.reply(f'{count+1}: {item[1]}')
+                if len(client.ismesenitem[1]) == 1:
+                    if not data['loglevel'] == 'normal':
+                        print(client.ismesjaitem[1][0][0])
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesenitem[1][0][0]))
+                    await client.user.party.me.set_emote('EID_IceKing')
+                if len(client.ismesenitem[1]) > 1:
+                    await message.reply('数字を入力することでそのアイテムに設定します')
+                return
+            await message.reply('見つかりません')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2367,57 +2534,62 @@ async def event_friend_message(message):
 
     elif args[0] in commands['emote'].split(','):
         if rawcontent == '':
-            return await message.reply(f"[{commands['emote']}] [エモート名]]")
+            await message.reply(f"[{commands['emote']}] [エモート名]]")
+            return
         try:
             isitem = await search_item_with_type("ja", rawcontent, "emote,emoji,toy")
             if isitem[0] == 'True':
                 client.ismesjaitem=isitem
                 if len(client.ismesjaitem[1]) > 29:
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
-                else:
-                    for count,item in enumerate(client.ismesjaitem[1]):
-                        if len(client.ismesjaitem[1]) == 1:
-                            await message.reply(f'{item[1]}')
-                        else:
-                            await message.reply(f'{count+1}: {item[1]}')
+                    return
+                for count,item in enumerate(client.ismesjaitem[1]):
                     if len(client.ismesjaitem[1]) == 1:
-                        if client.ismesjaitem[1][0][2] == 'emote':
-                            await client.user.party.me.set_emote(client.ismesjaitem[1][0][0])
-                            client.eid=client.ismesjaitem[1][0][0]
-                        if client.ismesjaitem[1][0][2] == 'emoji':
-                            await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}')
-                            client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'
-                        if client.ismesjaitem[1][0][2] == 'toy':
-                            await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}')
-                            client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'
-                    if len(client.ismesjaitem[1]) > 1:
-                        await message.reply('数字を入力することでそのアイテムに設定します')
-            else:
-                isitem = await search_item_with_type("en", rawcontent, "emote,emoji,toy")
-                if isitem[0] == 'True':
-                    client.ismesenitem=isitem
-                    if len(client.ismesenitem[1]) > 29:
-                        await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
+                        await message.reply(f'{item[1]}')
                     else:
-                        for count,item in enumerate(client.ismesenitem[1]):
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'{item[1]}')
-                            else:
-                                await message.reply(f'{count+1}: {item[1]}')
-                        if len(client.ismesenitem[1]) == 1:
-                            if client.ismesenitem[1][0][2] == 'emote':
-                                await client.user.party.me.set_emote(client.ismesenitem[1][0][0])
-                                client.eid=client.ismesenitem[1][0][0]
-                            if client.ismesenitem[1][0][2] == 'emoji':
-                                await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesenitem[1][0][0]}.{client.ismesenitem[1][0][0]}')
-                                client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesenitem[1][0][0]}.{client.ismesenitem[1][0][0]}'
-                            if client.ismesenitem[1][0][2] == 'toy':
-                                await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesenitem[1][0][0]}.{client.ismesenitem[1][0][0]}')
-                                client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesenitem[1][0][0]}.{client.ismesenitem[1][0][0]}'
-                        if len(client.ismesenitem[1]) > 1:
-                            await message.reply('数字を入力することでそのアイテムに設定します')
-                else:
-                    await message.reply('見つかりません')
+                        await message.reply(f'{count+1}: {item[1]}')
+                if len(client.ismesjaitem[1]) == 1:
+                    if not data['loglevel'] == 'normal':
+                        print(client.ismesjaitem[1][0][0])
+                    if client.ismesjaitem[1][0][2] == 'emote':
+                        await client.user.party.me.set_emote(client.ismesjaitem[1][0][0])
+                        client.eid=client.ismesjaitem[1][0][0]
+                    if client.ismesjaitem[1][0][2] == 'emoji':
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'
+                    if client.ismesjaitem[1][0][2] == 'toy':
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'
+                if len(client.ismesjaitem[1]) > 1:
+                    await message.reply('数字を入力することでそのアイテムに設定します')
+                return
+            isitem = await search_item_with_type("en", rawcontent, "emote,emoji,toy")
+            if isitem[0] == 'True':
+                client.ismesenitem=isitem
+                if len(client.ismesenitem[1]) > 29:
+                    await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
+                    return
+                for count,item in enumerate(client.ismesenitem[1]):
+                    if len(client.ismesenitem[1]) == 1:
+                        await message.reply(f'{item[1]}')
+                    else:
+                        await message.reply(f'{count+1}: {item[1]}')
+                if len(client.ismesenitem[1]) == 1:
+                    if not data['loglevel'] == 'normal':
+                        print(client.ismesjaitem[1][0][0])
+                    if client.ismesenitem[1][0][2] == 'emote':
+                        await client.user.party.me.set_emote(client.ismesenitem[1][0][0])
+                        client.eid=client.ismesenitem[1][0][0]
+                    if client.ismesenitem[1][0][2] == 'emoji':
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesenitem[1][0][0]}.{client.ismesenitem[1][0][0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesenitem[1][0][0]}.{client.ismesenitem[1][0][0]}'
+                    if client.ismesenitem[1][0][2] == 'toy':
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesenitem[1][0][0]}.{client.ismesenitem[1][0][0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesenitem[1][0][0]}.{client.ismesenitem[1][0][0]}'
+                if len(client.ismesenitem[1]) > 1:
+                    await message.reply('数字を入力することでそのアイテムに設定します')
+                return
+            await message.reply('見つかりません')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2428,12 +2600,15 @@ async def event_friend_message(message):
 
     elif args[0] in commands['set'].split(','):
         if rawcontent == '':
-            return await message.reply(f"[{commands['set']}] [セット名]]")
+            await message.reply(f"[{commands['set']}] [セット名]]")
+            return
         try:
             isitem = await search_set_item("ja", rawcontent)
             if isitem[0] == 'True':
                 client.ismesjaitem=isitem
                 for count,item in enumerate(client.ismesjaitem[1]):
+                    if not data['loglevel'] == 'normal':
+                        print(client.ismesjaitem[1][0][0])
                     if item[2] == 'outfit':
                         if len(client.ismesjaitem[1]) == 1:
                             await message.reply(f'スキン: {item[1]}')
@@ -2480,60 +2655,61 @@ async def event_friend_message(message):
                             await message.reply(f'{count+1} エモート: {item[1]}')
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}'
-                    
-            else:
-                isitem = await search_set_item("en", rawcontent)
-                if isitem[0] == 'True':
-                    client.ismesenitem=isitem
-                    for count,item in enumerate(client.ismesenitem[1]):
-                        if item[2] == 'outfit':
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'スキン: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} スキン: {item[1]}')
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,item[0]))
-                        if item[2] == 'backpack':
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'バッグ: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} バッグ: {item[1]}')
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,item[0]))
-                        if item[2] == 'pet':
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'バッグ: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} バッグ: {item[1]}')
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,item[0]))
-                        if item[2] == 'pickaxe':
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'ツルハシ: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} ツルハシ: {item[1]}')
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,item[0]))
-                            await client.user.party.me.set_emote('EID_IceKing')
-                        if item[2] == 'emote':
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'エモート: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} エモート: {item[1]}')
-                            await client.user.party.me.set_emote(item[0])
-                            client.eid=item[0]
-                        if item[2] == 'emoji':
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'エモート: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} エモート: {item[1]}')
-                            await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}')
-                            client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}'
-                        if item[2] == 'toy':
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'エモート: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} エモート: {item[1]}')
-                            await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}')
-                            client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}'
-                else:
-                    await message.reply('見つかりません')
+                return
+            isitem = await search_set_item("en", rawcontent)
+            if isitem[0] == 'True':
+                client.ismesenitem=isitem
+                for count,item in enumerate(client.ismesenitem[1]):
+                    if not data['loglevel'] == 'normal':
+                        print(client.ismesjaitem[1][0][0])
+                    if item[2] == 'outfit':
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'スキン: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} スキン: {item[1]}')
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,item[0]))
+                    if item[2] == 'backpack':
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'バッグ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[1]}')
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,item[0]))
+                    if item[2] == 'pet':
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'バッグ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[1]}')
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,item[0]))
+                    if item[2] == 'pickaxe':
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'ツルハシ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} ツルハシ: {item[1]}')
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,item[0]))
+                        await client.user.party.me.set_emote('EID_IceKing')
+                    if item[2] == 'emote':
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
+                        await client.user.party.me.set_emote(item[0])
+                        client.eid=item[0]
+                    if item[2] == 'emoji':
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}'
+                    if item[2] == 'toy':
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}'
+                return
+            await message.reply('見つかりません')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2568,13 +2744,17 @@ async def event_friend_message(message):
             if len(args) == 4 or len(args) == 6 or len(args) == 8:
                 if args[1].startswith('cid_'):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,asset=args[1],variants=variants))
+                    await message.reply(f'スキンを {args[1]} {variants} に設定')
                 elif args[1].startswith('bid_'):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,asset=args[1],variants=variants))
+                    await message.reply(f'バッグを {args[1]} {variants} に設定')
                 elif args[1].startswith('petcarrier_'):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,asset=args[1],variants=variants))
+                    await message.reply(f'バッグを {args[1]} {variants} に設定')
                 elif args[1].startswith('pickaxe_id'):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,asset=args[1],variants=variants))
                     await client.user.party.me.set_emote('EID_IceKing')
+                    await message.reply(f'ツルハシを {args[1]} {variants} に設定')
             else:
                 await message.reply(f"[{commands['variant']}] [variant] [数値]\nvariantと数値は3つまで設定可")
         except fortnitepy.HTTPException:
@@ -2846,7 +3026,8 @@ async def event_friend_message(message):
             if isitem[0] == 'True':
                 client.ismesjaitem = isitem
                 if len(client.ismesjaitem[1]) > 29:
-                    return await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
+                    await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
+                    return
                 for count,item in enumerate(client.ismesjaitem[1]):
                     if item[2] == 'outfit':
                         if len(client.ismesjaitem[1]) == 1:
@@ -2924,7 +3105,8 @@ async def event_friend_message(message):
             if isitem[0] == 'True':
                 client.ismesenitem = isitem
                 if len(client.ismesenitem[1]) > 29:
-                    return await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
+                    await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
+                    return
                 for count,item in enumerate(client.ismesenitem[1]):
                     if item[2] == 'outfit':
                         if len(client.ismesenitem[1]) == 1:
@@ -3066,38 +3248,71 @@ async def event_party_message(message):
                 await message.reply('正常に読み込みが完了しました')
             else:
                 await message.reply('エラー')
+                return
+            client.owner=None
             try:
-                client.owner=None
                 owner=await client.fetch_profile(data['fortnite']['owner'])
-                if owner is None:
-                    print(red(f'[{now_()}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
-                else:
-                    client.owner=client.get_friend(owner.id)
-                    if client.owner is None:
-                        try:
-                            await client.add_friend(owner.id)
-                        except fortnitepy.HTTPException:
-                            if data['loglevel'] == 'debug':
-                                print(red(traceback.format_exc()))
-                        except Exception:
-                            if data['loglevel'] == 'debug':
-                                print(red(traceback.format_exc()))
-                        print(red(f'[{now_()}] 所有者とフレンドではありません。フレンドになってからもう一度起動してください。'))
-                    else:
-                        if data['loglevel'] == 'normal':
-                            print(green(f'[{now_()}] 所有者: {client.owner.display_name}'))
-                        else:
-                            print(green(f'[{now_()}] 所有者: {client.owner.display_name} / {client.owner.id}'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                 print(red(f'[{now_()}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                return
+            if owner is None:
+                print(red(f'[{now_()}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
+                return
+            client.owner=client.get_friend(owner.id)
+            if client.owner is None:
+                try:
+                    await client.add_friend(owner.id)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    print(red(f'[{now_()}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
+                except Exception:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                print(red(f'[{now_()}] 所有者とフレンドではありません。フレンドになってからもう一度起動してください。'))
+                return
+            if data['loglevel'] == 'normal':
+                print(green(f'[{now_()}] 所有者: {client.owner.display_name}'))
+            else:
+                print(green(f'[{now_()}] 所有者: {client.owner.display_name} / {client.owner.id}'))
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['get'].split(','):
-        await message.reply(f'{client.user.party.leader.display_name}\n{client.user.party.leader.pickaxe}\n{client.user.party.leader.pickaxe_variants}')
+        try:
+            if rawcontent == '':
+                await message.reply(f"[{commands['get']}] [ユーザー名/ユーザーID]")
+                return
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
+                if not user.id in client.user.party.members.keys():
+                    await message.reply('ユーザーがパーティーにいません')
+                    return
+                member=client.user.party.members.get(user.id)
+                print(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
+                await message.reply(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
+            else:
+                if not message.author.id in client.user.party.members.keys():
+                    await message.reply('ユーザーがパーティーにいません')
+                    return
+                member=client.user.party.members.get(message.author.id)
+                print(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
+                await message.reply(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
+        except Exception:
+            print(red(traceback.format_exc()))
+            await message.reply('エラー')
 
     elif args[0] in commands['friendcount'].split(','):
         try:
@@ -3221,35 +3436,76 @@ async def event_party_message(message):
 
     elif args[0] in commands['wait'].split(','):
         try:
-            if not client.owner is None:
-                if client.owner.id in client.user.party.members.keys() and not message.author.id == client.owner.id:
-                    await message.reply('現在利用できません')
-                else:
-                    client.acceptinvite=False
-                    try:
-                        client.timer_.cancel()
-                    except Exception:
-                        if data['loglevel'] == 'debug':
-                            print(red(traceback.format_exc()))
-                    client.timer_=Timer(data['fortnite']['waitinterval'], inviteaccept, [client])
-                    client.timer_.start()
-                    await message.reply(f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")
-            else:
+            if client.owner is None:
                 client.acceptinvite=False
                 try:
                     client.timer_.cancel()
-                except Exception:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
+                except AttributeError:
+                    pass
                 client.timer_=Timer(data['fortnite']['waitinterval'], inviteaccept, [client])
                 client.timer_.start()
                 await message.reply(f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")
+            else:
+                if client.owner.id in client.user.party.members.keys() and not message.author.id == client.owner.id:
+                    await message.reply('現在利用できません')
+                    return
+                client.acceptinvite=False
+                try:
+                    client.timer_.cancel()
+                except AttributeError:
+                    pass
+                client.timer_=Timer(data['fortnite']['waitinterval'], inviteaccept, [client])
+                client.timer_.start()
+                await message.reply(f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")             
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['join'].split(','):
+        try:
+            if rawcontent == '':
+                await message.reply(f"[{commands['join']}] [ユーザー名/ユーザーID]")
+                return
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
+                friend=client.get_friend(user.id)
+                if friend is None:
+                    await message.reply('ユーザーとフレンドではありません')
+                else:
+                    await friend.join_party()
+            else:
+                await message.author.join_party()
+        except fortnitepy.PartyError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+            await message.reply('既にパーティーのメンバーです')
+        except fortnitepy.NotFound:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+            await message.reply('パーティーが見つかりません')
+        except fortnitepy.Forbidden:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+            await message.reply('パーティーがプライベートです')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+            await message.reply('パーティーの参加リクエストを処理中にエラーが発生しました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            await message.reply('エラー')
+
+    elif args[0] in commands['joinid'].split(','):
         try:
             await client.join_to_party(party_id=args[1])
         except fortnitepy.PartyError:
@@ -3267,7 +3523,7 @@ async def event_party_message(message):
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['join']}] [party_id]")
+            await message.reply(f"[{commands['join']}] [パーティーID]")
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
@@ -3286,47 +3542,39 @@ async def event_party_message(message):
 
     elif args[0] in commands['invite'].split(','):
         try:
-            try:
-                user=await client.fetch_profile(rawcontent)
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+            if rawcontent == '':
+                await message.reply(f"[{commands['invite']}] [ユーザー名 / ユーザーID]")
                 return
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
                 friend=client.get_friend(user.id)
                 if friend is None:
-                    friend=client.get_friend(rawcontent)
-                    if friend is None:
-                        await message.reply('ユーザーとフレンドではありません')
-                if not friend is None:
-                    try:
-                        await friend.invite()
-                        if data['loglevel'] == 'normal':
-                            await message.reply(f'{friend.display_name} をパーティーに招待')
-                        else:
-                            await message.reply(f'{friend.display_name} / {friend.id} をパーティー {client.user.party.id} に招待')
-                    except fortnitepy.PartyError:
-                        if data['loglevel'] == 'debug':
-                            print(red(traceback.format_exc()))
-                        await message.reply('パーティーが満員か、既にパーティーにいます')
-                    except fortnitepy.HTTPException:
-                        if data['loglevel'] == 'debug':
-                            print(red(traceback.format_exc()))
-                        await message.reply('パーティー招待の送信リクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['invite']}] [ユーザー名 / ユーザーID]")
-        except Exception:
-            print(red(traceback.format_exc()))
-            await message.reply('エラー')
-
-    elif args[0] in commands['inviteme'].split(','):
-        try:
-            await message.author.invite()
+                    await message.reply('ユーザーとフレンドではありません')
+                    return
+                await friend.invite()
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(friend.display_name)} をパーティーに招待')
+                else:
+                    await message.reply(f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
+            else:
+                friend=client.get_friend(message.author.id)
+                if friend is None:
+                    await message.reply('ユーザーとフレンドではありません')
+                    return
+                await friend.invite()
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(friend.display_name)} をパーティーに招待')
+                else:
+                    await message.reply(f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -3341,22 +3589,40 @@ async def event_party_message(message):
 
     elif args[0] in commands['message'].split(','):
         try:
+            if rawcontent == '':
+                await message.reply(f"[{commands['message']}] [ユーザー名 / ユーザーID] : [内容]")
+                return
             send=rawcontent.split(' : ')
-            user=await client.fetch_profile(send[0])
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
+            if not send[0] in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(send[0])
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
                 friend=client.get_friend(user.id)
                 if friend is None:
-                    friend=client.get_friend(send[0])
-                    if friend is None:
-                        await message.reply('ユーザーとフレンドではありません')
-                if not friend is None:
-                    await friend.send(send[1])
-                    if data['loglevel'] == 'normal':
-                        await message.reply(f'{friend.display_name} にメッセージ {send[1]} を送信')
-                    else:
-                        await message.reply(f'{friend.display_name} / {friend.id} にメッセージ {send[1]} を送信')
+                    await message.reply('ユーザーとフレンドではありません')
+                    return
+                await friend.send(send[1])
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
+                else:
+                    await message.reply(f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
+            else:
+                friend=client.get_friend(message.author.id)
+                if friend is None:
+                    await message.reply('ユーザーとフレンドではありません')
+                    return
+                await friend.send(send[1])
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
+                else:
+                    await message.reply(f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -3371,19 +3637,18 @@ async def event_party_message(message):
 
     elif args[0] in commands['partymessage'].split(','):
         try:
+            if rawcontent == '':
+                await message.reply(f"[{commands['partymessage']}] [内容]")
+                return
             await client.user.party.send(rawcontent)
             if data['loglevel'] == 'normal':
                 await message.reply(f'パーティーにメッセージ {rawcontent} を送信')
             else:
                 await message.reply(f'パーティー {client.user.party.id} にメッセージ {rawcontent} を送信')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['partymessage']}] [内容]")
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
-
+                
     elif args[0] in commands['status'].split(','):
         try:
             await client.set_status(rawcontent)
@@ -3449,62 +3714,74 @@ async def event_party_message(message):
 
     elif args[0] in commands['user'].split(','):
         try:
-            user=await client.fetch_profile(rawcontent)
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
-                if user.display_name is None:
-                    print(f'None / {user.id}')
-                    await message.reply(f'None / {user.id}')
+            if rawcontent == '':
+                await message.reply(f"[{commands['user']}] [ユーザー名 / ユーザーID]")
+                return
+            if not rawcontent in commands['me'].split(','):
+                user=await client.fetch_profile(rawcontent)
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
+                if data['loglevel'] == 'normal':
+                    print(f'{str(user.display_name)}')
+                    await message.reply(f'{str(user.display_name)}')
                 else:
-                    print(f'{user.display_name} / {user.id}')
-                    await message.reply(f'{user.display_name} / {user.id}')
+                    print(f'{str(user.display_name)} / {user.id}')
+                    await message.reply(f'{str(user.display_name)} / {user.id}')
+            else:
+                if data['loglevel'] == 'normal':
+                    print(f'{str(message.author.display_name)}')
+                    await message.reply(f'{str(message.author.display_name)}')
+                else:
+                    print(f'{str(message.author.display_name)} / {message.author.id}')
+                    await message.reply(f'{str(message.author.display_name)} / {message.author.id}')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
             await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['user']}] [ユーザー名 / ユーザーID]")
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['friend'].split(','):
         try:
-            user=await client.fetch_profile(rawcontent)
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
+            if rawcontent == '':
+                await message.reply(f"[{commands['friend']}] [ユーザー名 / ユーザーID]")
+                return
+            if not rawcontent in commands['me'].split(','):
+                user=await client.fetch_profile(rawcontent)
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
                 friend=client.get_friend(user.id)
                 if friend is None:
                     await message.reply('ユーザーとフレンドではありません')
+                    return
+                if friend.nickname is None:
+                    print(f'{str(friend.display_name)} / {friend.id}')
+                    await message.reply(f'{str(friend.display_name)} / {friend.id}')
                 else:
-                    if friend.nickname is None:
-                        if friend.display_name is None:
-                            print(f'None / {friend.id}')
-                            await message.reply(f'None / {friend.id}')
-                        else:
-                            print(f'{friend.display_name} / {friend.id}')
-                            await message.reply(f'{friend.display_name} / {friend.id}')
-                    else:
-                        if friend.display_name is None:
-                            print(f'{friend.nickname}(None) / {friend.id}')
-                            await message.reply(f'{friend.nickname}(None) / {friend.id}')
-                        else:
-                            print(f'{friend.nickname}({friend.display_name}) / {friend.id}')
-                            await message.reply(f'{friend.nickname}({friend.display_name}) / {friend.id}')
-                    if not friend.last_logout is None:
-                        await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
+                    print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+                    await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+                if not friend.last_logout is None:
+                    await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
+            else:
+                friend=client.get_friend(message.author.id)
+                if friend is None:
+                    await message.reply('ユーザーとフレンドではありません')
+                    return
+                if friend.nickname is None:
+                    print(f'{str(friend.display_name)} / {friend.id}')
+                    await message.reply(f'{str(friend.display_name)} / {friend.id}')
+                else:
+                    print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+                    await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+                if not friend.last_logout is None:
+                    await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
             await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['friend']}] [ユーザー名 / ユーザーID]")
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
@@ -3512,96 +3789,109 @@ async def event_party_message(message):
     elif args[0] in commands['info'].split(','):
         try:
             if args[1] in commands['info_party'].split(','):
+                print(f'{client.user.party.id}\n人数: {client.user.party.member_count}')
                 await message.reply(f'{client.user.party.id}\n人数: {client.user.party.member_count}')
                 for member in client.user.party.members.values():
-                    if member.display_name is None:
-                        await message.reply(f'None / {member.id}')
+                    if data['loglevel'] == 'normal':
+                        print(f'{str(member.display_name)}')
+                        await message.reply(f'{str(member.display_name)}')
                     else:
-                        await message.reply(f'{member.display_name} / {member.id}')
+                        print(f'{str(member.display_name)} / {member.id}')
+                        await message.reply(f'{str(member.display_name)} / {member.id}')
             elif args[1] in commands['info_item'].split(','):
                 if rawcontent2 == '':
-                    return await message.reply(f"[{commands['info']}] [{commands['info_item']}] [アイテム名]")
+                    await message.reply(f"[{commands['info']}] [{commands['info_item']}] [アイテム名]")
+                    return
                 items=await is_itemname('ja', rawcontent2)
                 if items[0] == 'True':
+                    client.ismesjaitem=items
                     if len(items[1]) > 29:
                         await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
-                    else:
-                        for item in items[1]:
-                            await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                            print(item[0])
-                else:
-                    client.ismesenitem=await is_itemname('en', rawcontent2)
-                    if client.ismesenitem[0] == 'True':
-                        if len(client.ismesenitem[1]) > 29:
-                            await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
-                        else:
-                            for item in client.ismesenitem[1]:
-                                await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                    else:
-                        await message.reply('見つかりません')
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                        print(item[0])
+                    return
+                items=await is_itemname('en', rawcontent2)
+                if items[0] == 'True':
+                    client.ismesenitem=items
+                    if len(items[1]) > 29:
+                        await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                        print(item[0])
+                    return
+                await message.reply('見つかりません')
             elif args[1] in commands['id'].split(','):
                 if rawcontent2 == '':
-                    return await message.reply(f"[{commands['info']}] [{commands['id']}] [ID]")
+                    await message.reply(f"[{commands['info']}] [{commands['id']}] [ID]")
+                    return
                 items=await search_item_with_id('ja', rawcontent2)
                 if items[0] == 'True':
+                    client.ismesjaitem=items
                     if len(items[1]) > 29:
                         await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
-                    else:
-                        for item in items[1]:
-                            await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                            print(item[0])
-                else:
-                    client.ismesenitem=await search_item_with_id('en', rawcontent2)
-                    if client.ismesenitem[0] == 'True':
-                        if len(client.ismesenitem[1]) > 29:
-                            await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
-                        else:
-                            for item in client.ismesenitem[1]:
-                                await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                    else:
-                        await message.reply('見つかりません')
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                        print(item[0])
+                    return
+                items=await search_item_with_id('en', rawcontent2)
+                if items[0] == 'True':
+                    client.ismesenitem=items
+                    if len(items[1]) > 29:
+                        await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                        print(item[0])
+                    return
+                await message.reply('見つかりません')
             elif args[1] in commands['skin'].split(','):
                 if rawcontent2 == '':
-                    return await message.reply(f"[{commands['info']}] [{commands['skin']}] [スキン名]")
+                    await message.reply(f"[{commands['info']}] [{commands['skin']}] [スキン名]")
+                    return
                 items=await search_item_with_type('ja', rawcontent2, 'outfit')
                 if items[0] == 'True':
                     if len(items[1]) > 29:
                         await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
-                    else:
-                        for item in items[1]:
-                            await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                            print(item[0])
-                else:
-                    client.ismesenitem=await search_item_with_type('en', rawcontent2, 'outfit')
-                    if client.ismesenitem[0] == 'True':
-                        if len(client.ismesenitem[1]) > 29:
-                            await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
-                        else:
-                            for item in client.ismesenitem[1]:
-                                await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                    else:
-                        await message.reply('見つかりません')
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                        print(item[0])
+                    return
+                items=await search_item_with_type('en', rawcontent2, 'outfit')
+                if items[0] == 'True':
+                    if len(items[1]) > 29:
+                        await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                    return
+                await message.reply('見つかりません')
             elif args[1] in commands['bag'].split(','):
                 if rawcontent2 == '':
-                    return await message.reply(f"[{commands['info']}] [{commands['bag']}] [バッグ名]")
+                    await message.reply(f"[{commands['info']}] [{commands['bag']}] [バッグ名]")
+                    return
                 items=await search_item_with_type('ja', rawcontent2, 'backpack,pet')
                 if items[0] == 'True':
                     if len(items[1]) > 29:
                         await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
-                    else:
-                        for item in items[1]:
-                            await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                            print(item[0])
-                else:
-                    client.ismesenitem=await search_item_with_type('en', rawcontent2, 'backpack,pet')
-                    if client.ismesenitem[0] == 'True':
-                        if len(client.ismesenitem[1]) > 29:
-                            await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
-                        else:
-                            for item in client.ismesenitem[1]:
-                                await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                    else:
-                        await message.reply('見つかりません')
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                        print(item[0])
+                    return
+                items=await search_item_with_type('en', rawcontent2, 'outfit')
+                if items[0] == 'True':
+                    if len(items[1]) > 29:
+                        await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                    return
+                await message.reply('見つかりません')
             elif args[1] in commands['pickaxe'].split(','):
                 if rawcontent2 == '':
                     return await message.reply(f"[{commands['info']}] [{commands['pickaxe']}] [ツルハシ名]")
@@ -3609,20 +3899,20 @@ async def event_party_message(message):
                 if items[0] == 'True':
                     if len(items[1]) > 29:
                         await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
                         print(item[0])
-                    else:
-                        for item in items[1]:
-                            await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                else:
-                    client.ismesenitem=await search_item_with_type('en', rawcontent2, 'pickaxe')
-                    if client.ismesenitem[0] == 'True':
-                        if len(client.ismesenitem[1]) > 29:
-                            await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
-                        else:
-                            for item in client.ismesenitem[1]:
-                                await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                    else:
-                        await message.reply('見つかりません')
+                    return
+                items=await search_item_with_type('en', rawcontent2, 'outfit')
+                if items[0] == 'True':
+                    if len(items[1]) > 29:
+                        await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                    return
+                await message.reply('見つかりません')
             elif args[1] in commands['emote'].split(','):
                 if rawcontent2 == '':
                     return await message.reply(f"[{commands['info']}] [{commands['emote']}] [エモート名]")
@@ -3630,25 +3920,20 @@ async def event_party_message(message):
                 if items[0] == 'True':
                     if len(items[1]) > 29:
                         await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
-                    else:
-                        for item in items[1]:
-                            await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                            print(item[0])
-                else:
-                    client.ismesenitem=await search_item_with_type('en', rawcontent2, 'emote,emoji,toy')
-                    if client.ismesenitem[0] == 'True':
-                        if len(client.ismesenitem[1]) > 29:
-                            await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
-                        else:
-                            for item in client.ismesenitem[1]:
-                                await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                                print(item[0])
-                    else:
-                        await message.reply('見つかりません')
-        except fortnitepy.HTTPException:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                        print(item[0])
+                    return
+                items=await search_item_with_type('en', rawcontent2, 'outfit')
+                if items[0] == 'True':
+                    if len(items[1]) > 29:
+                        await message.reply("見つかったアイテムが多すぎます " + str(len(items[1])))
+                        return
+                    for item in items[1]:
+                        await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
+                    return
+                await message.reply('見つかりません')
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
@@ -3663,17 +3948,18 @@ async def event_party_message(message):
                 for pending in pendings:
                     try:
                         await pending.accept()
-                        if friend.display_name is None:
-                            await message.reply(f'None / {friend.id} をフレンドに追加')
+                        if data['loglevel'] == 'normal':
+                            await message.reply(f'{str(friend.display_name)} をフレンドに追加')
                         else:
-                            await message.reply(f'{friend.display_name} / {friend.id} をフレンドに追加')
+                            await message.reply(f'{str(friend.display_name)} / {friend.id} をフレンドに追加')
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
-                        if friend.display_name is None:
-                            await message.reply(f'None / {friend.id} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
+                        if data['loglevel'] == 'normal':
+                            await message.reply(f'{str(friend.dispaly_name)} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
                         else:
-                            await message.reply(f'{friend.display_name} / {friend.id} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
+                            await message.reply(f'{str(friend.display_name)} / {friend.id} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
+                        continue
                     except Exception:
                         print(red(traceback.format_exc()))
                         await message.reply('エラー')
@@ -3682,17 +3968,18 @@ async def event_party_message(message):
                 for pending in pendings:
                     try:
                         await pending.decline()
-                        if friend.display_name is None:
-                            await message.reply(f'None / {friend.id} のフレンド申請を拒否')
+                        if data['loglevel'] == 'normal':
+                            await message.reply(f'{str(friend.display_name)} のフレンド申請を拒否')
                         else:
-                            await message.reply(f'{friend.display_name} / {friend.id} のフレンド申請を拒否')
+                            await message.reply(f'{str(friend.display_name)} / {friend.id} のフレンド申請を拒否')
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
-                        if friend.display_name is None:
-                            await message.reply(f'None / {friend.id} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
+                        if data['loglevel'] == 'normal':
+                            await message.reply(f'{str(friend.display_name)} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
                         else:
-                            await message.reply(f'{friend.display_name} / {friend.id} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
+                            await message.reply(f'{str(friend.display_name)} / {friend.id} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
+                        continue
                     except Exception:
                         print(red(traceback.format_exc()))
                         await message.reply('エラー')
@@ -3707,275 +3994,296 @@ async def event_party_message(message):
 
     elif args[0] in commands['addfriend'].split(','):
         try:
-            try:
-                user=await client.fetch_profile(rawcontent)
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+            if rawcontent == '':
+                await message.reply(f"[{commands['addfriend']}] [ユーザー名 / ユーザーID]")
                 return
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
                 if client.has_friend(user.id) is True:
                     await message.reply('既にユーザーとフレンドです')
+                    return
+                await client.add_friend(user.id)
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(user.display_name)} にフレンド申請を送信')
                 else:
-                    await client.add_friend(user.id)
-                    if user.display_name is None:
-                        await message.reply(f'None / {user.id} にフレンド申請を送信')
-                    else:
-                        await message.reply(f'{user.display_name} / {user.id} にフレンド申請を送信')
+                    await message.reply(f'{str(user.display_name)} / {user.id} にフレンド申請を送信')
+            else:
+                if client.has_friend(message.author.id) is True:
+                    await message.reply('既にユーザーとフレンドです')
+                    return
+                await client.add_friend(message.author.id)
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(message.author.display_name)} にフレンド申請を送信')
+                else:
+                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} にフレンド申請を送信')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
             await message.reply('フレンド申請の送信リクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['addfriend']}] [ユーザー名 / ユーザーID]")
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['removefriend'].split(','):
         try:
-            try:
-                user=await client.fetch_profile(rawcontent)
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+            if rawcontent == '':
+                await message.reply(f"[{commands['removefriend']}] [ユーザー名 / ユーザーID]")
                 return
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
                 if client.has_friend(user.id) is False:
                     await message.reply('ユーザーとフレンドではありません')
+                    return
+                await client.remove_or_decline_friend(user.id)
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(user.display_name)} をフレンドから削除')
                 else:
-                    await client.remove_or_decline_friend(user.id)
-                    if user.display_name is None:
-                        await message.reply(f'None / {user.id} をフレンドから削除')
-                    else:
-                        await message.reply(f'{user.display_name} / {user.id} をフレンドから削除')
+                    await message.reply(f'{str(user.display_name)} / {user.id} をフレンドから削除')
+            else:
+                if client.has_friend(message.author.id) is False:
+                    await message.reply('ユーザーとフレンドではありません')
+                    return
+                await client.remove_or_decline_friend(message.author.id)
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(message.author.display_name)} をフレンドから削除')
+                else:
+                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をフレンドから削除')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
-            await message.reply('フレンドの削除リクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['removefriend']}] [ユーザー名 / ユーザーID]")
+            await message.reply('フレンドの削除リクエストを処理中にエラーが発生しました')    
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['acceptpending'].split(','):
         try:
-            try:
-                user=await client.fetch_profile(rawcontent)
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+            if rawcontent == '':
+                await message.reply(f"[{commands['acceptpending']}] [ユーザー名 / ユーザーID]")
                 return
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
                 if client.is_pending(user.id) is False:
                     await message.reply('ユーザーからのフレンド申請がありません')
+                    return
+                await client.accept_friend(user.id)
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(user.display_name)} をフレンドに追加')
                 else:
-                    await client.accept_friend(user.id)
-                    if user.display_name is None:
-                        await message.reply(f'None / {user.id} をフレンドに追加')
-                        if data['loglevel'] == 'normal':
-                            print(f'[{now_()}] None のフレンド申請を承諾')
-                        else:
-                            print(f'[{now_()}] None / {user.id} のフレンド申請を承諾')
-                    else:
-                        await message.reply(f'{user.display_name} / {user.id} をフレンドに追加')
-                        if data['loglevel'] == 'normal':
-                            print(f'[{now_()}] {user.display_name} のフレンド申請を承諾')
-                        else:
-                            print(f'[{now_()}] {user.display_name} / {user.id} のフレンド申請を承諾')
+                    await message.reply(f'{str(user.display_name)} / {user.id} をフレンドに追加')       
+            else:
+                if client.is_pending(message.author.id) is False:
+                    await message.reply('ユーザーからのフレンド申請がありません')
+                    return
+                await client.accept_friend(message.author.id)
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(message.author.display_name)} をフレンドに追加')
+                else:
+                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をフレンドに追加')    
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
             await message.reply('フレンドの追加リクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['acceptpending']}] [ユーザー名 / ユーザーID]")
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['declinepending'].split(','):
         try:
-            try:
-                user=await client.fetch_profile(rawcontent)
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+            if rawcontent == '':
+                await message.reply(f"[{commands['declinepending']}] [ユーザー名 / ユーザーID]")
                 return
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
                 if client.is_pending(user.id) is False:
                     await message.reply('ユーザーからのフレンド申請がありません')
+                    return
+                await client.remove_or_decline_friend(user.id)
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(user.display_name)} のフレンド申請を拒否')
                 else:
-                    await client.remove_or_decline_friend(user.id)
-                    if user.display_name is None:
-                        await message.reply(f'None / {user.id} のフレンド申請を拒否')
-                        if data['loglevel'] == 'normal':
-                            print(f'[{now_()}] None のフレンド申請を拒否')
-                        else:
-                            print(f'[{now_()}] None / {user.id} のフレンド申請を拒否')
-                    else:
-                        await message.reply(f'{user.display_name} / {user.id} のフレンド申請を拒否')
-                        if data['loglevel'] == 'normal':
-                            print(f'[{now_()}] {user.display_name} のフレンド申請を拒否')
-                        else:
-                            print(f'[{now_()}] {user.display_name} / {user.id} のフレンド申請を拒否')
+                    await message.reply(f'{str(user.display_name)} / {user.id} のフレンド申請を拒否')
+            else:
+                if client.is_pending(message.author.id) is False:
+                    await message.reply('ユーザーからのフレンド申請がありません')
+                    return
+                await client.remove_or_decline_friend(message.author.id)
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(message.author.display_name)} のフレンド申請を拒否')
+                else:
+                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} のフレンド申請を拒否')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
             await message.reply('フレンド申請の拒否リクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['declinepending']}] [ユーザー名 / ユーザーID]")
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['blockfriend'].split(','):
         try:
-            try:
-                user=await client.fetch_profile(rawcontent)
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
-                if not user.id in client.blocked_users.keys():
-                    await client.block_user(user.id)
-                    if user.display_name is None:
-                        await message.reply(f'None / {user.id} をブロック')
-                        if data['loglevel'] == 'normal':
-                            print(f'[{now_()}] None をブロック')
-                        else:
-                            print(f'[{now_()}] None / {user.id} をブロック')
-                    else:
-                        await message.reply(f'{user.display_name} / {user.id} をブロック')
-                        if data['loglevel'] == 'normal':
-                            print(f'[{now_()}] {user.display_name} をブロック')
-                        else:
-                            print(f'[{now_()}] {user.display_name} / {user.id} をブロック')
-                else:
+            if rawcontent == '':
+                await message.reply(f"[{commands['blockfriend']}] [ユーザー名 / ユーザーID]")
+                return
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
+                if user.id in client.blocked_users.keys():
                     await message.reply('既にユーザーをブロックしています')
+                    return
+                await client.block_user(user.id)
+                if user.display_name is None:
+                    await message.reply(f'None / {user.id} をブロック')
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(user.display_name)} をブロック')
+                else:
+                    await message.reply(f'{str(user.display_name)} / {user.id} をブロック')
+            else:
+                if message.author.id in client.blocked_users.keys():
+                    await message.reply('既にユーザーをブロックしています')
+                    return
+                await client.block_user(message.author.id)
+                if message.author.display_name is None:
+                    await message.reply(f'None / {message.author.id} をブロック')
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(message.author.display_name)} をブロック')
+                else:
+                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をブロック')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
             await message.reply('フレンドのブロックリクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['blockfriend']}] [ユーザー名 / ユーザーID]")
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['unblockfriend'].split(','):
         try:
-            try:
-                user=await client.fetch_profile(rawcontent)
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
-                if user.id in client.blocked_users.keys():
-                    await client.unblock_user(user.id)
-                    if user.display_name is None:
-                        await message.reply(f'None / {user.id} をブロック解除')
-                        if data['loglevel'] == 'normal':
-                            print(f'[{now_()}] None をブロック解除')
-                        else:
-                            print(f'[{now_()}] None / {user.id} をブロック解除')
-                    else:
-                        await message.reply(f'{user.display_name} / {user.id} をブロック解除')
-                        if data['loglevel'] == 'normal':
-                            print(f'[{now_()}] {user.display_name} をブロック解除')
-                        else:
-                            print(f'[{now_()}] {user.display_name} / {user.id} をブロック解除')
-                else:
+            if rawcontent == '':
+                await message.reply(f"[{commands['unblockfriend']}] [ユーザー名 / ユーザーID]")
+                return
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
+                if not user.id in client.blocked_users.keys():
                     await message.reply('ユーザーをブロックしていません')
+                    return
+                await client.unblock_user(user.id)
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(user.display_name)} をブロック解除')
+                else:
+                    await message.reply(f'{str(user.display_name)} / {user.id} をブロック解除')
+            else:
+                if not message.author.id in client.blocked_users.keys():
+                    await message.reply('ユーザーをブロックしていません')
+                    return
+                await client.unblock_user(message.author.id)
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(message.author.display_name)} をブロック解除')
+                else:
+                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をブロック解除')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
             await message.reply('ブロックしたユーザーのブロック解除リクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['unblockfriend']}] [ユーザー名 / ユーザーID]")
         except Exception:
             print(red(traceback.format_exc()))
             await message.reply('エラー')
 
     elif args[0] in commands['chatban'].split(','):
         try:
+            if rawcontent == '':
+                await message.reply(f"[{commands['chatban']}] [ユーザー名 / ユーザーID] : [理由(任意)]")
+                return
             reason=rawcontent.split(' : ')
-            user=await client.fetch_profile(reason[0])
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
+            if not reason[0] in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(reason[0])
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
                 if not user.id in client.user.party.members.keys():
                     await message.reply('ユーザーがパーティーにいません')
+                    return
+                member=client.user.party.members.get(user.id)
+                try:
+                    await member.chatban(reason[1])
+                except IndexError:
+                    await member.chatban()
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(user.display_name)} をバン')
                 else:
-                    member=client.user.party.members.get(user.id)
-                    try:
-                        await member.chatban(reason[1])
-                    except IndexError:
-                        await member.chatban()
-                    if user.display_name is None:
-                        await message.reply(f'None / {user.id} をバン')
-                    else:
-                        await message.reply(f'{user.display_name} / {user.id} をバン')
-        except fortnitepy.Forbidden:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply('パーティーリーダーではありません')
-        except fortnitepy.NotFound:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply('メンバーが見つかりません')
-        except ValueError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply('既にバンされています')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['chatban']}] [ユーザー名 / ユーザーID] : [理由(任意)]")
-        except Exception:
-            print(red(traceback.format_exc()))
-            await message.reply('エラー')
-
-    elif args[0] in commands['chatbanme'].split(','):
-        try:
-            if not message.author.id in client.user.party.members.keys():
-                await message.reply('ユーザーがパーティーにいません')
+                    await message.reply(f'{str(user.display_name)} / {user.id} をバン')
             else:
+                if not message.author.id in client.user.party.members.keys():
+                    await message.reply('ユーザーがパーティーにいません')
+                    return
                 member=client.user.party.members.get(message.author.id)
                 try:
                     await member.chatban(reason[1])
                 except IndexError:
                     await member.chatban()
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(message.author.display_name)} をバン')
+                else:
+                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をバン')
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -3994,51 +4302,39 @@ async def event_party_message(message):
 
     elif args[0] in commands['promote'].split(','):
         try:
-            try:
-                user=await client.fetch_profile(rawcontent)
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
+            if rawcontent == '':
+                await message.reply(f"[{commands['promote']}] [ユーザー名 / ユーザーID]")
+                return
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
                 if not user.id in client.user.party.members.keys():
                     await message.reply('ユーザーがパーティーにいません')
+                    return
+                member=client.user.party.members.get(user.id)
+                await member.promote()
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(user.display_name)} に譲渡')
                 else:
-                    member=client.user.party.members.get(user.id)
-                    await member.promote()
-                    if user.display_name is None:
-                        await message.reply(f'None / {user.id} に譲渡')
-                    else:
-                        await message.reply(f'{user.display_name} / {user.id} に譲渡')
-        except fortnitepy.Forbidden:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply('パーティーリーダーではありません')
-        except fortnitepy.PartyError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply('既にパーティーリーダーです')
-        except fortnitepy.HTTPException:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply('パーティーリーダーの譲渡リクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['promote']}] [ユーザー名 / ユーザーID]")
-        except Exception:
-            print(red(traceback.format_exc()))
-            await message.reply('エラー')
-
-    elif args[0] in commands['promoteme'].split(','):
-        try:
-            if not message.author.id in client.user.party.members.keys():
-                await message.reply('ユーザーがパーティーにいません')
+                    await message.reply(f'{str(user.display_name)} / {user.id} に譲渡')
             else:
+                if not message.author.id in client.user.party.members.keys():
+                    await message.reply('ユーザーがパーティーにいません')
+                    return
                 member=client.user.party.members.get(message.author.id)
                 await member.promote()
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(message.author.display_name)} に譲渡')
+                else:
+                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} に譲渡')
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4057,51 +4353,39 @@ async def event_party_message(message):
 
     elif args[0] in commands['kick'].split(','):
         try:
-            try:
-                user=await client.fetch_profile(rawcontent)
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-            else:
+            if rawcontent == '':
+                await message.reply(f"[{commands['kick']}] [ユーザー名 / ユーザーID]")
+                return
+            if not rawcontent in commands['me'].split(','):
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    return
+                if user is None:
+                    await message.reply('ユーザーが見つかりません')
+                    return
                 if not user.id in client.user.party.members.keys():
                     await message.reply('ユーザーがパーティーにいません')
+                    return
+                member=client.user.party.members.get(user.id)
+                await member.kick()
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(user.display_name)} をキック')
                 else:
-                    member=client.user.party.members.get(user.id)
-                    await member.kick()
-                    if user.display_name is None:
-                        await message.reply(f'None / {user.id} をキック')
-                    else:
-                        await message.reply(f'{user.display_name} / {user.id} をキック')
-        except fortnitepy.Forbidden:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply('パーティーリーダーではありません')
-        except fortnitepy.PartyError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply('自分をキックすることはできません')
-        except fortnitepy.HTTPException:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply('パーティーメンバーのキックリクエストを処理中にエラーが発生しました')
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            await message.reply(f"[{commands['kick']}] [ユーザー名 / ユーザーID]")
-        except Exception:
-            print(red(traceback.format_exc()))
-            await message.reply('エラー')
-
-    elif args[0] in commands['kickme'].split(','):
-        try:
-            if not message.author.id in client.user.party.members.keys():
-                await message.reply('ユーザーがパーティーにいません')
+                    await message.reply(f'{str(user.display_name)} / {user.id} をキック')
             else:
+                if not message.author.id in client.user.party.members.keys():
+                    await message.reply('ユーザーがパーティーにいません')
+                    return
                 member=client.user.party.members.get(message.author.id)
                 await member.kick()
+                if data['loglevel'] == 'normal':
+                    await message.reply(f'{str(message.author.display_name)} をキック')
+                else:
+                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をキック')
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4156,9 +4440,8 @@ async def event_party_message(message):
             with open('allen.json', 'r', encoding='utf-8') as f:
                 allskin = json.load(f)
             for item in allskin['data']:
-                if client.stopcheck == True:
+                if client.stopcheck is True:
                     client.stopcheck=False
-                    await message.reply('停止しました')
                     break
                 if item['type'] == 'outfit':
                     await client.user.party.me.set_outfit(item['id'])
@@ -4173,9 +4456,8 @@ async def event_party_message(message):
             with open('allen.json', 'r', encoding='utf-8') as f:
                 allemote = json.load(f)
             for item in allemote['data']:
-                if client.stopcheck == True:
+                if client.stopcheck is True:
                     client.stopcheck=False
-                    await message.reply('停止しました')
                     break
                 if item['type'] == 'emote':
                     await client.user.party.me.set_emote(item['id'])
@@ -4188,74 +4470,80 @@ async def event_party_message(message):
 
     elif args[0] in commands['id'].split(','):
         if rawcontent == '':
-            return await message.reply(f"[{commands['id']}] [ID]")
+            await message.reply(f"[{commands['id']}] [ID]")
+            return
         try:
             isitem = await search_item_with_id("ja", rawcontent)
             if isitem[0] == 'True':
                 client.ismesjaitem=isitem
                 if len(client.ismesjaitem[1]) > 29:
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
-                else:
-                    for count,item in enumerate(client.ismesjaitem[1]):
-                        if item[2] == 'outfit':
-                            if len(client.ismesjaitem[1]) == 1:
-                                await message.reply(f'スキン: {item[0]}: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} スキン: {item[0]}: {item[1]}')
-                        if item[2] == 'backpack':
-                            if len(client.ismesjaitem[1]) == 1:
-                                await message.reply(f'バッグ: {item[0]}: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
-                        if item[2] == 'pet':
-                            if len(client.ismesjaitem[1]) == 1:
-                                await message.reply(f'バッグ: {item[0]}: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
-                        if item[2] == 'pickaxe':
-                            if len(client.ismesjaitem[1]) == 1:
-                                await message.reply(f'ツルハシ: {item[0]}: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} ツルハシ: {item[0]}: {item[1]}')
-                        if item[2] == 'emote':
-                            if len(client.ismesjaitem[1]) == 1:
-                                await message.reply(f'エモート: {item[0]}: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
-                        if item[2] == 'emoji':
-                            if len(client.ismesjaitem[1]) == 1:
-                                await message.reply(f'エモート: {item[0]}: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
-                        if item[2] == 'toy':
-                            if len(client.ismesjaitem[1]) == 1:
-                                await message.reply(f'エモート: {item[0]}: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
-                    if len(client.ismesjaitem[1]) == 1:
-                        if client.ismesjaitem[1][0][2] == 'outfit':
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][0][0]))
-                        if client.ismesjaitem[1][0][2] == 'backpack':
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesjaitem[1][0][0]))
-                        if client.ismesjaitem[1][0][2] == 'pet':
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.ismesjaitem[1][0][0]))
-                        if client.ismesjaitem[1][0][2] == 'pickaxe':
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][0][0]))
-                            await client.user.party.me.set_emote('EID_IceKing')
-                        if client.ismesjaitem[1][0][2] == 'emote':
-                            if not client.user.party.me.emote is None:
-                                if client.user.party.me.emote.lower() == client.ismesjaitem[1][0][0].lower():
-                                    await client.user.party.me.clear_emote()
-                            await client.user.party.me.set_emote(client.ismesjaitem[1][0][0])
-                            client.eid=client.ismesjaitem[1][0][0]
-                        if client.ismesjaitem[1][0][2] == 'emoji':
-                            await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}')
-                            client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'
-                        if client.ismesjaitem[1][0][2] == 'toy':
-                            await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}')
-                            client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'
-                    if len(client.ismesjaitem[1]) > 1:
-                        await message.reply('数字を入力することでそのアイテムに設定します')
+                    return
+                for count,item in enumerate(client.ismesjaitem[1]):
+                    if item[2] == 'outfit':
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'スキン: {item[0]}: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} スキン: {item[0]}: {item[1]}')
+                    if item[2] == 'backpack':
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'バッグ: {item[0]}: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
+                    if item[2] == 'pet':
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'バッグ: {item[0]}: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[0]}: {item[1]}')
+                    if item[2] == 'pickaxe':
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'ツルハシ: {item[0]}: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} ツルハシ: {item[0]}: {item[1]}')
+                    if item[2] == 'emote':
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'エモート: {item[0]}: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
+                    if item[2] == 'emoji':
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'エモート: {item[0]}: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
+                    if item[2] == 'toy':
+                        if len(client.ismesjaitem[1]) == 1:
+                            await message.reply(f'エモート: {item[0]}: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
+                if len(client.ismesjaitem[1]) == 1:
+                    if not data['loglevel'] == 'normal':
+                        print(client.ismesjaitem[1][0][0])
+                    if client.ismesjaitem[1][0][2] == 'outfit':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][0][0]))
+                    if client.ismesjaitem[1][0][2] == 'backpack':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesjaitem[1][0][0]))
+                    if client.ismesjaitem[1][0][2] == 'pet':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.ismesjaitem[1][0][0]))
+                    if client.ismesjaitem[1][0][2] == 'pickaxe':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][0][0]))
+                        if not client.user.party.me.emote is None:
+                            if client.user.party.me.emote.lower() == 'eid_iceking':
+                                await client.user.party.me.clear_emote()
+                        await client.user.party.me.set_emote('EID_IceKing')
+                    if client.ismesjaitem[1][0][2] == 'emote':
+                        if not client.user.party.me.emote is None:
+                            if client.user.party.me.emote.lower() == client.ismesjaitem[1][0][0].lower():
+                                await client.user.party.me.clear_emote()
+                        await client.user.party.me.set_emote(client.ismesjaitem[1][0][0])
+                        client.eid=client.ismesjaitem[1][0][0]
+                    if client.ismesjaitem[1][0][2] == 'emoji':
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'
+                    if client.ismesjaitem[1][0][2] == 'toy':
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'
+                if len(client.ismesjaitem[1]) > 1:
+                    await message.reply('数字を入力することでそのアイテムに設定します')
             else:
                 await message.reply('見つかりません')
         except fortnitepy.HTTPException:
@@ -4268,41 +4556,46 @@ async def event_party_message(message):
 
     elif args[0] in commands['skin'].split(','):
         if rawcontent == '':
-            return await message.reply(f"[{commands['skin']}] [スキン名]")
+            await message.reply(f"[{commands['skin']}] [スキン名]")
+            return
         try:
             isitem = await search_item_with_type("ja", rawcontent, "outfit")
             if isitem[0] == 'True':
                 client.ismesjaitem=isitem
                 if len(client.ismesjaitem[1]) > 29:
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
-                else:
-                    for count,item in enumerate(client.ismesjaitem[1]):
-                        if len(client.ismesjaitem[1]) == 1:
-                            await message.reply(f'{item[1]}')
-                        else:
-                            await message.reply(f'{count+1}: {item[1]}')
+                    return
+                for count,item in enumerate(client.ismesjaitem[1]):
                     if len(client.ismesjaitem[1]) == 1:
-                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][0][0]))
-                    if len(client.ismesjaitem[1]) > 1:
-                        await message.reply('数字を入力することでそのアイテムに設定します')
-            else:
-                isitem = await search_item_with_type("en", rawcontent, "outfit")
-                if isitem[0] == 'True':
-                    client.ismesenitem=isitem
-                    if len(client.ismesenitem[1]) > 29:
-                        await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
+                        await message.reply(f'{item[1]}')
                     else:
-                        for count,item in enumerate(client.ismesenitem[1]):
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'{item[1]}')
-                            else:
-                                await message.reply(f'{count+1}: {item[1]}')
-                        if len(client.ismesenitem[1]) == 1:
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesenitem[1][0][0]))
-                        if len(client.ismesenitem[1]) > 1:
-                            await message.reply('数字を入力することでそのアイテムに設定します')
-                else:
-                    await message.reply('見つかりません')
+                        await message.reply(f'{count+1}: {item[1]}')
+                if len(client.ismesjaitem[1]) == 1:
+                    if not data['loglevel'] == 'normal':
+                        print(client.ismesjaitem[1][0][0])
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesjaitem[1][0][0]))
+                if len(client.ismesjaitem[1]) > 1:
+                    await message.reply('数字を入力することでそのアイテムに設定します')
+                return
+            isitem = await search_item_with_type("en", rawcontent, "outfit")
+            if isitem[0] == 'True':
+                client.ismesenitem=isitem
+                if len(client.ismesenitem[1]) > 29:
+                    await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
+                    return
+                for count,item in enumerate(client.ismesenitem[1]):
+                    if len(client.ismesenitem[1]) == 1:
+                        await message.reply(f'{item[1]}')
+                    else:
+                        await message.reply(f'{count+1}: {item[1]}')
+                if len(client.ismesenitem[1]) == 1:
+                    if not data['loglevel'] == 'normal':
+                        print(client.ismesjaitem[1][0][0])
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.ismesenitem[1][0][0]))
+                if len(client.ismesenitem[1]) > 1:
+                    await message.reply('数字を入力することでそのアイテムに設定します')
+                return
+            await message.reply('見つかりません')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4313,47 +4606,52 @@ async def event_party_message(message):
 
     elif args[0] in commands['bag'].split(','):
         if rawcontent == '':
-            return await message.reply(f"[{commands['bag']}] [バッグ名]")
+            await message.reply(f"[{commands['bag']}] [バッグ名]")
+            return
         try:
             isitem = await search_item_with_type("ja", rawcontent, "backpack,pet")
             if isitem[0] == 'True':
                 client.ismesjaitem=isitem
                 if len(client.ismesjaitem[1]) > 29:
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
+                    return
+                for count,item in enumerate(client.ismesjaitem[1]):
+                    if len(client.ismesjaitem[1]) == 1:
+                        await message.reply(f'{item[1]}')
+                    else:
+                        await message.reply(f'{count+1}: {item[1]}')
+                if len(client.ismesjaitem[1]) == 1:
+                    if not data['loglevel'] == 'normal':
+                        print(client.ismesjaitem[1][0][0])
+                    if client.ismesjaitem[1][0][2] == 'backpack':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesjaitem[1][0][0]))
+                    if client.ismesjaitem[1][0][2] == 'pet':
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.ismesjaitem[1][0][0]))
+                if len(client.ismesjaitem[1]) > 1:
+                    await message.reply('数字を入力することでそのアイテムに設定します')
+                return
+            isitem = await search_item_with_type("en", rawcontent, "backpack,pet")
+            if isitem[0] == 'True':
+                client.ismesenitem=isitem
+                if len(client.ismesenitem[1]) > 29:
+                    await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
                 else:
-                    for count,item in enumerate(client.ismesjaitem[1]):
-                        if len(client.ismesjaitem[1]) == 1:
+                    for count,item in enumerate(client.ismesenitem[1]):
+                        if len(client.ismesenitem[1]) == 1:
                             await message.reply(f'{item[1]}')
                         else:
                             await message.reply(f'{count+1}: {item[1]}')
-                    if len(client.ismesjaitem[1]) == 1:
-                        if client.ismesjaitem[1][0][2] == 'backpack':
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesjaitem[1][0][0]))
-                        if client.ismesjaitem[1][0][2] == 'pet':
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.ismesjaitem[1][0][0]))
-                    if len(client.ismesjaitem[1]) > 1:
+                    if len(client.ismesenitem[1]) == 1:
+                        if not data['loglevel'] == 'normal':
+                            print(client.ismesjaitem[1][0][0])
+                        if client.ismesenitem[1][0][2] == 'backpack':
+                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesenitem[1][0][0]))
+                        if client.ismesenitem[1][0][2] == 'pet':
+                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.ismesenitem[1][0][0]))
+                    if len(client.ismesenitem[1]) > 1:
                         await message.reply('数字を入力することでそのアイテムに設定します')
-            else:
-                isitem = await search_item_with_type("en", rawcontent, "backpack,pet")
-                if isitem[0] == 'True':
-                    client.ismesenitem=isitem
-                    if len(client.ismesenitem[1]) > 29:
-                        await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
-                    else:
-                        for count,item in enumerate(client.ismesenitem[1]):
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'{item[1]}')
-                            else:
-                                await message.reply(f'{count+1}: {item[1]}')
-                        if len(client.ismesenitem[1]) == 1:
-                            if client.ismesenitem[1][0][2] == 'backpack':
-                                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.ismesenitem[1][0][0]))
-                            if client.ismesenitem[1][0][2] == 'pet':
-                                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.ismesenitem[1][0][0]))
-                        if len(client.ismesenitem[1]) > 1:
-                            await message.reply('数字を入力することでそのアイテムに設定します')
-                else:
-                    await message.reply('見つかりません')
+                return
+            await message.reply('見つかりません')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4364,43 +4662,51 @@ async def event_party_message(message):
 
     elif args[0] in commands['pickaxe'].split(','):
         if rawcontent == '':
-            return await message.reply(f"[{commands['pickaxe']}] [ツルハシ名]]")
+            await message.reply(f"[{commands['pickaxe']}] [ツルハシ名]")
+            return
         try:
             isitem = await search_item_with_type("ja", rawcontent, "pickaxe")
             if isitem[0] == 'True':
                 client.ismesjaitem=isitem
                 if len(client.ismesjaitem[1]) > 29:
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
-                else:
-                    for count,item in enumerate(client.ismesjaitem[1]):
-                        if len(client.ismesjaitem[1]) == 1:
-                            await message.reply(f'{item[1]}')
-                        else:
-                            await message.reply(f'{count+1}: {item[1]}')
+                    return
+                for count,item in enumerate(client.ismesjaitem[1]):
                     if len(client.ismesjaitem[1]) == 1:
-                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][0][0]))
-                        await client.user.party.me.set_emote('EID_IceKing')
-                    if len(client.ismesjaitem[1]) > 1:
-                        await message.reply('数字を入力することでそのアイテムに設定します')
-            else:
-                isitem = await search_item_with_type("en", rawcontent, "pickaxe")
-                if isitem[0] == 'True':
-                    client.ismesenitem=isitem
-                    if len(client.ismesenitem[1]) > 29:
-                        await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
+                        await message.reply(f'{item[1]}')
                     else:
-                        for count,item in enumerate(client.ismesenitem[1]):
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'{item[1]}')
-                            else:
-                                await message.reply(f'{count+1}: {item[1]}')
-                        if len(client.ismesenitem[1]) == 1:
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesenitem[1][0][0]))
-                            await client.user.party.me.set_emote('EID_IceKing')
-                        if len(client.ismesenitem[1]) > 1:
-                            await message.reply('数字を入力することでそのアイテムに設定します')
-                else:
-                    await message.reply('見つかりません')
+                        await message.reply(f'{count+1}: {item[1]}')
+                if len(client.ismesjaitem[1]) == 1:
+                    if not data['loglevel'] == 'normal':
+                        print(client.ismesjaitem[1][0][0])
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesjaitem[1][0][0]))
+                    if not client.user.party.me.emote is None:
+                        if client.user.party.me.emote.lower() == 'eid_iceking':
+                            await client.user.party.me.clear_emote()
+                    await client.user.party.me.set_emote('EID_IceKing')
+                if len(client.ismesjaitem[1]) > 1:
+                    await message.reply('数字を入力することでそのアイテムに設定します')
+                return
+            isitem = await search_item_with_type("en", rawcontent, "pickaxe")
+            if isitem[0] == 'True':
+                client.ismesenitem=isitem
+                if len(client.ismesenitem[1]) > 29:
+                    await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
+                    return
+                for count,item in enumerate(client.ismesenitem[1]):
+                    if len(client.ismesenitem[1]) == 1:
+                        await message.reply(f'{item[1]}')
+                    else:
+                        await message.reply(f'{count+1}: {item[1]}')
+                if len(client.ismesenitem[1]) == 1:
+                    if not data['loglevel'] == 'normal':
+                        print(client.ismesjaitem[1][0][0])
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.ismesenitem[1][0][0]))
+                    await client.user.party.me.set_emote('EID_IceKing')
+                if len(client.ismesenitem[1]) > 1:
+                    await message.reply('数字を入力することでそのアイテムに設定します')
+                return
+            await message.reply('見つかりません')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4411,57 +4717,62 @@ async def event_party_message(message):
 
     elif args[0] in commands['emote'].split(','):
         if rawcontent == '':
-            return await message.reply(f"[{commands['emote']}] [エモート名]]")
+            await message.reply(f"[{commands['emote']}] [エモート名]]")
+            return
         try:
             isitem = await search_item_with_type("ja", rawcontent, "emote,emoji,toy")
             if isitem[0] == 'True':
                 client.ismesjaitem=isitem
                 if len(client.ismesjaitem[1]) > 29:
                     await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
-                else:
-                    for count,item in enumerate(client.ismesjaitem[1]):
-                        if len(client.ismesjaitem[1]) == 1:
-                            await message.reply(f'{item[1]}')
-                        else:
-                            await message.reply(f'{count+1}: {item[1]}')
+                    return
+                for count,item in enumerate(client.ismesjaitem[1]):
                     if len(client.ismesjaitem[1]) == 1:
-                        if client.ismesjaitem[1][0][2] == 'emote':
-                            await client.user.party.me.set_emote(client.ismesjaitem[1][0][0])
-                            client.eid=client.ismesjaitem[1][0][0]
-                        if client.ismesjaitem[1][0][2] == 'emoji':
-                            await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}')
-                            client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'
-                        if client.ismesjaitem[1][0][2] == 'toy':
-                            await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}')
-                            client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'
-                    if len(client.ismesjaitem[1]) > 1:
-                        await message.reply('数字を入力することでそのアイテムに設定します')
-            else:
-                isitem = await search_item_with_type("en", rawcontent, "emote,emoji,toy")
-                if isitem[0] == 'True':
-                    client.ismesenitem=isitem
-                    if len(client.ismesenitem[1]) > 29:
-                        await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
+                        await message.reply(f'{item[1]}')
                     else:
-                        for count,item in enumerate(client.ismesenitem[1]):
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'{item[1]}')
-                            else:
-                                await message.reply(f'{count+1}: {item[1]}')
-                        if len(client.ismesenitem[1]) == 1:
-                            if client.ismesenitem[1][0][2] == 'emote':
-                                await client.user.party.me.set_emote(client.ismesenitem[1][0][0])
-                                client.eid=client.ismesenitem[1][0][0]
-                            if client.ismesenitem[1][0][2] == 'emoji':
-                                await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesenitem[1][0][0]}.{client.ismesenitem[1][0][0]}')
-                                client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesenitem[1][0][0]}.{client.ismesenitem[1][0][0]}'
-                            if client.ismesenitem[1][0][2] == 'toy':
-                                await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesenitem[1][0][0]}.{client.ismesenitem[1][0][0]}')
-                                client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesenitem[1][0][0]}.{client.ismesenitem[1][0][0]}'
-                        if len(client.ismesenitem[1]) > 1:
-                            await message.reply('数字を入力することでそのアイテムに設定します')
-                else:
-                    await message.reply('見つかりません')
+                        await message.reply(f'{count+1}: {item[1]}')
+                if len(client.ismesjaitem[1]) == 1:
+                    if not data['loglevel'] == 'normal':
+                        print(client.ismesjaitem[1][0][0])
+                    if client.ismesjaitem[1][0][2] == 'emote':
+                        await client.user.party.me.set_emote(client.ismesjaitem[1][0][0])
+                        client.eid=client.ismesjaitem[1][0][0]
+                    if client.ismesjaitem[1][0][2] == 'emoji':
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'
+                    if client.ismesjaitem[1][0][2] == 'toy':
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesjaitem[1][0][0]}.{client.ismesjaitem[1][0][0]}'
+                if len(client.ismesjaitem[1]) > 1:
+                    await message.reply('数字を入力することでそのアイテムに設定します')
+                return
+            isitem = await search_item_with_type("en", rawcontent, "emote,emoji,toy")
+            if isitem[0] == 'True':
+                client.ismesenitem=isitem
+                if len(client.ismesenitem[1]) > 29:
+                    await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
+                    return
+                for count,item in enumerate(client.ismesenitem[1]):
+                    if len(client.ismesenitem[1]) == 1:
+                        await message.reply(f'{item[1]}')
+                    else:
+                        await message.reply(f'{count+1}: {item[1]}')
+                if len(client.ismesenitem[1]) == 1:
+                    if not data['loglevel'] == 'normal':
+                        print(client.ismesjaitem[1][0][0])
+                    if client.ismesenitem[1][0][2] == 'emote':
+                        await client.user.party.me.set_emote(client.ismesenitem[1][0][0])
+                        client.eid=client.ismesenitem[1][0][0]
+                    if client.ismesenitem[1][0][2] == 'emoji':
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesenitem[1][0][0]}.{client.ismesenitem[1][0][0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.ismesenitem[1][0][0]}.{client.ismesenitem[1][0][0]}'
+                    if client.ismesenitem[1][0][2] == 'toy':
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesenitem[1][0][0]}.{client.ismesenitem[1][0][0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.ismesenitem[1][0][0]}.{client.ismesenitem[1][0][0]}'
+                if len(client.ismesenitem[1]) > 1:
+                    await message.reply('数字を入力することでそのアイテムに設定します')
+                return
+            await message.reply('見つかりません')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4472,12 +4783,15 @@ async def event_party_message(message):
 
     elif args[0] in commands['set'].split(','):
         if rawcontent == '':
-            return await message.reply(f"[{commands['set']}] [セット名]]")
+            await message.reply(f"[{commands['set']}] [セット名]]")
+            return
         try:
             isitem = await search_set_item("ja", rawcontent)
             if isitem[0] == 'True':
                 client.ismesjaitem=isitem
                 for count,item in enumerate(client.ismesjaitem[1]):
+                    if not data['loglevel'] == 'normal':
+                        print(client.ismesjaitem[1][0][0])
                     if item[2] == 'outfit':
                         if len(client.ismesjaitem[1]) == 1:
                             await message.reply(f'スキン: {item[1]}')
@@ -4524,60 +4838,61 @@ async def event_party_message(message):
                             await message.reply(f'{count+1} エモート: {item[1]}')
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}'
-                    
-            else:
-                isitem = await search_set_item("en", rawcontent)
-                if isitem[0] == 'True':
-                    client.ismesenitem=isitem
-                    for count,item in enumerate(client.ismesenitem[1]):
-                        if item[2] == 'outfit':
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'スキン: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} スキン: {item[1]}')
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,item[0]))
-                        if item[2] == 'backpack':
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'バッグ: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} バッグ: {item[1]}')
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,item[0]))
-                        if item[2] == 'pet':
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'バッグ: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} バッグ: {item[1]}')
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,item[0]))
-                        if item[2] == 'pickaxe':
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'ツルハシ: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} ツルハシ: {item[1]}')
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,item[0]))
-                            await client.user.party.me.set_emote('EID_IceKing')
-                        if item[2] == 'emote':
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'エモート: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} エモート: {item[1]}')
-                            await client.user.party.me.set_emote(item[0])
-                            client.eid=item[0]
-                        if item[2] == 'emoji':
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'エモート: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} エモート: {item[1]}')
-                            await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}')
-                            client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}'
-                        if item[2] == 'toy':
-                            if len(client.ismesenitem[1]) == 1:
-                                await message.reply(f'エモート: {item[1]}')
-                            else:
-                                await message.reply(f'{count+1} エモート: {item[1]}')
-                            await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}')
-                            client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}'
-                else:
-                    await message.reply('見つかりません')
+                return
+            isitem = await search_set_item("en", rawcontent)
+            if isitem[0] == 'True':
+                client.ismesenitem=isitem
+                for count,item in enumerate(client.ismesenitem[1]):
+                    if not data['loglevel'] == 'normal':
+                        print(client.ismesjaitem[1][0][0])
+                    if item[2] == 'outfit':
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'スキン: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} スキン: {item[1]}')
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,item[0]))
+                    if item[2] == 'backpack':
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'バッグ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[1]}')
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,item[0]))
+                    if item[2] == 'pet':
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'バッグ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[1]}')
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,item[0]))
+                    if item[2] == 'pickaxe':
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'ツルハシ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} ツルハシ: {item[1]}')
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,item[0]))
+                        await client.user.party.me.set_emote('EID_IceKing')
+                    if item[2] == 'emote':
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
+                        await client.user.party.me.set_emote(item[0])
+                        client.eid=item[0]
+                    if item[2] == 'emoji':
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}'
+                    if item[2] == 'toy':
+                        if len(client.ismesenitem[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}'
+                return
+            await message.reply('見つかりません')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4612,13 +4927,17 @@ async def event_party_message(message):
             if len(args) == 4 or len(args) == 6 or len(args) == 8:
                 if args[1].startswith('cid_'):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,asset=args[1],variants=variants))
+                    await message.reply(f'スキンを {args[1]} {variants} に設定')
                 elif args[1].startswith('bid_'):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,asset=args[1],variants=variants))
+                    await message.reply(f'バッグを {args[1]} {variants} に設定')
                 elif args[1].startswith('petcarrier_'):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,asset=args[1],variants=variants))
+                    await message.reply(f'バッグを {args[1]} {variants} に設定')
                 elif args[1].startswith('pickaxe_id'):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,asset=args[1],variants=variants))
                     await client.user.party.me.set_emote('EID_IceKing')
+                    await message.reply(f'ツルハシを {args[1]} {variants} に設定')
             else:
                 await message.reply(f"[{commands['variant']}] [variant] [数値]\nvariantと数値は3つまで設定可")
         except fortnitepy.HTTPException:
@@ -4890,7 +5209,8 @@ async def event_party_message(message):
             if isitem[0] == 'True':
                 client.ismesjaitem = isitem
                 if len(client.ismesjaitem[1]) > 29:
-                    return await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
+                    await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesjaitem[1])))
+                    return
                 for count,item in enumerate(client.ismesjaitem[1]):
                     if item[2] == 'outfit':
                         if len(client.ismesjaitem[1]) == 1:
@@ -4968,7 +5288,8 @@ async def event_party_message(message):
             if isitem[0] == 'True':
                 client.ismesenitem = isitem
                 if len(client.ismesenitem[1]) > 29:
-                    return await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
+                    await message.reply("見つかったアイテムが多すぎます " + str(len(client.ismesenitem[1])))
+                    return
                 for count,item in enumerate(client.ismesenitem[1]):
                     if item[2] == 'outfit':
                         if len(client.ismesenitem[1]) == 1:
@@ -5072,6 +5393,7 @@ for email, password in credentials.items():
     client.eid=data['fortnite']['eid']
     client.acceptinvite_interval=True
     client.stopcheck=False
+    client.stopspam=False
     client.prevoutfit=None
     client.prevoutfitvariants=None
     client.prevbackpack=None
@@ -5098,6 +5420,9 @@ for email, password in credentials.items():
     client.add_event_handler('party_member_kick', event_party_member_kick)
     client.add_event_handler('party_member_promote', event_party_member_promote)
     client.add_event_handler('party_member_update', event_party_member_update)
+    client.add_event_handler('party_member_disconnect', event_party_member_disconnect)
+    client.add_event_handler('party_member_chatban', event_party_member_chatban)
+    client.add_event_handler('party_update', event_party_update)
     client.add_event_handler('friend_message', event_friend_message)
     client.add_event_handler('party_message', event_party_message)
 
