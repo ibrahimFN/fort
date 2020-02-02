@@ -53,15 +53,17 @@ debug               : Fortnitepyのデバッグモードをオンにするかど
 # コマンド一覧
 コマンド名はcommands.json内の表記  
 全て , で区切ることで複数設定可  
+アイテム名を打つことでそのアイテムにすることもできる  
 
 ```
 true                 : コマンドの true として扱う文字列
 false                : コマンドの false として扱う文字列
+me                   : コマンドの送り主として扱う文字列
 prev                 : 一つ前のコマンドを繰り返す
 restart              : プログラムを再起動する
 relogin              : アカウントに再ログインする
 reload               : configとcommandsを再読み込みする
-get                  : パーティーリーダーのアイテム各種の情報を取得する
+get                  : get [ユーザー名/ユーザーID] ユーザーのアイテム各種の情報を取得する
 friendcount          : 現在のフレンド数を表示する
 skinmimic            : skinmimic [true / false] 他人のスキンを真似るかどうかの設定
 emotemimic           : emotemimic [true / false] 他人のエモートを真似るかどうかの設定
@@ -71,10 +73,10 @@ acceptfriend         : acceptfriend [true / false] フレンド申請を承諾�
 joinmessageenable    : joinmessageenable [true / false] パーティーに誰かが参加した時のメッセージを出すかどうかの設定
 randommessageenable  : randommessageenable [true / false] パーティーに誰かが参加したときのランダムメッセージを出すかどうかの設定
 wait                 : configのwaitintervalの秒数だけ招待を拒否する
-join                 : join [パーティーID] パーティーに参加する
+join                 : join [ユーザー名/ユーザーID] ユーザーのパーティーに参加する
+joinid               : joinid [パーティーID] パーティーに参加する
 leave                : パーティーを離脱する
 invite               : invite [ユーザー名 / ユーザーID] ユーザーをパーティーに招待する
-inviteme             : メッセージの送り主を招待する
 message              : message [ユーザー名 / ユーザーID] : [内容] ユーザーにメッセージを送信する
 partymessage         : partymessage [内容] パーティーチャットにメッセージを送信する
 status               : status [内容] ステータスを設定する
@@ -94,11 +96,8 @@ declinepending       : declinepending [ユーザー名 / ユーザーID] ユー�
 blockfriend          : blockfriend[ユーザー名 / ユーザーID] ユーザーをブロックする
 unblockfriend        : unblockfriend [ユーザー名 / ユーザーID] ユーザーをブロック解除する
 chatban              : chatban [ユーザー名 / ユーザーID] : [理由(任意)] ユーザーをチャットバンする
-chatbanme            : メッセージの送り主をチャットバンする
 promote              : promote [ユーザー名 / ユーザーID] ユーザーにパーティーリーダーを譲渡する
-promoteme            : メッセージの送り主にパーティーリーダーを譲渡する
 kick                 : kick [ユーザー名 / ユーザーID] ユーザーをキックする
-kickme               : メッセージの送り主をキックする
 ready                : 準備OK 状態にする
 unready              : 準備中 状態にする
 sitout               : 欠場中 状態にする
