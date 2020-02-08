@@ -2720,41 +2720,31 @@ async def event_friend_message(message):
 
     elif args[0] in commands['variant'].split(','):
         try:
-            if len(args) == 4:
-                if args[1].startswith('cid_'):
-                    variants=client.user.party.me.create_variants(item='AthenaCharacter',**{args[2]: int(args[3])})
-                elif args[1].startswith('bid_') or args[1].startswith('petcarrier_'):
-                    variants=client.user.party.me.create_variants(item='AthenaBackpack',**{args[2]: int(args[3])})
-                elif args[1].startswith('pickaxe_id_'):
-                    variants=client.user.party.me.create_variants(item='AthenaPickaxe',**{args[2]: int(args[3])})
-            elif len(args) == 6:
-                if args[1].startswith('cid_'):
-                    variants=client.user.party.me.create_variants(item='AthenaCharacter',**{args[2]: int(args[3])},**{args[4]: int(args[5])})
-                elif args[1].startswith('bid_') or args[1].startswith('petcarrier_'):
-                    variants=client.user.party.me.create_variants(item='AthenaBackpack',**{args[2]: int(args[3])},**{args[4]: int(args[5])})
-                elif args[1].startswith('pickaxe_id_'):
-                    variants=client.user.party.me.create_variants(item='AthenaPickaxe',**{args[2]: int(args[3])},**{args[4]: int(args[5])})
-            elif len(args) == 8:
-                if args[1].startswith('cid_'):
-                    variants=client.user.party.me.create_variants(item='AthenaCharacter',**{args[2]: int(args[3])},**{args[4]: int(args[5])},**{args[6]: int(args[7])})
-                elif args[1].startswith('bid_') or args[1].startswith('petcarrier_'):
-                    variants=client.user.party.me.create_variants(item='AthenaBackpack',**{args[2]: int(args[3])},**{args[4]: int(args[5])},**{args[6]: int(args[7])})
-                elif args[1].startswith('pickaxe_id_'):
-                    variants=client.user.party.me.create_variants(item='AthenaPickaxe',**{args[2]: int(args[3])},**{args[4]: int(args[5])},**{args[6]: int(args[7])})
-            if len(args) == 4 or len(args) == 6 or len(args) == 8:
-                if args[1].startswith('cid_'):
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,asset=args[1],variants=variants))
-                    await message.reply(f'スキンを {args[1]} {variants} に設定')
-                elif args[1].startswith('bid_'):
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,asset=args[1],variants=variants))
-                    await message.reply(f'バッグを {args[1]} {variants} に設定')
-                elif args[1].startswith('petcarrier_'):
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,asset=args[1],variants=variants))
-                    await message.reply(f'バッグを {args[1]} {variants} に設定')
-                elif args[1].startswith('pickaxe_id'):
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,asset=args[1],variants=variants))
-                    await client.user.party.me.set_emote('EID_IceKing')
-                    await message.reply(f'ツルハシを {args[1]} {variants} に設定')
+            variantdict={}
+            for count,text in enumerate(args[2:]):
+                if count % 2 != 0:
+                    continue
+                try:
+                    variantdict[text]=args[count+1]
+                except IndexError:
+                    break
+            if args[1].startswith('cid_'):
+                variants=client.user.party.me.create_variants(item='AthenaCharacter',**variantdict)
+                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,asset=args[1],variants=variants))
+                await message.reply(f'スキンを {args[1]} {variants} に設定')
+            elif args[1].startswith('bid_'):
+                variants=client.user.party.me.create_variants(item='AthenaBackpack',**variantdict)
+                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,asset=args[1],variants=variants))
+                await message.reply(f'バッグを {args[1]} {variants} に設定')
+            elif args[1].startswith('petcarrier_'):
+                variants=client.user.party.me.create_variants(item='AthenaBackpack',**variantdict)
+                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,asset=args[1],variants=variants))
+                await message.reply(f'バッグを {args[1]} {variants} に設定')
+            elif args[1].startswith('pickaxe_id_'):
+                variants=client.user.party.me.create_variants(item='AthenaPickaxe',**variantdict)
+                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,asset=args[1],variants=variants))
+                await client.user.party.me.set_emote('EID_IceKing')
+                await message.reply(f'ツルハシを {args[1]} {variants} に設定')
             else:
                 await message.reply(f"[{commands['variant']}] [variant] [数値]\nvariantと数値は3つまで設定可")
         except fortnitepy.HTTPException:
@@ -4903,41 +4893,31 @@ async def event_party_message(message):
 
     elif args[0] in commands['variant'].split(','):
         try:
-            if len(args) == 4:
-                if args[1].startswith('cid_'):
-                    variants=client.user.party.me.create_variants(item='AthenaCharacter',**{args[2]: int(args[3])})
-                elif args[1].startswith('bid_') or args[1].startswith('petcarrier_'):
-                    variants=client.user.party.me.create_variants(item='AthenaBackpack',**{args[2]: int(args[3])})
-                elif args[1].startswith('pickaxe_id_'):
-                    variants=client.user.party.me.create_variants(item='AthenaPickaxe',**{args[2]: int(args[3])})
-            elif len(args) == 6:
-                if args[1].startswith('cid_'):
-                    variants=client.user.party.me.create_variants(item='AthenaCharacter',**{args[2]: int(args[3])},**{args[4]: int(args[5])})
-                elif args[1].startswith('bid_') or args[1].startswith('petcarrier_'):
-                    variants=client.user.party.me.create_variants(item='AthenaBackpack',**{args[2]: int(args[3])},**{args[4]: int(args[5])})
-                elif args[1].startswith('pickaxe_id_'):
-                    variants=client.user.party.me.create_variants(item='AthenaPickaxe',**{args[2]: int(args[3])},**{args[4]: int(args[5])})
-            elif len(args) == 8:
-                if args[1].startswith('cid_'):
-                    variants=client.user.party.me.create_variants(item='AthenaCharacter',**{args[2]: int(args[3])},**{args[4]: int(args[5])},**{args[6]: int(args[7])})
-                elif args[1].startswith('bid_') or args[1].startswith('petcarrier_'):
-                    variants=client.user.party.me.create_variants(item='AthenaBackpack',**{args[2]: int(args[3])},**{args[4]: int(args[5])},**{args[6]: int(args[7])})
-                elif args[1].startswith('pickaxe_id_'):
-                    variants=client.user.party.me.create_variants(item='AthenaPickaxe',**{args[2]: int(args[3])},**{args[4]: int(args[5])},**{args[6]: int(args[7])})
-            if len(args) == 4 or len(args) == 6 or len(args) == 8:
-                if args[1].startswith('cid_'):
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,asset=args[1],variants=variants))
-                    await message.reply(f'スキンを {args[1]} {variants} に設定')
-                elif args[1].startswith('bid_'):
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,asset=args[1],variants=variants))
-                    await message.reply(f'バッグを {args[1]} {variants} に設定')
-                elif args[1].startswith('petcarrier_'):
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,asset=args[1],variants=variants))
-                    await message.reply(f'バッグを {args[1]} {variants} に設定')
-                elif args[1].startswith('pickaxe_id'):
-                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,asset=args[1],variants=variants))
-                    await client.user.party.me.set_emote('EID_IceKing')
-                    await message.reply(f'ツルハシを {args[1]} {variants} に設定')
+            variantdict={}
+            for count,text in enumerate(args[2:]):
+                if count % 2 != 0:
+                    continue
+                try:
+                    variantdict[text]=args[count+1]
+                except IndexError:
+                    break
+            if args[1].startswith('cid_'):
+                variants=client.user.party.me.create_variants(item='AthenaCharacter',**variantdict)
+                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,asset=args[1],variants=variants))
+                await message.reply(f'スキンを {args[1]} {variants} に設定')
+            elif args[1].startswith('bid_'):
+                variants=client.user.party.me.create_variants(item='AthenaBackpack',**variantdict)
+                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,asset=args[1],variants=variants))
+                await message.reply(f'バッグを {args[1]} {variants} に設定')
+            elif args[1].startswith('petcarrier_'):
+                variants=client.user.party.me.create_variants(item='AthenaBackpack',**variantdict)
+                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,asset=args[1],variants=variants))
+                await message.reply(f'バッグを {args[1]} {variants} に設定')
+            elif args[1].startswith('pickaxe_id_'):
+                variants=client.user.party.me.create_variants(item='AthenaPickaxe',**variantdict)
+                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,asset=args[1],variants=variants))
+                await client.user.party.me.set_emote('EID_IceKing')
+                await message.reply(f'ツルハシを {args[1]} {variants} に設定')
             else:
                 await message.reply(f"[{commands['variant']}] [variant] [数値]\nvariantと数値は3つまで設定可")
         except fortnitepy.HTTPException:
