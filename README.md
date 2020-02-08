@@ -110,7 +110,7 @@ bag                  : bag [バッグ名] バッグ名でバッグを検索す�
 pickaxe              : pickaxe [ツルハシ名] ツルハシ名でツルハシを検索する
 emote                : emote [エモート名] エモート名でエモートを検索する
 set                  : set [セット名] セット名でアイテムを検索する
-variant              : variant [ID] [variant] [数値] variant/数値は3つまで設定可 スタイル情報を設定する 後述
+variant              : variant [ID] [variant] [数値] variant/数値は無限に設定可 数が合わない場合は無視される スタイル情報を設定する 後述
 skinasset            : skinasset [アセットパス] スキンをアセットパスから設定する
 bagasset             : bagasset [アセットパス] バッグをアセットパスから設定する
 pickasset            : pickasset [アセットパス] ツルハシをアセットパスから設定する
