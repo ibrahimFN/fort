@@ -107,13 +107,16 @@ sitout               : 欠場中 状態にする
 stop                 : エモート/全てのスキン/全てのエモートを停止する
 allskin              : 全てのスキンを表示する
 allemote             : 全てのエモートを表示する
+setstyle             : setstyle [skin / bag / pickaxe] [スタイル名]現在付けているアイテムのスタイル名を検索し、そのスタイルに設定する
+addstyle             : addstyle [skin / bag / pickaxe] [スタイル名]現在付けているアイテムのスタイル名を検索し、そのスタイルに現在のスタイルを追加する
 id                   : id [ID] IDでアイテムを検索する
 skin                 : skin [スキン名] スキン名でスキンを検索する
 bag                  : bag [バッグ名] バッグ名でバッグを検索する
 pickaxe              : pickaxe [ツルハシ名] ツルハシ名でツルハシを検索する
 emote                : emote [エモート名] エモート名でエモートを検索する
 set                  : set [セット名] セット名でアイテムを検索する
-variant              : variant [ID] [variant] [数値] variant/数値は無限に設定可 数が合わない場合は無視される スタイル情報を設定する 後述
+setvariant           : setvariant [ID] [variant] [数値] variant/数値は無限に設定可 数が合わない場合は無視される スタイル情報を設定する 後述
+addvariant           : addvariant [ID] [variant] [数値] variant/数値は無限に設定可 数が合わない場合は無視される スタイル情報を設定する 後述
 skinasset            : skinasset [アセットパス] スキンをアセットパスから設定する
 bagasset             : bagasset [アセットパス] バッグをアセットパスから設定する
 pickasset            : pickasset [アセットパス] ツルハシをアセットパスから設定する
