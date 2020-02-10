@@ -30,6 +30,9 @@
 		"interval": 10,
 		"waitinterval": 10
 	},
+	"ingame-error": true,
+	"discord-log": false,
+	"webhook": "",
 	"caseinsensitive": true,
 	"api-key": "APIキー",
 	"loglevel": "normal",
