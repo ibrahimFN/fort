@@ -44,6 +44,9 @@ addfriend           : ボットがパーティーメンバーにフレンド申�
 inviteinterval      : 招待を承諾した後intervalの秒数だけ招待を拒否するようにするかどうかの設定 true か false
 interval            : 招待を承諾した後招待を拒否する秒数
 waitinterval        : waitコマンドで招待を拒否する秒数
+ingame-error        : プレイヤーにエラーを送信するかどうかの設定 true か false
+discord-log         : Discordにログを送信するかどうかの設定 true か false
+webhook             : Discordのwebhookのurl
 caseinsensitive     : コマンドを大文字小文字、平仮名片仮名を区別しないかどうかの設定 true か false
 api-key             : Fortnite-API.comのAPIキー 後述
 loglevel            : ログにどのくらいの情報を流すか normal か info か debug
