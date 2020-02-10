@@ -317,6 +317,53 @@ async def search_item_with_id(lang, itemid):
         dstore('ボット',f'>>> {traceback.format_exc()}')
         return TF
 
+async def search_style(lang, stylename, itemid):
+    ignoretype=[
+        "banner",
+        "contrail",
+        "glider",
+        "wrap",
+        "loadingscreen",
+        "music",
+        "spray"
+    ]
+    if lang == 'en':
+        with open('allen.json', 'r', encoding='utf-8') as f:
+            alldata = json.load(f)
+    if lang == 'ja':
+        with open('allja.json', 'r', encoding='utf-8') as f:
+            alldata = json.load(f)
+    try:
+        for item in alldata['data']:
+            if item['type'] in ignoretype:
+                continue
+            itemid=jaconv.hira2kata(itemid.lower())
+            itemid_=jaconv.hira2kata(item['id'].lower())
+            if itemid in itemid_:
+                if not item['variants'] is None:
+                    variants=[]
+                    for variant in item['variants']:
+                        for option in variant['options']:
+                            if data['caseinsensitive'] is True:
+                                stylename=jaconv.hira2kata(stylename.lower())
+                                stylename_=jaconv.hira2kata(option['name'].lower())
+                            else:
+                                stylename_=option['name']
+                            if stylename in stylename_:
+                                variants.append({'item': item['backendType'], 'channel': variant['channel'], 'variant': option['tag']})
+                else:
+                    return None
+        if data['loglevel'] == 'debug':
+            print(yellow(f'{itemid}: {stylename} {variants}'))
+            dstore('ボット',f'```\n{itemid}: {stylename} {variants}\n```')
+        if variants == []:
+            return None
+        else:
+            return variants
+    except Exception:
+        print(red(traceback.format_exc()))
+        dstore('ボット',f'>>> {traceback.format_exc()}')
+        return None
 
 try:
     with open('config.json', 'r', encoding='utf-8-sig') as f:
@@ -404,15 +451,17 @@ if data['loglevel'] == 'debug':
     print(yellow(f'\n[{req.status_code}] {req.url}\n{req.text[:100]}'))
     dstore('ボット',f'```\n[{req.status_code}] {req.url}\n{req.text[:100]}\n```')
 allcosmen=req.json()
+if req.status_code == 200:
+    with open('allen.json', 'w') as f:
+        json.dump(allcosmen, f)
 req=requests.get('https://fortnite-api.com/cosmetics/br?language=ja', headers=headers)
 if data['loglevel'] == 'debug':
     print(yellow(f'[{req.status_code}] {req.url}\n{req.text[:100]}'))
     dstore('ボット',f'```\n[{req.status_code}] {req.url}\n{req.text[:100]}\n```')
 allcosmja=req.json()
-with open('allen.json', 'w') as f:
-    json.dump(allcosmen, f)
-with open('allja.json', 'w') as f:
-    json.dump(allcosmja, f)
+if req.status_code == 200:
+    with open('allja.json', 'w') as f:
+        json.dump(allcosmja, f)
 
 try:
     with open('commands.json', 'r', encoding='utf-8-sig') as f:
@@ -1067,7 +1116,7 @@ async def event_party_member_update(member):
     if not member.backpack == client.prevbackpack or not member.backpack_variants == client.prevbackpackvariants:
         if not data['loglevel'] == 'normal':
             print(member.backpack)
-            dstore(client.user.display_name,member.backpac)
+            dstore(client.user.display_name,member.backpack)
         if client.skinmimic is True:
             if member.backpack is None:
                 try:
@@ -1953,6 +2002,11 @@ async def event_friend_message(message):
                         dstore(client.user.display_name,item[0])
                     return
                 await message.reply('見つかりません')
+        except IndexError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply(f"[{commands['info']}] [[{commands['info_party']}] / [{commands['info_item']}] / [{commands['id']}] / [{commands['skin']}] / [{commands['bag']}] / [{commands['pickaxe']}] / [{commands['emote']}]]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -2429,6 +2483,106 @@ async def event_friend_message(message):
                     await asyncio.sleep(5)
             else:
                 await message.reply('全てのエモートを表示し終わりました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['setstyle'].split(','):
+        if rawcontent2 == '':
+            await message.reply(f"[{commands['setstyle']}] [[{commands['skin']}] / [{commands['bag']}] / [{commands['pickaxe']}]] [スタイル名]")
+            return
+        try:
+            if args[1] in commands['skin']:
+                variants=await search_style("ja", rawcontent2, client.user.party.me.outfit)
+                if variants is None:
+                    variants=await search_style("en", rawcontent2, client.user.party.me.outfit)
+                if not variants is None:
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.user.party.me.outfit,variants=variants))
+                else:
+                    await message.reply('見つかりません')
+            elif args[1] in commands['bag']:
+                variants=await search_style("ja", rawcontent2, client.user.party.me.backpack)
+                if variants is None:
+                    variants=await search_style("en", rawcontent2, client.user.party.me.backpack)
+                if not variants is None:
+                    if client.user.party.me.backpack.lower().startswith('bid_'):
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.user.party.me.backpack,variants=variants))
+                    elif client.user.party.me.backpack.lower().startswith('petcarrier_'):
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.user.party.me.backpack,variants=variants))
+                else:
+                    await message.reply('見つかりません')
+            elif args[1] in commands['pickaxe']:
+                variants=await search_style("ja", rawcontent2, client.user.pickaxe)
+                if variants is None:
+                    variants=await search_style("en", rawcontent2, client.user.party.me.pickaxe)
+                if not variants is None:
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.user.party.me.pickaxe,variants=variants))
+                else:
+                    await message.reply('見つかりません')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
+        except IndexError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply(f"[{commands['setstyle']}] [[{commands['skin']}] / [{commands['bag']}] / [{commands['pickaxe']}]] [スタイル名]")
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['addstyle'].split(','):
+        if rawcontent2 == '':
+            await message.reply(f"[{commands['addstyle']}] [[{commands['skin']}] / [{commands['bag']}] / [{commands['pickaxe']}]] [スタイル名]")
+            return
+        try:
+            if args[1] in commands['skin']:
+                variants=await search_style("ja", rawcontent2, client.user.party.me.outfit)
+                if variants is None:
+                    variants=await search_style("en", rawcontent2, client.user.party.me.outfit)
+                if not variants is None:
+                    for val in client.user.party.me.outfit_variants:
+                        variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.user.party.me.outfit,variants=variants))
+                else:
+                    await message.reply('見つかりません')
+            elif args[1] in commands['bag']:
+                variants=await search_style("ja", rawcontent2, client.user.party.me.backpack)
+                if variants is None:
+                    variants=await search_style("en", rawcontent2, client.user.party.me.backpack)
+                for val in client.user.party.me.backpack_variants:
+                    variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
+                if not variants is None:
+                    if client.user.party.me.backpack.lower().startswith('bid_'):
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.user.party.me.backpack,variants=variants))
+                    elif client.user.party.me.backpack.lower().startswith('petcarrier_'):
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.user.party.me.backpack,variants=variants))
+                else:
+                    await message.reply('見つかりません')
+            elif args[1] in commands['pickaxe']:
+                variants=await search_style("ja", rawcontent2, client.user.pickaxe)
+                if variants is None:
+                    variants=await search_style("en", rawcontent2, client.user.party.me.pickaxe)
+                if not variants is None:
+                    for val in client.user.party.me.pickaxe_variants:
+                        variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.user.party.me.pickaxe,variants=variants))
+                else:
+                    await message.reply('見つかりません')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
+        except IndexError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply(f"[{commands['addstyle']}] [[{commands['skin']}] / [{commands['bag']}] / [{commands['pickaxe']}]] [スタイル名]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -2920,14 +3074,14 @@ async def event_friend_message(message):
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('エラー')
 
-    elif args[0] in commands['variant'].split(','):
+    elif args[0] in commands['setvariant'].split(','):
         try:
             variantdict={}
             for count,text in enumerate(args[2:]):
                 if count % 2 != 0:
                     continue
                 try:
-                    variantdict[text]=args[count+1]
+                    variantdict[text]=args[count+3]
                 except IndexError:
                     break
             if args[1].startswith('cid_'):
@@ -2957,13 +3111,81 @@ async def event_friend_message(message):
                 await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,asset=args[1],variants=variants))
                 await client.user.party.me.set_emote('EID_IceKing')
                 await message.reply(f'ツルハシを {args[1]} {variants} に設定')
-            else:
-                await message.reply(f"[{commands['variant']}] [variant] [数値]\nvariantと数値は3つまで設定可")
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
+        except IndexError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply(f"[{commands['setvariant']}] [ID] [variant] [数値]\nvariantと数値は無限に設定可能")
+        except Exception:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['addvariant'].split(','):
+        try:
+            variantdict={}
+            for count,text in enumerate(args[2:]):
+                if count % 2 != 0:
+                    continue
+                try:
+                    variantdict[text]=args[count+3]
+                except IndexError:
+                    break
+            if args[1].startswith('cid_'):
+                if 'banner' not in args[1]:
+                    variants=client.user.party.me.create_variants(item='AthenaCharacter',**variantdict)
+                    for val in client.user.party.me.outfit_variants:
+                        variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,asset=args[1],variants=variants))
+                else:
+                    variantdict['profile_banner']='ProfileBanner'
+                    variants=client.user.party.me.create_variants(item='AthenaCharacter',**variantdict)
+                    for val in client.user.party.me.outfit_variants:
+                        variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,asset=args[1],variants=variants))
+                await message.reply(f'スキンを {args[1]} {variants} に設定')
+            elif args[1].startswith('bid_'):
+                if 'banner' not in args[1]:
+                    variants=client.user.party.me.create_variants(item='AthenaBackpack',**variantdict)
+                    for val in client.user.party.me.backpack_variants:
+                        variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,asset=args[1],variants=variants))
+                else:
+                    variantdict['profile_banner']='ProfileBanner'
+                    variants=client.user.party.me.create_variants(item='AthenaBackpack',**variantdict)
+                    for val in client.user.party.me.backpack_variants:
+                        variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,asset=args[1],variants=variants))
+                await message.reply(f'バッグを {args[1]} {variants} に設定')
+            elif args[1].startswith('petcarrier_'):
+                variants=client.user.party.me.create_variants(item='AthenaBackpack',**variantdict)
+                for val in client.user.party.me.backpack_variants:
+                        variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
+                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,asset=args[1],variants=variants))
+                await message.reply(f'バッグを {args[1]} {variants} に設定')
+            elif args[1].startswith('pickaxe_id_'):
+                variants=client.user.party.me.create_variants(item='AthenaPickaxe',**variantdict)
+                for val in client.user.party.me.pickaxe_variants:
+                        variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
+                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,asset=args[1],variants=variants))
+                await client.user.party.me.set_emote('EID_IceKing')
+                await message.reply(f'ツルハシを {args[1]} {variants} に設定')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
+        except IndexError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply(f"[{commands['addvariant']}] [variant] [数値]\nvariantと数値は無限に設定可能")
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4266,6 +4488,11 @@ async def event_party_message(message):
                         dstore(client.user.display_name,item[0])
                     return
                 await message.reply('見つかりません')
+        except IndexError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply(f"[{commands['info']}] [[{commands['info_party']}] / [{commands['info_item']}] / [{commands['id']}] / [{commands['skin']}] / [{commands['bag']}] / [{commands['pickaxe']}] / [{commands['emote']}]]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -4742,6 +4969,106 @@ async def event_party_message(message):
                     await asyncio.sleep(5)
             else:
                 await message.reply('全てのエモートを表示し終わりました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['setstyle'].split(','):
+        if rawcontent2 == '':
+            await message.reply(f"[{commands['setstyle']}] [[{commands['skin']}] / [{commands['bag']}] / [{commands['pickaxe']}]] [スタイル名]")
+            return
+        try:
+            if args[1] in commands['skin']:
+                variants=await search_style("ja", rawcontent2, client.user.party.me.outfit)
+                if variants is None:
+                    variants=await search_style("en", rawcontent2, client.user.party.me.outfit)
+                if not variants is None:
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.user.party.me.outfit,variants=variants))
+                else:
+                    await message.reply('見つかりません')
+            elif args[1] in commands['bag']:
+                variants=await search_style("ja", rawcontent2, client.user.party.me.backpack)
+                if variants is None:
+                    variants=await search_style("en", rawcontent2, client.user.party.me.backpack)
+                if not variants is None:
+                    if client.user.party.me.backpack.lower().startswith('bid_'):
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.user.party.me.backpack,variants=variants))
+                    elif client.user.party.me.backpack.lower().startswith('petcarrier_'):
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.user.party.me.backpack,variants=variants))
+                else:
+                    await message.reply('見つかりません')
+            elif args[1] in commands['pickaxe']:
+                variants=await search_style("ja", rawcontent2, client.user.pickaxe)
+                if variants is None:
+                    variants=await search_style("en", rawcontent2, client.user.party.me.pickaxe)
+                if not variants is None:
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.user.party.me.pickaxe,variants=variants))
+                else:
+                    await message.reply('見つかりません')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
+        except IndexError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply(f"[{commands['setstyle']}] [[{commands['skin']}] / [{commands['bag']}] / [{commands['pickaxe']}]] [スタイル名]")
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['addstyle'].split(','):
+        if rawcontent2 == '':
+            await message.reply(f"[{commands['addstyle']}] [[{commands['skin']}] / [{commands['bag']}] / [{commands['pickaxe']}]] [スタイル名]")
+            return
+        try:
+            if args[1] in commands['skin']:
+                variants=await search_style("ja", rawcontent2, client.user.party.me.outfit)
+                if variants is None:
+                    variants=await search_style("en", rawcontent2, client.user.party.me.outfit)
+                if not variants is None:
+                    for val in client.user.party.me.outfit_variants:
+                        variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.user.party.me.outfit,variants=variants))
+                else:
+                    await message.reply('見つかりません')
+            elif args[1] in commands['bag']:
+                variants=await search_style("ja", rawcontent2, client.user.party.me.backpack)
+                if variants is None:
+                    variants=await search_style("en", rawcontent2, client.user.party.me.backpack)
+                for val in client.user.party.me.backpack_variants:
+                    variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
+                if not variants is None:
+                    if client.user.party.me.backpack.lower().startswith('bid_'):
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.user.party.me.backpack,variants=variants))
+                    elif client.user.party.me.backpack.lower().startswith('petcarrier_'):
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.user.party.me.backpack,variants=variants))
+                else:
+                    await message.reply('見つかりません')
+            elif args[1] in commands['pickaxe']:
+                variants=await search_style("ja", rawcontent2, client.user.pickaxe)
+                if variants is None:
+                    variants=await search_style("en", rawcontent2, client.user.party.me.pickaxe)
+                if not variants is None:
+                    for val in client.user.party.me.pickaxe_variants:
+                        variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.user.party.me.pickaxe,variants=variants))
+                else:
+                    await message.reply('見つかりません')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
+        except IndexError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply(f"[{commands['addstyle']}] [[{commands['skin']}] / [{commands['bag']}] / [{commands['pickaxe']}]] [スタイル名]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -5233,14 +5560,14 @@ async def event_party_message(message):
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('エラー')
 
-    elif args[0] in commands['variant'].split(','):
+    elif args[0] in commands['setvariant'].split(','):
         try:
             variantdict={}
             for count,text in enumerate(args[2:]):
                 if count % 2 != 0:
                     continue
                 try:
-                    variantdict[text]=args[count+1]
+                    variantdict[text]=args[count+3]
                 except IndexError:
                     break
             if args[1].startswith('cid_'):
@@ -5270,13 +5597,81 @@ async def event_party_message(message):
                 await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,asset=args[1],variants=variants))
                 await client.user.party.me.set_emote('EID_IceKing')
                 await message.reply(f'ツルハシを {args[1]} {variants} に設定')
-            else:
-                await message.reply(f"[{commands['variant']}] [variant] [数値]\nvariantと数値は3つまで設定可")
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
+        except IndexError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply(f"[{commands['setvariant']}] [ID] [variant] [数値]\nvariantと数値は無限に設定可能")
+        except Exception:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['addvariant'].split(','):
+        try:
+            variantdict={}
+            for count,text in enumerate(args[2:]):
+                if count % 2 != 0:
+                    continue
+                try:
+                    variantdict[text]=args[count+3]
+                except IndexError:
+                    break
+            if args[1].startswith('cid_'):
+                if 'banner' not in args[1]:
+                    variants=client.user.party.me.create_variants(item='AthenaCharacter',**variantdict)
+                    for val in client.user.party.me.outfit_variants:
+                        variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,asset=args[1],variants=variants))
+                else:
+                    variantdict['profile_banner']='ProfileBanner'
+                    variants=client.user.party.me.create_variants(item='AthenaCharacter',**variantdict)
+                    for val in client.user.party.me.outfit_variants:
+                        variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,asset=args[1],variants=variants))
+                await message.reply(f'スキンを {args[1]} {variants} に設定')
+            elif args[1].startswith('bid_'):
+                if 'banner' not in args[1]:
+                    variants=client.user.party.me.create_variants(item='AthenaBackpack',**variantdict)
+                    for val in client.user.party.me.backpack_variants:
+                        variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,asset=args[1],variants=variants))
+                else:
+                    variantdict['profile_banner']='ProfileBanner'
+                    variants=client.user.party.me.create_variants(item='AthenaBackpack',**variantdict)
+                    for val in client.user.party.me.backpack_variants:
+                        variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
+                    await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,asset=args[1],variants=variants))
+                await message.reply(f'バッグを {args[1]} {variants} に設定')
+            elif args[1].startswith('petcarrier_'):
+                variants=client.user.party.me.create_variants(item='AthenaBackpack',**variantdict)
+                for val in client.user.party.me.backpack_variants:
+                        variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
+                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,asset=args[1],variants=variants))
+                await message.reply(f'バッグを {args[1]} {variants} に設定')
+            elif args[1].startswith('pickaxe_id_'):
+                variants=client.user.party.me.create_variants(item='AthenaPickaxe',**variantdict)
+                for val in client.user.party.me.pickaxe_variants:
+                        variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
+                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,asset=args[1],variants=variants))
+                await client.user.party.me.set_emote('EID_IceKing')
+                await message.reply(f'ツルハシを {args[1]} {variants} に設定')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
+        except IndexError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply(f"[{commands['addvariant']}] [variant] [数値]\nvariantと数値は無限に設定可能")
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
