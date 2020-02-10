@@ -1182,6 +1182,8 @@ async def event_friend_message(message):
     rawcontent = ' '.join(rawargs[1:])
     rawcontent2 = ' '.join(rawargs[2:])
     user=None
+    if rawcontent in commands['me'].split(','):
+        rawcontent=str(message.author.display_name)
     if data['loglevel'] == 'normal':
         print(f'[{now_()}] [{client.user.display_name}] {str(message.author.display_name)} | {message.content}')
         dstore(message.author.display_name,message.content)
@@ -1282,33 +1284,24 @@ async def event_friend_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['get']}] [ユーザー名/ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                if not user.id in client.user.party.members.keys():
-                    await message.reply('ユーザーがパーティーにいません')
-                    return
-                member=client.user.party.members.get(user.id)
-                print(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
-                dstore(client.user.display_name,f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
-                await message.reply(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
-            else:
-                if not message.author.id in client.user.party.members.keys():
-                    await message.reply('ユーザーがパーティーにいません')
-                    return
-                member=client.user.party.members.get(message.author.id)
-                print(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
-                dstore(client.user.display_name,f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
-                await message.reply(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            if not user.id in client.user.party.members.keys():
+                await message.reply('ユーザーがパーティーにいません')
+                return
+            member=client.user.party.members.get(user.id)
+            print(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
+            dstore(client.user.display_name,f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
+            await message.reply(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -1317,7 +1310,7 @@ async def event_friend_message(message):
     elif args[0] in commands['friendcount'].split(','):
         try:
             print(f'フレンド数: {len(client.friends)}')
-            dstore(client.user.display_name,f'')
+            dstore(client.user.display_name,f'フレンド数: {len(client.friends)}')
             await message.reply(f'フレンド数: {len(client.friends)}')
         except Exception:
             print(red(traceback.format_exc()))
@@ -1484,25 +1477,22 @@ async def event_friend_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['join']}] [ユーザー名/ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                friend=client.get_friend(user.id)
-                if friend is None:
-                    await message.reply('ユーザーとフレンドではありません')
-                else:
-                    await friend.join_party()
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            friend=client.get_friend(user.id)
+            if friend is None:
+                await message.reply('ユーザーとフレンドではありません')
             else:
-                await message.author.join_party()
+                await friend.join_party()
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -1575,37 +1565,26 @@ async def event_friend_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['invite']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                friend=client.get_friend(user.id)
-                if friend is None:
-                    await message.reply('ユーザーとフレンドではありません')
-                    return
-                await friend.invite()
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(friend.display_name)} をパーティーに招待')
-                else:
-                    await message.reply(f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            friend=client.get_friend(user.id)
+            if friend is None:
+                await message.reply('ユーザーとフレンドではありません')
+                return
+            await friend.invite()
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(friend.display_name)} をパーティーに招待')
             else:
-                friend=client.get_friend(message.author.id)
-                if friend is None:
-                    await message.reply('ユーザーとフレンドではありません')
-                    return
-                await friend.invite()
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(friend.display_name)} をパーティーに招待')
-                else:
-                    await message.reply(f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
+                await message.reply(f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -1627,37 +1606,26 @@ async def event_friend_message(message):
                 await message.reply(f"[{commands['message']}] [ユーザー名 / ユーザーID] : [内容]")
                 return
             send=rawcontent.split(' : ')
-            if not send[0] in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(send[0])
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                friend=client.get_friend(user.id)
-                if friend is None:
-                    await message.reply('ユーザーとフレンドではありません')
-                    return
-                await friend.send(send[1])
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
-                else:
-                    await message.reply(f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
+            try:
+                user=await client.fetch_profile(send[0])
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            friend=client.get_friend(user.id)
+            if friend is None:
+                await message.reply('ユーザーとフレンドではありません')
+                return
+            await friend.send(send[1])
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
             else:
-                friend=client.get_friend(message.author.id)
-                if friend is None:
-                    await message.reply('ユーザーとフレンドではありません')
-                    return
-                await friend.send(send[1])
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
-                else:
-                    await message.reply(f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
+                await message.reply(f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -1768,18 +1736,13 @@ async def event_friend_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['user']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                user=await client.fetch_profile(rawcontent)
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                print(f'{str(user.display_name)} / {user.id}')
-                dstore(client.user.display_name,f'{str(user.display_name)} / {user.id}')
-                await message.reply(f'{str(user.display_name)} / {user.id}')
-            else:
-                print(f'{str(message.author.display_name)} / {message.author.id}')
-                dstore(client.user.display_name,f'')
-                await message.reply(f'{str(message.author.display_name)} / {message.author.id}')
+            user=await client.fetch_profile(rawcontent)
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            print(f'{str(user.display_name)} / {user.id}')
+            dstore(client.user.display_name,f'{str(user.display_name)} / {user.id}')
+            await message.reply(f'{str(user.display_name)} / {user.id}')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -1795,40 +1758,24 @@ async def event_friend_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['friend']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                user=await client.fetch_profile(rawcontent)
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                friend=client.get_friend(user.id)
-                if friend is None:
-                    await message.reply('ユーザーとフレンドではありません')
-                    return
-                if friend.nickname is None:
-                    print(f'{str(friend.display_name)} / {friend.id}')
-                    dstore(client.user.display_name,f'')
-                    await message.reply(f'{str(friend.display_name)} / {friend.id}')
-                else:
-                    print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
-                    dstore(client.user.display_name,f'')
-                    await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
-                if not friend.last_logout is None:
-                    await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
+            user=await client.fetch_profile(rawcontent)
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            friend=client.get_friend(user.id)
+            if friend is None:
+                await message.reply('ユーザーとフレンドではありません')
+                return
+            if friend.nickname is None:
+                print(f'{str(friend.display_name)} / {friend.id}')
+                dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id}')
+                await message.reply(f'{str(friend.display_name)} / {friend.id}')
             else:
-                friend=client.get_friend(message.author.id)
-                if friend is None:
-                    await message.reply('ユーザーとフレンドではありません')
-                    return
-                if friend.nickname is None:
-                    print(f'{str(friend.display_name)} / {friend.id}')
-                    dstore(client.user.display_name,f'')
-                    await message.reply(f'{str(friend.display_name)} / {friend.id}')
-                else:
-                    print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
-                    dstore(client.user.display_name,f'')
-                    await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
-                if not friend.last_logout is None:
-                    await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
+                print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+                dstore(client.user.display_name,f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+                await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+            if not friend.last_logout is None:
+                await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -1843,7 +1790,7 @@ async def event_friend_message(message):
         try:
             if args[1] in commands['info_party'].split(','):
                 print(f'{client.user.party.id}\n人数: {client.user.party.member_count}')
-                dstore(client.user.display_name,f'')
+                dstore(client.user.display_name,f'{client.user.party.id}\n人数: {client.user.party.member_count}')
                 await message.reply(f'{client.user.party.id}\n人数: {client.user.party.member_count}')
                 for member in client.user.party.members.values():
                     if data['loglevel'] == 'normal':
@@ -2075,34 +2022,24 @@ async def event_friend_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['addfriend']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                if client.has_friend(user.id) is True:
-                    await message.reply('既にユーザーとフレンドです')
-                    return
-                await client.add_friend(user.id)
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(user.display_name)} にフレンド申請を送信')
-                else:
-                    await message.reply(f'{str(user.display_name)} / {user.id} にフレンド申請を送信')
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            if client.has_friend(user.id) is True:
+                await message.reply('既にユーザーとフレンドです')
+                return
+            await client.add_friend(user.id)
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(user.display_name)} にフレンド申請を送信')
             else:
-                if client.has_friend(message.author.id) is True:
-                    await message.reply('既にユーザーとフレンドです')
-                    return
-                await client.add_friend(message.author.id)
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(message.author.display_name)} にフレンド申請を送信')
-                else:
-                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} にフレンド申請を送信')
+                await message.reply(f'{str(user.display_name)} / {user.id} にフレンド申請を送信')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2118,34 +2055,24 @@ async def event_friend_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['removefriend']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                if client.has_friend(user.id) is False:
-                    await message.reply('ユーザーとフレンドではありません')
-                    return
-                await client.remove_or_decline_friend(user.id)
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(user.display_name)} をフレンドから削除')
-                else:
-                    await message.reply(f'{str(user.display_name)} / {user.id} をフレンドから削除')
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            if client.has_friend(user.id) is False:
+                await message.reply('ユーザーとフレンドではありません')
+                return
+            await client.remove_or_decline_friend(user.id)
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(user.display_name)} をフレンドから削除')
             else:
-                if client.has_friend(message.author.id) is False:
-                    await message.reply('ユーザーとフレンドではありません')
-                    return
-                await client.remove_or_decline_friend(message.author.id)
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(message.author.display_name)} をフレンドから削除')
-                else:
-                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をフレンドから削除')
+                await message.reply(f'{str(user.display_name)} / {user.id} をフレンドから削除')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2161,34 +2088,24 @@ async def event_friend_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['acceptpending']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                if client.is_pending(user.id) is False:
-                    await message.reply('ユーザーからのフレンド申請がありません')
-                    return
-                await client.accept_friend(user.id)
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(user.display_name)} をフレンドに追加')
-                else:
-                    await message.reply(f'{str(user.display_name)} / {user.id} をフレンドに追加')       
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            if client.is_pending(user.id) is False:
+                await message.reply('ユーザーからのフレンド申請がありません')
+                return
+            await client.accept_friend(user.id)
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(user.display_name)} をフレンドに追加')
             else:
-                if client.is_pending(message.author.id) is False:
-                    await message.reply('ユーザーからのフレンド申請がありません')
-                    return
-                await client.accept_friend(message.author.id)
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(message.author.display_name)} をフレンドに追加')
-                else:
-                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をフレンドに追加')    
+                await message.reply(f'{str(user.display_name)} / {user.id} をフレンドに追加')       
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2204,34 +2121,24 @@ async def event_friend_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['declinepending']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                if client.is_pending(user.id) is False:
-                    await message.reply('ユーザーからのフレンド申請がありません')
-                    return
-                await client.remove_or_decline_friend(user.id)
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(user.display_name)} のフレンド申請を拒否')
-                else:
-                    await message.reply(f'{str(user.display_name)} / {user.id} のフレンド申請を拒否')
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            if client.is_pending(user.id) is False:
+                await message.reply('ユーザーからのフレンド申請がありません')
+                return
+            await client.remove_or_decline_friend(user.id)
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(user.display_name)} のフレンド申請を拒否')
             else:
-                if client.is_pending(message.author.id) is False:
-                    await message.reply('ユーザーからのフレンド申請がありません')
-                    return
-                await client.remove_or_decline_friend(message.author.id)
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(message.author.display_name)} のフレンド申請を拒否')
-                else:
-                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} のフレンド申請を拒否')
+                await message.reply(f'{str(user.display_name)} / {user.id} のフレンド申請を拒否')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2247,39 +2154,27 @@ async def event_friend_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['blockfriend']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                if user.id in client.blocked_users.keys():
-                    await message.reply('既にユーザーをブロックしています')
-                    return
-                await client.block_user(user.id)
-                if user.display_name is None:
-                    await message.reply(f'None / {user.id} をブロック')
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(user.display_name)} をブロック')
-                else:
-                    await message.reply(f'{str(user.display_name)} / {user.id} をブロック')
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            if user.id in client.blocked_users.keys():
+                await message.reply('既にユーザーをブロックしています')
+                return
+            await client.block_user(user.id)
+            if user.display_name is None:
+                await message.reply(f'None / {user.id} をブロック')
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(user.display_name)} をブロック')
             else:
-                if message.author.id in client.blocked_users.keys():
-                    await message.reply('既にユーザーをブロックしています')
-                    return
-                await client.block_user(message.author.id)
-                if message.author.display_name is None:
-                    await message.reply(f'None / {message.author.id} をブロック')
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(message.author.display_name)} をブロック')
-                else:
-                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をブロック')
+                await message.reply(f'{str(user.display_name)} / {user.id} をブロック')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2295,35 +2190,25 @@ async def event_friend_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['unblockfriend']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                if not user.id in client.blocked_users.keys():
-                    await message.reply('ユーザーをブロックしていません')
-                    return
-                await client.unblock_user(user.id)
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(user.display_name)} をブロック解除')
-                else:
-                    await message.reply(f'{str(user.display_name)} / {user.id} をブロック解除')
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            if not user.id in client.blocked_users.keys():
+                await message.reply('ユーザーをブロックしていません')
+                return
+            await client.unblock_user(user.id)
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(user.display_name)} をブロック解除')
             else:
-                if not message.author.id in client.blocked_users.keys():
-                    await message.reply('ユーザーをブロックしていません')
-                    return
-                await client.unblock_user(message.author.id)
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(message.author.display_name)} をブロック解除')
-                else:
-                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をブロック解除')
+                await message.reply(f'{str(user.display_name)} / {user.id} をブロック解除')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2340,43 +2225,29 @@ async def event_friend_message(message):
                 await message.reply(f"[{commands['chatban']}] [ユーザー名 / ユーザーID] : [理由(任意)]")
                 return
             reason=rawcontent.split(' : ')
-            if not reason[0] in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(reason[0])
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                if not user.id in client.user.party.members.keys():
-                    await message.reply('ユーザーがパーティーにいません')
-                    return
-                member=client.user.party.members.get(user.id)
-                try:
-                    await member.chatban(reason[1])
-                except IndexError:
-                    await member.chatban()
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(user.display_name)} をバン')
-                else:
-                    await message.reply(f'{str(user.display_name)} / {user.id} をバン')
+            try:
+                user=await client.fetch_profile(reason[0])
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            if not user.id in client.user.party.members.keys():
+                await message.reply('ユーザーがパーティーにいません')
+                return
+            member=client.user.party.members.get(user.id)
+            try:
+                await member.chatban(reason[1])
+            except IndexError:
+                await member.chatban()
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(user.display_name)} をバン')
             else:
-                if not message.author.id in client.user.party.members.keys():
-                    await message.reply('ユーザーがパーティーにいません')
-                    return
-                member=client.user.party.members.get(message.author.id)
-                try:
-                    await member.chatban(reason[1])
-                except IndexError:
-                    await member.chatban()
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(message.author.display_name)} をバン')
-                else:
-                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をバン')
+                await message.reply(f'{str(user.display_name)} / {user.id} をバン')
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2402,37 +2273,26 @@ async def event_friend_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['promote']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                if not user.id in client.user.party.members.keys():
-                    await message.reply('ユーザーがパーティーにいません')
-                    return
-                member=client.user.party.members.get(user.id)
-                await member.promote()
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(user.display_name)} に譲渡')
-                else:
-                    await message.reply(f'{str(user.display_name)} / {user.id} に譲渡')
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            if not user.id in client.user.party.members.keys():
+                await message.reply('ユーザーがパーティーにいません')
+                return
+            member=client.user.party.members.get(user.id)
+            await member.promote()
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(user.display_name)} に譲渡')
             else:
-                if not message.author.id in client.user.party.members.keys():
-                    await message.reply('ユーザーがパーティーにいません')
-                    return
-                member=client.user.party.members.get(message.author.id)
-                await member.promote()
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(message.author.display_name)} に譲渡')
-                else:
-                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} に譲渡')
+                await message.reply(f'{str(user.display_name)} / {user.id} に譲渡')
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2458,37 +2318,26 @@ async def event_friend_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['kick']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                if not user.id in client.user.party.members.keys():
-                    await message.reply('ユーザーがパーティーにいません')
-                    return
-                member=client.user.party.members.get(user.id)
-                await member.kick()
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(user.display_name)} をキック')
-                else:
-                    await message.reply(f'{str(user.display_name)} / {user.id} をキック')
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            if not user.id in client.user.party.members.keys():
+                await message.reply('ユーザーがパーティーにいません')
+                return
+            member=client.user.party.members.get(user.id)
+            await member.kick()
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(user.display_name)} をキック')
             else:
-                if not message.author.id in client.user.party.members.keys():
-                    await message.reply('ユーザーがパーティーにいません')
-                    return
-                member=client.user.party.members.get(message.author.id)
-                await member.kick()
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(message.author.display_name)} をキック')
-                else:
-                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をキック')
+                await message.reply(f'{str(user.display_name)} / {user.id} をキック')
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -3646,6 +3495,8 @@ async def event_party_message(message):
     user=None
     if client.partychat is False and message.author.id == client.user.id:
         return
+    if rawcontent in commands['me'].split(','):
+        rawcontent=str(message.author.display_name)
     if data['loglevel'] == 'normal':
         print(f'[{now_()}] [パーティー] [{client.user.display_name}] {message.author.display_name} | {message.content}')
         dstore(client.user.display_name,f'[パーティー] {message.content}')
@@ -3746,33 +3597,24 @@ async def event_party_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['get']}] [ユーザー名/ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                if not user.id in client.user.party.members.keys():
-                    await message.reply('ユーザーがパーティーにいません')
-                    return
-                member=client.user.party.members.get(user.id)
-                print(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
-                dstore(client.user.display_name,f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
-                await message.reply(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
-            else:
-                if not message.author.id in client.user.party.members.keys():
-                    await message.reply('ユーザーがパーティーにいません')
-                    return
-                member=client.user.party.members.get(message.author.id)
-                print(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
-                dstore(client.user.display_name,f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
-                await message.reply(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            if not user.id in client.user.party.members.keys():
+                await message.reply('ユーザーがパーティーにいません')
+                return
+            member=client.user.party.members.get(user.id)
+            print(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
+            dstore(client.user.display_name,f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
+            await message.reply(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -3781,7 +3623,7 @@ async def event_party_message(message):
     elif args[0] in commands['friendcount'].split(','):
         try:
             print(f'フレンド数: {len(client.friends)}')
-            dstore(client.user.display_name,f'')
+            dstore(client.user.display_name,f'フレンド数: {len(client.friends)}')
             await message.reply(f'フレンド数: {len(client.friends)}')
         except Exception:
             print(red(traceback.format_exc()))
@@ -3948,25 +3790,22 @@ async def event_party_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['join']}] [ユーザー名/ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                friend=client.get_friend(user.id)
-                if friend is None:
-                    await message.reply('ユーザーとフレンドではありません')
-                else:
-                    await friend.join_party()
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            friend=client.get_friend(user.id)
+            if friend is None:
+                await message.reply('ユーザーとフレンドではありません')
             else:
-                await message.author.join_party()
+                await friend.join_party()
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4039,37 +3878,26 @@ async def event_party_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['invite']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                friend=client.get_friend(user.id)
-                if friend is None:
-                    await message.reply('ユーザーとフレンドではありません')
-                    return
-                await friend.invite()
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(friend.display_name)} をパーティーに招待')
-                else:
-                    await message.reply(f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            friend=client.get_friend(user.id)
+            if friend is None:
+                await message.reply('ユーザーとフレンドではありません')
+                return
+            await friend.invite()
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(friend.display_name)} をパーティーに招待')
             else:
-                friend=client.get_friend(message.author.id)
-                if friend is None:
-                    await message.reply('ユーザーとフレンドではありません')
-                    return
-                await friend.invite()
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(friend.display_name)} をパーティーに招待')
-                else:
-                    await message.reply(f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
+                await message.reply(f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4091,37 +3919,26 @@ async def event_party_message(message):
                 await message.reply(f"[{commands['message']}] [ユーザー名 / ユーザーID] : [内容]")
                 return
             send=rawcontent.split(' : ')
-            if not send[0] in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(send[0])
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                friend=client.get_friend(user.id)
-                if friend is None:
-                    await message.reply('ユーザーとフレンドではありません')
-                    return
-                await friend.send(send[1])
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
-                else:
-                    await message.reply(f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
+            try:
+                user=await client.fetch_profile(send[0])
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            friend=client.get_friend(user.id)
+            if friend is None:
+                await message.reply('ユーザーとフレンドではありません')
+                return
+            await friend.send(send[1])
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
             else:
-                friend=client.get_friend(message.author.id)
-                if friend is None:
-                    await message.reply('ユーザーとフレンドではありません')
-                    return
-                await friend.send(send[1])
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
-                else:
-                    await message.reply(f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
+                await message.reply(f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4232,18 +4049,13 @@ async def event_party_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['user']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                user=await client.fetch_profile(rawcontent)
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                print(f'{str(user.display_name)} / {user.id}')
-                dstore(client.user.display_name,f'{str(user.display_name)} / {user.id}')
-                await message.reply(f'{str(user.display_name)} / {user.id}')
-            else:
-                print(f'{str(message.author.display_name)} / {message.author.id}')
-                dstore(client.user.display_name,f'')
-                await message.reply(f'{str(message.author.display_name)} / {message.author.id}')
+            user=await client.fetch_profile(rawcontent)
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            print(f'{str(user.display_name)} / {user.id}')
+            dstore(client.user.display_name,f'{str(user.display_name)} / {user.id}')
+            await message.reply(f'{str(user.display_name)} / {user.id}')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4259,40 +4071,24 @@ async def event_party_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['friend']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                user=await client.fetch_profile(rawcontent)
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                friend=client.get_friend(user.id)
-                if friend is None:
-                    await message.reply('ユーザーとフレンドではありません')
-                    return
-                if friend.nickname is None:
-                    print(f'{str(friend.display_name)} / {friend.id}')
-                    dstore(client.user.display_name,f'')
-                    await message.reply(f'{str(friend.display_name)} / {friend.id}')
-                else:
-                    print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
-                    dstore(client.user.display_name,f'')
-                    await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
-                if not friend.last_logout is None:
-                    await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
+            user=await client.fetch_profile(rawcontent)
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            friend=client.get_friend(user.id)
+            if friend is None:
+                await message.reply('ユーザーとフレンドではありません')
+                return
+            if friend.nickname is None:
+                print(f'{str(friend.display_name)} / {friend.id}')
+                dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id}')
+                await message.reply(f'{str(friend.display_name)} / {friend.id}')
             else:
-                friend=client.get_friend(message.author.id)
-                if friend is None:
-                    await message.reply('ユーザーとフレンドではありません')
-                    return
-                if friend.nickname is None:
-                    print(f'{str(friend.display_name)} / {friend.id}')
-                    dstore(client.user.display_name,f'')
-                    await message.reply(f'{str(friend.display_name)} / {friend.id}')
-                else:
-                    print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
-                    dstore(client.user.display_name,f'')
-                    await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
-                if not friend.last_logout is None:
-                    await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
+                print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+                dstore(client.user.display_name,f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+                await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+            if not friend.last_logout is None:
+                await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4307,7 +4103,7 @@ async def event_party_message(message):
         try:
             if args[1] in commands['info_party'].split(','):
                 print(f'{client.user.party.id}\n人数: {client.user.party.member_count}')
-                dstore(client.user.display_name,f'')
+                dstore(client.user.display_name,f'{client.user.party.id}\n人数: {client.user.party.member_count}')
                 await message.reply(f'{client.user.party.id}\n人数: {client.user.party.member_count}')
                 for member in client.user.party.members.values():
                     if data['loglevel'] == 'normal':
@@ -4539,34 +4335,24 @@ async def event_party_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['addfriend']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                if client.has_friend(user.id) is True:
-                    await message.reply('既にユーザーとフレンドです')
-                    return
-                await client.add_friend(user.id)
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(user.display_name)} にフレンド申請を送信')
-                else:
-                    await message.reply(f'{str(user.display_name)} / {user.id} にフレンド申請を送信')
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            if client.has_friend(user.id) is True:
+                await message.reply('既にユーザーとフレンドです')
+                return
+            await client.add_friend(user.id)
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(user.display_name)} にフレンド申請を送信')
             else:
-                if client.has_friend(message.author.id) is True:
-                    await message.reply('既にユーザーとフレンドです')
-                    return
-                await client.add_friend(message.author.id)
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(message.author.display_name)} にフレンド申請を送信')
-                else:
-                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} にフレンド申請を送信')
+                await message.reply(f'{str(user.display_name)} / {user.id} にフレンド申請を送信')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4582,34 +4368,24 @@ async def event_party_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['removefriend']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                if client.has_friend(user.id) is False:
-                    await message.reply('ユーザーとフレンドではありません')
-                    return
-                await client.remove_or_decline_friend(user.id)
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(user.display_name)} をフレンドから削除')
-                else:
-                    await message.reply(f'{str(user.display_name)} / {user.id} をフレンドから削除')
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            if client.has_friend(user.id) is False:
+                await message.reply('ユーザーとフレンドではありません')
+                return
+            await client.remove_or_decline_friend(user.id)
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(user.display_name)} をフレンドから削除')
             else:
-                if client.has_friend(message.author.id) is False:
-                    await message.reply('ユーザーとフレンドではありません')
-                    return
-                await client.remove_or_decline_friend(message.author.id)
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(message.author.display_name)} をフレンドから削除')
-                else:
-                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をフレンドから削除')
+                await message.reply(f'{str(user.display_name)} / {user.id} をフレンドから削除')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4625,34 +4401,24 @@ async def event_party_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['acceptpending']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                if client.is_pending(user.id) is False:
-                    await message.reply('ユーザーからのフレンド申請がありません')
-                    return
-                await client.accept_friend(user.id)
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(user.display_name)} をフレンドに追加')
-                else:
-                    await message.reply(f'{str(user.display_name)} / {user.id} をフレンドに追加')       
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            if client.is_pending(user.id) is False:
+                await message.reply('ユーザーからのフレンド申請がありません')
+                return
+            await client.accept_friend(user.id)
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(user.display_name)} をフレンドに追加')
             else:
-                if client.is_pending(message.author.id) is False:
-                    await message.reply('ユーザーからのフレンド申請がありません')
-                    return
-                await client.accept_friend(message.author.id)
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(message.author.display_name)} をフレンドに追加')
-                else:
-                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をフレンドに追加')    
+                await message.reply(f'{str(user.display_name)} / {user.id} をフレンドに追加')       
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4668,34 +4434,24 @@ async def event_party_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['declinepending']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                if client.is_pending(user.id) is False:
-                    await message.reply('ユーザーからのフレンド申請がありません')
-                    return
-                await client.remove_or_decline_friend(user.id)
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(user.display_name)} のフレンド申請を拒否')
-                else:
-                    await message.reply(f'{str(user.display_name)} / {user.id} のフレンド申請を拒否')
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            if client.is_pending(user.id) is False:
+                await message.reply('ユーザーからのフレンド申請がありません')
+                return
+            await client.remove_or_decline_friend(user.id)
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(user.display_name)} のフレンド申請を拒否')
             else:
-                if client.is_pending(message.author.id) is False:
-                    await message.reply('ユーザーからのフレンド申請がありません')
-                    return
-                await client.remove_or_decline_friend(message.author.id)
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(message.author.display_name)} のフレンド申請を拒否')
-                else:
-                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} のフレンド申請を拒否')
+                await message.reply(f'{str(user.display_name)} / {user.id} のフレンド申請を拒否')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4711,39 +4467,27 @@ async def event_party_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['blockfriend']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                if user.id in client.blocked_users.keys():
-                    await message.reply('既にユーザーをブロックしています')
-                    return
-                await client.block_user(user.id)
-                if user.display_name is None:
-                    await message.reply(f'None / {user.id} をブロック')
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(user.display_name)} をブロック')
-                else:
-                    await message.reply(f'{str(user.display_name)} / {user.id} をブロック')
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            if user.id in client.blocked_users.keys():
+                await message.reply('既にユーザーをブロックしています')
+                return
+            await client.block_user(user.id)
+            if user.display_name is None:
+                await message.reply(f'None / {user.id} をブロック')
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(user.display_name)} をブロック')
             else:
-                if message.author.id in client.blocked_users.keys():
-                    await message.reply('既にユーザーをブロックしています')
-                    return
-                await client.block_user(message.author.id)
-                if message.author.display_name is None:
-                    await message.reply(f'None / {message.author.id} をブロック')
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(message.author.display_name)} をブロック')
-                else:
-                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をブロック')
+                await message.reply(f'{str(user.display_name)} / {user.id} をブロック')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4759,35 +4503,25 @@ async def event_party_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['unblockfriend']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                if not user.id in client.blocked_users.keys():
-                    await message.reply('ユーザーをブロックしていません')
-                    return
-                await client.unblock_user(user.id)
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(user.display_name)} をブロック解除')
-                else:
-                    await message.reply(f'{str(user.display_name)} / {user.id} をブロック解除')
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            if not user.id in client.blocked_users.keys():
+                await message.reply('ユーザーをブロックしていません')
+                return
+            await client.unblock_user(user.id)
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(user.display_name)} をブロック解除')
             else:
-                if not message.author.id in client.blocked_users.keys():
-                    await message.reply('ユーザーをブロックしていません')
-                    return
-                await client.unblock_user(message.author.id)
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(message.author.display_name)} をブロック解除')
-                else:
-                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をブロック解除')
+                await message.reply(f'{str(user.display_name)} / {user.id} をブロック解除')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4804,43 +4538,29 @@ async def event_party_message(message):
                 await message.reply(f"[{commands['chatban']}] [ユーザー名 / ユーザーID] : [理由(任意)]")
                 return
             reason=rawcontent.split(' : ')
-            if not reason[0] in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(reason[0])
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                if not user.id in client.user.party.members.keys():
-                    await message.reply('ユーザーがパーティーにいません')
-                    return
-                member=client.user.party.members.get(user.id)
-                try:
-                    await member.chatban(reason[1])
-                except IndexError:
-                    await member.chatban()
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(user.display_name)} をバン')
-                else:
-                    await message.reply(f'{str(user.display_name)} / {user.id} をバン')
+            try:
+                user=await client.fetch_profile(reason[0])
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            if not user.id in client.user.party.members.keys():
+                await message.reply('ユーザーがパーティーにいません')
+                return
+            member=client.user.party.members.get(user.id)
+            try:
+                await member.chatban(reason[1])
+            except IndexError:
+                await member.chatban()
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(user.display_name)} をバン')
             else:
-                if not message.author.id in client.user.party.members.keys():
-                    await message.reply('ユーザーがパーティーにいません')
-                    return
-                member=client.user.party.members.get(message.author.id)
-                try:
-                    await member.chatban(reason[1])
-                except IndexError:
-                    await member.chatban()
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(message.author.display_name)} をバン')
-                else:
-                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をバン')
+                await message.reply(f'{str(user.display_name)} / {user.id} をバン')
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4866,37 +4586,26 @@ async def event_party_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['promote']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                if not user.id in client.user.party.members.keys():
-                    await message.reply('ユーザーがパーティーにいません')
-                    return
-                member=client.user.party.members.get(user.id)
-                await member.promote()
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(user.display_name)} に譲渡')
-                else:
-                    await message.reply(f'{str(user.display_name)} / {user.id} に譲渡')
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            if not user.id in client.user.party.members.keys():
+                await message.reply('ユーザーがパーティーにいません')
+                return
+            member=client.user.party.members.get(user.id)
+            await member.promote()
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(user.display_name)} に譲渡')
             else:
-                if not message.author.id in client.user.party.members.keys():
-                    await message.reply('ユーザーがパーティーにいません')
-                    return
-                member=client.user.party.members.get(message.author.id)
-                await member.promote()
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(message.author.display_name)} に譲渡')
-                else:
-                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} に譲渡')
+                await message.reply(f'{str(user.display_name)} / {user.id} に譲渡')
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4922,37 +4631,26 @@ async def event_party_message(message):
             if rawcontent == '':
                 await message.reply(f"[{commands['kick']}] [ユーザー名 / ユーザーID]")
                 return
-            if not rawcontent in commands['me'].split(','):
-                try:
-                    user=await client.fetch_profile(rawcontent)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    return
-                if user is None:
-                    await message.reply('ユーザーが見つかりません')
-                    return
-                if not user.id in client.user.party.members.keys():
-                    await message.reply('ユーザーがパーティーにいません')
-                    return
-                member=client.user.party.members.get(user.id)
-                await member.kick()
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(user.display_name)} をキック')
-                else:
-                    await message.reply(f'{str(user.display_name)} / {user.id} をキック')
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            if not user.id in client.user.party.members.keys():
+                await message.reply('ユーザーがパーティーにいません')
+                return
+            member=client.user.party.members.get(user.id)
+            await member.kick()
+            if data['loglevel'] == 'normal':
+                await message.reply(f'{str(user.display_name)} をキック')
             else:
-                if not message.author.id in client.user.party.members.keys():
-                    await message.reply('ユーザーがパーティーにいません')
-                    return
-                member=client.user.party.members.get(message.author.id)
-                await member.kick()
-                if data['loglevel'] == 'normal':
-                    await message.reply(f'{str(message.author.display_name)} をキック')
-                else:
-                    await message.reply(f'{str(message.author.display_name)} / {message.author.id} をキック')
+                await message.reply(f'{str(user.display_name)} / {user.id} をキック')
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
