@@ -33,7 +33,6 @@ except ModuleNotFoundError as e:
         pass
     print(e)
     print('モジュールの読み込みに失敗しました。INSTALL.bat を実行してください。問題が修正されない場合はこちらまで連絡をください\nTwitter @gomashioepic\nDiscord gomashio#4335')
-    
     exit()
 
 storedlog=[]
