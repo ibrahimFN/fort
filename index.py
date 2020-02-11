@@ -562,8 +562,8 @@ async def event_ready(client):
                 except Exception:
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                print(red(f"[{now_()}] [{client.user.display_name}] 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{data['reload']}] コマンドで再読み込みしてください。"))
-                dstore(client.user.display_name,f'>>> 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{data["reload"]}] コマンドで再読み込みしてください')
+                print(red(f"[{now_()}] [{client.user.display_name}] 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{commands['reload']}] コマンドで再読み込みしてください。"))
+                dstore(client.user.display_name,f'>>> 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{commands["reload"]}] コマンドで再読み込みしてください')
             else:
                 if data['loglevel'] == 'normal':
                     print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name}'))
@@ -6233,6 +6233,7 @@ for email, password in credentials.items():
     client.acceptinvite_interval=True
     client.stopcheck=False
     client.stopspam=False
+    client.owner=None
     client.prevoutfit=None
     client.prevoutfitvariants=None
     client.prevbackpack=None
