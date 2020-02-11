@@ -1,9 +1,17 @@
 import time,requests,os
-import difflib as diff
 
 print('アップデートを確認中...')
-with open("index.py", encoding='utf-8') as f:
-    current = f.read()
+if os.path.isfile("index.py"):
+    with open("index.py", encoding='utf-8') as f:
+        current = f.read()
+else:
+    github = requests.get("https://raw.githubusercontent.com/gomashio1596/Fortnite-LobbyBot/master/index.py")
+    github.encoding = github.apparent_encoding
+    github = github.text.encode(encoding='utf-8')
+    with open("index.py", 'bw') as f:
+        f.write(github)
+    with open("index.py", encoding='utf-8') as f:
+        current = f.read()
 github = requests.get("https://raw.githubusercontent.com/gomashio1596/Fortnite-LobbyBot/master/index.py")
 github.encoding = github.apparent_encoding
 github = github.text.encode(encoding='utf-8')
