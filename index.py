@@ -1779,7 +1779,7 @@ async def event_friend_message(message):
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('エラー')
-                
+
     elif args[0] in commands['status'].split(','):
         try:
             await client.set_status(rawcontent)
@@ -1835,7 +1835,7 @@ async def event_friend_message(message):
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('エラー')
-    
+
     elif args[0] in commands['bp'].split(','):
         try:
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_battlepass_info,True,args[1],args[2],args[3]))
@@ -4442,7 +4442,7 @@ async def event_party_message(message):
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('エラー')
-                
+
     elif args[0] in commands['status'].split(','):
         try:
             await client.set_status(rawcontent)
@@ -4498,7 +4498,7 @@ async def event_party_message(message):
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('エラー')
-    
+
     elif args[0] in commands['bp'].split(','):
         try:
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_battlepass_info,True,args[1],args[2],args[3]))
