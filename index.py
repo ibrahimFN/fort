@@ -943,6 +943,12 @@ async def event_friend_request(request):
     elif client.acceptfriend is False:
         try:
             await request.decline()
+            if data['loglevel'] == 'normal':
+                print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} からのフレンド申請を拒否')
+                dstore(client.user.display_name,f'{str(request.display_name)} からのフレンド申請を拒否')
+            else:
+                print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} / {request.id} からのフレンド申請を拒否')
+                dstore(client.user.display_name,f'{str(request.display_name)} / {request.id} からのフレンド申請を拒否')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -1376,6 +1382,65 @@ async def event_friend_message(message):
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('エラー')
 
+    elif args[0] in commands['pendingcount'].split(','):
+        try:
+            print(f'保留数: {len(client.pending_friends)}')
+            dstore(client.user.display_name,f'保留数: {len(client.pending_friends)}')
+            await message.reply(f'保留数: {len(client.pending_friends)}')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['blockcount'].split(','):
+        try:
+            print(f'ブロック数: {len(client.blocked_users)}')
+            dstore(client.user.display_name,f'ブロック数: {len(client.blocked_users)}')
+            await message.reply(f'ブロック数: {len(client.blocked_users)}')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['friendlist'].split(','):
+        try:
+            text=''
+            for friend in client.friends.values():
+                text+=f'{friend}\n'
+            print(f'{text}')
+            dstore(client.user.display_name,f'{text}')
+            await message.reply(f'{text}')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['pendinglist'].split(','):
+        try:
+            text=''
+            for pending in client.pending_friends.values():
+                text+=f'{pending}\n'
+            print(f'{text}')
+            dstore(client.user.display_name,f'{text}')
+            await message.reply(f'{text}')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['blocklist'].split(','):
+        try:
+            text=''
+            for block in client.blocked_users.values():
+                text+=f'{block}\n'
+            print(f'{text}')
+            dstore(client.user.display_name,f'{text}')
+            await message.reply(f'{text}')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
     elif args[0] in commands['skinmimic'].split(','):
         try:
             if args[1] in commands['true'].split(','):
@@ -1790,10 +1855,10 @@ async def event_friend_message(message):
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('エラー')
 
-    elif args[0] in commands['user'].split(','):
+    elif args[0] in commands['getuser'].split(','):
         try:
             if rawcontent == '':
-                await message.reply(f"[{commands['user']}] [ユーザー名 / ユーザーID]")
+                await message.reply(f"[{commands['getuser']}] [ユーザー名 / ユーザーID]")
                 return
             user=await client.fetch_profile(rawcontent)
             if user is None:
@@ -1812,10 +1877,10 @@ async def event_friend_message(message):
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('エラー')
 
-    elif args[0] in commands['friend'].split(','):
+    elif args[0] in commands['getfriend'].split(','):
         try:
             if rawcontent == '':
-                await message.reply(f"[{commands['friend']}] [ユーザー名 / ユーザーID]")
+                await message.reply(f"[{commands['getfriend']}] [ユーザー名 / ユーザーID]")
                 return
             user=await client.fetch_profile(rawcontent)
             if user is None:
@@ -1835,6 +1900,91 @@ async def event_friend_message(message):
                 await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
             if not friend.last_logout is None:
                 await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['getfriend'].split(','):
+        try:
+            if rawcontent == '':
+                await message.reply(f"[{commands['getfriend']}] [ユーザー名 / ユーザーID]")
+                return
+            user=await client.fetch_profile(rawcontent)
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            friend=client.get_friend(user.id)
+            if friend is None:
+                await message.reply('ユーザーとフレンドではありません')
+                return
+            if friend.nickname is None:
+                print(f'{str(friend.display_name)} / {friend.id}')
+                dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id}')
+                await message.reply(f'{str(friend.display_name)} / {friend.id}')
+            else:
+                print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+                dstore(client.user.display_name,f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+                await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+            if not friend.last_logout is None:
+                await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['getpending'].split(','):
+        try:
+            if rawcontent == '':
+                await message.reply(f"[{commands['getpending']}] [ユーザー名 / ユーザーID]")
+                return
+            user=await client.fetch_profile(rawcontent)
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            pending=client.get_pending_friend(user.id)
+            if pending is None:
+                await message.reply('ユーザーからのフレンド申請がありません')
+                return
+            print(f'{str(pending.display_name)} / {pending.id}')
+            dstore(client.user.display_name,f'{str(pending.display_name)} / {pending.id}')
+            await message.reply(f'{str(pending.display_name)} / {pending.id}')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['getblock'].split(','):
+        try:
+            if rawcontent == '':
+                await message.reply(f"[{commands['getblock']}] [ユーザー名 / ユーザーID]")
+                return
+            user=await client.fetch_profile(rawcontent)
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            block=client.get_blocked_user(user.id)
+            if block is None:
+                await message.reply('ユーザーをブロックしていません')
+                return
+            print(f'{str(block.display_name)} / {block.id}')
+            dstore(client.user.display_name,f'{str(block.display_name)} / {block.id}')
+            await message.reply(f'{str(block.display_name)} / {block.id}')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2033,16 +2183,16 @@ async def event_friend_message(message):
                     try:
                         await pending.accept()
                         if data['loglevel'] == 'normal':
-                            await message.reply(f'{str(friend.display_name)} をフレンドに追加')
+                            await message.reply(f'{str(pending.display_name)} をフレンドに追加')
                         else:
-                            await message.reply(f'{str(friend.display_name)} / {friend.id} をフレンドに追加')
+                            await message.reply(f'{str(pending.display_name)} / {pending.id} をフレンドに追加')
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
                         if data['loglevel'] == 'normal':
-                            await message.reply(f'{str(friend.dispaly_name)} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
+                            await message.reply(f'{str(pending.dispaly_name)} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
                         else:
-                            await message.reply(f'{str(friend.display_name)} / {friend.id} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
+                            await message.reply(f'{str(pending.display_name)} / {pending.id} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
                         continue
                     except Exception:
                         print(red(traceback.format_exc()))
@@ -2054,17 +2204,17 @@ async def event_friend_message(message):
                     try:
                         await pending.decline()
                         if data['loglevel'] == 'normal':
-                            await message.reply(f'{str(friend.display_name)} のフレンド申請を拒否')
+                            await message.reply(f'{str(pending.display_name)} のフレンド申請を拒否')
                         else:
-                            await message.reply(f'{str(friend.display_name)} / {friend.id} のフレンド申請を拒否')
+                            await message.reply(f'{str(pending.display_name)} / {pending.id} のフレンド申請を拒否')
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
                             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
                         if data['loglevel'] == 'normal':
-                            await message.reply(f'{str(friend.display_name)} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
+                            await message.reply(f'{str(pending.display_name)} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
                         else:
-                            await message.reply(f'{str(friend.display_name)} / {friend.id} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
+                            await message.reply(f'{str(pending.display_name)} / {pending.id} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
                         continue
                     except Exception:
                         print(red(traceback.format_exc()))
@@ -2076,6 +2226,39 @@ async def event_friend_message(message):
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply(f"[{commands['pending']}] [[{commands['true']}] / [{commands['false']}]]")
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['removepending'].split(','):
+        try:
+            pendings=[]
+            for pending in client.pending_friends.values():
+                print(pending.direction)
+                if pending.direction == 'OUTBOUND':
+                    pendings.append(pending)
+            for pending in pendings:
+                try:
+                    await pending.decline()
+                    if data['loglevel'] == 'normal':
+                        await message.reply(f'{str(pending.display_name)} へのフレンド申請を解除')
+                    else:
+                        await message.reply(f'{str(pending.display_name)} / {pending.id} へのフレンド申請を解除')
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                    if data['loglevel'] == 'normal':
+                        await message.reply(f'{str(pending.display_name)} へのフレンド申請を解除リクエストを処理中にエラーが発生しました')
+                    else:
+                        await message.reply(f'{str(pending.display_name)} / {pending.id} へのフレンド申請を解除リクエストを処理中にエラーが発生しました')
+                    continue
+                except Exception:
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                    await message.reply('エラー')
+                    continue
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -3862,6 +4045,65 @@ async def event_party_message(message):
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('エラー')
 
+    elif args[0] in commands['pendingcount'].split(','):
+        try:
+            print(f'保留数: {len(client.pending_friends)}')
+            dstore(client.user.display_name,f'保留数: {len(client.pending_friends)}')
+            await message.reply(f'保留数: {len(client.pending_friends)}')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['blockcount'].split(','):
+        try:
+            print(f'ブロック数: {len(client.blocked_users)}')
+            dstore(client.user.display_name,f'ブロック数: {len(client.blocked_users)}')
+            await message.reply(f'ブロック数: {len(client.blocked_users)}')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['friendlist'].split(','):
+        try:
+            text=''
+            for friend in client.friends.values():
+                text+=f'{friend}\n'
+            print(f'{text}')
+            dstore(client.user.display_name,f'{text}')
+            await message.reply(f'{text}')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['pendinglist'].split(','):
+        try:
+            text=''
+            for pending in client.pending_friends.values():
+                text+=f'{pending}\n'
+            print(f'{text}')
+            dstore(client.user.display_name,f'{text}')
+            await message.reply(f'{text}')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['blocklist'].split(','):
+        try:
+            text=''
+            for block in client.blocked_users.values():
+                text+=f'{block}\n'
+            print(f'{text}')
+            dstore(client.user.display_name,f'{text}')
+            await message.reply(f'{text}')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
     elif args[0] in commands['skinmimic'].split(','):
         try:
             if args[1] in commands['true'].split(','):
@@ -4276,10 +4518,10 @@ async def event_party_message(message):
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('エラー')
 
-    elif args[0] in commands['user'].split(','):
+    elif args[0] in commands['getuser'].split(','):
         try:
             if rawcontent == '':
-                await message.reply(f"[{commands['user']}] [ユーザー名 / ユーザーID]")
+                await message.reply(f"[{commands['getuser']}] [ユーザー名 / ユーザーID]")
                 return
             user=await client.fetch_profile(rawcontent)
             if user is None:
@@ -4298,10 +4540,10 @@ async def event_party_message(message):
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('エラー')
 
-    elif args[0] in commands['friend'].split(','):
+    elif args[0] in commands['getfriend'].split(','):
         try:
             if rawcontent == '':
-                await message.reply(f"[{commands['friend']}] [ユーザー名 / ユーザーID]")
+                await message.reply(f"[{commands['getfriend']}] [ユーザー名 / ユーザーID]")
                 return
             user=await client.fetch_profile(rawcontent)
             if user is None:
@@ -4321,6 +4563,91 @@ async def event_party_message(message):
                 await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
             if not friend.last_logout is None:
                 await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['getfriend'].split(','):
+        try:
+            if rawcontent == '':
+                await message.reply(f"[{commands['getfriend']}] [ユーザー名 / ユーザーID]")
+                return
+            user=await client.fetch_profile(rawcontent)
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            friend=client.get_friend(user.id)
+            if friend is None:
+                await message.reply('ユーザーとフレンドではありません')
+                return
+            if friend.nickname is None:
+                print(f'{str(friend.display_name)} / {friend.id}')
+                dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id}')
+                await message.reply(f'{str(friend.display_name)} / {friend.id}')
+            else:
+                print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+                dstore(client.user.display_name,f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+                await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+            if not friend.last_logout is None:
+                await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['getpending'].split(','):
+        try:
+            if rawcontent == '':
+                await message.reply(f"[{commands['getpending']}] [ユーザー名 / ユーザーID]")
+                return
+            user=await client.fetch_profile(rawcontent)
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            pending=client.get_pending_friend(user.id)
+            if pending is None:
+                await message.reply('ユーザーからのフレンド申請がありません')
+                return
+            print(f'{str(pending.display_name)} / {pending.id}')
+            dstore(client.user.display_name,f'{str(pending.display_name)} / {pending.id}')
+            await message.reply(f'{str(pending.display_name)} / {pending.id}')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['getblock'].split(','):
+        try:
+            if rawcontent == '':
+                await message.reply(f"[{commands['getblock']}] [ユーザー名 / ユーザーID]")
+                return
+            user=await client.fetch_profile(rawcontent)
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+                return
+            block=client.get_blocked_user(user.id)
+            if block is None:
+                await message.reply('ユーザーをブロックしていません')
+                return
+            print(f'{str(block.display_name)} / {block.id}')
+            dstore(client.user.display_name,f'{str(block.display_name)} / {block.id}')
+            await message.reply(f'{str(block.display_name)} / {block.id}')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4519,16 +4846,16 @@ async def event_party_message(message):
                     try:
                         await pending.accept()
                         if data['loglevel'] == 'normal':
-                            await message.reply(f'{str(friend.display_name)} をフレンドに追加')
+                            await message.reply(f'{str(pending.display_name)} をフレンドに追加')
                         else:
-                            await message.reply(f'{str(friend.display_name)} / {friend.id} をフレンドに追加')
+                            await message.reply(f'{str(pending.display_name)} / {pending.id} をフレンドに追加')
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
                         if data['loglevel'] == 'normal':
-                            await message.reply(f'{str(friend.dispaly_name)} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
+                            await message.reply(f'{str(pending.dispaly_name)} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
                         else:
-                            await message.reply(f'{str(friend.display_name)} / {friend.id} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
+                            await message.reply(f'{str(pending.display_name)} / {pending.id} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
                         continue
                     except Exception:
                         print(red(traceback.format_exc()))
@@ -4540,17 +4867,17 @@ async def event_party_message(message):
                     try:
                         await pending.decline()
                         if data['loglevel'] == 'normal':
-                            await message.reply(f'{str(friend.display_name)} のフレンド申請を拒否')
+                            await message.reply(f'{str(pending.display_name)} のフレンド申請を拒否')
                         else:
-                            await message.reply(f'{str(friend.display_name)} / {friend.id} のフレンド申請を拒否')
+                            await message.reply(f'{str(pending.display_name)} / {pending.id} のフレンド申請を拒否')
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
                             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
                         if data['loglevel'] == 'normal':
-                            await message.reply(f'{str(friend.display_name)} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
+                            await message.reply(f'{str(pending.display_name)} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
                         else:
-                            await message.reply(f'{str(friend.display_name)} / {friend.id} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
+                            await message.reply(f'{str(pending.display_name)} / {pending.id} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
                         continue
                     except Exception:
                         print(red(traceback.format_exc()))
@@ -4562,6 +4889,39 @@ async def event_party_message(message):
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply(f"[{commands['pending']}] [[{commands['true']}] / [{commands['false']}]]")
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['removepending'].split(','):
+        try:
+            pendings=[]
+            for pending in client.pending_friends.values():
+                print(pending.direction)
+                if pending.direction == 'OUTBOUND':
+                    pendings.append(pending)
+            for pending in pendings:
+                try:
+                    await pending.decline()
+                    if data['loglevel'] == 'normal':
+                        await message.reply(f'{str(pending.display_name)} へのフレンド申請を解除')
+                    else:
+                        await message.reply(f'{str(pending.display_name)} / {pending.id} へのフレンド申請を解除')
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                    if data['loglevel'] == 'normal':
+                        await message.reply(f'{str(pending.display_name)} へのフレンド申請を解除リクエストを処理中にエラーが発生しました')
+                    else:
+                        await message.reply(f'{str(pending.display_name)} / {pending.id} へのフレンド申請を解除リクエストを処理中にエラーが発生しました')
+                    continue
+                except Exception:
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                    await message.reply('エラー')
+                    continue
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
