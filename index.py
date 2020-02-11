@@ -6274,7 +6274,7 @@ try:
         ready_callback=event_ready,
         all_ready_callback=lambda: print(green(f'[{now_()}] 全てのアカウントにログインしました。')) if len(clients) > 1 else print('')
     )
-except fortnitepy.AuthException:
+except fortnitepy.AuthException as e:
     if "errors.com.epicgames.account.oauth.exchange_code_not_found" in e.args[0]:
         print(red(traceback.format_exc()))
         print(f'[{now_()}] exchange_codeを\nhttps://www.epicgames.com/\nでボットのアカウントにログインし、\nhttps://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fexchange\nで取得してください。')
