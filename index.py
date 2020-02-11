@@ -3,7 +3,9 @@ try:
     from crayons import cyan, green, magenta, red, yellow
     from fortnitepy import ClientPartyMember
     from functools import partial
+    from threading import Thread
     from threading import Timer
+    from flask import Flask
     import fortnitepy.errors
     import unicodedata
     import fortnitepy
@@ -34,6 +36,15 @@ except ModuleNotFoundError as e:
     print(e)
     print('モジュールの読み込みに失敗しました。INSTALL.bat を実行してください。問題が修正されない場合はこちらまで連絡をください\nTwitter @gomashioepic\nDiscord gomashio#4335')
     exit()
+
+#=====
+if os.getcwd().startswith('/app'):
+    app=Flask(__name__)
+    @app.route("/")
+    def index():
+        return "<h1>Bot is running</h1>"
+    Thread(target=app.run,args=("0.0.0.0",8080)).start()
+#=====
 
 storedlog=[]
 
