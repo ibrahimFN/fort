@@ -68,6 +68,8 @@ relogin              : アカウントに再ログインする
 reload               : configとcommandsを再読み込みする
 get                  : get [ユーザー名/ユーザーID] ユーザーのアイテム各種の情報を取得する
 friendcount          : 現在のフレンド数を表示する
+pendingcount         : 現在のフレンド申請数を表示する(方向関係なし)
+blockcount           : 現在のブロック数を表示する
 skinmimic            : skinmimic [true / false] 他人のスキンを真似るかどうかの設定
 emotemimic           : emotemimic [true / false] 他人のエモートを真似るかどうかの設定
 partychat            : partychat [true / false] パーティーチャットからのコマンドを受け付けるかどうかの設定
@@ -86,12 +88,15 @@ status               : status [内容] ステータスを設定する
 banner               : banner [バナーID] [バナーの色] バナーを設定する
 level                : level [レベル] レベルを設定する
 bp                   : bp [ティア] [XPブースト] [フレンドXPブースト] バトルパス情報を設定する
-user                 : user [ユーザー名 / ユーザーID] ユーザーの名前とIDを表示する
+getuser              : getuser [ユーザー名 / ユーザーID] ユーザーの名前とIDを表示する
+getfriend            : getefriend [ユーザー名 / ユーザーID] フレンドの名前とIDを表示する
+getpending           : getpending [ユーザー名 / ユーザーID] 保留中のフレンドの名前とIDを表示する
+getblock             : getblock [ユーザー名 / ユーザーID] ブロックしたユーザーの名前とIDを表示する
 info                 : info [info_party / info_item / id / skin / bag / pickaxe / emote] パーティー/アイテムの情報を表示する
 info_party           : info コマンドで使う info_party
 info_item            : info コマンドで使う info_item
-friend               : friend [ユーザー名 / ユーザーID] フレンドの名前とIDを表示する
 pending              : pending [true / false] 保留しているフレンド申請を全て承諾/拒否する
+removepending        : 自分が送ったフレンド申請を全て解除する
 addfriend            : addfriend [ユーザー名 / ユーザーID] ユーザーにフレンド申請を送信する
 removefriend         : removefriend [ユーザー名 / ユーザーID] ユーザーをフレンドから削除する
 acceptpending        : acceptpending [ユーザー名 / ユーザーID] ユーザーからのフレンド申請を承諾する
