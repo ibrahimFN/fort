@@ -37,14 +37,12 @@ except ModuleNotFoundError as e:
     print('モジュールの読み込みに失敗しました。INSTALL.bat を実行してください。問題が修正されない場合はこちらまで連絡をください\nTwitter @gomashioepic\nDiscord gomashio#4335')
     exit()
 
-#=====
 if os.getcwd().startswith('/app'):
     app=Flask(__name__)
     @app.route("/")
     def index():
         return "<h1>Bot is running</h1>"
     Thread(target=app.run,args=("0.0.0.0",8080)).start()
-#=====
 
 storedlog=[]
 
@@ -140,22 +138,78 @@ def reload_configs(client):
     global headers
     try:
         with open('config.json', 'r', encoding='utf-8-sig') as f:
-            data=json.load(f)
+            data = json.load(f)
             if data['loglevel'] == 'debug':
-                print(f'\n{data}')
-    except json.decoder.JSONDecodeError:
+                print(yellow(f'\n{data}\n'))
+                dstore('ボット',f'\n{data}\n')
+            keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['partychat']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['ingame-error']","['discord-log']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
+            for key in keys:
+                exec(f"errorcheck=data{key}")
+            try:
+                errorcheck=requests.get('https://fortnite-api.com/cosmetics/br/search?name=API-KEY-CHECK',headers={'x-api-key': data['api-key']}).json()
+            except UnicodeEncodeError:
+                if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
+                    print(red('APIキーが無効です。正しい値を入力してください。'))
+                    dstore('ボット',f'>>> APIキーが無効です。正しい値を入力してください')
+                    return None
+                else:
+                    print(red('APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください。'))
+                    dstore('ボット',f'>>> APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください')
+            if errorcheck['status'] == 401:
+                if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
+                    print(red('APIキーが無効です。正しい値を入力してください。'))
+                    dstore('ボット',f'>>> APIキーが無効です。正しい値を入力してください')
+                    return None
+                else:
+                    print(red('APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください。'))
+                    dstore('ボット',f'>>> APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください')
+            if errorcheck['status'] == 503:
+                if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
+                    print(red('APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください。'))
+                    dstore('ボット',f'>>> APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください')
+                    return None
+                else:
+                    print(red('APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。'))
+                    dstore('ボット',f'>>> APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。')
+    except KeyError as e:
+        print(red(traceback.format_exc()))
+        print(red('config.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。'))
+        print(red(f'{str(e)} がありません。'))
+        dstore('ボット',f'>>> {traceback.format_exc()}')
+        dstore('ボット',f'>>> config.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください')
+        dstore('ボット',f'>>> {str(e)} がありません')
+        return None
+    except json.decoder.JSONDecodeError as e:
         print(red(traceback.format_exc()))
         print(red('config.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
-        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-        dstore(client.user.display_name,'>>> config.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
+        print(red(str(e).replace('Expecting ','不明な',1).replace('Invalid control character at','無効なコントロール文字: ').replace('value','値',1).replace('delimiter','区切り文字',1).replace('line','行:',1).replace('column','文字:').replace('char ','',1)))
+        dstore('ボット',f'>>> {traceback.format_exc()}')
+        dstore('ボット',f'>>> config.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
+        dstore('ボット',f'>>> {str(e).replace("Expecting ","不明な",1).replace("Invalid control character at","無効なコントロール文字: ").replace("value","値",1).replace("delimiter","区切り文字",1).replace("line","行:",1).replace("column","文字:").replace("char ","",1)}')
         return None
     except FileNotFoundError:
         print(red(traceback.format_exc()))
         print(red('config.json ファイルが存在しません。'))
-        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-        dstore(client.user.display_name,'>>> config.json ファイルが存在しません')
+        dstore('ボット',f'>>> {traceback.format_exc()}')
+        dstore('ボット',f'>>> config.json ファイルが存在しません')
         return None
     headers={'x-api-key': data['api-key']}
+    req=requests.get('https://fortnite-api.com/cosmetics/br?language=en', headers=headers)
+    if data['loglevel'] == 'debug':
+        print(yellow(f'\n[{req.status_code}] {req.url}\n{req.text[:100]}'))
+        dstore('ボット',f'```\n[{req.status_code}] {req.url}\n{req.text[:100]}\n```')
+    allcosmen=req.json()
+    if req.status_code == 200:
+        with open('allen.json', 'w') as f:
+            json.dump(allcosmen, f)
+    req=requests.get('https://fortnite-api.com/cosmetics/br?language=ja', headers=headers)
+    if data['loglevel'] == 'debug':
+        print(yellow(f'[{req.status_code}] {req.url}\n{req.text[:100]}'))
+        dstore('ボット',f'```\n[{req.status_code}] {req.url}\n{req.text[:100]}\n```')
+    allcosmja=req.json()
+    if req.status_code == 200:
+        with open('allja.json', 'w') as f:
+            json.dump(allcosmja, f)
     if not data['loglevel'] == 'normal' and not data['loglevel'] == 'info' and not data['loglevel'] == 'debug':
         data['loglevel']='normal'
     client.joinmessageenable=data['fortnite']['joinmessageenable']
@@ -168,21 +222,52 @@ def reload_configs(client):
     try:
         with open('commands.json', 'r', encoding='utf-8-sig') as f:
             commands=json.load(f)
-            commands=dict((k.lower(), v.lower()) for k,v in commands.items())
+            keys=["['true']","['false']","['me']","['prev']","['restart']","['relogin']","['reload']","['get']","['friendcount']","['pendingcount']","['blockcount']","['skinmimic']","['emotemimic']","['partychat']","['acceptinvite']","['acceptfriend']","['joinmessageenable']","['randommessageenable']","['wait']","['join']","['joinid']","['leave']","['invite']","['message']","['partymessage']","['status']","['banner']","['level']","['bp']","['getuser']","['getfriend']","['getpending']","['getblock']","['info']","['info_party']","['info_item']","['pending']","['removepending']","['addfriend']","['removefriend']","['acceptpending']","['declinepending']","['blockfriend']","['unblockfriend']","['chatban']","['promote']","['kick']","['ready']","['unready']","['sitout']","['stop']","['allskin']","['allemote']","['setstyle']","['addvariant']","['skinasset']","['bagasset']","['pickasset']","['emoteasset']"]
+            for key in keys:
+                exec(f"errorcheck=commands{key}")
+            if data['caseinsensitive'] is True:
+                commands=dict((k.lower(), jaconv.kata2hira(v.lower())) for k,v in commands.items())
+            for checks in commands.items():
+                ignore=['ownercommands','true','false','me']
+                if checks[0] in ignore:
+                    continue
+                if commands['ownercommands'] == '':
+                    break
+                for command in commands['ownercommands'].split(','):
+                    try:
+                        errorcheck=commands[command.lower()]
+                    except KeyError as e:
+                        print(red(traceback.format_exc()))
+                        print(red('所有者コマンドの設定に失敗しました。キーの名前が間違っていないか確認してください。'))
+                        print(red(f'{str(e)} がありません。'))
+                        dstore('ボット',f'>>> {traceback.format_exc()}')
+                        dstore('ボット',f'>>> 所有者コマンドの設定に失敗しました。キーの名前が間違っていないか確認してください')
+                        dstore('ボット',f'>>> {str(e)} がありません')
+                        return None
             if data['loglevel'] == 'debug':
-                print(f'\n{commands}\n')
+                print(yellow(f'\n{commands}\n'))
+                dstore('ボット',f'\n{commands}\n')
+    except KeyError as e:
+        print(red(traceback.format_exc()))
+        print(red('commands.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。'))
+        print(red(f'{str(e)} がありません。'))
+        dstore('ボット',f'>>> {traceback.format_exc()}')
+        dstore('ボット',f'>>> commands.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください')
+        dstore('ボット',f'>>> {str(e)} がありません')
+        return None
     except json.decoder.JSONDecodeError:
         print(red(traceback.format_exc()))
         print(red('commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
-        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-        dstore(client.user.display_name,'>>> commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
+        dstore('ボット',f'>>> {traceback.format_exc()}')
+        dstore('ボット',f'>>> commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
         return None
     except FileNotFoundError:
         print(red(traceback.format_exc()))
         print(red('commands.json ファイルが存在しません。'))
-        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-        dstore(client.user.display_name,'>>> commands.json ファイルが存在しません')
+        dstore('ボット',f'>>> {traceback.format_exc()}')
+        dstore('ボット',f'>>> commands.json ファイルが存在しません')
         return None
+
     return 'Success'
 
 async def is_itemname(lang, itemname):
@@ -386,54 +471,201 @@ async def search_style(lang, stylename, itemid):
         dstore('ボット',f'>>> {traceback.format_exc()}')
         return None
 
+async def invitation_accept(invitation):
+    client=invitation.client
+    try:
+        await invitation.accept()
+        if not client.owner is None:
+            if invitation.sender.id == client.owner.id:
+                client.acceptinvite_interval=False
+                try:
+                    client.timer.cancel()
+                except Exception:
+                    pass
+                client.timer=Timer(data['fortnite']['interval'], inviteinterval, [client])
+                client.timer.start()
+                if data['loglevel'] == 'normal':
+                    print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を承諾')
+                else:
+                    print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾')
+        else:
+            client.acceptinvite_interval=False
+            try:
+                client.timer.cancel()
+            except Exception:
+                pass
+            client.timer=Timer(data['fortnite']['interval'], inviteinterval, [client])
+            client.timer.start()
+            if data['loglevel'] == 'normal':
+                print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を承諾')
+            else:
+                print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾')
+    except KeyError:
+        if data['loglevel'] == 'debug':
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+    except fortnitepy.PartyError:
+        if data['loglevel'] == 'debug':
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+        print(red(f'[{now_()}] [{client.user.display_name}] 既にパーティーのメンバーです。'))
+        dstore(client.user.display_name,f'>>> 既にパーティーのメンバーです')
+    except fortnitepy.HTTPException:
+        if data['loglevel'] == 'debug':
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+        print(red(f'[{now_()}] [{client.user.display_name}] メンバーが見つかりません。'))
+        dstore(client.user.display_name,f'>>> メンバーが見つかりません')
+    except fortnitepy.Forbidden:
+        if data['ingame-error'] is True:
+            await invitation.sender.reply('以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)')
+        if data['loglevel'] == 'debug':
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+        print(red(f'[{now_()}] [{client.user.display_name}] 以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)'))
+        dstore(client.user.display_name,f'>>> 以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)')
+    except fortnitepy.HTTPException:
+        if data['ingame-error'] is True:
+            await invitation.sender.reply('パーティー招待の承諾リクエストを処理中にエラーが発生しました')
+        if data['loglevel'] == 'debug':
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+        print(red(f'[{now_()}] [{client.user.display_name}] パーティー招待の承諾リクエストを処理中にエラーが発生しました。'))
+        dstore(client.user.display_name,f'>>> パーティー招待の承諾リクエストを処理中にエラーが発生しました')
+    except Exception:
+        if data['ingame-error'] is True:
+            await invitation.sender.send('エラー')
+        print(red(traceback.format_exc()))
+        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+
+async def invitation_decline(invitation):
+    client=invitation.client
+    try:
+        await invitation.decline()
+        if data['loglevel'] == 'normal':
+            print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を拒否')
+            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} からの招待を拒否')
+        else:
+            print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を拒否')
+            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を拒否')
+    except fortnitepy.PartyError:
+        if data['loglevel'] == 'debug':
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+        print(red(f'[{now_()}] [{client.user.display_name}] 受信したnet_clとクライアントのnet_clが一致しません。'))
+        dstore(client.user.display_name,f'>>> 受信したnet_clとクライアントのnet_clが一致しません')
+    except fortnitepy.HTTPException:
+        if data['loglevel'] == 'debug':
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+        print(red(f'[{now_()}] [{client.user.display_name}] パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
+        dstore(client.user.display_name,f'>>> パーティー招待の拒否リクエストを処理中にエラーが発生しました')
+    except Exception:
+        if data['ingame-error'] is True:
+            await invitation.sender.send('エラー')
+        print(red(traceback.format_exc()))
+        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+
+async def invitation_decline_interval(invitation):
+    client=invitation.client
+    try:
+        await invitation.decline()
+        await invitation.sender.send(f"招待を承諾してから{str(data['fortnite']['interval'])}秒間は招待を拒否します")
+        if data['loglevel'] == 'normal':
+            print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を{str(data['fortnite']['interval'])}秒拒否")
+            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} からの招待を{str(data["fortnite"]["interval"])}秒拒否')
+        else:
+            print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
+            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を{str(data["fortnite"]["interval"])}秒拒否')
+    except fortnitepy.PartyError:
+        if data['ingame-error'] is True:
+            await invitation.sender.send('受信したnet_clとクライアントのnet_clが一致しません')
+        if data['loglevel'] == 'debug':
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+        print(red(f'[{now_()}] [{client.user.display_name}] 受信したnet_clとクライアントのnet_clが一致しません。'))
+        dstore(client.user.display_name,f'>>> 受信したnet_clとクライアントのnet_clが一致しません')
+    except fortnitepy.HTTPException:
+        if data['ingame-error'] is True:
+            await invitation.sender.send('パーティー招待の拒否リクエストを処理中にエラーが発生しました')
+        if data['loglevel'] == 'debug':
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+        print(red(f'[{now_()}] [{client.user.display_name}] パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
+        dstore(client.user.display_name,f'>>> パーティー招待の拒否リクエストを処理中にエラーが発生しました')
+    except Exception:
+        if data['ingame-error'] is True:
+            await invitation.sender.send('エラー')
+        print(red(traceback.format_exc()))
+        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+
+async def invitation_decline_owner(invitation):
+    try:
+        await invitation.decline()
+        await invitation.sender.send('所有者がパーティーにいるため招待を拒否します')
+        if data['loglevel'] == 'normal':
+            print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を{str(data['fortnite']['interval'])}秒拒否")
+            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} からの招待を{str(data["fortnite"]["interval"])}秒拒否')
+        else:
+            print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
+            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を{str(data["fortnite"]["interval"])}秒拒否')
+    except fortnitepy.PartyError:
+        if data['ingame-error'] is True:
+            await invitation.sender.send('受信したnet_clとクライアントのnet_clが一致しません')
+        if data['loglevel'] == 'debug':
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+        print(red(f'[{now_()}] [{client.user.display_name}] 受信したnet_clとクライアントのnet_clが一致しません。'))
+        dstore(client.user.display_name,f'>>> 受信したnet_clとクライアントのnet_clが一致しません')
+    except fortnitepy.HTTPException:
+        if data['ingame-error'] is True:
+            await invitation.sender.send('パーティー招待の拒否リクエストを処理中にエラーが発生しました')
+        if data['loglevel'] == 'debug':
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+        print(red(f'[{now_()}] [{client.user.display_name}] パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
+        dstore(client.user.display_name,f'>>> パーティー招待の拒否リクエストを処理中にエラーが発生しました')
+    except Exception:
+        if data['ingame-error'] is True:
+            await invitation.sender.send('エラー')
+        print(red(traceback.format_exc()))
+        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+
 try:
     with open('config.json', 'r', encoding='utf-8-sig') as f:
         data = json.load(f)
         if data['loglevel'] == 'debug':
             print(yellow(f'\n{data}\n'))
             dstore('ボット',f'\n{data}\n')
-        errorcheck=data['fortnite']
-        errorcheck=data['fortnite']['email']
-        errorcheck=data['fortnite']['password']
-        errorcheck=data['fortnite']['owner']
-        errorcheck=data['fortnite']['platform']
-        errorcheck=data['fortnite']['cid']
-        errorcheck=data['fortnite']['bid']
-        errorcheck=data['fortnite']['pickaxe_id']
-        errorcheck=data['fortnite']['eid']
-        errorcheck=data['fortnite']['playlist']
-        errorcheck=data['fortnite']['banner']
-        errorcheck=data['fortnite']['banner_color']
-        errorcheck=data['fortnite']['level']
-        errorcheck=data['fortnite']['tier']
-        errorcheck=data['fortnite']['xpboost']
-        errorcheck=data['fortnite']['friendxpboost']
-        errorcheck=data['fortnite']['status']
-        errorcheck=data['fortnite']['partychat']
-        errorcheck=data['fortnite']['joinmessage']
-        errorcheck=data['fortnite']['randommessage']
-        errorcheck=data['fortnite']['joinmessageenable']
-        errorcheck=data['fortnite']['randommessageenable']
-        errorcheck=data['fortnite']['skinmimic']
-        errorcheck=data['fortnite']['emotemimic']
-        errorcheck=data['fortnite']['acceptinvite']
-        errorcheck=data['fortnite']['acceptfriend']
-        errorcheck=data['fortnite']['addfriend']
-        errorcheck=data['fortnite']['inviteinterval']
-        errorcheck=data['fortnite']['interval']
-        errorcheck=data['fortnite']['waitinterval']
-        errorcheck=data['caseinsensitive']
-        errorcheck=data['api-key']
-        errorcheck=data['loglevel']
-        errorcheck=data['debug']
-        errorcheck=requests.get('https://fortnite-api.com/cosmetics/br/search?name=API-KEY-CHECK',headers={'x-api-key': data['api-key']}).json()
+        keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['partychat']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['ingame-error']","['discord-log']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
+        for key in keys:
+            exec(f"errorcheck=data{key}")
+        try:
+            errorcheck=requests.get('https://fortnite-api.com/cosmetics/br/search?name=API-KEY-CHECK',headers={'x-api-key': data['api-key']}).json()
+        except UnicodeEncodeError:
+            if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
+                print(red('APIキーが無効です。正しい値を入力してください。'))
+                dstore('ボット',f'>>> APIキーが無効です。正しい値を入力してください')
+                exit()
+            else:
+                print(red('APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください。'))
+                dstore('ボット',f'>>> APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください')
         if errorcheck['status'] == 401:
-            print(red('APIキーが無効です。正しい値を入力してください。'))
-            dstore('ボット',f'>>> APIキーが無効です。正しい値を入力してください')
-            exit()
+            if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
+                print(red('APIキーが無効です。正しい値を入力してください。'))
+                dstore('ボット',f'>>> APIキーが無効です。正しい値を入力してください')
+                exit()
+            else:
+                print(red('APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください。'))
+                dstore('ボット',f'>>> APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください')
         if errorcheck['status'] == 503:
-            print(red('APIがダウンしているため、一部コマンドが機能しません。しばらく待ってからもう一度起動してみてください。'))
-            dstore('ボット',f'>>> APIがダウンしているため、一部コマンドが機能しません。しばらく待ってからもう一度起動してみてください')
+            if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
+                print(red('APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください。'))
+                dstore('ボット',f'>>> APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください')
+                exit()
+            else:
+                print(red('APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。'))
+                dstore('ボット',f'>>> APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。')
         credentials={}
         try:
             for count,mail in enumerate(data['fortnite']['email'].split(',')):
@@ -466,6 +698,54 @@ except FileNotFoundError:
     dstore('ボット',f'>>> config.json ファイルが存在しません')
     exit()
 
+try:
+    with open('commands.json', 'r', encoding='utf-8-sig') as f:
+        commands=json.load(f)
+        keys=["['true']","['false']","['me']","['prev']","['restart']","['relogin']","['reload']","['get']","['friendcount']","['pendingcount']","['blockcount']","['skinmimic']","['emotemimic']","['partychat']","['acceptinvite']","['acceptfriend']","['joinmessageenable']","['randommessageenable']","['wait']","['join']","['joinid']","['leave']","['invite']","['message']","['partymessage']","['status']","['banner']","['level']","['bp']","['getuser']","['getfriend']","['getpending']","['getblock']","['info']","['info_party']","['info_item']","['pending']","['removepending']","['addfriend']","['removefriend']","['acceptpending']","['declinepending']","['blockfriend']","['unblockfriend']","['chatban']","['promote']","['kick']","['ready']","['unready']","['sitout']","['stop']","['allskin']","['allemote']","['setstyle']","['addvariant']","['skinasset']","['bagasset']","['pickasset']","['emoteasset']"]
+        for key in keys:
+            exec(f"errorcheck=commands{key}")
+        if data['caseinsensitive'] is True:
+            commands=dict((k.lower(), jaconv.kata2hira(v.lower())) for k,v in commands.items())
+        for checks in commands.items():
+            ignore=['ownercommands','true','false','me']
+            if checks[0] in ignore:
+                continue
+            if commands['ownercommands'] == '':
+                break
+            for command in commands['ownercommands'].split(','):
+                try:
+                    errorcheck=commands[command.lower()]
+                except KeyError as e:
+                    print(red(traceback.format_exc()))
+                    print(red('所有者コマンドの設定に失敗しました。キーの名前が間違っていないか確認してください。'))
+                    print(red(f'{str(e)} がありません。'))
+                    dstore('ボット',f'>>> {traceback.format_exc()}')
+                    dstore('ボット',f'>>> 所有者コマンドの設定に失敗しました。キーの名前が間違っていないか確認してください')
+                    dstore('ボット',f'>>> {str(e)} がありません')
+                    exit()
+        if data['loglevel'] == 'debug':
+            print(yellow(f'\n{commands}\n'))
+            dstore('ボット',f'\n{commands}\n')
+except KeyError as e:
+    print(red(traceback.format_exc()))
+    print(red('commands.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。'))
+    print(red(f'{str(e)} がありません。'))
+    dstore('ボット',f'>>> {traceback.format_exc()}')
+    dstore('ボット',f'>>> commands.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください')
+    dstore('ボット',f'>>> {str(e)} がありません')
+    exit()
+except json.decoder.JSONDecodeError:
+    print(red(traceback.format_exc()))
+    print(red('commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
+    dstore('ボット',f'>>> {traceback.format_exc()}')
+    dstore('ボット',f'>>> commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
+except FileNotFoundError:
+    print(red(traceback.format_exc()))
+    print(red('commands.json ファイルが存在しません。'))
+    dstore('ボット',f'>>> {traceback.format_exc()}')
+    dstore('ボット',f'>>> commands.json ファイルが存在しません')
+    exit()
+
 headers={'x-api-key': data['api-key']}
 req=requests.get('https://fortnite-api.com/cosmetics/br?language=en', headers=headers)
 if data['loglevel'] == 'debug':
@@ -483,25 +763,6 @@ allcosmja=req.json()
 if req.status_code == 200:
     with open('allja.json', 'w') as f:
         json.dump(allcosmja, f)
-
-try:
-    with open('commands.json', 'r', encoding='utf-8-sig') as f:
-        commands=json.load(f)
-        commands=dict((k.lower(), v.lower()) for k,v in commands.items())
-        if data['loglevel'] == 'debug':
-            print(yellow(f'\n{commands}\n'))
-            dstore('ボット',f'\n{commands}\n')
-except json.decoder.JSONDecodeError:
-    print(red(traceback.format_exc()))
-    print(red('commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
-    dstore('ボット',f'>>> {traceback.format_exc()}')
-    dstore('ボット',f'>>> commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
-except FileNotFoundError:
-    print(red(traceback.format_exc()))
-    print(red('commands.json ファイルが存在しません。'))
-    dstore('ボット',f'>>> {traceback.format_exc()}')
-    dstore('ボット',f'>>> commands.json ファイルが存在しません')
-    exit()
 
 if data['debug'] is True:
     logger = logging.getLogger('fortnitepy.http')
@@ -540,10 +801,11 @@ else:
     dstore('ボット','デバッグ: オフ')
 print(green(f'\nPython {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}\nFortnitepy {fortnitepy.__version__}\n'))
 if data['debug'] is True:
-    print(red(f'[{now_()}] デバッグが有効です!'))
-    dstore('ボット','>>> デバッグが有効です!')
+    print(red(f'[{now_()}] デバッグが有効です!(エラーではありません)'))
+    dstore('ボット','>>> デバッグが有効です!(エラーではありません)')
 threading.Thread(target=dprint,args=()).start()
-dstore('ボット','プログラムが読み込まれました')
+print('ボットを起動中...')
+dstore('ボット','ボットを起動中...')
 
 async def event_device_auth_generate(details, email):
     store_device_auth_details(email, details)
@@ -565,14 +827,18 @@ async def event_ready(client):
         else:
             client.owner=client.get_friend(owner.id)
             if client.owner is None:
-                try:
-                    await client.add_friend(owner.id)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
+                if data['fortnite']['addfriend'] is True:
+                    try:
+                        await client.add_friend(owner.id)
+                    except fortnitepy.HTTPException:
+                        if data['loglevel'] == 'debug':
+                            print(red(traceback.format_exc()))
+                            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                        print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
+                        dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
+                    except Exception:
                         print(red(traceback.format_exc()))
-                except Exception:
-                    print(red(traceback.format_exc()))
-                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
                 print(red(f"[{now_()}] [{client.user.display_name}] 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{commands['reload']}] コマンドで再読み込みしてください。"))
                 dstore(client.user.display_name,f'>>> 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{commands["reload"]}] コマンドで再読み込みしてください')
             else:
@@ -633,45 +899,7 @@ async def event_party_invite(invitation):
         return
     if not client.owner is None:
         if invitation.sender.id == client.owner.id:
-            try:
-                await invitation.accept()
-            except KeyError:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-            except fortnitepy.PartyError:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] 既にパーティーのメンバーです。'))
-                dstore(client.user.display_name,f'>>> 既にパーティーのメンバーです')
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] メンバーが見つかりません。'))
-                dstore(client.user.display_name,f'>>> メンバーが見つかりません')
-            except fortnitepy.Forbidden:
-                if data['ingame-error'] is True:
-                    await invitation.sender.reply('以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)')
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] 以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)'))
-                dstore(client.user.display_name,f'>>> 以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)')
-            except fortnitepy.HTTPException:
-                if data['ingame-error'] is True:
-                    await invitation.sender.reply('パーティー招待の承諾リクエストを処理中にエラーが発生しました')
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] パーティー招待の承諾リクエストを処理中にエラーが発生しました。'))
-                dstore(client.user.display_name,f'>>> パーティー招待の承諾リクエストを処理中にエラーが発生しました')
-            except Exception:
-                if data['ingame-error'] is True:
-                    await invitation.sender.send('エラー')
-                print(red(traceback.format_exc()))
-                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await invitation_accept(invitation)
             return
     if data['loglevel'] == 'normal':
         print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からのパーティー招待')
@@ -684,242 +912,23 @@ async def event_party_invite(invitation):
         if not client.owner.id in client.user.party.members.keys():
             if client.acceptinvite is True:
                 if client.acceptinvite_interval is True:
-                    try:
-                        await invitation.accept()
-                        client.acceptinvite_interval=False
-                        try:
-                            client.timer.cancel()
-                        except Exception:
-                            if data['loglevel'] == 'debug':
-                                print(red(traceback.format_exc()))
-                                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                        client.timer=Timer(data['fortnite']['interval'], inviteinterval, [client])
-                        client.timer.start()
-                        if data['loglevel'] == 'normal':
-                            print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を承諾')
-                        else:
-                            print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾')
-                    except KeyError:
-                        if data['loglevel'] == 'debug':
-                            print(red(traceback.format_exc()))
-                            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    except fortnitepy.PartyError:
-                        if data['loglevel'] == 'debug':
-                            print(red(traceback.format_exc()))
-                            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                        print(red(f'[{now_()}] [{client.user.display_name}] 既にパーティーのメンバーです。'))
-                        dstore(client.user.display_name,f'>>> 既にパーティーのメンバーです')
-                    except fortnitepy.HTTPException:
-                        if data['loglevel'] == 'debug':
-                            print(red(traceback.format_exc()))
-                            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                        print(red(f'[{now_()}] [{client.user.display_name}] メンバーが見つかりません。'))
-                        dstore(client.user.display_name,f'>>> メンバーが見つかりません')
-                    except fortnitepy.Forbidden:
-                        if data['ingame-error'] is True:
-                            await invitation.sender.reply('以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)')
-                        if data['loglevel'] == 'debug':
-                            print(red(traceback.format_exc()))
-                            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                        print(red(f'[{now_()}] [{client.user.display_name}] 以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)'))
-                        dstore(client.user.display_name,f'>>> 以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)')
-                    except fortnitepy.HTTPException:
-                        if data['ingame-error'] is True:
-                            await invitation.sender.reply('パーティー招待の承諾リクエストを処理中にエラーが発生しました')
-                        if data['loglevel'] == 'debug':
-                            print(red(traceback.format_exc()))
-                            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                        print(red(f'[{now_()}] [{client.user.display_name}] パーティー招待の承諾リクエストを処理中にエラーが発生しました。'))
-                        dstore(client.user.display_name,f'>>> パーティー招待の承諾リクエストを処理中にエラーが発生しました')
-                    except Exception:
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                    await invitation_accept(invitation)
+                    return
                 else:
-                    try:
-                        await invitation.decline()
-                        await invitation.sender.send(f"招待を承諾してから{str(data['fortnite']['interval'])}秒間は招待を拒否します")
-                        if data['loglevel'] == 'normal':
-                            print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を{str(data['fortnite']['interval'])}秒拒否")
-                            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} からの招待を{str(data["fortnite"]["interval"])}秒拒否')
-                        else:
-                            print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
-                            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を{str(data["fortnite"]["interval"])}秒拒否')
-                    except fortnitepy.PartyError:
-                        if data['ingame-error'] is True:
-                            await invitation.sender.send('受信したnet_clとクライアントのnet_clが一致しません')
-                        if data['loglevel'] == 'debug':
-                            print(red(traceback.format_exc()))
-                            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                        print(red(f'[{now_()}] [{client.user.display_name}] 受信したnet_clとクライアントのnet_clが一致しません。'))
-                        dstore(client.user.display_name,f'>>> 受信したnet_clとクライアントのnet_clが一致しません')
-                    except fortnitepy.HTTPException:
-                        if data['ingame-error'] is True:
-                            await invitation.sender.send('パーティー招待の拒否リクエストを処理中にエラーが発生しました')
-                        if data['loglevel'] == 'debug':
-                            print(red(traceback.format_exc()))
-                            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                        print(red(f'[{now_()}] [{client.user.display_name}] パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
-                        dstore(client.user.display_name,f'>>> パーティー招待の拒否リクエストを処理中にエラーが発生しました')
-                    except Exception:
-                        if data['ingame-error'] is True:
-                            await invitation.sender.send('エラー')
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                    await invitation_decline_interval(invitation)
+                    return
             else:
-                try:
-                    await invitation.decline()
-                    if data['loglevel'] == 'normal':
-                        print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を拒否')
-                        dstore(client.user.display_name,f'{str(invitation.sender.display_name)} からの招待を拒否')
-                    else:
-                        print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を拒否')
-                        dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を拒否')
-                except fortnitepy.PartyError:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] [{client.user.display_name}] 受信したnet_clとクライアントのnet_clが一致しません。'))
-                    dstore(client.user.display_name,f'>>> 受信したnet_clとクライアントのnet_clが一致しません')
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] [{client.user.display_name}] パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
-                    dstore(client.user.display_name,f'>>> パーティー招待の拒否リクエストを処理中にエラーが発生しました')
-                except Exception:
-                    if data['ingame-error'] is True:
-                        await invitation.sender.send('エラー')
-                    print(red(traceback.format_exc()))
-                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await invitation_decline(invitation)
         else:
-            try:
-                await invitation.decline()
-                await invitation.sender.send('所有者がパーティーにいるため招待を拒否します')
-            except fortnitepy.PartyError:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] 受信したnet_clとクライアントのnet_clが一致しません。'))
-                dstore(client.user.display_name,f'>>> 受信したnet_clとクライアントのnet_clが一致しません')
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
-                dstore(client.user.display_name,f'>>> パーティー招待の拒否リクエストを処理中にエラーが発生しました')
-            except Exception:
-                if data['ingame-error'] is True:
-                    await invitation.sender.send('エラー')
-                print(red(traceback.format_exc()))
-                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await invitation_decline_owner(invitation)
     else:
         if client.acceptinvite is True:
             if client.acceptinvite_interval is True:
-                try:
-                    await invitation.accept()
-                    client.acceptinvite_interval=False
-                    try:
-                        client.timer.cancel()
-                    except Exception:
-                        pass
-                    client.timer=Timer(data['fortnite']['interval'], inviteinterval, [client])
-                    client.timer.start()
-                    if data['loglevel'] == 'normal':
-                        print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を承諾')
-                        dstore(client.user.display_name,f'{str(invitation.sender.display_name)} からの招待を承諾')
-                    else:
-                        print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾')
-                        dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾')
-                except KeyError:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                except fortnitepy.PartyError:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] [{client.user.display_name}] 既にパーティーのメンバーです。'))
-                    dstore(client.user.display_name,f'>>> 既にパーティーのメンバーです')
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] [{client.user.display_name}] メンバーが見つかりません。'))
-                    dstore(client.user.display_name,f'>>> メンバーが見つかりません')
-                except fortnitepy.Forbidden:
-                    if data['ingame-error'] is True:
-                        await invitation.sender.reply('以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)')
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] [{client.user.display_name}] 以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)'))
-                    dstore(client.user.display_name,f'>>> 以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)')
-                except fortnitepy.HTTPException:
-                    if data['ingame-error'] is True:
-                        await invitation.sender.reply('パーティー招待の承諾リクエストを処理中にエラーが発生しました')
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] [{client.user.display_name}] パーティー招待の承諾リクエストを処理中にエラーが発生しました。'))
-                    dstore(client.user.display_name,f'>>> パーティー招待の承諾リクエストを処理中にエラーが発生しました')
-                except Exception:
-                    if data['ingame-error'] is True:
-                        await invitation.sender.send('エラー')
-                    print(red(traceback.format_exc()))
-                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await invitation_accept(invitation)
             else:
-                try:
-                    await invitation.decline()
-                    await invitation.sender.send(f"招待を承諾してから{str(data['fortnite']['interval'])}秒間は招待を拒否します")
-                    if data['loglevel'] == 'normal':
-                        print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を{str(data['fortnite']['interval'])}秒拒否")
-                        dstore(client.user.display_name,f'{str(invitation.sender.display_name)} からの招待を{str(data["fortnite"]["interval"])}秒拒否')
-                    else:
-                        print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
-                        dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を{str(data["fortnite"]["interval"])}秒拒否')
-                except fortnitepy.PartyError:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] [{client.user.display_name}] 受信したnet_clとクライアントのnet_clが一致しません。'))
-                    dstore(client.user.display_name,f'>>> 受信したnet_clとクライアントのnet_clが一致しません')
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] [{client.user.display_name}] パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
-                    dstore(client.user.display_name,f'>>> パーティー招待の拒否リクエストを処理中にエラーが発生しました')
-                except Exception:
-                    if data['ingame-error'] is True:
-                        await invitation.sender.send('エラー')
-                    print(red(traceback.format_exc()))
-                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await invitation_decline_interval(invitation)
         else:
-            try:
-                await invitation.decline()
-                if data['loglevel'] == 'normal':
-                    print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を拒否')
-                    dstore(client.user.display_name,f'{str(invitation.sender.display_name)} からの招待を拒否')
-                else:
-                    print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を拒否')
-                    dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を拒否')
-            except fortnitepy.PartyError:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] 受信したnet_clとクライアントのnet_clが一致しません。'))
-                dstore(client.user.display_name,f'>>> 受信したnet_clとクライアントのnet_clが一致しません')
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
-                dstore(client.user.display_name,f'>>> パーティー招待の拒否リクエストを処理中にエラーが発生しました')
-            except Exception:
-                if data['ingame-error'] is True:
-                    await invitation.sender.send('エラー')
-                print(red(traceback.format_exc()))
-                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await invitation_decline(invitation)
 
 async def event_friend_request(request):
     client=request.client
@@ -1250,28 +1259,50 @@ async def event_party_update(party):
 
 async def event_friend_message(message):
     client=message.client
+    content=message.content
     if data['caseinsensitive'] is True:
-        args = jaconv.kata2hira(message.content.lower()).split()
+        args = jaconv.kata2hira(content.lower()).split()
     else:
-        args = message.content.split()
-    rawargs = message.content.split()
+        args = content.split()
+    rawargs = content.split()
     rawcontent = ' '.join(rawargs[1:])
     rawcontent2 = ' '.join(rawargs[2:])
     user=None
     if rawcontent in commands['me'].split(','):
         rawcontent=str(message.author.display_name)
     if data['loglevel'] == 'normal':
-        print(f'[{now_()}] [{client.user.display_name}] {str(message.author.display_name)} | {message.content}')
-        dstore(message.author.display_name,message.content)
+        print(f'[{now_()}] [{client.user.display_name}] {str(message.author.display_name)} | {content}')
+        dstore(message.author.display_name,content)
     else:
-        print(f'[{now_()}] [{client.user.display_name}] {str(message.author.display_name)}/ {message.author.id} [{platform_to_str(message.author.platform)}] | {message.content}')
-        dstore(f'{message.author.display_name} / {message.author.id}',message.content)
+        print(f'[{now_()}] [{client.user.display_name}] {str(message.author.display_name)}/ {message.author.id} [{platform_to_str(message.author.platform)}] | {content}')
+        dstore(f'{message.author.display_name} / {message.author.id}',content)
+
+    if not client.owner is None:
+        if not client.owner.id == message.author.id:
+            for checks in commands.items():
+                ignore=['ownercommands','true','false','me']
+                if checks[0] in ignore:
+                    continue
+                if commands['ownercommands'] == '':
+                    break
+                for command in commands['ownercommands'].split(','):
+                    if args[0] in commands[command.lower()].split(','):
+                        await message.reply('このコマンドは管理者しか使用できません')
+                        return
 
     if args[0] in commands['prev'].split(','):
-        args = jaconv.kata2hira(client.prevmessage.lower()).split()
-        rawargs = client.prevmessage.split()
+        if client.prevmessage.get(message.author.id) is None:
+            client.prevmessage[message.author.id]='None'
+        content=client.prevmessage.get(message.author.id)
+        if data['caseinsensitive'] is True:
+            args = jaconv.kata2hira(content.lower()).split()
+        else:
+            args = content.split()
+        args = jaconv.kata2hira(content.lower()).split()
+        rawargs = content.split()
         rawcontent = ' '.join(rawargs[1:])
-    client.prevmessage=message.content
+        rawcontent2 = ' '.join(rawargs[2:])
+    client.prevmessage[message.author.id]=content
 
     if args[0] in commands['restart'].split(','):
         try:
@@ -1294,13 +1325,13 @@ async def event_friend_message(message):
             await client.restart()
         except fortnitepy.AuthException:
             print(red(traceback.format_exc()))
-            print(red(f'[{now_()}] メールアドレスまたはパスワードが間違っています。'))
+            print(red(f'[{now_()}] [{client.user.display_name}] メールアドレスまたはパスワードが間違っています。'))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             dstore(client.user.display_name,f'>>> メールアドレスまたはパスワードが間違っています')
             exit()
         except Exception:
             print(red(traceback.format_exc()))
-            print(red(f'[{now_()}] アカウントの読み込みに失敗しました。もう一度試してみてください。'))
+            print(red(f'[{now_()}] [{client.user.display_name}] アカウントの読み込みに失敗しました。もう一度試してみてください。'))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             dstore(client.user.display_name,f'>>> アカウントの読み込みに失敗しました。もう一度試してみてください')
             exit()
@@ -1320,35 +1351,35 @@ async def event_friend_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
                 dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
                 return
             if owner is None:
-                print(red(f'[{now_()}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
+                print(red(f'[{now_()}] [{client.user.display_name}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
                 dstore(client.user.display_name,f'>>> 所有者が見つかりません。正しい名前/IDになっているか確認してください')
                 return
             client.owner=client.get_friend(owner.id)
             if client.owner is None:
-                try:
-                    await client.add_friend(owner.id)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
+                if data['fortnite']['addfriend'] is True:
+                    try:
+                        await client.add_friend(owner.id)
+                    except fortnitepy.HTTPException:
+                        if data['loglevel'] == 'debug':
+                            print(red(traceback.format_exc()))
+                            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                        print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
+                        dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
+                    except Exception:
                         print(red(traceback.format_exc()))
                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
-                    dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
-                except Exception:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] 所有者とフレンドではありません。フレンドになってからもう一度起動してください。'))
+                print(red(f'[{now_()}] [{client.user.display_name}] 所有者とフレンドではありません。フレンドになってからもう一度起動してください。'))
                 dstore(client.user.display_name,f'>>> 所有者とフレンドではありません。フレンドになってからもう一度起動してください')
                 return
             if data['loglevel'] == 'normal':
-                print(green(f'[{now_()}] 所有者: {client.owner.display_name}'))
+                print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name}'))
                 dstore(client.user.display_name,f'所有者: {client.owner.display_name}')
             else:
-                print(green(f'[{now_()}] 所有者: {client.owner.display_name} / {client.owner.id}'))
+                print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name} / {client.owner.id}'))
                 dstore(client.user.display_name,f'所有者: {client.owner.display_name} / {client.owner.id}')
         except Exception:
             print(red(traceback.format_exc()))
@@ -3438,7 +3469,7 @@ async def event_friend_message(message):
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('エラー')
 
-    elif args[0] in commands['pickaxeasset'].split(','):
+    elif args[0] in commands['pickasset'].split(','):
         try:
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,rawcontent))
             await client.user.party.me.set_emote('EID_IceKing')
@@ -3451,7 +3482,7 @@ async def event_friend_message(message):
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-            await message.reply(f"[{commands['pickaxeasset']}] [アセットパス]")
+            await message.reply(f"[{commands['pickasset']}] [アセットパス]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -3686,7 +3717,7 @@ async def event_friend_message(message):
             return
 
         try:
-            isitem = await is_itemname("ja", message.content.replace('\\',''))
+            isitem = await is_itemname("ja", content.replace('\\',''))
             if isitem[0] == 'True':
                 client.itemdata = isitem
                 if len(client.itemdata[1]) > 29:
@@ -3776,7 +3807,7 @@ async def event_friend_message(message):
             return
 
         try:
-            isitem = await is_itemname("en", message.content.replace('\\',''))
+            isitem = await is_itemname("en", content.replace('\\',''))
             if isitem[0] == 'True':
                 client.itemdata = isitem
                 if len(client.itemdata[1]) > 29:
@@ -3873,30 +3904,56 @@ async def event_friend_message(message):
 
 async def event_party_message(message):
     client=message.client
+    content=message.content
     if data['caseinsensitive'] is True:
-        args = jaconv.kata2hira(message.content.lower()).split()
+        args = jaconv.kata2hira(content.lower()).split()
     else:
-        args = message.content.split()
-    rawargs = message.content.split()
+        args = content.split()
+    rawargs = content.split()
     rawcontent = ' '.join(rawargs[1:])
     rawcontent2 = ' '.join(rawargs[2:])
     user=None
-    if client.partychat is False and message.author.id == client.user.id:
-        return
+    if not client.owner is None:
+        if client.partychat is False and not message.author.id == client.owner.id:
+            return
+    else:
+        if client.partychat is False:
+            return
     if rawcontent in commands['me'].split(','):
         rawcontent=str(message.author.display_name)
     if data['loglevel'] == 'normal':
-        print(f'[{now_()}] [パーティー] [{client.user.display_name}] {message.author.display_name} | {message.content}')
-        dstore(client.user.display_name,f'[パーティー] {message.content}')
+        print(f'[{now_()}] [パーティー] [{client.user.display_name}] {message.author.display_name} | {content}')
+        dstore(client.user.display_name,f'[パーティー] {content}')
     else:
-        print(f'[{now_()}] [パーティー/{client.user.party.id}] [{client.user.display_name}] {message.author.display_name} / {message.author.id} [{platform_to_str(message.author.platform)}/{message.author.input}] | {message.content}')
-        dstore(f'{client.user.display_name} / {message.author.id} [{platform_to_str(message.author.platform)}/{message.author.input}]',f'[パーティー/{client.user.party.id}] {message.content}')
+        print(f'[{now_()}] [パーティー/{client.user.party.id}] [{client.user.display_name}] {message.author.display_name} / {message.author.id} [{platform_to_str(message.author.platform)}/{message.author.input}] | {content}')
+        dstore(f'{client.user.display_name} / {message.author.id} [{platform_to_str(message.author.platform)}/{message.author.input}]',f'[パーティー/{client.user.party.id}] {content}')
+
+    if not client.owner is None:
+        if not client.owner.id == message.author.id:
+            for checks in commands.items():
+                ignore=['ownercommands','true','false','me']
+                if checks[0] in ignore:
+                    continue
+                if commands['ownercommands'] == '':
+                    break
+                for command in commands['ownercommands'].split(','):
+                    if args[0] in commands[command.lower()].split(','):
+                        await message.reply('このコマンドは管理者しか使用できません')
+                        return
 
     if args[0] in commands['prev'].split(','):
-        args = jaconv.kata2hira(client.prevmessage.lower()).split()
-        rawargs = client.prevmessage.split()
+        if client.prevmessage.get(message.author.id) is None:
+            client.prevmessage[message.author.id]='None'
+        content=client.prevmessage.get(message.author.id)
+        if data['caseinsensitive'] is True:
+            args = jaconv.kata2hira(content.lower()).split()
+        else:
+            args = content.split()
+        args = jaconv.kata2hira(content.lower()).split()
+        rawargs = content.split()
         rawcontent = ' '.join(rawargs[1:])
-    client.prevmessage=message.content
+        rawcontent2 = ' '.join(rawargs[2:])
+    client.prevmessage[message.author.id]=content
 
     if args[0] in commands['restart'].split(','):
         try:
@@ -3919,13 +3976,13 @@ async def event_party_message(message):
             await client.restart()
         except fortnitepy.AuthException:
             print(red(traceback.format_exc()))
-            print(red(f'[{now_()}] メールアドレスまたはパスワードが間違っています。'))
+            print(red(f'[{now_()}] [{client.user.display_name}] メールアドレスまたはパスワードが間違っています。'))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             dstore(client.user.display_name,f'>>> メールアドレスまたはパスワードが間違っています')
             exit()
         except Exception:
             print(red(traceback.format_exc()))
-            print(red(f'[{now_()}] アカウントの読み込みに失敗しました。もう一度試してみてください。'))
+            print(red(f'[{now_()}] [{client.user.display_name}] アカウントの読み込みに失敗しました。もう一度試してみてください。'))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             dstore(client.user.display_name,f'>>> アカウントの読み込みに失敗しました。もう一度試してみてください')
             exit()
@@ -3945,35 +4002,35 @@ async def event_party_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
                 dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
                 return
             if owner is None:
-                print(red(f'[{now_()}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
+                print(red(f'[{now_()}] [{client.user.display_name}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
                 dstore(client.user.display_name,f'>>> 所有者が見つかりません。正しい名前/IDになっているか確認してください')
                 return
             client.owner=client.get_friend(owner.id)
             if client.owner is None:
-                try:
-                    await client.add_friend(owner.id)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
+                if data['fortnite']['addfriend'] is True:
+                    try:
+                        await client.add_friend(owner.id)
+                    except fortnitepy.HTTPException:
+                        if data['loglevel'] == 'debug':
+                            print(red(traceback.format_exc()))
+                            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                        print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
+                        dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
+                    except Exception:
                         print(red(traceback.format_exc()))
                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
-                    dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
-                except Exception:
-                    if data['loglevel'] == 'debug':
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] 所有者とフレンドではありません。フレンドになってからもう一度起動してください。'))
+                print(red(f'[{now_()}] [{client.user.display_name}] 所有者とフレンドではありません。フレンドになってからもう一度起動してください。'))
                 dstore(client.user.display_name,f'>>> 所有者とフレンドではありません。フレンドになってからもう一度起動してください')
                 return
             if data['loglevel'] == 'normal':
-                print(green(f'[{now_()}] 所有者: {client.owner.display_name}'))
+                print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name}'))
                 dstore(client.user.display_name,f'所有者: {client.owner.display_name}')
             else:
-                print(green(f'[{now_()}] 所有者: {client.owner.display_name} / {client.owner.id}'))
+                print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name} / {client.owner.id}'))
                 dstore(client.user.display_name,f'所有者: {client.owner.display_name} / {client.owner.id}')
         except Exception:
             print(red(traceback.format_exc()))
@@ -6063,7 +6120,7 @@ async def event_party_message(message):
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('エラー')
 
-    elif args[0] in commands['pickaxeasset'].split(','):
+    elif args[0] in commands['pickasset'].split(','):
         try:
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,rawcontent))
             await client.user.party.me.set_emote('EID_IceKing')
@@ -6076,7 +6133,7 @@ async def event_party_message(message):
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-            await message.reply(f"[{commands['pickaxeasset']}] [アセットパス]")
+            await message.reply(f"[{commands['pickasset']}] [アセットパス]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -6311,7 +6368,7 @@ async def event_party_message(message):
             return
 
         try:
-            isitem = await is_itemname("ja", message.content.replace('\\',''))
+            isitem = await is_itemname("ja", content.replace('\\',''))
             if isitem[0] == 'True':
                 client.itemdata = isitem
                 if len(client.itemdata[1]) > 29:
@@ -6401,7 +6458,7 @@ async def event_party_message(message):
             return
 
         try:
-            isitem = await is_itemname("en", message.content.replace('\\',''))
+            isitem = await is_itemname("en", content.replace('\\',''))
             if isitem[0] == 'True':
                 client.itemdata = isitem
                 if len(client.itemdata[1]) > 29:
@@ -6535,7 +6592,7 @@ for email, password in credentials.items():
     client.prevbackpackvariants=None
     client.prevpickaxe=None
     client.prevpickaxevariants=None
-    client.prevmessage='None'
+    client.prevmessage={}
     client.partychat=data['fortnite']['partychat']
     client.joinmessageenable=data['fortnite']['joinmessageenable']
     client.randommessageenable=data['fortnite']['randommessageenable']
