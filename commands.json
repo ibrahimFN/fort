@@ -1,4 +1,5 @@
 {
+	"ownercommands": "restart,relogin,reload",
 	"true": "true,on,accept",
 	"false": "false,off,decline",
 	"me": "me",
