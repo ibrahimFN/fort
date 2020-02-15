@@ -39,8 +39,8 @@ randommessageenable : ボットのパーティーに誰かが参加した時に�
 skinmimic           : 他人のスキンを真似るかどうかの設定 true か false
 emotemimic          : 他人のエモートを真似るかどうかの設定 true か false
 acceptinvite        : ボットが招待を承諾するかどうかの設定 所有者からの招待は常に承諾 true か false
-acceptfriend        : ボットがフレンド申請を承諾するかどうかの設定 true か false か None
-addfriend           : ボットがパーティーメンバーにフレンド申請を送るかどうかの設定
+acceptfriend        : ボットがフレンド申請を承諾するかどうかの設定 true か false か null
+addfriend           : ボットがパーティーメンバーにフレンド申請を送るかどうかの設定 true か false
 inviteinterval      : 招待を承諾した後intervalの秒数だけ招待を拒否するようにするかどうかの設定 true か false
 interval            : 招待を承諾した後招待を拒否する秒数
 waitinterval        : waitコマンドで招待を拒否する秒数
