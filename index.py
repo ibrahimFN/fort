@@ -6564,7 +6564,7 @@ for email, password in credentials.items():
                 email=email,
                 password=password,
                 prompt_exchange_code=True,
-                delete_existing_device_auths=True,
+                delete_existing_device_auths=False,
                 **device_auth_details
             ),
             default_party_member_config=[
