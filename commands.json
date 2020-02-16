@@ -68,6 +68,6 @@
 	"addvariant": "addvariant",
 	"skinasset": "skinasset",
 	"bagasset": "bagasset",
-	"pickaxeasset": "pickaxeasset",
+	"pickasset": "pickasset",
 	"emoteasset": "emoteasset"
 }
