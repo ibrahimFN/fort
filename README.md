@@ -46,6 +46,10 @@ interval            : 招待を承諾した後招待を拒否する秒数
 waitinterval        : waitコマンドで招待を拒否する秒数
 ingame-error        : プレイヤーにエラーを送信するかどうかの設定 true か false
 discord-log         : Discordにログを送信するかどうかの設定 true か false
+hide-email          : Discordのログでメールアドレスを隠すかどうかの設定 true か false
+hide-password       : Discordのログでパスワードを隠すかどうかの設定 true か false
+hide-webhook        : Discordのログでwebhookのurlを隠すかどうかの設定 true か false
+hide-api-key        : DiscordのログでAPIキーを隠すかどうかの設定 true か false
 webhook             : Discordのwebhookのurl
 caseinsensitive     : コマンドを大文字小文字、平仮名片仮名を区別しないかどうかの設定 true か false
 api-key             : Fortnite-API.comのAPIキー 後述
