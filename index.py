@@ -45,13 +45,30 @@ if os.getcwd().startswith('/app'):
     Thread(target=app.run,args=("0.0.0.0",8080)).start()
 
 storedlog=[]
+kill=False
 
 def dstore(username, content):
     global storedlog
+    content=str(content)
+    if data['hide-email'] is True:
+        for email in data['fortnite']['email'].split(','):
+            content=content.replace(email,len(email)*"X")
+    if data['hide-password'] is True:
+        for password in data['fortnite']['password'].split(','):
+            content=content.replace(password,len(password)*"X")
+    if data['hide-webhook'] is True:
+        for webhook in data['webhook'].split(','):
+            content=content.replace(webhook,len(webhook)*"X")
+    if data['hide-api-key'] is True:
+        for apikey in data['api-key'].split(','):
+            content=content.replace(apikey,len(apikey)*"X")
     if data['discord-log'] is True:
         if len(storedlog) > 0:
             if list(storedlog[len(storedlog)-1].keys())[0] == username:
-                storedlog[len(storedlog)-1][username]+=f'\n{content}'
+                if len(list(storedlog[len(storedlog)-1].values())[0]) + len(content) > 2000:
+                    storedlog.append({username: content})
+                else:
+                    storedlog[len(storedlog)-1][username]+=f'\n{content}'
             else:
                 storedlog.append({username: content})
         else:
@@ -59,7 +76,10 @@ def dstore(username, content):
 
 def dprint():
     global storedlog
+    global kill
     while True:
+        if kill is True:
+            exit()
         if data['discord-log'] is True:
             if len(storedlog) != 0:
                 for send in storedlog:
@@ -83,10 +103,12 @@ def dprint():
                                 'content': content
                             }
                         )
-                    if r.status_code == 204:
-                        storedlog.remove(send)
                     if data['loglevel'] == 'debug':
                         print(yellow(f'[{r.status_code}] {username}: {content}'))
+                    if r.status_code == 204:
+                        storedlog.remove(send)
+                    if r.status_code == 429:
+                        break
             time.sleep(5)
 
 def get_device_auth_details():
@@ -142,7 +164,7 @@ def reload_configs(client):
             if data['loglevel'] == 'debug':
                 print(yellow(f'\n{data}\n'))
                 dstore('ボット',f'\n{data}\n')
-            keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['partychat']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['ingame-error']","['discord-log']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
+            keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['partychat']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
             for key in keys:
                 exec(f"errorcheck=data{key}")
             try:
@@ -636,8 +658,8 @@ try:
         data = json.load(f)
         if data['loglevel'] == 'debug':
             print(yellow(f'\n{data}\n'))
-            dstore('ボット',f'\n{data}\n')
-        keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['partychat']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['ingame-error']","['discord-log']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
+            dstore('ボット',f'\n```\n{data}\n```\n')
+        keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['partychat']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
         for key in keys:
             exec(f"errorcheck=data{key}")
         try:
@@ -677,10 +699,10 @@ try:
             dstore('ボット',f'>>> メールアドレスの数に対しパスワードの数が足りません')
 except KeyError as e:
     print(red(traceback.format_exc()))
-    print(red('config.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。'))
+    print(red('config.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。アップデート後の場合は、最新のconfig.jsonファイルを確認してください。'))
     print(red(f'{str(e)} がありません。'))
     dstore('ボット',f'>>> {traceback.format_exc()}')
-    dstore('ボット',f'>>> config.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください')
+    dstore('ボット',f'>>> config.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。アップデート後の場合は、最新のconfig.jsonファイルを確認してください')
     dstore('ボット',f'>>> {str(e)} がありません')
     exit()
 except json.decoder.JSONDecodeError as e:
@@ -701,6 +723,9 @@ except FileNotFoundError:
 try:
     with open('commands.json', 'r', encoding='utf-8-sig') as f:
         commands=json.load(f)
+        if data['loglevel'] == 'debug':
+            print(yellow(f'\n{commands}\n'))
+            dstore('ボット',f'\n```\n{commands}\n```\n')
         keys=["['true']","['false']","['me']","['prev']","['restart']","['relogin']","['reload']","['get']","['friendcount']","['pendingcount']","['blockcount']","['skinmimic']","['emotemimic']","['partychat']","['acceptinvite']","['acceptfriend']","['joinmessageenable']","['randommessageenable']","['wait']","['join']","['joinid']","['leave']","['invite']","['message']","['partymessage']","['status']","['banner']","['level']","['bp']","['getuser']","['getfriend']","['getpending']","['getblock']","['info']","['info_party']","['info_item']","['pending']","['removepending']","['addfriend']","['removefriend']","['acceptpending']","['declinepending']","['blockfriend']","['unblockfriend']","['chatban']","['promote']","['kick']","['ready']","['unready']","['sitout']","['stop']","['allskin']","['allemote']","['setstyle']","['addvariant']","['skinasset']","['bagasset']","['pickasset']","['emoteasset']"]
         for key in keys:
             exec(f"errorcheck=commands{key}")
@@ -723,15 +748,12 @@ try:
                     dstore('ボット',f'>>> 所有者コマンドの設定に失敗しました。キーの名前が間違っていないか確認してください')
                     dstore('ボット',f'>>> {str(e)} がありません')
                     exit()
-        if data['loglevel'] == 'debug':
-            print(yellow(f'\n{commands}\n'))
-            dstore('ボット',f'\n{commands}\n')
 except KeyError as e:
     print(red(traceback.format_exc()))
-    print(red('commands.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。'))
+    print(red('commands.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。アップデート後の場合は、最新のcommands.jsonファイルを確認してください。'))
     print(red(f'{str(e)} がありません。'))
     dstore('ボット',f'>>> {traceback.format_exc()}')
-    dstore('ボット',f'>>> commands.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください')
+    dstore('ボット',f'>>> commands.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。アップデート後の場合は、最新のcommands.jsonファイルを確認してください')
     dstore('ボット',f'>>> {str(e)} がありません')
     exit()
 except json.decoder.JSONDecodeError:
@@ -745,6 +767,8 @@ except FileNotFoundError:
     dstore('ボット',f'>>> {traceback.format_exc()}')
     dstore('ボット',f'>>> commands.json ファイルが存在しません')
     exit()
+
+threading.Thread(target=dprint,args=()).start()
 
 headers={'x-api-key': data['api-key']}
 req=requests.get('https://fortnite-api.com/cosmetics/br?language=en', headers=headers)
@@ -803,7 +827,6 @@ print(green(f'\nPython {sys.version_info.major}.{sys.version_info.minor}.{sys.ve
 if data['debug'] is True:
     print(red(f'[{now_()}] デバッグが有効です!(エラーではありません)'))
     dstore('ボット','>>> デバッグが有効です!(エラーではありません)')
-threading.Thread(target=dprint,args=()).start()
 print('ボットを起動中...')
 dstore('ボット','ボットを起動中...')
 
@@ -894,9 +917,9 @@ async def event_restart():
     dstore('ボット',f'>>> 正常に再ログインが完了しました')
 
 async def event_party_invite(invitation):
-    client=invitation.client
     if invitation is None:
         return
+    client=invitation.client
     if not client.owner is None:
         if invitation.sender.id == client.owner.id:
             await invitation_accept(invitation)
@@ -931,9 +954,9 @@ async def event_party_invite(invitation):
             await invitation_decline(invitation)
 
 async def event_friend_request(request):
-    client=request.client
     if request is None:
         return
+    client=request.client
     if request.direction == 'OUTBOUND':
         if data['loglevel'] == 'normal':
             print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} にフレンド申請を送信')
@@ -979,28 +1002,28 @@ async def event_friend_request(request):
             print(red(traceback.format_exc()))
 
 async def event_friend_add(friend):
-    client=friend.client
     if friend is None:
         return
+    client=friend.client
     if friend.direction == 'INBOUND':
         if data['loglevel'] == 'normal':
             print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} がフレンド申請を承諾')
             dstore(client.user.display_name,f'{str(friend.display_name)} がフレンド申請を承諾')
         else:
-            print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} / {friend.id} [{platform_to_str(friend.platform)}] がフレンド申請を承諾')
-            dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id} [{platform_to_str(friend.platform)}] がフレンド申請を承諾')
+            print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} / {friend.id} がフレンド申請を承諾')
+            dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id} がフレンド申請を承諾')
     else:
         if data['loglevel'] == 'normal':
             print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} をフレンドに追加')
             dstore(client.user.display_name,f'{str(friend.display_name)} をフレンドに追加')
         else:
-            print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} / {friend.id} [{platform_to_str(friend.platform)}] をフレンドに追加')
-            dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id} [{platform_to_str(friend.platform)}] をフレンドに追加')
+            print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} / {friend.id} をフレンドに追加')
+            dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id} をフレンドに追加')
 
 async def event_friend_remove(friend):
-    client=friend.client
     if friend is None:
         return
+    client=friend.client
     if data['loglevel'] == 'normal':
         print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} がフレンドから削除')
         dstore(client.user.display_name,f'{str(friend.display_name)} がフレンドから削除')
@@ -1009,15 +1032,27 @@ async def event_friend_remove(friend):
         dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id} [{platform_to_str(friend.platform)}] がフレンドから削除')
 
 async def event_party_member_join(member):
-    client=member.client
     if member is None:
         return
-    if data['loglevel'] == 'normal':
-        print(magenta(f'[{now_()}] [パーティー] [{client.user.display_name}] {str(member.display_name)} がパーティーに参加\n人数: {member.party.member_count}'))
-        dstore(client.user.display_name,f'[パーティー] {str(member.display_name)} がパーティーに参加\n人数: {member.party.member_count}')
-    else:
-        print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client.user.display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーに参加\n人数: {member.party.member_count}'))
-        dstore(client.user.display_name,f'[パーティー/{member.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーに参加\n人数: {member.party.member_count}')
+    client=member.client
+    client_user_display_name=str(client.user.display_name)
+    member_joined_at_most=[]
+    for member_ in client.user.party.members.values():
+        if member_joined_at_most != []:
+            if member_.id in [i.user.id for i in clients]:
+                if member_.id != client.user.id:
+                    client_user_display_name+=f"/{str(member_.display_name)}"
+                if member_.joined_at < member_joined_at_most[1]:
+                    member_joined_at_most=[member_.id, member_.joined_at]
+        else:
+            member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+    if client.user.id == member_joined_at_most[0]:
+        if data['loglevel'] == 'normal':
+            print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.display_name)} がパーティーに参加\n人数: {member.party.member_count}'))
+            dstore(client_user_display_name,f'[パーティー] {str(member.display_name)} がパーティーに参加\n人数: {member.party.member_count}')
+        else:
+            print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーに参加\n人数: {member.party.member_count}'))
+            dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーに参加\n人数: {member.party.member_count}')
     
     if data['fortnite']['addfriend'] is True:
         for member in member.party.members.keys():
@@ -1032,7 +1067,7 @@ async def event_party_member_join(member):
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(0.1)
 
     if client.joinmessageenable is True:
         try:
@@ -1068,15 +1103,27 @@ async def event_party_member_join(member):
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
 async def event_party_member_leave(member):
-    client=member.client
     if member is None:
         return
-    if data['loglevel'] == 'normal':
-        print(magenta(f'[{now_()}] [パーティー] [{client.user.display_name}] {str(member.display_name)} がパーティーを離脱\n人数: {member.party.member_count}'))
-        dstore(client.user.display_name,f'[パーティー] {str(member.display_name)} がパーティーを離脱\n人数: {member.party.member_count}')
-    else:
-        print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client.user.display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーを離脱\n人数: {member.party.member_count}'))
-        dstore(client.user.display_name,f'[パーティー/{member.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーを離脱\n人数: {member.party.member_count}')
+    client=member.client
+    client_user_display_name=str(client.user.display_name)
+    member_joined_at_most=[]
+    for member_ in client.user.party.members.values():
+        if member_joined_at_most != []:
+            if member_.id in [i.user.id for i in clients]:
+                if member_.id != client.user.id:
+                    client_user_display_name+=f"/{str(member_.display_name)}"
+                if member_.joined_at < member_joined_at_most[1]:
+                    member_joined_at_most=[member_.id, member_.joined_at]
+        else:
+            member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+    if client.user.id == member_joined_at_most[0]:
+        if data['loglevel'] == 'normal':
+            print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.display_name)} がパーティーを離脱\n人数: {member.party.member_count}'))
+            dstore(client_user_display_name,f'[パーティー] {str(member.display_name)} がパーティーを離脱\n人数: {member.party.member_count}')
+        else:
+            print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーを離脱\n人数: {member.party.member_count}'))
+            dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーを離脱\n人数: {member.party.member_count}')
 
     if data['fortnite']['addfriend'] is True:
         for member in member.party.members.keys():
@@ -1093,20 +1140,50 @@ async def event_party_member_leave(member):
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
 async def event_party_member_kick(member):
-    client=member.client
     if member is None:
         return
-    if data['loglevel'] == 'normal':
-        print(magenta(f'[{now_()}] [パーティー] [{client.user.display_name}] {str(member.party.leader.display_name)} が {str(member.display_name)} をパーティーからキック\n人数: {member.party.member_count}'))
-        dstore(client.user.display_name,f'[パーティー] {str(member.party.leader.display_name)} が {str(member.display_name)} をパーティーからキック\n人数: {member.party.member_count}')
-    else:
-        print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client.user.display_name}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーからキック\n人数: {member.party.member_count}'))
-        dstore(client.user.display_name,f'[パーティー/{member.party.id}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーからキック\n人数: {member.party.member_count}')
+    client=member.client
+    client_user_display_name=str(client.user.display_name)
+    member_joined_at_most=[]
+    for member_ in client.user.party.members.values():
+        if member_joined_at_most != []:
+            if member_.id in [i.user.id for i in clients]:
+                if member_.id != client.user.id:
+                    client_user_display_name+=f"/{str(member_.display_name)}"
+                if member_.joined_at < member_joined_at_most[1]:
+                    member_joined_at_most=[member_.id, member_.joined_at]
+        else:
+            member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+    if client.user.id == member_joined_at_most[0]:
+        if data['loglevel'] == 'normal':
+            print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.party.leader.display_name)} が {str(member.display_name)} をパーティーからキック\n人数: {member.party.member_count}'))
+            dstore(client_user_display_name,f'[パーティー] {str(member.party.leader.display_name)} が {str(member.display_name)} をパーティーからキック\n人数: {member.party.member_count}')
+        else:
+            print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーからキック\n人数: {member.party.member_count}'))
+            dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーからキック\n人数: {member.party.member_count}')
 
 async def event_party_member_promote(old_leader,new_leader):
     if old_leader is None or new_leader is None:
         return
     client=new_leader.client
+    client_user_display_name=str(client.user.display_name)
+    member_joined_at_most=[]
+    for member_ in client.user.party.members.values():
+        if member_joined_at_most != []:
+            if member_.id in [i.user.id for i in clients]:
+                if member_.id != client.user.id:
+                    client_user_display_name+=f"/{str(member_.display_name)}"
+                if member_.joined_at < member_joined_at_most[1]:
+                    member_joined_at_most=[member_.id, member_.joined_at]
+        else:
+            member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+    if client.user.id == member_joined_at_most[0]:
+        if data['loglevel'] == 'normal':
+            print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(old_leader.display_name)} から {str(new_leader.display_name)} にリーダーが譲渡'))
+            dstore(client_user_display_name,f'[パーティー] {str(old_leader.display_name)} から {str(new_leader.display_name)} にリーダーが譲渡')
+        else:
+            print(magenta(f'[{now_()}] [パーティー/{new_leader.party.id}] [{client_user_display_name}] {str(old_leader.display_name)} / {old_leader.id} [{platform_to_str(old_leader.platform)}/{old_leader.input}] から {str(new_leader.display_name)} / {new_leader.id} [{platform_to_str(new_leader.platform)}/{new_leader.input}] にリーダーが譲渡'))
+            dstore(client_user_display_name,f'[パーティー/{new_leader.party.id}] {str(old_leader.display_name)} / {old_leader.id} [{platform_to_str(old_leader.platform)}/{old_leader.input}] から {str(new_leader.display_name)} / {new_leader.id} [{platform_to_str(new_leader.platform)}/{new_leader.input}] にリーダーが譲渡')
     if new_leader.id == client.user.id:
         try:
             await client.user.party.set_playlist(data['fortnite']['playlist'])
@@ -1114,26 +1191,33 @@ async def event_party_member_promote(old_leader,new_leader):
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-    if data['loglevel'] == 'normal':
-        print(magenta(f'[{now_()}] [パーティー] [{client.user.display_name}] {str(old_leader.display_name)} から {str(new_leader.display_name)} にリーダーが譲渡'))
-        dstore(client.user.display_name,f'[パーティー] {str(old_leader.display_name)} から {str(new_leader.display_name)} にリーダーが譲渡')
-    else:
-        print(magenta(f'[{now_()}] [パーティー/{new_leader.party.id}] [{client.user.display_name}] {str(old_leader.display_name)} / {old_leader.id} [{platform_to_str(old_leader.platform)}/{old_leader.input}] から {str(new_leader.display_name)} / {new_leader.id} [{platform_to_str(new_leader.platform)}/{new_leader.input}] にリーダーが譲渡'))
-        dstore(client.user.display_name,f'[パーティー/{new_leader.party.id}] {str(old_leader.display_name)} / {old_leader.id} [{platform_to_str(old_leader.platform)}/{old_leader.input}] から {str(new_leader.display_name)} / {new_leader.id} [{platform_to_str(new_leader.platform)}/{new_leader.input}] にリーダーが譲渡')
 
 async def event_party_member_update(member):
-    client=member.client
     if member is None:
         return
-    if not data['loglevel'] == 'normal':
-        print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client.user.display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] パーティーメンバー更新'))
-        dstore(client.user.display_name,f'[パーティー/{member.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] パーティーメンバー更新')
+    client=member.client
+    client_user_display_name=str(client.user.display_name)
+    member_joined_at_most=[]
+    for member_ in client.user.party.members.values():
+        if member_joined_at_most != []:
+            if member_.id in [i.user.id for i in clients]:
+                if member_.id != client.user.id:
+                    client_user_display_name+=f"/{str(member_.display_name)}"
+                if member_.joined_at < member_joined_at_most[1]:
+                    member_joined_at_most=[member_.id, member_.joined_at]
+        else:
+            member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+    if client.user.id == member_joined_at_most[0]:
+        if not data['loglevel'] == 'normal':
+            print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] パーティーメンバー更新'))
+            dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] パーティーメンバー更新')
     if member.id == client.user.id:
         return
     if not member.outfit == client.prevoutfit or not member.outfit_variants == client.prevoutfitvariants:
         if not data['loglevel'] == 'normal':
-            print(member.outfit)
-            dstore(client.user.display_name,member.outfit)
+            if client.user.id == member_joined_at_most[0]:
+                print(str(member.outfit))
+                dstore(client_user_display_name,str(member.outfit))
         if client.skinmimic is True:
             if member.outfit is None:
                 try:
@@ -1151,8 +1235,9 @@ async def event_party_member_update(member):
                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
     if not member.backpack == client.prevbackpack or not member.backpack_variants == client.prevbackpackvariants:
         if not data['loglevel'] == 'normal':
-            print(member.backpack)
-            dstore(client.user.display_name,member.backpack)
+            if client.user.id == member_joined_at_most[0]:
+                print(str(member.backpack))
+                dstore(client_user_display_name,str(member.backpack))
         if client.skinmimic is True:
             if member.backpack is None:
                 try:
@@ -1170,8 +1255,9 @@ async def event_party_member_update(member):
                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
     if not member.pickaxe == client.prevpickaxe or not member.pickaxe_variants == client.prevpickaxevariants:
         if not data['loglevel'] == 'normal':
-            print(member.pickaxe)
-            dstore(client.user.display_name,member.pickaxe)
+            if client.user.id == member_joined_at_most[0]:
+                print(str(member.pickaxe))
+                dstore(client_user_display_name,str(member.pickaxe))
         if client.skinmimic is True:
             if member.pickaxe is None:
                 try:
@@ -1196,8 +1282,9 @@ async def event_party_member_update(member):
 
     if not member.emote is None:
         if not data['loglevel'] == 'normal':
-            print(member.emote)
-            dstore(client.user.display_name,member.emote)
+            if client.user.id == member_joined_at_most[0]:
+                print(str(member.emote))
+                dstore(client_user_display_name,str(member.emote))
         if client.emotemimic is True:
             if member.emote.upper() == client.user.party.me.emote.upper():
                 try:
@@ -1214,42 +1301,78 @@ async def event_party_member_update(member):
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
 async def event_party_member_disconnect(member):
-    client=member.client
     if member is None:
         return
-    if data['loglevel'] == 'normal':
-        print(magenta(f'[{now_()}] [パーティー] [{client.user.display_name}] {str(member.display_name)} の接続が切断'))
-        dstore(client.user.display_name,f'[パーティー] {str(member.display_name)} の接続が切断')
-    else:
-        print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client.user.display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] の接続が切断'))
-        dstore(client.user.display_name,f'[パーティー/{member.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] の接続が切断')
+    client=member.client
+    client_user_display_name=str(client.user.display_name)
+    member_joined_at_most=[]
+    for member_ in client.user.party.members.values():
+        if member_joined_at_most != []:
+            if member_.id in [i.user.id for i in clients]:
+                if member_.id != client.user.id:
+                    client_user_display_name+=f"/{str(member_.display_name)}"
+                if member_.joined_at < member_joined_at_most[1]:
+                    member_joined_at_most=[member_.id, member_.joined_at]
+        else:
+            member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+    if client.user.id == member_joined_at_most[0]:
+        if data['loglevel'] == 'normal':
+            print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.display_name)} の接続が切断'))
+            dstore(client_user_display_name,f'[パーティー] {str(member.display_name)} の接続が切断')
+        else:
+            print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] の接続が切断'))
+            dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] の接続が切断')
 
 async def event_party_member_chatban(member, reason):
-    client=member.client
     if member is None:
         return
-    if data['loglevel'] == 'normal':
-        if reason is None:
-            print(magenta(f'[{now_()}] [パーティー] [{client.user.display_name}] {str(member.party.leader.display_name)} が {str(member.display_name)} をチャットバン'))
-            dstore(client.user.display_name,f'[パーティー] {str(member.party.leader.display_name)} が {str(member.display_name)} をチャットバン')
+    client=member.client
+    client_user_display_name=str(client.user.display_name)
+    member_joined_at_most=[]
+    for member_ in client.user.party.members.values():
+        if member_joined_at_most != []:
+            if member_.id in [i.user.id for i in clients]:
+                if member_.id != client.user.id:
+                    client_user_display_name+=f"/{str(member_.display_name)}"
+                if member_.joined_at < member_joined_at_most[1]:
+                    member_joined_at_most=[member_.id, member_.joined_at]
         else:
-            print(magenta(f'[{now_()}] [パーティー] [{client.user.display_name}] {str(member.party.leader.display_name)} が {str(member.display_name)} をチャットバン | 理由: {reason}'))
-            dstore(client.user.display_name,f'[パーティー] {str(member.party.leader.display_name)} が {str(member.display_name)} をチャットバン | 理由: {reason}')
-    else:
-        if reason is None:
-            print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client.user.display_name}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン'))
-            dstore(client.user.display_name,f'[パーティー/{member.party.id}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン')
+            member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+    if client.user.id == member_joined_at_most[0]:
+        if data['loglevel'] == 'normal':
+            if reason is None:
+                print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.party.leader.display_name)} が {str(member.display_name)} をチャットバン'))
+                dstore(client_user_display_name,f'[パーティー] {str(member.party.leader.display_name)} が {str(member.display_name)} をチャットバン')
+            else:
+                print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.party.leader.display_name)} が {str(member.display_name)} をチャットバン | 理由: {reason}'))
+                dstore(client_user_display_name,f'[パーティー] {str(member.party.leader.display_name)} が {str(member.display_name)} をチャットバン | 理由: {reason}')
         else:
-            print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client.user.display_name}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン | 理由: {reason}'))
-            dstore(client.user.display_name,f'[パーティー/{member.party.id}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン | 理由: {reason}')
+            if reason is None:
+                print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン'))
+                dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン')
+            else:
+                print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン | 理由: {reason}'))
+                dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン | 理由: {reason}')
 
 async def event_party_update(party):
-    client=party.client
     if party is None:
         return
-    if not data['loglevel'] == 'normal':
-        print(magenta(f'[{now_()}] [パーティー/{party.id}] [{client.user.display_name}] パーティー更新'))
-        dstore(client.user.display_name,f'[パーティー/{party.id}] パーティー更新')
+    client=party.client
+    client_user_display_name=str(client.user.display_name)
+    member_joined_at_most=[]
+    for member_ in client.user.party.members.values():
+        if member_joined_at_most != []:
+            if member_.id in [i.user.id for i in clients]:
+                if member_.id != client.user.id:
+                    client_user_display_name+=f"/{str(member_.display_name)}"
+                if member_.joined_at < member_joined_at_most[1]:
+                    member_joined_at_most=[member_.id, member_.joined_at]
+        else:
+            member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+    if client.user.id == member_joined_at_most[0]:
+        if not data['loglevel'] == 'normal':
+            print(magenta(f'[{now_()}] [パーティー/{party.id}] [{client_user_display_name}] パーティー更新'))
+            dstore(client_user_display_name,f'[パーティー/{party.id}] パーティー更新')
 
 #========================================================================================================================
 #========================================================================================================================
@@ -1328,12 +1451,14 @@ async def event_friend_message(message):
             print(red(f'[{now_()}] [{client.user.display_name}] メールアドレスまたはパスワードが間違っています。'))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             dstore(client.user.display_name,f'>>> メールアドレスまたはパスワードが間違っています')
+            kill=True
             exit()
         except Exception:
             print(red(traceback.format_exc()))
             print(red(f'[{now_()}] [{client.user.display_name}] アカウントの読み込みに失敗しました。もう一度試してみてください。'))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             dstore(client.user.display_name,f'>>> アカウントの読み込みに失敗しました。もう一度試してみてください')
+            kill=True
             exit()
 
     elif args[0] in commands['reload'].split(','):
@@ -3662,7 +3787,7 @@ async def event_friend_message(message):
 
     else:
         try:
-            if args[0].isdigit() and client.itemdata[0] == 'True':
+            if args[0].isdigit() and ':' not in args[1] and client.itemdata[0] == 'True':
                 if not data['loglevel'] == 'normal':
                     print(client.itemdata[1][int(args[0])-1][0])
                     dstore(client.user.display_name,client.itemdata[1][int(args[0])-1][0])
@@ -3921,12 +4046,24 @@ async def event_party_message(message):
             return
     if rawcontent in commands['me'].split(','):
         rawcontent=str(message.author.display_name)
-    if data['loglevel'] == 'normal':
-        print(f'[{now_()}] [パーティー] [{client.user.display_name}] {message.author.display_name} | {content}')
-        dstore(client.user.display_name,f'[パーティー] {content}')
-    else:
-        print(f'[{now_()}] [パーティー/{client.user.party.id}] [{client.user.display_name}] {message.author.display_name} / {message.author.id} [{platform_to_str(message.author.platform)}/{message.author.input}] | {content}')
-        dstore(f'{client.user.display_name} / {message.author.id} [{platform_to_str(message.author.platform)}/{message.author.input}]',f'[パーティー/{client.user.party.id}] {content}')
+    client_user_display_name=str(client.user.display_name)
+    member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+    for member_ in client.user.party.members.values():
+        if member_joined_at_most != []:
+            if member_.id in [i.user.id for i in clients]:
+                if member_.id != client.user.id and member_.id != message.author.id:
+                    client_user_display_name+=f"/{str(member_.display_name)}"
+                if member_.joined_at < member_joined_at_most[1]:
+                    member_joined_at_most=[member_.id, member_.joined_at]
+        else:
+            member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+    if client.user.id == member_joined_at_most[0]:
+        if data['loglevel'] == 'normal':
+            print(f'[{now_()}] [パーティー] [{client_user_display_name}] {message.author.display_name} | {content}')
+            dstore(message.author.display_name,f'[{client_user_display_name}] [パーティー] {content}')
+        else:
+            print(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] {message.author.display_name} / {message.author.id} [{platform_to_str(message.author.platform)}/{message.author.input}] | {content}')
+            dstore(f'{message.author.display_name} / {message.author.id} [{platform_to_str(message.author.platform)}/{message.author.input}]',f'[{client_user_display_name}] [パーティー/{client.user.party.id}] {content}')
 
     if not client.owner is None:
         if not client.owner.id == message.author.id:
@@ -3979,12 +4116,14 @@ async def event_party_message(message):
             print(red(f'[{now_()}] [{client.user.display_name}] メールアドレスまたはパスワードが間違っています。'))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             dstore(client.user.display_name,f'>>> メールアドレスまたはパスワードが間違っています')
+            kill=True
             exit()
         except Exception:
             print(red(traceback.format_exc()))
             print(red(f'[{now_()}] [{client.user.display_name}] アカウントの読み込みに失敗しました。もう一度試してみてください。'))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             dstore(client.user.display_name,f'>>> アカウントの読み込みに失敗しました。もう一度試してみてください')
+            kill=True
             exit()
 
     elif args[0] in commands['reload'].split(','):
@@ -6313,7 +6452,7 @@ async def event_party_message(message):
 
     else:
         try:
-            if args[0].isdigit() and client.itemdata[0] == 'True':
+            if args[0].isdigit() and ':' not in args[1] and client.itemdata[0] == 'True':
                 if not data['loglevel'] == 'normal':
                     print(client.itemdata[1][int(args[0])-1][0])
                     dstore(client.user.display_name,client.itemdata[1][int(args[0])-1][0])
@@ -6630,17 +6769,19 @@ except fortnitepy.AuthException as e:
     if "errors.com.epicgames.account.oauth.exchange_code_not_found" in e.args[0]:
         print(red(traceback.format_exc()))
         print(f'[{now_()}] exchange_codeを\nhttps://www.epicgames.com/\nでボットのアカウントにログインし、\nhttps://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fexchange\nで取得してください。')
-        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-        dstore(client.user.display_name,f'>>> exchange_codeを\nhttps://www.epicgames.com/\nでボットのアカウントにログインし、\nhttps://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fexchange\nで取得してください')
+        dstore('ボット',f'>>> {traceback.format_exc()}')
+        dstore('ボット',f'>>> exchange_codeを\nhttps://www.epicgames.com/\nでボットのアカウントにログインし、\nhttps://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fexchange\nで取得してください')
     else:
         print(red(traceback.format_exc()))
         print(red(f'[{now_()}] アカウントにログインできません。'))
-        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-        dstore(client.user.display_name,f'>>> アカウントにログインできません')
+        dstore('ボット',f'>>> {traceback.format_exc()}')
+        dstore('ボット',f'>>> アカウントにログインできません')
+    kill=True
     exit()
 except Exception:
     print(red(traceback.format_exc()))
     print(red(f'[{now_()}] アカウントの読み込みに失敗しました。もう一度試してみてください。'))
-    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-    dstore(client.user.display_name,f'>>> アカウントの読み込みに失敗しました。もう一度試してみてください')
+    dstore('ボット',f'>>> {traceback.format_exc()}')
+    dstore('ボット',f'>>> アカウントの読み込みに失敗しました。もう一度試してみてください')
+    kill=True
     exit()
