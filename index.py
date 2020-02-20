@@ -3776,7 +3776,7 @@ async def event_friend_message(message):
 
     else:
         try:
-            if args[0].isdigit() and ':' not in args[1] and client.itemdata[0] == 'True':
+            if args[0].isdigit() and ': ' not in message.content and client.itemdata[0] == 'True':
                 if not data['loglevel'] == 'normal':
                     print(client.itemdata[1][int(args[0])-1][0])
                     dstore(client.user.display_name,client.itemdata[1][int(args[0])-1][0])
@@ -6441,7 +6441,7 @@ async def event_party_message(message):
 
     else:
         try:
-            if args[0].isdigit() and ':' not in args[1] and client.itemdata[0] == 'True':
+            if args[0].isdigit() and ': ' not in message.content and client.itemdata[0] == 'True':
                 if not data['loglevel'] == 'normal':
                     print(client.itemdata[1][int(args[0])-1][0])
                     dstore(client.user.display_name,client.itemdata[1][int(args[0])-1][0])
