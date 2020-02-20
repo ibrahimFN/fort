@@ -215,23 +215,7 @@ def reload_configs(client):
         dstore('ボット',f'>>> {traceback.format_exc()}')
         dstore('ボット',f'>>> config.json ファイルが存在しません')
         return None
-    headers={'x-api-key': data['api-key']}
-    req=requests.get('https://fortnite-api.com/cosmetics/br?language=en', headers=headers)
-    if data['loglevel'] == 'debug':
-        print(yellow(f'\n[{req.status_code}] {req.url}\n{req.text[:100]}'))
-        dstore('ボット',f'```\n[{req.status_code}] {req.url}\n{req.text[:100]}\n```')
-    allcosmen=req.json()
-    if req.status_code == 200:
-        with open('allen.json', 'w') as f:
-            json.dump(allcosmen, f)
-    req=requests.get('https://fortnite-api.com/cosmetics/br?language=ja', headers=headers)
-    if data['loglevel'] == 'debug':
-        print(yellow(f'[{req.status_code}] {req.url}\n{req.text[:100]}'))
-        dstore('ボット',f'```\n[{req.status_code}] {req.url}\n{req.text[:100]}\n```')
-    allcosmja=req.json()
-    if req.status_code == 200:
-        with open('allja.json', 'w') as f:
-            json.dump(allcosmja, f)
+    threading.Thread(target=get_item_info,args=()).start()
     if not data['loglevel'] == 'normal' and not data['loglevel'] == 'info' and not data['loglevel'] == 'debug':
         data['loglevel']='normal'
     client.joinmessageenable=data['fortnite']['joinmessageenable']
@@ -291,6 +275,28 @@ def reload_configs(client):
         return None
 
     return 'Success'
+
+def get_item_info():
+    try:
+        headers={'x-api-key': data['api-key']}
+        req=requests.get('https://fortnite-api.com/cosmetics/br?language=en', headers=headers)
+        if data['loglevel'] == 'debug':
+            print(yellow(f'\n[{req.status_code}] {req.url}\n{req.text[:100]}'))
+            dstore('ボット',f'```\n[{req.status_code}] {req.url}\n{req.text[:100]}\n```')
+        allcosmen=req.json()
+        if req.status_code == 200:
+            with open('allen.json', 'w') as f:
+                json.dump(allcosmen, f)
+        req=requests.get('https://fortnite-api.com/cosmetics/br?language=ja', headers=headers)
+        if data['loglevel'] == 'debug':
+            print(yellow(f'[{req.status_code}] {req.url}\n{req.text[:100]}'))
+            dstore('ボット',f'```\n[{req.status_code}] {req.url}\n{req.text[:100]}\n```')
+        allcosmja=req.json()
+        if req.status_code == 200:
+            with open('allja.json', 'w') as f:
+                json.dump(allcosmja, f)
+    except Exception:
+        print(red(traceback.format_exc()))
 
 async def is_itemname(lang, itemname):
     ignoretype=[
@@ -769,24 +775,7 @@ except FileNotFoundError:
     exit()
 
 threading.Thread(target=dprint,args=()).start()
-
-headers={'x-api-key': data['api-key']}
-req=requests.get('https://fortnite-api.com/cosmetics/br?language=en', headers=headers)
-if data['loglevel'] == 'debug':
-    print(yellow(f'\n[{req.status_code}] {req.url}\n{req.text[:100]}'))
-    dstore('ボット',f'```\n[{req.status_code}] {req.url}\n{req.text[:100]}\n```')
-allcosmen=req.json()
-if req.status_code == 200:
-    with open('allen.json', 'w') as f:
-        json.dump(allcosmen, f)
-req=requests.get('https://fortnite-api.com/cosmetics/br?language=ja', headers=headers)
-if data['loglevel'] == 'debug':
-    print(yellow(f'[{req.status_code}] {req.url}\n{req.text[:100]}'))
-    dstore('ボット',f'```\n[{req.status_code}] {req.url}\n{req.text[:100]}\n```')
-allcosmja=req.json()
-if req.status_code == 200:
-    with open('allja.json', 'w') as f:
-        json.dump(allcosmja, f)
+threading.Thread(target=get_item_info,args=()).start()
 
 if data['debug'] is True:
     logger = logging.getLogger('fortnitepy.http')
@@ -6776,6 +6765,9 @@ except fortnitepy.AuthException as e:
         print(red(f'[{now_()}] アカウントにログインできません。'))
         dstore('ボット',f'>>> {traceback.format_exc()}')
         dstore('ボット',f'>>> アカウントにログインできません')
+    kill=True
+    exit()
+except KeyboardInterrupt:
     kill=True
     exit()
 except Exception:
