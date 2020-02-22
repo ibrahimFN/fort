@@ -1,9 +1,11 @@
 {
-	"ownercommands": "restart,relogin,reload",
+	"ownercommands": "eval,exec,restart,relogin,reload",
 	"true": "true,on,accept",
 	"false": "false,off,decline",
 	"me": "me",
 	"prev": "prev",
+	"eval": "eval",
+	"exec": "exec",
 	"restart": "restart",
 	"relogin": "relogin",
 	"reload": "reload",
