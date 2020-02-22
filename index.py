@@ -829,6 +829,7 @@ async def event_ready(client):
     else:
         print(green(f'[{now_()}] ログイン: {client.user.display_name} / {client.user.id}'))
         dstore('ボット',f'ログイン: {client.user.display_name} / {client.user.id}')
+    client.isready=True
 
     try:
         client.owner=None
@@ -909,6 +910,8 @@ async def event_party_invite(invitation):
     if invitation is None:
         return
     client=invitation.client
+    if client.isready is False:
+        return
     if not client.owner is None:
         if invitation.sender.id == client.owner.id:
             await invitation_accept(invitation)
@@ -946,6 +949,8 @@ async def event_friend_request(request):
     if request is None:
         return
     client=request.client
+    if client.isready is False:
+        return
     if request.direction == 'OUTBOUND':
         if data['loglevel'] == 'normal':
             print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} にフレンド申請を送信')
@@ -994,6 +999,8 @@ async def event_friend_add(friend):
     if friend is None:
         return
     client=friend.client
+    if client.isready is False:
+        return
     if friend.direction == 'INBOUND':
         if data['loglevel'] == 'normal':
             print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} がフレンド申請を承諾')
@@ -1013,6 +1020,8 @@ async def event_friend_remove(friend):
     if friend is None:
         return
     client=friend.client
+    if client.isready is False:
+        return
     if data['loglevel'] == 'normal':
         print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} がフレンドから削除')
         dstore(client.user.display_name,f'{str(friend.display_name)} がフレンドから削除')
@@ -1024,6 +1033,8 @@ async def event_party_member_join(member):
     if member is None:
         return
     client=member.client
+    if client.isready is False:
+        return
     client_user_display_name=str(client.user.display_name)
     member_joined_at_most=[]
     for member_ in client.user.party.members.values():
@@ -1095,6 +1106,8 @@ async def event_party_member_leave(member):
     if member is None:
         return
     client=member.client
+    if client.isready is False:
+        return
     client_user_display_name=str(client.user.display_name)
     member_joined_at_most=[]
     for member_ in client.user.party.members.values():
@@ -1132,6 +1145,8 @@ async def event_party_member_kick(member):
     if member is None:
         return
     client=member.client
+    if client.isready is False:
+        return
     client_user_display_name=str(client.user.display_name)
     member_joined_at_most=[]
     for member_ in client.user.party.members.values():
@@ -1155,6 +1170,8 @@ async def event_party_member_promote(old_leader,new_leader):
     if old_leader is None or new_leader is None:
         return
     client=new_leader.client
+    if client.isready is False:
+        return
     client_user_display_name=str(client.user.display_name)
     member_joined_at_most=[]
     for member_ in client.user.party.members.values():
@@ -1185,6 +1202,8 @@ async def event_party_member_update(member):
     if member is None:
         return
     client=member.client
+    if client.isready is False:
+        return
     client_user_display_name=str(client.user.display_name)
     member_joined_at_most=[]
     for member_ in client.user.party.members.values():
@@ -1293,6 +1312,8 @@ async def event_party_member_disconnect(member):
     if member is None:
         return
     client=member.client
+    if client.isready is False:
+        return
     client_user_display_name=str(client.user.display_name)
     member_joined_at_most=[]
     for member_ in client.user.party.members.values():
@@ -1316,6 +1337,8 @@ async def event_party_member_chatban(member, reason):
     if member is None:
         return
     client=member.client
+    if client.isready is False:
+        return
     client_user_display_name=str(client.user.display_name)
     member_joined_at_most=[]
     for member_ in client.user.party.members.values():
@@ -1347,6 +1370,8 @@ async def event_party_update(party):
     if party is None:
         return
     client=party.client
+    if client.isready is False:
+        return
     client_user_display_name=str(client.user.display_name)
     member_joined_at_most=[]
     for member_ in client.user.party.members.values():
@@ -1370,7 +1395,11 @@ async def event_party_update(party):
 #========================================================================================================================
 
 async def event_friend_message(message):
+    if message is None:
+        return
     client=message.client
+    if client.isready is False:
+        return
     content=message.content
     if data['caseinsensitive'] is True:
         args = jaconv.kata2hira(content.lower()).split()
@@ -4070,7 +4099,11 @@ async def event_friend_message(message):
 #========================================================================================================================
 
 async def event_party_message(message):
+    if message is None:
+        return
     client=message.client
+    if client.isready is False:
+        return
     content=message.content
     if data['caseinsensitive'] is True:
         args = jaconv.kata2hira(content.lower()).split()
@@ -6816,6 +6849,7 @@ for email, password in credentials.items():
         dstore(client.user.display_name,f'アカウント情報を設定中にエラーが発生しました。configのfortnite部分の設定が間違っている可能性があります')
         continue
     client.eid=data['fortnite']['eid']
+    client.isready=False
     client.acceptinvite_interval=True
     client.stopcheck=False
     client.stopspam=False
