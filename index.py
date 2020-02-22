@@ -1,4 +1,4 @@
-# -*- coding: utf-8-sig -*-
+# -*- coding: utf-8 -*-
 try:
     from crayons import cyan, green, magenta, red, yellow
     from fortnitepy import ClientPartyMember
@@ -157,7 +157,6 @@ def inviteinterval(client):
 def reload_configs(client):
     global data
     global commands
-    global headers
     try:
         with open('config.json', 'r', encoding='utf-8-sig') as f:
             data = json.load(f)
@@ -228,7 +227,7 @@ def reload_configs(client):
     try:
         with open('commands.json', 'r', encoding='utf-8-sig') as f:
             commands=json.load(f)
-            keys=["['true']","['false']","['me']","['prev']","['restart']","['relogin']","['reload']","['get']","['friendcount']","['pendingcount']","['blockcount']","['skinmimic']","['emotemimic']","['partychat']","['acceptinvite']","['acceptfriend']","['joinmessageenable']","['randommessageenable']","['wait']","['join']","['joinid']","['leave']","['invite']","['message']","['partymessage']","['status']","['banner']","['level']","['bp']","['getuser']","['getfriend']","['getpending']","['getblock']","['info']","['info_party']","['info_item']","['pending']","['removepending']","['addfriend']","['removefriend']","['acceptpending']","['declinepending']","['blockfriend']","['unblockfriend']","['chatban']","['promote']","['kick']","['ready']","['unready']","['sitout']","['stop']","['allskin']","['allemote']","['setstyle']","['addvariant']","['skinasset']","['bagasset']","['pickasset']","['emoteasset']"]
+            keys=["['true']","['false']","['me']","['prev']", "['eval']", "['exec']","['restart']","['relogin']","['reload']","['get']","['friendcount']","['pendingcount']","['blockcount']","['skinmimic']","['emotemimic']","['partychat']","['acceptinvite']","['acceptfriend']","['joinmessageenable']","['randommessageenable']","['wait']","['join']","['joinid']","['leave']","['invite']","['message']","['partymessage']","['status']","['banner']","['level']","['bp']","['getuser']","['getfriend']","['getpending']","['getblock']","['info']","['info_party']","['info_item']","['pending']","['removepending']","['addfriend']","['removefriend']","['acceptpending']","['declinepending']","['blockfriend']","['unblockfriend']","['chatban']","['promote']","['kick']","['ready']","['unready']","['sitout']","['stop']","['allskin']","['allemote']","['setstyle']","['addvariant']","['skinasset']","['bagasset']","['pickasset']","['emoteasset']"]
             for key in keys:
                 exec(f"errorcheck=commands{key}")
             if data['caseinsensitive'] is True:
@@ -277,6 +276,7 @@ def reload_configs(client):
     return 'Success'
 
 def get_item_info():
+    global headers
     try:
         headers={'x-api-key': data['api-key']}
         req=requests.get('https://fortnite-api.com/cosmetics/br?language=en', headers=headers)
@@ -732,7 +732,7 @@ try:
         if data['loglevel'] == 'debug':
             print(yellow(f'\n{commands}\n'))
             dstore('ボット',f'\n```\n{commands}\n```\n')
-        keys=["['true']","['false']","['me']","['prev']","['restart']","['relogin']","['reload']","['get']","['friendcount']","['pendingcount']","['blockcount']","['skinmimic']","['emotemimic']","['partychat']","['acceptinvite']","['acceptfriend']","['joinmessageenable']","['randommessageenable']","['wait']","['join']","['joinid']","['leave']","['invite']","['message']","['partymessage']","['status']","['banner']","['level']","['bp']","['getuser']","['getfriend']","['getpending']","['getblock']","['info']","['info_party']","['info_item']","['pending']","['removepending']","['addfriend']","['removefriend']","['acceptpending']","['declinepending']","['blockfriend']","['unblockfriend']","['chatban']","['promote']","['kick']","['ready']","['unready']","['sitout']","['stop']","['allskin']","['allemote']","['setstyle']","['addvariant']","['skinasset']","['bagasset']","['pickasset']","['emoteasset']"]
+        keys=["['true']","['false']","['me']","['prev']", "['eval']", "['exec']","['restart']","['relogin']","['reload']","['get']","['friendcount']","['pendingcount']","['blockcount']","['skinmimic']","['emotemimic']","['partychat']","['acceptinvite']","['acceptfriend']","['joinmessageenable']","['randommessageenable']","['wait']","['join']","['joinid']","['leave']","['invite']","['message']","['partymessage']","['status']","['banner']","['level']","['bp']","['getuser']","['getfriend']","['getpending']","['getblock']","['info']","['info_party']","['info_item']","['pending']","['removepending']","['addfriend']","['removefriend']","['acceptpending']","['declinepending']","['blockfriend']","['unblockfriend']","['chatban']","['promote']","['kick']","['ready']","['unready']","['sitout']","['stop']","['allskin']","['allemote']","['setstyle']","['addvariant']","['skinasset']","['bagasset']","['pickasset']","['emoteasset']"]
         for key in keys:
             exec(f"errorcheck=commands{key}")
         if data['caseinsensitive'] is True:
@@ -1416,7 +1416,60 @@ async def event_friend_message(message):
         rawcontent2 = ' '.join(rawargs[2:])
     client.prevmessage[message.author.id]=content
 
-    if args[0] in commands['restart'].split(','):
+    if args[0] in commands['eval'].split(','):
+        try:
+            if rawcontent == "":
+                await message.reply(f"[{commands['eval']}] [式]")
+                return
+            variable=globals()
+            variable.update(locals())
+            if rawcontent.startswith("await "):
+                if data['loglevel'] == "debug":
+                    print(f"await eval({rawcontent.replace('await ','',1)})")
+                result = await eval(rawcontent.replace("await ","",1), variable)
+                await message.reply(str(result))
+            else:
+                if data['loglevel'] == "debug":
+                    print(f"eval {rawcontent}")
+                result = eval(rawcontent, variable)
+                await message.reply(str(result))
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['exec'].split(','):
+        try:
+            if rawcontent == "":
+                await message.reply(f"[{commands['exec']}] [文]")
+                return
+            variable=globals()
+            variable.update(locals())
+            variable_prev=variable
+            if rawcontent.startswith("await "):
+                if data['loglevel'] == "debug":
+                    print(f"await exec({rawcontent.replace('await ','',1)})")
+                result = await exec(rawcontent.replace("await ","",1), variable)
+                await message.reply(str(result))
+                for key, value in variable.items():
+                    if key not in variable_prev.keys():
+                        exec(f"global {key}")
+                        exec(f"{key} = {value}")
+            else:
+                if data['loglevel'] == "debug":
+                    print(f"exec {rawcontent}")
+                result = exec(rawcontent, variable)
+                await message.reply(str(result))
+                for key, value in variable.items():
+                    if key not in variable_prev.keys():
+                        exec(f"global {key}")
+                        exec(f"{key} = {value}")
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['restart'].split(','):
         try:
             if client.acceptinvite is False and client.owner is None:
                 await message.reply('招待が拒否に設定されているので実行できません')
@@ -4081,7 +4134,60 @@ async def event_party_message(message):
         rawcontent2 = ' '.join(rawargs[2:])
     client.prevmessage[message.author.id]=content
 
-    if args[0] in commands['restart'].split(','):
+    if args[0] in commands['eval'].split(','):
+        try:
+            if rawcontent == "":
+                await message.reply(f"[{commands['eval']}] [式]")
+                return
+            variable=globals()
+            variable.update(locals())
+            if rawcontent.startswith("await "):
+                if data['loglevel'] == "debug":
+                    print(f"await eval({rawcontent.replace('await ','',1)})")
+                result = await eval(rawcontent.replace("await ","",1), variable)
+                await message.reply(str(result))
+            else:
+                if data['loglevel'] == "debug":
+                    print(f"eval {rawcontent}")
+                result = eval(rawcontent, variable)
+                await message.reply(str(result))
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['exec'].split(','):
+        try:
+            if rawcontent == "":
+                await message.reply(f"[{commands['exec']}] [文]")
+                return
+            variable=globals()
+            variable.update(locals())
+            variable_prev=variable
+            if rawcontent.startswith("await "):
+                if data['loglevel'] == "debug":
+                    print(f"await exec({rawcontent.replace('await ','',1)})")
+                result = await exec(rawcontent.replace("await ","",1), variable)
+                await message.reply(str(result))
+                for key, value in variable.items():
+                    if key not in variable_prev.keys():
+                        exec(f"global {key}")
+                        exec(f"{key} = {value}")
+            else:
+                if data['loglevel'] == "debug":
+                    print(f"exec {rawcontent}")
+                result = exec(rawcontent, variable)
+                await message.reply(str(result))
+                for key, value in variable.items():
+                    if key not in variable_prev.keys():
+                        exec(f"global {key}")
+                        exec(f"{key} = {value}")
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['restart'].split(','):
         try:
             if client.acceptinvite is False and client.owner is None:
                 await message.reply('招待が拒否に設定されているので実行できません')
