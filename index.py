@@ -1046,6 +1046,8 @@ async def event_party_member_join(member):
                     member_joined_at_most=[member_.id, member_.joined_at]
         else:
             member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+    if member_joined_at_most == []:
+        member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] == 'normal':
             print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.display_name)} がパーティーに参加\n人数: {member.party.member_count}'))
@@ -1119,6 +1121,8 @@ async def event_party_member_leave(member):
                     member_joined_at_most=[member_.id, member_.joined_at]
         else:
             member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+    if member_joined_at_most == []:
+        member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] == 'normal':
             print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.display_name)} がパーティーを離脱\n人数: {member.party.member_count}'))
@@ -1158,6 +1162,8 @@ async def event_party_member_kick(member):
                     member_joined_at_most=[member_.id, member_.joined_at]
         else:
             member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+    if member_joined_at_most == []:
+        member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] == 'normal':
             print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.party.leader.display_name)} が {str(member.display_name)} をパーティーからキック\n人数: {member.party.member_count}'))
@@ -1183,6 +1189,8 @@ async def event_party_member_promote(old_leader,new_leader):
                     member_joined_at_most=[member_.id, member_.joined_at]
         else:
             member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+    if member_joined_at_most == []:
+        member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] == 'normal':
             print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(old_leader.display_name)} から {str(new_leader.display_name)} にリーダーが譲渡'))
@@ -1215,6 +1223,8 @@ async def event_party_member_update(member):
                     member_joined_at_most=[member_.id, member_.joined_at]
         else:
             member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+    if member_joined_at_most == []:
+        member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
         if not data['loglevel'] == 'normal':
             print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] パーティーメンバー更新'))
@@ -1325,6 +1335,8 @@ async def event_party_member_disconnect(member):
                     member_joined_at_most=[member_.id, member_.joined_at]
         else:
             member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+    if member_joined_at_most == []:
+        member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] == 'normal':
             print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.display_name)} の接続が切断'))
@@ -1350,6 +1362,8 @@ async def event_party_member_chatban(member, reason):
                     member_joined_at_most=[member_.id, member_.joined_at]
         else:
             member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+    if member_joined_at_most == []:
+        member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] == 'normal':
             if reason is None:
@@ -1383,6 +1397,8 @@ async def event_party_update(party):
                     member_joined_at_most=[member_.id, member_.joined_at]
         else:
             member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+    if member_joined_at_most == []:
+        member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
         if not data['loglevel'] == 'normal':
             print(magenta(f'[{now_()}] [パーティー/{party.id}] [{client_user_display_name}] パーティー更新'))
@@ -3857,8 +3873,10 @@ async def event_friend_message(message):
             await message.reply('エラー')
 
     else:
+        if ': ' in message.content:
+            return
         try:
-            if args[0].isdigit() and ': ' not in message.content and client.itemdata[0] == 'True':
+            if args[0].isdigit() and client.itemdata[0] == 'True':
                 if not data['loglevel'] == 'normal':
                     print(client.itemdata[1][int(args[0])-1][0])
                     dstore(client.user.display_name,client.itemdata[1][int(args[0])-1][0])
@@ -6579,8 +6597,10 @@ async def event_party_message(message):
             await message.reply('エラー')
 
     else:
+        if ': ' in message.content:
+            return
         try:
-            if args[0].isdigit() and ': ' not in message.content and client.itemdata[0] == 'True':
+            if args[0].isdigit() and client.itemdata[0] == 'True':
                 if not data['loglevel'] == 'normal':
                     print(client.itemdata[1][int(args[0])-1][0])
                     dstore(client.user.display_name,client.itemdata[1][int(args[0])-1][0])
