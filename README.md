@@ -68,6 +68,8 @@ true                 : コマンドの true として扱う文字列
 false                : コマンドの false として扱う文字列
 me                   : コマンドの送り主として扱う文字列
 prev                 : 一つ前のコマンドを繰り返す
+eval                 : eval [プログラム] 内容を式として評価し、その内容を返す
+exec                 : exec [プログラム] 内容を文として評価し、その内容を返す
 restart              : プログラムを再起動する
 relogin              : アカウントに再ログインする
 reload               : configとcommandsを再読み込みする
