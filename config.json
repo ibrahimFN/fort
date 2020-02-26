@@ -30,6 +30,7 @@
 		"interval": 10,
 		"waitinterval": 10
 	},
+	"no-logs": false,
 	"ingame-error": true,
 	"discord-log": false,
 	"hide-email": true,
