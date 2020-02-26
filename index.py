@@ -4332,10 +4332,12 @@ async def event_party_message(message):
             member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] == 'normal':
-            print(f'[{now_()}] [パーティー] [{client_user_display_name}] {message.author.display_name} | {content}')
+            if data['no-logs'] is False:
+                print(f'[{now_()}] [パーティー] [{client_user_display_name}] {message.author.display_name} | {content}')
             dstore(message.author.display_name,f'[{client_user_display_name}] [パーティー] {content}')
         else:
-            print(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] {message.author.display_name} / {message.author.id} [{platform_to_str(message.author.platform)}/{message.author.input}] | {content}')
+            if data['no-logs'] is False:
+                print(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] {message.author.display_name} / {message.author.id} [{platform_to_str(message.author.platform)}/{message.author.input}] | {content}')
             dstore(f'{message.author.display_name} / {message.author.id} [{platform_to_str(message.author.platform)}/{message.author.input}]',f'[{client_user_display_name}] [パーティー/{client.user.party.id}] {content}')
 
     if not client.owner is None:
