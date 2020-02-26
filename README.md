@@ -44,6 +44,7 @@ addfriend           : ボットがパーティーメンバーにフレンド申�
 inviteinterval      : 招待を承諾した後intervalの秒数だけ招待を拒否するようにするかどうかの設定 true か false
 interval            : 招待を承諾した後招待を拒否する秒数
 waitinterval        : waitコマンドで招待を拒否する秒数
+no-logs             : コンソールにログを出すかどうかの設定 true か false
 ingame-error        : プレイヤーにエラーを送信するかどうかの設定 true か false
 discord-log         : Discordにログを送信するかどうかの設定 true か false
 hide-email          : Discordのログでメールアドレスを隠すかどうかの設定 true か false
@@ -133,6 +134,17 @@ skinasset            : skinasset [アセットパス] スキンをアセット�
 bagasset             : bagasset [アセットパス] バッグをアセットパスから設定する
 pickasset            : pickasset [アセットパス] ツルハシをアセットパスから設定する
 emoteasset           : emoteasset [アセットパス] エモートをアセットパスから設定する
+```
+
+# replies
+"反応するメッセージ": "返す文字列"  
+のように設定する  
+複数ある場合は下のように , をつける  
+```
+{
+    "hello": "こんにちは",
+    "goodbye": "さようなら"
+}
 ```
 
 # その他
