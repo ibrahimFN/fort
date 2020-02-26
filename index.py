@@ -145,12 +145,14 @@ def platform_to_str(platform):
         return None
 
 def inviteaccept(client):
-    print(f'[{now_()}] [{client.user.display_name}] 招待を承諾に設定')
+    if data['no-logs'] is False:
+        print(f'[{now_()}] [{client.user.display_name}] 招待を承諾に設定')
     dstore(client.user.display_name, '招待を承諾に設定')
     client.acceptinvite=True
 
 def inviteinterval(client):
-    print(f'[{now_()}] [{client.user.display_name}] 招待の受付を再開します')
+    if data['no-logs'] is False:
+        print(f'[{now_()}] [{client.user.display_name}] 招待の受付を再開します')
     dstore(client.user.display_name, '招待の受付を再開します')
     client.acceptinvite_interval=True
 
@@ -158,12 +160,12 @@ def reload_configs(client):
     global data
     global commands
     try:
-        with open('config.json', 'r', encoding='utf-8-sig') as f:
+        with open('config.json', 'r', encoding='utf-8') as f:
             data = json.load(f)
             if data['loglevel'] == 'debug':
                 print(yellow(f'\n{data}\n'))
                 dstore('ボット',f'\n{data}\n')
-            keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['partychat']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
+            keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['partychat']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
             for key in keys:
                 exec(f"errorcheck=data{key}")
             try:
@@ -225,7 +227,7 @@ def reload_configs(client):
     client.acceptfriend=data['fortnite']['acceptfriend']
 
     try:
-        with open('commands.json', 'r', encoding='utf-8-sig') as f:
+        with open('commands.json', 'r', encoding='utf-8') as f:
             commands=json.load(f)
             keys=["['true']","['false']","['me']","['prev']", "['eval']", "['exec']","['restart']","['relogin']","['reload']","['get']","['friendcount']","['pendingcount']","['blockcount']","['skinmimic']","['emotemimic']","['partychat']","['acceptinvite']","['acceptfriend']","['joinmessageenable']","['randommessageenable']","['wait']","['join']","['joinid']","['leave']","['invite']","['message']","['partymessage']","['status']","['banner']","['level']","['bp']","['getuser']","['getfriend']","['getpending']","['getblock']","['info']","['info_party']","['info_item']","['pending']","['removepending']","['addfriend']","['removefriend']","['acceptpending']","['declinepending']","['blockfriend']","['unblockfriend']","['chatban']","['promote']","['kick']","['ready']","['unready']","['sitout']","['stop']","['allskin']","['allemote']","['setstyle']","['addvariant']","['skinasset']","['bagasset']","['pickasset']","['emoteasset']"]
             for key in keys:
@@ -271,6 +273,27 @@ def reload_configs(client):
         print(red('commands.json ファイルが存在しません。'))
         dstore('ボット',f'>>> {traceback.format_exc()}')
         dstore('ボット',f'>>> commands.json ファイルが存在しません')
+        return None
+
+    try:
+        with open('replies.json', 'r', encoding='utf-8') as f:
+            replies=json.load(f)
+        if data['loglevel'] == 'debug':
+            print(yellow(f'\n{replies}\n'))
+            dstore('ボット',f'\n```\n{replies}\n```\n')
+        if data['caseinsensitive'] is True:
+            replies=dict((jaconv.kata2hira(k.lower()), v) for k,v in replies.items())
+    except json.decoder.JSONDecodeError:
+        print(red(traceback.format_exc()))
+        print(red('replies.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
+        dstore('ボット',f'>>> {traceback.format_exc()}')
+        dstore('ボット',f'>>> replies.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
+        return None
+    except FileNotFoundError:
+        print(red(traceback.format_exc()))
+        print(red('replies.json ファイルが存在しません。'))
+        dstore('ボット',f'>>> {traceback.format_exc()}')
+        dstore('ボット',f'>>> replies.json ファイルが存在しません')
         return None
 
     return 'Success'
@@ -513,9 +536,13 @@ async def invitation_accept(invitation):
                 client.timer=Timer(data['fortnite']['interval'], inviteinterval, [client])
                 client.timer.start()
                 if data['loglevel'] == 'normal':
-                    print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を承諾')
+                    if data['no-logs'] is False:
+                        print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を承諾')
+                    dstore(client.user.display_name, f"{str(invitation.sender.display_name)} からの招待を承諾")
                 else:
-                    print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾')
+                    if data['no-logs'] is False:
+                        print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾')
+                    dstore(client.user.display_name, f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾")
         else:
             client.acceptinvite_interval=False
             try:
@@ -525,9 +552,13 @@ async def invitation_accept(invitation):
             client.timer=Timer(data['fortnite']['interval'], inviteinterval, [client])
             client.timer.start()
             if data['loglevel'] == 'normal':
-                print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を承諾')
+                if data['no-logs'] is False:
+                    print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を承諾')
+                    dstore(client.user.display_name, f"{str(invitation.sender.display_name)} からの招待を承諾")
             else:
-                print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾')
+                if data['no-logs'] is False:
+                    print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾')
+                    dstore(client.user.display_name, f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾")
     except KeyError:
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
@@ -571,10 +602,12 @@ async def invitation_decline(invitation):
     try:
         await invitation.decline()
         if data['loglevel'] == 'normal':
-            print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を拒否')
+            if data['no-logs'] is False:
+                print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を拒否')
             dstore(client.user.display_name,f'{str(invitation.sender.display_name)} からの招待を拒否')
         else:
-            print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を拒否')
+            if data['no-logs'] is False:
+                print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を拒否')
             dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を拒否')
     except fortnitepy.PartyError:
         if data['loglevel'] == 'debug':
@@ -600,10 +633,12 @@ async def invitation_decline_interval(invitation):
         await invitation.decline()
         await invitation.sender.send(f"招待を承諾してから{str(data['fortnite']['interval'])}秒間は招待を拒否します")
         if data['loglevel'] == 'normal':
-            print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を{str(data['fortnite']['interval'])}秒拒否")
+            if data['no-logs'] is False:
+                print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を{str(data['fortnite']['interval'])}秒拒否")
             dstore(client.user.display_name,f'{str(invitation.sender.display_name)} からの招待を{str(data["fortnite"]["interval"])}秒拒否')
         else:
-            print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
+            if data['no-logs'] is False:
+                print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
             dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を{str(data["fortnite"]["interval"])}秒拒否')
     except fortnitepy.PartyError:
         if data['ingame-error'] is True:
@@ -632,10 +667,12 @@ async def invitation_decline_owner(invitation):
         await invitation.decline()
         await invitation.sender.send('所有者がパーティーにいるため招待を拒否します')
         if data['loglevel'] == 'normal':
-            print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を{str(data['fortnite']['interval'])}秒拒否")
+            if data['no-logs'] is False:
+                print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を{str(data['fortnite']['interval'])}秒拒否")
             dstore(client.user.display_name,f'{str(invitation.sender.display_name)} からの招待を{str(data["fortnite"]["interval"])}秒拒否')
         else:
-            print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
+            if data['no-logs'] is False:
+                print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
             dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を{str(data["fortnite"]["interval"])}秒拒否')
     except fortnitepy.PartyError:
         if data['ingame-error'] is True:
@@ -660,12 +697,12 @@ async def invitation_decline_owner(invitation):
         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
 try:
-    with open('config.json', 'r', encoding='utf-8-sig') as f:
+    with open('config.json', 'r', encoding='utf-8') as f:
         data = json.load(f)
         if data['loglevel'] == 'debug':
             print(yellow(f'\n{data}\n'))
             dstore('ボット',f'\n```\n{data}\n```\n')
-        keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['partychat']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
+        keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['partychat']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
         for key in keys:
             exec(f"errorcheck=data{key}")
         try:
@@ -727,7 +764,7 @@ except FileNotFoundError:
     exit()
 
 try:
-    with open('commands.json', 'r', encoding='utf-8-sig') as f:
+    with open('commands.json', 'r', encoding='utf-8') as f:
         commands=json.load(f)
         if data['loglevel'] == 'debug':
             print(yellow(f'\n{commands}\n'))
@@ -767,11 +804,33 @@ except json.decoder.JSONDecodeError:
     print(red('commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
     dstore('ボット',f'>>> {traceback.format_exc()}')
     dstore('ボット',f'>>> commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
+    exit()
 except FileNotFoundError:
     print(red(traceback.format_exc()))
     print(red('commands.json ファイルが存在しません。'))
     dstore('ボット',f'>>> {traceback.format_exc()}')
     dstore('ボット',f'>>> commands.json ファイルが存在しません')
+    exit()
+
+try:
+    with open('replies.json', 'r', encoding='utf-8') as f:
+        replies=json.load(f)
+    if data['loglevel'] == 'debug':
+        print(yellow(f'\n{replies}\n'))
+        dstore('ボット',f'\n```\n{replies}\n```\n')
+    if data['caseinsensitive'] is True:
+        replies=dict((jaconv.kata2hira(k.lower()), v) for k,v in replies.items())
+except json.decoder.JSONDecodeError:
+    print(red(traceback.format_exc()))
+    print(red('replies.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
+    dstore('ボット',f'>>> {traceback.format_exc()}')
+    dstore('ボット',f'>>> replies.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
+    exit()
+except FileNotFoundError:
+    print(red(traceback.format_exc()))
+    print(red('replies.json ファイルが存在しません。'))
+    dstore('ボット',f'>>> {traceback.format_exc()}')
+    dstore('ボット',f'>>> replies.json ファイルが存在しません')
     exit()
 
 threading.Thread(target=dprint,args=()).start()
@@ -816,7 +875,8 @@ print(green(f'\nPython {sys.version_info.major}.{sys.version_info.minor}.{sys.ve
 if data['debug'] is True:
     print(red(f'[{now_()}] デバッグが有効です!(エラーではありません)'))
     dstore('ボット','>>> デバッグが有効です!(エラーではありません)')
-print('ボットを起動中...')
+if data['no-logs'] is False:
+    print('ボットを起動中...')
 dstore('ボット','ボットを起動中...')
 
 async def event_device_auth_generate(details, email):
@@ -824,10 +884,12 @@ async def event_device_auth_generate(details, email):
 
 async def event_ready(client):
     if data['loglevel'] == 'normal':
-        print(green(f'[{now_()}] ログイン: {client.user.display_name}'))
+        if data['no-logs'] is False:
+            print(green(f'[{now_()}] ログイン: {client.user.display_name}'))
         dstore('ボット',f'ログイン: {client.user.display_name}')
     else:
-        print(green(f'[{now_()}] ログイン: {client.user.display_name} / {client.user.id}'))
+        if data['no-logs'] is False:
+            print(green(f'[{now_()}] ログイン: {client.user.display_name} / {client.user.id}'))
         dstore('ボット',f'ログイン: {client.user.display_name} / {client.user.id}')
     client.isready=True
 
@@ -856,10 +918,12 @@ async def event_ready(client):
                 dstore(client.user.display_name,f'>>> 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{commands["reload"]}] コマンドで再読み込みしてください')
             else:
                 if data['loglevel'] == 'normal':
-                    print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name}'))
+                    if data['no-logs'] is False:
+                        print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name}'))
                     dstore(client.user.display_name,f'所有者: {client.owner.display_name}')
                 else:
-                    print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name} / {client.owner.id}'))
+                    if data['no-logs'] is False:
+                        print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name} / {client.owner.id}'))
                     dstore(client.user.display_name,f'所有者: {client.owner.display_name} / {client.owner.id}')
     except fortnitepy.HTTPException:
         if data['loglevel'] == 'debug':
@@ -903,7 +967,8 @@ async def event_ready(client):
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
 async def event_restart():
-    print(green(f'[{now_()}] 正常に再ログインが完了しました'))
+    if data['no-logs'] is False:
+        print(green(f'[{now_()}] 正常に再ログインが完了しました'))
     dstore('ボット',f'>>> 正常に再ログインが完了しました')
 
 async def event_party_invite(invitation):
@@ -917,10 +982,12 @@ async def event_party_invite(invitation):
             await invitation_accept(invitation)
             return
     if data['loglevel'] == 'normal':
-        print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からのパーティー招待')
+        if data['no-logs'] is False:
+            print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からのパーティー招待')
         dstore(client.user.display_name,f'{str(invitation.sender.display_name)} からのパーティー招待')
     else:
-        print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待')
+        if data['no-logs'] is False:
+            print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待')
         dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待')
 
     if not client.owner is None:
@@ -953,17 +1020,21 @@ async def event_friend_request(request):
         return
     if request.direction == 'OUTBOUND':
         if data['loglevel'] == 'normal':
-            print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} にフレンド申請を送信')
+            if data['no-logs'] is False:
+                print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} にフレンド申請を送信')
             dstore(client.user.display_name,f'{str(request.display_name)} にフレンド申請を送信')
         else:
-            print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} / {request.id} にフレンド申請を送信')
+            if data['no-logs'] is False:
+                print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} / {request.id} にフレンド申請を送信')
             dstore(client.user.display_name,f'{str(request.display_name)} / {request.id} にフレンド申請を送信')
         return
     if data['loglevel'] == 'normal':
-        print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} からのフレンド申請')
+        if data['no-logs'] is False:
+            print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} からのフレンド申請')
         dstore(client.user.display_name,f'{str(request.display_name)} からのフレンド申請')
     else:
-        print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} / {request.id} からのフレンド申請')
+        if data['no-logs'] is False:
+            print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} / {request.id} からのフレンド申請')
         dstore(client.user.display_name,f'{str(request.display_name)} / {request.id} からのフレンド申請')
     if client.acceptfriend is True:
         try:
@@ -981,10 +1052,12 @@ async def event_friend_request(request):
         try:
             await request.decline()
             if data['loglevel'] == 'normal':
-                print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} からのフレンド申請を拒否')
+                if data['no-logs'] is False:
+                    print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} からのフレンド申請を拒否')
                 dstore(client.user.display_name,f'{str(request.display_name)} からのフレンド申請を拒否')
             else:
-                print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} / {request.id} からのフレンド申請を拒否')
+                if data['no-logs'] is False:
+                    print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} / {request.id} からのフレンド申請を拒否')
                 dstore(client.user.display_name,f'{str(request.display_name)} / {request.id} からのフレンド申請を拒否')
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
@@ -1003,17 +1076,21 @@ async def event_friend_add(friend):
         return
     if friend.direction == 'INBOUND':
         if data['loglevel'] == 'normal':
-            print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} がフレンド申請を承諾')
+            if data['no-logs'] is False:
+                print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} がフレンド申請を承諾')
             dstore(client.user.display_name,f'{str(friend.display_name)} がフレンド申請を承諾')
         else:
-            print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} / {friend.id} がフレンド申請を承諾')
+            if data['no-logs'] is False:
+                print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} / {friend.id} がフレンド申請を承諾')
             dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id} がフレンド申請を承諾')
     else:
         if data['loglevel'] == 'normal':
-            print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} をフレンドに追加')
+            if data['no-logs'] is False:
+                print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} をフレンドに追加')
             dstore(client.user.display_name,f'{str(friend.display_name)} をフレンドに追加')
         else:
-            print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} / {friend.id} をフレンドに追加')
+            if data['no-logs'] is False:
+                print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} / {friend.id} をフレンドに追加')
             dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id} をフレンドに追加')
 
 async def event_friend_remove(friend):
@@ -1023,10 +1100,12 @@ async def event_friend_remove(friend):
     if client.isready is False:
         return
     if data['loglevel'] == 'normal':
-        print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} がフレンドから削除')
+        if data['no-logs'] is False:
+            print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} がフレンドから削除')
         dstore(client.user.display_name,f'{str(friend.display_name)} がフレンドから削除')
     else:
-        print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} / {friend.id} [{platform_to_str(friend.platform)}] がフレンドから削除')
+        if data['no-logs'] is False:
+            print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} / {friend.id} [{platform_to_str(friend.platform)}] がフレンドから削除')
         dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id} [{platform_to_str(friend.platform)}] がフレンドから削除')
 
 async def event_party_member_join(member):
@@ -1050,10 +1129,12 @@ async def event_party_member_join(member):
         member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] == 'normal':
-            print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.display_name)} がパーティーに参加\n人数: {member.party.member_count}'))
+            if data['no-logs'] is False:
+                print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.display_name)} がパーティーに参加\n人数: {member.party.member_count}'))
             dstore(client_user_display_name,f'[パーティー] {str(member.display_name)} がパーティーに参加\n人数: {member.party.member_count}')
         else:
-            print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーに参加\n人数: {member.party.member_count}'))
+            if data['no-logs'] is False:
+                print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーに参加\n人数: {member.party.member_count}'))
             dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーに参加\n人数: {member.party.member_count}')
     
     if data['fortnite']['addfriend'] is True:
@@ -1081,7 +1162,8 @@ async def event_party_member_join(member):
     if client.randommessageenable is True:
             try:
                 randommessage=random.choice(data['fortnite']['randommessage'].split(','))
-                print(f'[{now_()}] [{client.user.display_name}] ランダムメッセージ: {randommessage}')
+                if data['no-logs'] is False:
+                    print(f'[{now_()}] [{client.user.display_name}] ランダムメッセージ: {randommessage}')
                 dstore(client.user.display_name,f'ランダムメッセージ: {randommessage}')
                 await client.user.party.send(randommessage)
             except Exception:
@@ -1125,10 +1207,12 @@ async def event_party_member_leave(member):
         member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] == 'normal':
-            print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.display_name)} がパーティーを離脱\n人数: {member.party.member_count}'))
+            if data['no-logs'] is False:
+                print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.display_name)} がパーティーを離脱\n人数: {member.party.member_count}'))
             dstore(client_user_display_name,f'[パーティー] {str(member.display_name)} がパーティーを離脱\n人数: {member.party.member_count}')
         else:
-            print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーを離脱\n人数: {member.party.member_count}'))
+            if data['no-logs'] is False:
+                print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーを離脱\n人数: {member.party.member_count}'))
             dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーを離脱\n人数: {member.party.member_count}')
 
     if data['fortnite']['addfriend'] is True:
@@ -1166,10 +1250,12 @@ async def event_party_member_kick(member):
         member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] == 'normal':
-            print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.party.leader.display_name)} が {str(member.display_name)} をパーティーからキック\n人数: {member.party.member_count}'))
+            if data['no-logs'] is False:
+                print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.party.leader.display_name)} が {str(member.display_name)} をパーティーからキック\n人数: {member.party.member_count}'))
             dstore(client_user_display_name,f'[パーティー] {str(member.party.leader.display_name)} が {str(member.display_name)} をパーティーからキック\n人数: {member.party.member_count}')
         else:
-            print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーからキック\n人数: {member.party.member_count}'))
+            if data['no-logs'] is False:
+                print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーからキック\n人数: {member.party.member_count}'))
             dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーからキック\n人数: {member.party.member_count}')
 
 async def event_party_member_promote(old_leader,new_leader):
@@ -1193,10 +1279,12 @@ async def event_party_member_promote(old_leader,new_leader):
         member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] == 'normal':
-            print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(old_leader.display_name)} から {str(new_leader.display_name)} にリーダーが譲渡'))
+            if data['no-logs'] is False:
+                print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(old_leader.display_name)} から {str(new_leader.display_name)} にリーダーが譲渡'))
             dstore(client_user_display_name,f'[パーティー] {str(old_leader.display_name)} から {str(new_leader.display_name)} にリーダーが譲渡')
         else:
-            print(magenta(f'[{now_()}] [パーティー/{new_leader.party.id}] [{client_user_display_name}] {str(old_leader.display_name)} / {old_leader.id} [{platform_to_str(old_leader.platform)}/{old_leader.input}] から {str(new_leader.display_name)} / {new_leader.id} [{platform_to_str(new_leader.platform)}/{new_leader.input}] にリーダーが譲渡'))
+            if data['no-logs'] is False:
+                print(magenta(f'[{now_()}] [パーティー/{new_leader.party.id}] [{client_user_display_name}] {str(old_leader.display_name)} / {old_leader.id} [{platform_to_str(old_leader.platform)}/{old_leader.input}] から {str(new_leader.display_name)} / {new_leader.id} [{platform_to_str(new_leader.platform)}/{new_leader.input}] にリーダーが譲渡'))
             dstore(client_user_display_name,f'[パーティー/{new_leader.party.id}] {str(old_leader.display_name)} / {old_leader.id} [{platform_to_str(old_leader.platform)}/{old_leader.input}] から {str(new_leader.display_name)} / {new_leader.id} [{platform_to_str(new_leader.platform)}/{new_leader.input}] にリーダーが譲渡')
     if new_leader.id == client.user.id:
         try:
@@ -1227,14 +1315,16 @@ async def event_party_member_update(member):
         member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
         if not data['loglevel'] == 'normal':
-            print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] パーティーメンバー更新'))
+            if data['no-logs'] is False:
+                print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] パーティーメンバー更新'))
             dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] パーティーメンバー更新')
     if member.id == client.user.id:
         return
     if not member.outfit == client.prevoutfit or not member.outfit_variants == client.prevoutfitvariants:
         if not data['loglevel'] == 'normal':
             if client.user.id == member_joined_at_most[0]:
-                print(str(member.outfit))
+                if data['no-logs'] is False:
+                    print(str(member.outfit))
                 dstore(client_user_display_name,str(member.outfit))
         if client.skinmimic is True:
             if member.outfit is None:
@@ -1254,7 +1344,8 @@ async def event_party_member_update(member):
     if not member.backpack == client.prevbackpack or not member.backpack_variants == client.prevbackpackvariants:
         if not data['loglevel'] == 'normal':
             if client.user.id == member_joined_at_most[0]:
-                print(str(member.backpack))
+                if data['no-logs'] is False:
+                    print(str(member.backpack))
                 dstore(client_user_display_name,str(member.backpack))
         if client.skinmimic is True:
             if member.backpack is None:
@@ -1274,7 +1365,8 @@ async def event_party_member_update(member):
     if not member.pickaxe == client.prevpickaxe or not member.pickaxe_variants == client.prevpickaxevariants:
         if not data['loglevel'] == 'normal':
             if client.user.id == member_joined_at_most[0]:
-                print(str(member.pickaxe))
+                if data['no-logs'] is False:
+                    print(str(member.pickaxe))
                 dstore(client_user_display_name,str(member.pickaxe))
         if client.skinmimic is True:
             if member.pickaxe is None:
@@ -1301,7 +1393,8 @@ async def event_party_member_update(member):
     if not member.emote is None:
         if not data['loglevel'] == 'normal':
             if client.user.id == member_joined_at_most[0]:
-                print(str(member.emote))
+                if data['no-logs'] is False:
+                    print(str(member.emote))
                 dstore(client_user_display_name,str(member.emote))
         if client.emotemimic is True:
             if member.emote.upper() == client.user.party.me.emote.upper():
@@ -1339,10 +1432,12 @@ async def event_party_member_disconnect(member):
         member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] == 'normal':
-            print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.display_name)} の接続が切断'))
+            if data['no-logs'] is False:
+                print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.display_name)} の接続が切断'))
             dstore(client_user_display_name,f'[パーティー] {str(member.display_name)} の接続が切断')
         else:
-            print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] の接続が切断'))
+            if data['no-logs'] is False:
+                print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] の接続が切断'))
             dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] の接続が切断')
 
 async def event_party_member_chatban(member, reason):
@@ -1367,17 +1462,21 @@ async def event_party_member_chatban(member, reason):
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] == 'normal':
             if reason is None:
-                print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.party.leader.display_name)} が {str(member.display_name)} をチャットバン'))
+                if data['no-logs'] is False:
+                    print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.party.leader.display_name)} が {str(member.display_name)} をチャットバン'))
                 dstore(client_user_display_name,f'[パーティー] {str(member.party.leader.display_name)} が {str(member.display_name)} をチャットバン')
             else:
-                print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.party.leader.display_name)} が {str(member.display_name)} をチャットバン | 理由: {reason}'))
+                if data['no-logs'] is False:
+                    print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.party.leader.display_name)} が {str(member.display_name)} をチャットバン | 理由: {reason}'))
                 dstore(client_user_display_name,f'[パーティー] {str(member.party.leader.display_name)} が {str(member.display_name)} をチャットバン | 理由: {reason}')
         else:
             if reason is None:
-                print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン'))
+                if data['no-logs'] is False:
+                    print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン'))
                 dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン')
             else:
-                print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン | 理由: {reason}'))
+                if data['no-logs'] is False:
+                    print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン | 理由: {reason}'))
                 dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン | 理由: {reason}')
 
 async def event_party_update(party):
@@ -1401,7 +1500,8 @@ async def event_party_update(party):
         member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
         if not data['loglevel'] == 'normal':
-            print(magenta(f'[{now_()}] [パーティー/{party.id}] [{client_user_display_name}] パーティー更新'))
+            if data['no-logs'] is False:
+                print(magenta(f'[{now_()}] [パーティー/{party.id}] [{client_user_display_name}] パーティー更新'))
             dstore(client_user_display_name,f'[パーティー/{party.id}] パーティー更新')
 
 #========================================================================================================================
@@ -1428,10 +1528,12 @@ async def event_friend_message(message):
     if rawcontent in commands['me'].split(','):
         rawcontent=str(message.author.display_name)
     if data['loglevel'] == 'normal':
-        print(f'[{now_()}] [{client.user.display_name}] {str(message.author.display_name)} | {content}')
+        if data['no-logs'] is False:
+            print(f'[{now_()}] [{client.user.display_name}] {str(message.author.display_name)} | {content}')
         dstore(message.author.display_name,content)
     else:
-        print(f'[{now_()}] [{client.user.display_name}] {str(message.author.display_name)}/ {message.author.id} [{platform_to_str(message.author.platform)}] | {content}')
+        if data['no-logs'] is False:
+            print(f'[{now_()}] [{client.user.display_name}] {str(message.author.display_name)}/ {message.author.id} [{platform_to_str(message.author.platform)}] | {content}')
         dstore(f'{message.author.display_name} / {message.author.id}',content)
 
     if not client.owner is None:
@@ -1460,6 +1562,16 @@ async def event_friend_message(message):
         rawcontent = ' '.join(rawargs[1:])
         rawcontent2 = ' '.join(rawargs[2:])
     client.prevmessage[message.author.id]=content
+
+    for key,value in replies.items():
+        if args[0] in key:
+            try:
+                await message.reply(value)
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('エラー')
+            return
 
     if args[0] in commands['eval'].split(','):
         try:
@@ -1618,7 +1730,8 @@ async def event_friend_message(message):
                 await message.reply('ユーザーがパーティーにいません')
                 return
             member=client.user.party.members.get(user.id)
-            print(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
+            if data['no-logs'] is False:
+                print(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
             dstore(client.user.display_name,f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
             await message.reply(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
         except Exception:
@@ -1628,7 +1741,8 @@ async def event_friend_message(message):
 
     elif args[0] in commands['friendcount'].split(','):
         try:
-            print(f'フレンド数: {len(client.friends)}')
+            if data['no-logs'] is False:
+                print(f'フレンド数: {len(client.friends)}')
             dstore(client.user.display_name,f'フレンド数: {len(client.friends)}')
             await message.reply(f'フレンド数: {len(client.friends)}')
         except Exception:
@@ -1638,7 +1752,8 @@ async def event_friend_message(message):
 
     elif args[0] in commands['pendingcount'].split(','):
         try:
-            print(f'保留数: {len(client.pending_friends)}')
+            if data['no-logs'] is False:
+                print(f'保留数: {len(client.pending_friends)}')
             dstore(client.user.display_name,f'保留数: {len(client.pending_friends)}')
             await message.reply(f'保留数: {len(client.pending_friends)}')
         except Exception:
@@ -1648,7 +1763,8 @@ async def event_friend_message(message):
 
     elif args[0] in commands['blockcount'].split(','):
         try:
-            print(f'ブロック数: {len(client.blocked_users)}')
+            if data['no-logs'] is False:
+                print(f'ブロック数: {len(client.blocked_users)}')
             dstore(client.user.display_name,f'ブロック数: {len(client.blocked_users)}')
             await message.reply(f'ブロック数: {len(client.blocked_users)}')
         except Exception:
@@ -1661,7 +1777,8 @@ async def event_friend_message(message):
             text=''
             for friend in client.friends.values():
                 text+=f'{friend}\n'
-            print(f'{text}')
+            if data['no-logs'] is False:
+                print(f'{text}')
             dstore(client.user.display_name,f'{text}')
             await message.reply(f'{text}')
         except Exception:
@@ -1674,7 +1791,8 @@ async def event_friend_message(message):
             text=''
             for pending in client.pending_friends.values():
                 text+=f'{pending}\n'
-            print(f'{text}')
+            if data['no-logs'] is False:
+                print(f'{text}')
             dstore(client.user.display_name,f'{text}')
             await message.reply(f'{text}')
         except Exception:
@@ -1687,7 +1805,8 @@ async def event_friend_message(message):
             text=''
             for block in client.blocked_users.values():
                 text+=f'{block}\n'
-            print(f'{text}')
+            if data['no-logs'] is False:
+                print(f'{text}')
             dstore(client.user.display_name,f'{text}')
             await message.reply(f'{text}')
         except Exception:
@@ -2118,7 +2237,8 @@ async def event_friend_message(message):
             if user is None:
                 await message.reply('ユーザーが見つかりません')
                 return
-            print(f'{str(user.display_name)} / {user.id}')
+            if data['no-logs'] is False:
+                print(f'{str(user.display_name)} / {user.id}')
             dstore(client.user.display_name,f'{str(user.display_name)} / {user.id}')
             await message.reply(f'{str(user.display_name)} / {user.id}')
         except fortnitepy.HTTPException:
@@ -2145,11 +2265,13 @@ async def event_friend_message(message):
                 await message.reply('ユーザーとフレンドではありません')
                 return
             if friend.nickname is None:
-                print(f'{str(friend.display_name)} / {friend.id}')
+                if data['no-logs'] is False:
+                    print(f'{str(friend.display_name)} / {friend.id}')
                 dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id}')
                 await message.reply(f'{str(friend.display_name)} / {friend.id}')
             else:
-                print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+                if data['no-logs'] is False:
+                    print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
                 dstore(client.user.display_name,f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
                 await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
             if not friend.last_logout is None:
@@ -2178,11 +2300,13 @@ async def event_friend_message(message):
                 await message.reply('ユーザーとフレンドではありません')
                 return
             if friend.nickname is None:
-                print(f'{str(friend.display_name)} / {friend.id}')
+                if data['no-logs'] is False:
+                    print(f'{str(friend.display_name)} / {friend.id}')
                 dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id}')
                 await message.reply(f'{str(friend.display_name)} / {friend.id}')
             else:
-                print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+                if data['no-logs'] is False:
+                    print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
                 dstore(client.user.display_name,f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
                 await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
             if not friend.last_logout is None:
@@ -2210,7 +2334,8 @@ async def event_friend_message(message):
             if pending is None:
                 await message.reply('ユーザーからのフレンド申請がありません')
                 return
-            print(f'{str(pending.display_name)} / {pending.id}')
+            if data['no-logs'] is False:
+                print(f'{str(pending.display_name)} / {pending.id}')
             dstore(client.user.display_name,f'{str(pending.display_name)} / {pending.id}')
             await message.reply(f'{str(pending.display_name)} / {pending.id}')
         except fortnitepy.HTTPException:
@@ -2236,7 +2361,8 @@ async def event_friend_message(message):
             if block is None:
                 await message.reply('ユーザーをブロックしていません')
                 return
-            print(f'{str(block.display_name)} / {block.id}')
+            if data['no-logs'] is False:
+                print(f'{str(block.display_name)} / {block.id}')
             dstore(client.user.display_name,f'{str(block.display_name)} / {block.id}')
             await message.reply(f'{str(block.display_name)} / {block.id}')
         except fortnitepy.HTTPException:
@@ -2252,7 +2378,8 @@ async def event_friend_message(message):
     elif args[0] in commands['info'].split(','):
         try:
             if args[1] in commands['info_party'].split(','):
-                print(f'{client.user.party.id}\n人数: {client.user.party.member_count}')
+                if data['no-logs'] is False:
+                    print(f'{client.user.party.id}\n人数: {client.user.party.member_count}')
                 dstore(client.user.display_name,f'{client.user.party.id}\n人数: {client.user.party.member_count}')
                 await message.reply(f'{client.user.party.id}\n人数: {client.user.party.member_count}')
                 for member in client.user.party.members.values():
@@ -2276,7 +2403,8 @@ async def event_friend_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 items=await is_itemname('en', rawcontent2)
@@ -2287,7 +2415,8 @@ async def event_friend_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 await message.reply('見つかりません')
@@ -2303,7 +2432,8 @@ async def event_friend_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 items=await search_item_with_id('en', rawcontent2)
@@ -2314,7 +2444,8 @@ async def event_friend_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 await message.reply('見つかりません')
@@ -2329,7 +2460,8 @@ async def event_friend_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 items=await search_item_with_type('en', rawcontent2, 'outfit')
@@ -2339,7 +2471,8 @@ async def event_friend_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 await message.reply('見つかりません')
@@ -2354,7 +2487,8 @@ async def event_friend_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 items=await search_item_with_type('en', rawcontent2, 'outfit')
@@ -2364,7 +2498,8 @@ async def event_friend_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 await message.reply('見つかりません')
@@ -2378,7 +2513,8 @@ async def event_friend_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 items=await search_item_with_type('en', rawcontent2, 'outfit')
@@ -2388,7 +2524,8 @@ async def event_friend_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 await message.reply('見つかりません')
@@ -2402,7 +2539,8 @@ async def event_friend_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 items=await search_item_with_type('en', rawcontent2, 'outfit')
@@ -2412,7 +2550,8 @@ async def event_friend_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 await message.reply('見つかりません')
@@ -2489,7 +2628,6 @@ async def event_friend_message(message):
         try:
             pendings=[]
             for pending in client.pending_friends.values():
-                print(pending.direction)
                 if pending.direction == 'OUTBOUND':
                     pendings.append(pending)
             for pending in pendings:
@@ -3084,7 +3222,8 @@ async def event_friend_message(message):
                             await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
                     if not data['loglevel'] == 'normal':
-                        print(client.itemdata[1][0][0])
+                        if data['no-logs'] is False:
+                            print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'outfit':
                         if 'banner' not in client.itemdata[1][0][0]:
@@ -3148,7 +3287,8 @@ async def event_friend_message(message):
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
                     if not data['loglevel'] == 'normal':
-                        print(client.itemdata[1][0][0])
+                        if data['no-logs'] is False:
+                            print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if 'banner' not in client.itemdata[1][0][0]:
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.itemdata[1][0][0]))
@@ -3170,7 +3310,8 @@ async def event_friend_message(message):
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
                     if not data['loglevel'] == 'normal':
-                        print(client.itemdata[1][0][0])
+                        if data['no-logs'] is False:
+                            print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if 'banner' not in client.itemdata[1][0][0]:
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.itemdata[1][0][0]))
@@ -3208,7 +3349,8 @@ async def event_friend_message(message):
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
                     if not data['loglevel'] == 'normal':
-                        print(client.itemdata[1][0][0])
+                        if data['no-logs'] is False:
+                            print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'backpack':
                         if 'banner' not in client.itemdata[1][1][0]:
@@ -3233,7 +3375,8 @@ async def event_friend_message(message):
                             await message.reply(f'{count+1}: {item[1]}')
                     if len(client.itemdata[1]) == 1:
                         if not data['loglevel'] == 'normal':
-                            print(client.itemdata[1][0][0])
+                            if data['no-logs'] is False:
+                                print(client.itemdata[1][0][0])
                             dstore(client.user.display_name,client.itemdata[1][0][0])
                         if client.itemdata[1][0][2] == 'backpack':
                             if 'banner' not in client.itemdata[1][0][0]:
@@ -3274,7 +3417,8 @@ async def event_friend_message(message):
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
                     if not data['loglevel'] == 'normal':
-                        print(client.itemdata[1][0][0])
+                        if data['no-logs'] is False:
+                            print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.itemdata[1][0][0]))
                     if not client.user.party.me.emote is None:
@@ -3297,7 +3441,8 @@ async def event_friend_message(message):
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
                     if not data['loglevel'] == 'normal':
-                        print(client.itemdata[1][0][0])
+                        if data['no-logs'] is False:
+                            print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.itemdata[1][0][0]))
                     await client.user.party.me.set_emote('EID_IceKing')
@@ -3333,7 +3478,8 @@ async def event_friend_message(message):
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
                     if not data['loglevel'] == 'normal':
-                        print(client.itemdata[1][0][0])
+                        if data['no-logs'] is False:
+                            print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'emote':
                         await client.user.party.me.set_emote(client.itemdata[1][0][0])
@@ -3360,7 +3506,8 @@ async def event_friend_message(message):
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
                     if not data['loglevel'] == 'normal':
-                        print(client.itemdata[1][0][0])
+                        if data['no-logs'] is False:
+                            print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'emote':
                         await client.user.party.me.set_emote(client.itemdata[1][0][0])
@@ -3395,7 +3542,8 @@ async def event_friend_message(message):
                 client.itemdata=isitem
                 for count,item in enumerate(client.itemdata[1]):
                     if not data['loglevel'] == 'normal':
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     if item[2] == 'outfit':
                         if len(client.itemdata[1]) == 1:
@@ -3455,7 +3603,8 @@ async def event_friend_message(message):
                 client.itemdata=isitem
                 for count,item in enumerate(client.itemdata[1]):
                     if not data['loglevel'] == 'normal':
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     if item[2] == 'outfit':
                         if len(client.itemdata[1]) == 1:
@@ -3722,7 +3871,8 @@ async def event_friend_message(message):
     elif args[0].lower().startswith('cid_'):
         try:
             if not data['loglevel'] == 'normal':
-                print(args[0])
+                if data['no-logs'] is False:
+                    print(args[0])
                 dstore(client.user.display_name,args[0])
             if 'banner' not in args[0].lower():
                 await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,args[0]))
@@ -3742,7 +3892,8 @@ async def event_friend_message(message):
     elif args[0].lower().startswith('bid_'):
         try:
             if not data['loglevel'] == 'normal':
-                print(args[0])
+                if data['no-logs'] is False:
+                    print(args[0])
                 dstore(client.user.display_name,args[0])
             if 'banner' not in args[0].lower():
                 await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,args[0]))
@@ -3762,7 +3913,8 @@ async def event_friend_message(message):
     elif args[0].lower().startswith('pet_carrier'):
         try:
             if not data['loglevel'] == 'normal':
-                print(args[0])
+                if data['no-logs'] is False:
+                    print(args[0])
                 dstore(client.user.display_name,args[0])
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,args[0]))
             await message.reply(f'バッグを {args[0]} に設定')
@@ -3779,7 +3931,8 @@ async def event_friend_message(message):
     elif args[0].lower().startswith('pickaxe_id'):
         try:
             if not data['loglevel'] == 'normal':
-                print(args[0])
+                if data['no-logs'] is False:
+                    print(args[0])
                 dstore(client.user.display_name,args[0])
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,args[0]))
             await client.user.party.me.set_emote('EID_IceKing')
@@ -3797,7 +3950,8 @@ async def event_friend_message(message):
     elif args[0].lower().startswith('eid_'):
         try:
             if not data['loglevel'] == 'normal':
-                print(args[0])
+                if data['no-logs'] is False:
+                    print(args[0])
                 dstore(client.user.display_name,args[0])
             if not client.user.party.me.emote is None:
                 if client.user.party.me.emote.lower() == args[0].lower():
@@ -3815,10 +3969,32 @@ async def event_friend_message(message):
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('エラー')
 
+    elif args[0].lower().startswith('shout_'):
+        try:
+            if not data['loglevel'] == 'normal':
+                if data['no-logs'] is False:
+                    print(args[0])
+            if not client.user.party.me.emote is None:
+                if client.user.party.me.emote.lower() == args[0].lower():
+                    await client.user.party.me.clear_emote()
+            await client.user.party.me.set_shout(args[0])
+            await message.reply(f'エモートを {args[0]} に設定')
+            client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Shouts/{args[0]}.{args[0]}'
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
     elif args[0].lower().startswith('emoji_'):
         try:
             if not data['loglevel'] == 'normal':
-                print(args[0])
+                if data['no-logs'] is False:
+                    print(args[0])
                 dstore(client.user.display_name,args[0])
             if not client.user.party.me.emote is None:
                 if client.user.party.me.emote.lower() == args[0].lower():
@@ -3839,7 +4015,8 @@ async def event_friend_message(message):
     elif args[0].lower().startswith('toy_'):
         try:
             if not data['loglevel'] == 'normal':
-                print(args[0])
+                if data['no-logs'] is False:
+                    print(args[0])
                 dstore(client.user.display_name,args[0])
             if not client.user.party.me.emote is None:
                 if client.user.party.me.emote.lower() == args[0].lower():
@@ -3878,7 +4055,8 @@ async def event_friend_message(message):
         try:
             if args[0].isdigit() and client.itemdata[0] == 'True':
                 if not data['loglevel'] == 'normal':
-                    print(client.itemdata[1][int(args[0])-1][0])
+                    if data['no-logs'] is False:
+                        print(client.itemdata[1][int(args[0])-1][0])
                     dstore(client.user.display_name,client.itemdata[1][int(args[0])-1][0])
                 if client.itemdata[1][int(args[0])-1][2] == 'outfit':
                     if 'banner' not in client.itemdata[1][int(args[0])-1][0]:
@@ -3975,7 +4153,8 @@ async def event_friend_message(message):
                             await message.reply(f'{count+1} エモート: {item[1]}')
                 if len(client.itemdata[1]) == 1:
                     if not data['loglevel'] == 'normal':
-                        print(client.itemdata[1][0][0])
+                        if data['no-logs'] is False:
+                            print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'outfit':
                         if 'banner' not in client.itemdata[1][0][0]:
@@ -4065,7 +4244,8 @@ async def event_friend_message(message):
                             await message.reply(f'{count+1} エモート: {item[1]}')
                 if len(client.itemdata[1]) == 1:
                     if not data['loglevel'] == 'normal':
-                        print(client.itemdata[1][0][0])
+                        if data['no-logs'] is False:
+                            print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'outfit':
                         if 'banner' not in client.itemdata[1][0][0]:
@@ -4185,6 +4365,19 @@ async def event_party_message(message):
         rawcontent2 = ' '.join(rawargs[2:])
     client.prevmessage[message.author.id]=content
 
+    if not client.owner is None:
+        if not client.owner.id == message.author.id:
+            for checks in commands.items():
+                ignore=['ownercommands','true','false','me']
+                if checks[0] in ignore:
+                    continue
+                if commands['ownercommands'] == '':
+                    break
+                for command in commands['ownercommands'].split(','):
+                    if args[0] in commands[command.lower()].split(','):
+                        await message.reply('このコマンドは管理者しか使用できません')
+                        return
+
     if args[0] in commands['eval'].split(','):
         try:
             if rawcontent == "":
@@ -4342,7 +4535,8 @@ async def event_party_message(message):
                 await message.reply('ユーザーがパーティーにいません')
                 return
             member=client.user.party.members.get(user.id)
-            print(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
+            if data['no-logs'] is False:
+                print(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
             dstore(client.user.display_name,f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
             await message.reply(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
         except Exception:
@@ -4352,7 +4546,8 @@ async def event_party_message(message):
 
     elif args[0] in commands['friendcount'].split(','):
         try:
-            print(f'フレンド数: {len(client.friends)}')
+            if data['no-logs'] is False:
+                print(f'フレンド数: {len(client.friends)}')
             dstore(client.user.display_name,f'フレンド数: {len(client.friends)}')
             await message.reply(f'フレンド数: {len(client.friends)}')
         except Exception:
@@ -4362,7 +4557,8 @@ async def event_party_message(message):
 
     elif args[0] in commands['pendingcount'].split(','):
         try:
-            print(f'保留数: {len(client.pending_friends)}')
+            if data['no-logs'] is False:
+                print(f'保留数: {len(client.pending_friends)}')
             dstore(client.user.display_name,f'保留数: {len(client.pending_friends)}')
             await message.reply(f'保留数: {len(client.pending_friends)}')
         except Exception:
@@ -4372,7 +4568,8 @@ async def event_party_message(message):
 
     elif args[0] in commands['blockcount'].split(','):
         try:
-            print(f'ブロック数: {len(client.blocked_users)}')
+            if data['no-logs'] is False:
+                print(f'ブロック数: {len(client.blocked_users)}')
             dstore(client.user.display_name,f'ブロック数: {len(client.blocked_users)}')
             await message.reply(f'ブロック数: {len(client.blocked_users)}')
         except Exception:
@@ -4385,7 +4582,8 @@ async def event_party_message(message):
             text=''
             for friend in client.friends.values():
                 text+=f'{friend}\n'
-            print(f'{text}')
+            if data['no-logs'] is False:
+                print(f'{text}')
             dstore(client.user.display_name,f'{text}')
             await message.reply(f'{text}')
         except Exception:
@@ -4398,7 +4596,8 @@ async def event_party_message(message):
             text=''
             for pending in client.pending_friends.values():
                 text+=f'{pending}\n'
-            print(f'{text}')
+            if data['no-logs'] is False:
+                print(f'{text}')
             dstore(client.user.display_name,f'{text}')
             await message.reply(f'{text}')
         except Exception:
@@ -4411,7 +4610,8 @@ async def event_party_message(message):
             text=''
             for block in client.blocked_users.values():
                 text+=f'{block}\n'
-            print(f'{text}')
+            if data['no-logs'] is False:
+                print(f'{text}')
             dstore(client.user.display_name,f'{text}')
             await message.reply(f'{text}')
         except Exception:
@@ -4842,7 +5042,8 @@ async def event_party_message(message):
             if user is None:
                 await message.reply('ユーザーが見つかりません')
                 return
-            print(f'{str(user.display_name)} / {user.id}')
+            if data['no-logs'] is False:
+                print(f'{str(user.display_name)} / {user.id}')
             dstore(client.user.display_name,f'{str(user.display_name)} / {user.id}')
             await message.reply(f'{str(user.display_name)} / {user.id}')
         except fortnitepy.HTTPException:
@@ -4869,11 +5070,13 @@ async def event_party_message(message):
                 await message.reply('ユーザーとフレンドではありません')
                 return
             if friend.nickname is None:
-                print(f'{str(friend.display_name)} / {friend.id}')
+                if data['no-logs'] is False:
+                    print(f'{str(friend.display_name)} / {friend.id}')
                 dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id}')
                 await message.reply(f'{str(friend.display_name)} / {friend.id}')
             else:
-                print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+                if data['no-logs'] is False:
+                    print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
                 dstore(client.user.display_name,f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
                 await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
             if not friend.last_logout is None:
@@ -4902,11 +5105,13 @@ async def event_party_message(message):
                 await message.reply('ユーザーとフレンドではありません')
                 return
             if friend.nickname is None:
-                print(f'{str(friend.display_name)} / {friend.id}')
+                if data['no-logs'] is False:
+                    print(f'{str(friend.display_name)} / {friend.id}')
                 dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id}')
                 await message.reply(f'{str(friend.display_name)} / {friend.id}')
             else:
-                print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
+                if data['no-logs'] is False:
+                    print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
                 dstore(client.user.display_name,f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
                 await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
             if not friend.last_logout is None:
@@ -4934,7 +5139,8 @@ async def event_party_message(message):
             if pending is None:
                 await message.reply('ユーザーからのフレンド申請がありません')
                 return
-            print(f'{str(pending.display_name)} / {pending.id}')
+            if data['no-logs'] is False:
+                print(f'{str(pending.display_name)} / {pending.id}')
             dstore(client.user.display_name,f'{str(pending.display_name)} / {pending.id}')
             await message.reply(f'{str(pending.display_name)} / {pending.id}')
         except fortnitepy.HTTPException:
@@ -4960,7 +5166,8 @@ async def event_party_message(message):
             if block is None:
                 await message.reply('ユーザーをブロックしていません')
                 return
-            print(f'{str(block.display_name)} / {block.id}')
+            if data['no-logs'] is False:
+                print(f'{str(block.display_name)} / {block.id}')
             dstore(client.user.display_name,f'{str(block.display_name)} / {block.id}')
             await message.reply(f'{str(block.display_name)} / {block.id}')
         except fortnitepy.HTTPException:
@@ -4976,7 +5183,8 @@ async def event_party_message(message):
     elif args[0] in commands['info'].split(','):
         try:
             if args[1] in commands['info_party'].split(','):
-                print(f'{client.user.party.id}\n人数: {client.user.party.member_count}')
+                if data['no-logs'] is False:
+                    print(f'{client.user.party.id}\n人数: {client.user.party.member_count}')
                 dstore(client.user.display_name,f'{client.user.party.id}\n人数: {client.user.party.member_count}')
                 await message.reply(f'{client.user.party.id}\n人数: {client.user.party.member_count}')
                 for member in client.user.party.members.values():
@@ -5000,7 +5208,8 @@ async def event_party_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 items=await is_itemname('en', rawcontent2)
@@ -5011,7 +5220,8 @@ async def event_party_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 await message.reply('見つかりません')
@@ -5027,7 +5237,8 @@ async def event_party_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 items=await search_item_with_id('en', rawcontent2)
@@ -5038,7 +5249,8 @@ async def event_party_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 await message.reply('見つかりません')
@@ -5053,7 +5265,8 @@ async def event_party_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 items=await search_item_with_type('en', rawcontent2, 'outfit')
@@ -5063,7 +5276,8 @@ async def event_party_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 await message.reply('見つかりません')
@@ -5078,7 +5292,8 @@ async def event_party_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 items=await search_item_with_type('en', rawcontent2, 'outfit')
@@ -5088,7 +5303,8 @@ async def event_party_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 await message.reply('見つかりません')
@@ -5102,7 +5318,8 @@ async def event_party_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 items=await search_item_with_type('en', rawcontent2, 'outfit')
@@ -5112,7 +5329,8 @@ async def event_party_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 await message.reply('見つかりません')
@@ -5126,7 +5344,8 @@ async def event_party_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 items=await search_item_with_type('en', rawcontent2, 'outfit')
@@ -5136,7 +5355,8 @@ async def event_party_message(message):
                         return
                     for item in items[1]:
                         await message.reply(f'{item[0]}: {item[1]}\n{item[3]}\n{item[4]}')
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     return
                 await message.reply('見つかりません')
@@ -5213,7 +5433,6 @@ async def event_party_message(message):
         try:
             pendings=[]
             for pending in client.pending_friends.values():
-                print(pending.direction)
                 if pending.direction == 'OUTBOUND':
                     pendings.append(pending)
             for pending in pendings:
@@ -5808,7 +6027,8 @@ async def event_party_message(message):
                             await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
                     if not data['loglevel'] == 'normal':
-                        print(client.itemdata[1][0][0])
+                        if data['no-logs'] is False:
+                            print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'outfit':
                         if 'banner' not in client.itemdata[1][0][0]:
@@ -5872,7 +6092,8 @@ async def event_party_message(message):
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
                     if not data['loglevel'] == 'normal':
-                        print(client.itemdata[1][0][0])
+                        if data['no-logs'] is False:
+                            print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if 'banner' not in client.itemdata[1][0][0]:
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.itemdata[1][0][0]))
@@ -5894,7 +6115,8 @@ async def event_party_message(message):
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
                     if not data['loglevel'] == 'normal':
-                        print(client.itemdata[1][0][0])
+                        if data['no-logs'] is False:
+                            print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if 'banner' not in client.itemdata[1][0][0]:
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.itemdata[1][0][0]))
@@ -5932,7 +6154,8 @@ async def event_party_message(message):
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
                     if not data['loglevel'] == 'normal':
-                        print(client.itemdata[1][0][0])
+                        if data['no-logs'] is False:
+                            print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'backpack':
                         if 'banner' not in client.itemdata[1][1][0]:
@@ -5957,7 +6180,8 @@ async def event_party_message(message):
                             await message.reply(f'{count+1}: {item[1]}')
                     if len(client.itemdata[1]) == 1:
                         if not data['loglevel'] == 'normal':
-                            print(client.itemdata[1][0][0])
+                            if data['no-logs'] is False:
+                                print(client.itemdata[1][0][0])
                             dstore(client.user.display_name,client.itemdata[1][0][0])
                         if client.itemdata[1][0][2] == 'backpack':
                             if 'banner' not in client.itemdata[1][0][0]:
@@ -5998,7 +6222,8 @@ async def event_party_message(message):
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
                     if not data['loglevel'] == 'normal':
-                        print(client.itemdata[1][0][0])
+                        if data['no-logs'] is False:
+                            print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.itemdata[1][0][0]))
                     if not client.user.party.me.emote is None:
@@ -6021,7 +6246,8 @@ async def event_party_message(message):
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
                     if not data['loglevel'] == 'normal':
-                        print(client.itemdata[1][0][0])
+                        if data['no-logs'] is False:
+                            print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.itemdata[1][0][0]))
                     await client.user.party.me.set_emote('EID_IceKing')
@@ -6057,7 +6283,8 @@ async def event_party_message(message):
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
                     if not data['loglevel'] == 'normal':
-                        print(client.itemdata[1][0][0])
+                        if data['no-logs'] is False:
+                            print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'emote':
                         await client.user.party.me.set_emote(client.itemdata[1][0][0])
@@ -6084,7 +6311,8 @@ async def event_party_message(message):
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
                     if not data['loglevel'] == 'normal':
-                        print(client.itemdata[1][0][0])
+                        if data['no-logs'] is False:
+                            print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'emote':
                         await client.user.party.me.set_emote(client.itemdata[1][0][0])
@@ -6119,7 +6347,8 @@ async def event_party_message(message):
                 client.itemdata=isitem
                 for count,item in enumerate(client.itemdata[1]):
                     if not data['loglevel'] == 'normal':
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     if item[2] == 'outfit':
                         if len(client.itemdata[1]) == 1:
@@ -6179,7 +6408,8 @@ async def event_party_message(message):
                 client.itemdata=isitem
                 for count,item in enumerate(client.itemdata[1]):
                     if not data['loglevel'] == 'normal':
-                        print(item[0])
+                        if data['no-logs'] is False:
+                            print(item[0])
                         dstore(client.user.display_name,item[0])
                     if item[2] == 'outfit':
                         if len(client.itemdata[1]) == 1:
@@ -6446,7 +6676,8 @@ async def event_party_message(message):
     elif args[0].lower().startswith('cid_'):
         try:
             if not data['loglevel'] == 'normal':
-                print(args[0])
+                if data['no-logs'] is False:
+                    print(args[0])
                 dstore(client.user.display_name,args[0])
             if 'banner' not in args[0].lower():
                 await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,args[0]))
@@ -6466,7 +6697,8 @@ async def event_party_message(message):
     elif args[0].lower().startswith('bid_'):
         try:
             if not data['loglevel'] == 'normal':
-                print(args[0])
+                if data['no-logs'] is False:
+                    print(args[0])
                 dstore(client.user.display_name,args[0])
             if 'banner' not in args[0].lower():
                 await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,args[0]))
@@ -6486,7 +6718,8 @@ async def event_party_message(message):
     elif args[0].lower().startswith('pet_carrier'):
         try:
             if not data['loglevel'] == 'normal':
-                print(args[0])
+                if data['no-logs'] is False:
+                    print(args[0])
                 dstore(client.user.display_name,args[0])
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,args[0]))
             await message.reply(f'バッグを {args[0]} に設定')
@@ -6503,7 +6736,8 @@ async def event_party_message(message):
     elif args[0].lower().startswith('pickaxe_id'):
         try:
             if not data['loglevel'] == 'normal':
-                print(args[0])
+                if data['no-logs'] is False:
+                    print(args[0])
                 dstore(client.user.display_name,args[0])
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,args[0]))
             await client.user.party.me.set_emote('EID_IceKing')
@@ -6521,7 +6755,8 @@ async def event_party_message(message):
     elif args[0].lower().startswith('eid_'):
         try:
             if not data['loglevel'] == 'normal':
-                print(args[0])
+                if data['no-logs'] is False:
+                    print(args[0])
                 dstore(client.user.display_name,args[0])
             if not client.user.party.me.emote is None:
                 if client.user.party.me.emote.lower() == args[0].lower():
@@ -6539,10 +6774,32 @@ async def event_party_message(message):
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('エラー')
 
+    elif args[0].lower().startswith('shout_'):
+        try:
+            if not data['loglevel'] == 'normal':
+                if data['no-logs'] is False:
+                    print(args[0])
+            if not client.user.party.me.emote is None:
+                if client.user.party.me.emote.lower() == args[0].lower():
+                    await client.user.party.me.clear_emote()
+            await client.user.party.me.set_shout(args[0])
+            await message.reply(f'エモートを {args[0]} に設定')
+            client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Shouts/{args[0]}.{args[0]}'
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('アイテム情報の設定リクエストを処理中にエラーが発生しました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
     elif args[0].lower().startswith('emoji_'):
         try:
             if not data['loglevel'] == 'normal':
-                print(args[0])
+                if data['no-logs'] is False:
+                    print(args[0])
                 dstore(client.user.display_name,args[0])
             if not client.user.party.me.emote is None:
                 if client.user.party.me.emote.lower() == args[0].lower():
@@ -6563,7 +6820,8 @@ async def event_party_message(message):
     elif args[0].lower().startswith('toy_'):
         try:
             if not data['loglevel'] == 'normal':
-                print(args[0])
+                if data['no-logs'] is False:
+                    print(args[0])
                 dstore(client.user.display_name,args[0])
             if not client.user.party.me.emote is None:
                 if client.user.party.me.emote.lower() == args[0].lower():
@@ -6602,7 +6860,8 @@ async def event_party_message(message):
         try:
             if args[0].isdigit() and client.itemdata[0] == 'True':
                 if not data['loglevel'] == 'normal':
-                    print(client.itemdata[1][int(args[0])-1][0])
+                    if data['no-logs'] is False:
+                        print(client.itemdata[1][int(args[0])-1][0])
                     dstore(client.user.display_name,client.itemdata[1][int(args[0])-1][0])
                 if client.itemdata[1][int(args[0])-1][2] == 'outfit':
                     if 'banner' not in client.itemdata[1][int(args[0])-1][0]:
@@ -6699,7 +6958,8 @@ async def event_party_message(message):
                             await message.reply(f'{count+1} エモート: {item[1]}')
                 if len(client.itemdata[1]) == 1:
                     if not data['loglevel'] == 'normal':
-                        print(client.itemdata[1][0][0])
+                        if data['no-logs'] is False:
+                            print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'outfit':
                         if 'banner' not in client.itemdata[1][0][0]:
@@ -6789,7 +7049,8 @@ async def event_party_message(message):
                             await message.reply(f'{count+1} エモート: {item[1]}')
                 if len(client.itemdata[1]) == 1:
                     if not data['loglevel'] == 'normal':
-                        print(client.itemdata[1][0][0])
+                        if data['no-logs'] is False:
+                            print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'outfit':
                         if 'banner' not in client.itemdata[1][0][0]:
