@@ -938,7 +938,7 @@ async def event_ready(client):
     if not client.owner is None:
         await client.owner.send('ここをクリックして招待')
 
-    if data['fortnite']['addfriend'] is True:
+    if data['fortnite']['acceptfriend'] is True:
         pendings=[]
         for pending in client.pending_friends.values():
             if pending.direction == 'INBOUND':
@@ -951,7 +951,15 @@ async def event_ready(client):
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    await pending.decline()
+                    try:
+                        await pending.decline()
+                    except fortnitepy.HTTPException:
+                        if data['loglevel'] == 'debug':
+                            print(red(traceback.format_exc()))
+                            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                    except Exception:
+                        print(red(traceback.format_exc()))
+                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
                 except Exception:
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -1074,7 +1082,7 @@ async def event_friend_add(friend):
     client=friend.client
     if client.isready is False:
         return
-    if friend.direction == 'INBOUND':
+    if friend.direction == 'OUTBOUND':
         if data['loglevel'] == 'normal':
             if data['no-logs'] is False:
                 print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} がフレンド申請を承諾')
