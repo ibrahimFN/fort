@@ -7122,6 +7122,7 @@ for email, password in credentials.items():
                 email=email,
                 password=password,
                 prompt_exchange_code=True,
+                prompt_exchange_code_if_throttled=True,
                 delete_existing_device_auths=False,
                 **device_auth_details
             ),
