@@ -1760,10 +1760,17 @@ async def event_friend_message(message):
 
     elif args[0] in commands['pendingcount'].split(','):
         try:
+            outbound = []
+            inbound = []
+            for pending in client.pending_friends.values():
+                if pending.direction == 'OUTBOUND':
+                    outbound.append(pending)
+                elif pending.direction == 'INBOUND':
+                    inbound.append(pending)
             if data['no-logs'] is False:
-                print(f'保留数: {len(client.pending_friends)}')
-            dstore(client.user.display_name,f'保留数: {len(client.pending_friends)}')
-            await message.reply(f'保留数: {len(client.pending_friends)}')
+                print(f'保留数: {len(client.pending_friends)}\n送信: {len(outbound)}\n受信: {len(inbound)}')
+            dstore(client.user.display_name,f'保留数: {len(client.pending_friends)}\n送信: {len(outbound)}\n受信: {len(inbound)}')
+            await message.reply(f'保留数: {len(client.pending_friends)}\n送信: {len(outbound)}\n受信: {len(inbound)}')
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -1796,13 +1803,17 @@ async def event_friend_message(message):
 
     elif args[0] in commands['pendinglist'].split(','):
         try:
-            text=''
+            outbound=''
+            inbound=''
             for pending in client.pending_friends.values():
-                text+=f'{pending}\n'
+                if pending.direction == 'OUTBOUND':
+                    outbound+=f'{pending}\n'
+                elif pending.direction == 'INBOUND':
+                    inbound+=f'{pending}\n'
             if data['no-logs'] is False:
-                print(f'{text}')
-            dstore(client.user.display_name,f'{text}')
-            await message.reply(f'{text}')
+                print(f'送信: {outbound}\n受信: {inbound}')
+            dstore(client.user.display_name,f'送信: {outbound}\n受信: {inbound}')
+            await message.reply(f'送信: {outbound}\n受信: {inbound}')
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -2249,41 +2260,6 @@ async def event_friend_message(message):
                 print(f'{str(user.display_name)} / {user.id}')
             dstore(client.user.display_name,f'{str(user.display_name)} / {user.id}')
             await message.reply(f'{str(user.display_name)} / {user.id}')
-        except fortnitepy.HTTPException:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-            await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-        except Exception:
-            print(red(traceback.format_exc()))
-            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-            await message.reply('エラー')
-
-    elif args[0] in commands['getfriend'].split(','):
-        try:
-            if rawcontent == '':
-                await message.reply(f"[{commands['getfriend']}] [ユーザー名 / ユーザーID]")
-                return
-            user=await client.fetch_profile(rawcontent)
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-                return
-            friend=client.get_friend(user.id)
-            if friend is None:
-                await message.reply('ユーザーとフレンドではありません')
-                return
-            if friend.nickname is None:
-                if data['no-logs'] is False:
-                    print(f'{str(friend.display_name)} / {friend.id}')
-                dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id}')
-                await message.reply(f'{str(friend.display_name)} / {friend.id}')
-            else:
-                if data['no-logs'] is False:
-                    print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
-                dstore(client.user.display_name,f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
-                await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
-            if not friend.last_logout is None:
-                await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -3012,7 +2988,7 @@ async def event_friend_message(message):
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('エラー')
-    
+
     elif args[0] in commands['unready'].split(','):
         try:
             await client.user.party.me.set_ready(fortnitepy.ReadyState.NOT_READY)
@@ -4375,18 +4351,15 @@ async def event_party_message(message):
         rawcontent2 = ' '.join(rawargs[2:])
     client.prevmessage[message.author.id]=content
 
-    if not client.owner is None:
-        if not client.owner.id == message.author.id:
-            for checks in commands.items():
-                ignore=['ownercommands','true','false','me']
-                if checks[0] in ignore:
-                    continue
-                if commands['ownercommands'] == '':
-                    break
-                for command in commands['ownercommands'].split(','):
-                    if args[0] in commands[command.lower()].split(','):
-                        await message.reply('このコマンドは管理者しか使用できません')
-                        return
+    for key,value in replies.items():
+        if args[0] in key:
+            try:
+                await message.reply(value)
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('エラー')
+            return
 
     if args[0] in commands['eval'].split(','):
         try:
@@ -4567,10 +4540,17 @@ async def event_party_message(message):
 
     elif args[0] in commands['pendingcount'].split(','):
         try:
+            outbound = []
+            inbound = []
+            for pending in client.pending_friends.values():
+                if pending.direction == 'OUTBOUND':
+                    outbound.append(pending)
+                elif pending.direction == 'INBOUND':
+                    inbound.append(pending)
             if data['no-logs'] is False:
-                print(f'保留数: {len(client.pending_friends)}')
-            dstore(client.user.display_name,f'保留数: {len(client.pending_friends)}')
-            await message.reply(f'保留数: {len(client.pending_friends)}')
+                print(f'保留数: {len(client.pending_friends)}\n送信: {len(outbound)}\n受信: {len(inbound)}')
+            dstore(client.user.display_name,f'保留数: {len(client.pending_friends)}\n送信: {len(outbound)}\n受信: {len(inbound)}')
+            await message.reply(f'保留数: {len(client.pending_friends)}\n送信: {len(outbound)}\n受信: {len(inbound)}')
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -4603,13 +4583,17 @@ async def event_party_message(message):
 
     elif args[0] in commands['pendinglist'].split(','):
         try:
-            text=''
+            outbound=''
+            inbound=''
             for pending in client.pending_friends.values():
-                text+=f'{pending}\n'
+                if pending.direction == 'OUTBOUND':
+                    outbound+=f'{pending}\n'
+                elif pending.direction == 'INBOUND':
+                    inbound+=f'{pending}\n'
             if data['no-logs'] is False:
-                print(f'{text}')
-            dstore(client.user.display_name,f'{text}')
-            await message.reply(f'{text}')
+                print(f'送信: {outbound}\n受信: {inbound}')
+            dstore(client.user.display_name,f'送信: {outbound}\n受信: {inbound}')
+            await message.reply(f'送信: {outbound}\n受信: {inbound}')
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -5056,41 +5040,6 @@ async def event_party_message(message):
                 print(f'{str(user.display_name)} / {user.id}')
             dstore(client.user.display_name,f'{str(user.display_name)} / {user.id}')
             await message.reply(f'{str(user.display_name)} / {user.id}')
-        except fortnitepy.HTTPException:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-            await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
-        except Exception:
-            print(red(traceback.format_exc()))
-            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-            await message.reply('エラー')
-
-    elif args[0] in commands['getfriend'].split(','):
-        try:
-            if rawcontent == '':
-                await message.reply(f"[{commands['getfriend']}] [ユーザー名 / ユーザーID]")
-                return
-            user=await client.fetch_profile(rawcontent)
-            if user is None:
-                await message.reply('ユーザーが見つかりません')
-                return
-            friend=client.get_friend(user.id)
-            if friend is None:
-                await message.reply('ユーザーとフレンドではありません')
-                return
-            if friend.nickname is None:
-                if data['no-logs'] is False:
-                    print(f'{str(friend.display_name)} / {friend.id}')
-                dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id}')
-                await message.reply(f'{str(friend.display_name)} / {friend.id}')
-            else:
-                if data['no-logs'] is False:
-                    print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
-                dstore(client.user.display_name,f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
-                await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
-            if not friend.last_logout is None:
-                await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -5819,7 +5768,7 @@ async def event_party_message(message):
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('エラー')
-    
+
     elif args[0] in commands['unready'].split(','):
         try:
             await client.user.party.me.set_ready(fortnitepy.ReadyState.NOT_READY)
