@@ -160,40 +160,44 @@ def reload_configs(client):
     global data
     global commands
     try:
-        with open('config.json', 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            if data['loglevel'] == 'debug':
-                print(yellow(f'\n{data}\n'))
-                dstore('ボット',f'\n{data}\n')
-            keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['partychat']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
-            for key in keys:
-                exec(f"errorcheck=data{key}")
-            try:
-                errorcheck=requests.get('https://fortnite-api.com/cosmetics/br/search?name=API-KEY-CHECK',headers={'x-api-key': data['api-key']}).json()
-            except UnicodeEncodeError:
-                if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
-                    print(red('APIキーが無効です。正しい値を入力してください。'))
-                    dstore('ボット',f'>>> APIキーが無効です。正しい値を入力してください')
-                    return None
-                else:
-                    print(red('APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください。'))
-                    dstore('ボット',f'>>> APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください')
-            if errorcheck['status'] == 401:
-                if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
-                    print(red('APIキーが無効です。正しい値を入力してください。'))
-                    dstore('ボット',f'>>> APIキーが無効です。正しい値を入力してください')
-                    return None
-                else:
-                    print(red('APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください。'))
-                    dstore('ボット',f'>>> APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください')
-            if errorcheck['status'] == 503:
-                if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
-                    print(red('APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください。'))
-                    dstore('ボット',f'>>> APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください')
-                    return None
-                else:
-                    print(red('APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。'))
-                    dstore('ボット',f'>>> APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。')
+        try:
+            with open('config.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+        except json.decoder.JSONDecodeError:
+            with open('config.json', 'r', encoding='utf-8-sig') as f:
+                data = json.load(f)
+        if data['loglevel'] == 'debug':
+            print(yellow(f'\n{data}\n'))
+            dstore('ボット',f'\n{data}\n')
+        keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['partychat']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
+        for key in keys:
+            exec(f"errorcheck=data{key}")
+        try:
+            errorcheck=requests.get('https://fortnite-api.com/cosmetics/br/search?name=API-KEY-CHECK',headers={'x-api-key': data['api-key']}).json()
+        except UnicodeEncodeError:
+            if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
+                print(red('APIキーが無効です。正しい値を入力してください。'))
+                dstore('ボット',f'>>> APIキーが無効です。正しい値を入力してください')
+                return None
+            else:
+                print(red('APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください。'))
+                dstore('ボット',f'>>> APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください')
+        if errorcheck['status'] == 401:
+            if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
+                print(red('APIキーが無効です。正しい値を入力してください。'))
+                dstore('ボット',f'>>> APIキーが無効です。正しい値を入力してください')
+                return None
+            else:
+                print(red('APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください。'))
+                dstore('ボット',f'>>> APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください')
+        if errorcheck['status'] == 503:
+            if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
+                print(red('APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください。'))
+                dstore('ボット',f'>>> APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください')
+                return None
+            else:
+                print(red('APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。'))
+                dstore('ボット',f'>>> APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。')
     except KeyError as e:
         print(red(traceback.format_exc()))
         print(red('config.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。'))
@@ -227,33 +231,37 @@ def reload_configs(client):
     client.acceptfriend=data['fortnite']['acceptfriend']
 
     try:
-        with open('commands.json', 'r', encoding='utf-8') as f:
-            commands=json.load(f)
-            keys=["['true']","['false']","['me']","['prev']", "['eval']", "['exec']","['restart']","['relogin']","['reload']","['get']","['friendcount']","['pendingcount']","['blockcount']","['skinmimic']","['emotemimic']","['partychat']","['acceptinvite']","['acceptfriend']","['joinmessageenable']","['randommessageenable']","['wait']","['join']","['joinid']","['leave']","['invite']","['message']","['partymessage']","['status']","['banner']","['level']","['bp']","['getuser']","['getfriend']","['getpending']","['getblock']","['info']","['info_party']","['info_item']","['pending']","['removepending']","['addfriend']","['removefriend']","['acceptpending']","['declinepending']","['blockfriend']","['unblockfriend']","['chatban']","['promote']","['kick']","['ready']","['unready']","['sitout']","['stop']","['allskin']","['allemote']","['setstyle']","['addvariant']","['skinasset']","['bagasset']","['pickasset']","['emoteasset']"]
-            for key in keys:
-                exec(f"errorcheck=commands{key}")
-            if data['caseinsensitive'] is True:
-                commands=dict((k.lower(), jaconv.kata2hira(v.lower())) for k,v in commands.items())
-            for checks in commands.items():
-                ignore=['ownercommands','true','false','me']
-                if checks[0] in ignore:
-                    continue
-                if commands['ownercommands'] == '':
-                    break
-                for command in commands['ownercommands'].split(','):
-                    try:
-                        errorcheck=commands[command.lower()]
-                    except KeyError as e:
-                        print(red(traceback.format_exc()))
-                        print(red('所有者コマンドの設定に失敗しました。キーの名前が間違っていないか確認してください。'))
-                        print(red(f'{str(e)} がありません。'))
-                        dstore('ボット',f'>>> {traceback.format_exc()}')
-                        dstore('ボット',f'>>> 所有者コマンドの設定に失敗しました。キーの名前が間違っていないか確認してください')
-                        dstore('ボット',f'>>> {str(e)} がありません')
-                        return None
-            if data['loglevel'] == 'debug':
-                print(yellow(f'\n{commands}\n'))
-                dstore('ボット',f'\n{commands}\n')
+        try:
+            with open('commands.json', 'r', encoding='utf-8') as f:
+                commands=json.load(f)
+        except json.decoder.JSONDecodeError:
+            with open('commands.json', 'r', encoding='utf-8-sig') as f:
+                commands=json.load(f)
+        keys=["['true']","['false']","['me']","['prev']", "['eval']", "['exec']","['restart']","['relogin']","['reload']","['get']","['friendcount']","['pendingcount']","['blockcount']","['skinmimic']","['emotemimic']","['partychat']","['acceptinvite']","['acceptfriend']","['joinmessageenable']","['randommessageenable']","['wait']","['join']","['joinid']","['leave']","['invite']","['message']","['partymessage']","['status']","['banner']","['level']","['bp']","['getuser']","['getfriend']","['getpending']","['getblock']","['info']","['info_party']","['info_item']","['pending']","['removepending']","['addfriend']","['removefriend']","['acceptpending']","['declinepending']","['blockfriend']","['unblockfriend']","['chatban']","['promote']","['kick']","['ready']","['unready']","['sitout']","['stop']","['allskin']","['allemote']","['setstyle']","['addvariant']","['skinasset']","['bagasset']","['pickasset']","['emoteasset']"]
+        for key in keys:
+            exec(f"errorcheck=commands{key}")
+        if data['caseinsensitive'] is True:
+            commands=dict((k.lower(), jaconv.kata2hira(v.lower())) for k,v in commands.items())
+        for checks in commands.items():
+            ignore=['ownercommands','true','false','me']
+            if checks[0] in ignore:
+                continue
+            if commands['ownercommands'] == '':
+                break
+            for command in commands['ownercommands'].split(','):
+                try:
+                    errorcheck=commands[command.lower()]
+                except KeyError as e:
+                    print(red(traceback.format_exc()))
+                    print(red('所有者コマンドの設定に失敗しました。キーの名前が間違っていないか確認してください。'))
+                    print(red(f'{str(e)} がありません。'))
+                    dstore('ボット',f'>>> {traceback.format_exc()}')
+                    dstore('ボット',f'>>> 所有者コマンドの設定に失敗しました。キーの名前が間違っていないか確認してください')
+                    dstore('ボット',f'>>> {str(e)} がありません')
+                    return None
+        if data['loglevel'] == 'debug':
+            print(yellow(f'\n{commands}\n'))
+            dstore('ボット',f'\n{commands}\n')
     except KeyError as e:
         print(red(traceback.format_exc()))
         print(red('commands.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。'))
@@ -262,11 +270,13 @@ def reload_configs(client):
         dstore('ボット',f'>>> commands.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください')
         dstore('ボット',f'>>> {str(e)} がありません')
         return None
-    except json.decoder.JSONDecodeError:
+    except json.decoder.JSONDecodeError as e:
         print(red(traceback.format_exc()))
         print(red('commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
+        print(red(str(e).replace('Expecting ','不明な',1).replace('Invalid control character at','無効なコントロール文字: ').replace('value','値',1).replace('delimiter','区切り文字',1).replace('line','行:',1).replace('column','文字:').replace('char ','',1)))
         dstore('ボット',f'>>> {traceback.format_exc()}')
         dstore('ボット',f'>>> commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
+        dstore('ボット',f'>>> {str(e).replace("Expecting ","不明な",1).replace("Invalid control character at","無効なコントロール文字: ").replace("value","値",1).replace("delimiter","区切り文字",1).replace("line","行:",1).replace("column","文字:").replace("char ","",1)}')
         return None
     except FileNotFoundError:
         print(red(traceback.format_exc()))
@@ -276,18 +286,24 @@ def reload_configs(client):
         return None
 
     try:
-        with open('replies.json', 'r', encoding='utf-8') as f:
-            replies=json.load(f)
+        try:
+            with open('replies.json', 'r', encoding='utf-8') as f:
+                replies=json.load(f)
+        except json.decoder.JSONDecodeError:
+            with open('replies.json', 'r', encoding='utf-8-sig') as f:
+                replies=json.load(f)
         if data['loglevel'] == 'debug':
             print(yellow(f'\n{replies}\n'))
             dstore('ボット',f'\n```\n{replies}\n```\n')
         if data['caseinsensitive'] is True:
             replies=dict((jaconv.kata2hira(k.lower()), v) for k,v in replies.items())
-    except json.decoder.JSONDecodeError:
+    except json.decoder.JSONDecodeError as e:
         print(red(traceback.format_exc()))
         print(red('replies.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
+        print(red(str(e).replace('Expecting ','不明な',1).replace('Invalid control character at','無効なコントロール文字: ').replace('value','値',1).replace('delimiter','区切り文字',1).replace('line','行:',1).replace('column','文字:').replace('char ','',1)))
         dstore('ボット',f'>>> {traceback.format_exc()}')
         dstore('ボット',f'>>> replies.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
+        dstore('ボット',f'>>> {str(e).replace("Expecting ","不明な",1).replace("Invalid control character at","無効なコントロール文字: ").replace("value","値",1).replace("delimiter","区切り文字",1).replace("line","行:",1).replace("column","文字:").replace("char ","",1)}')
         return None
     except FileNotFoundError:
         print(red(traceback.format_exc()))
@@ -697,49 +713,53 @@ async def invitation_decline_owner(invitation):
         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
 try:
-    with open('config.json', 'r', encoding='utf-8') as f:
-        data = json.load(f)
+    try:
+        with open('config.json', 'r', encoding='utf-8') as f:
+            data = json.load(f)
+    except json.decoder.JSONDecodeError:
+        with open('config.json', 'r', encoding='utf-8-sig') as f:
+            data = json.load(f)
+    if data['loglevel'] == 'debug':
+        print(yellow(f'\n{data}\n'))
+        dstore('ボット',f'\n```\n{data}\n```\n')
+    keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['partychat']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
+    for key in keys:
+        exec(f"errorcheck=data{key}")
+    try:
+        errorcheck=requests.get('https://fortnite-api.com/cosmetics/br/search?name=API-KEY-CHECK',headers={'x-api-key': data['api-key']}).json()
+    except UnicodeEncodeError:
+        if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
+            print(red('APIキーが無効です。正しい値を入力してください。'))
+            dstore('ボット',f'>>> APIキーが無効です。正しい値を入力してください')
+            exit()
+        else:
+            print(red('APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください。'))
+            dstore('ボット',f'>>> APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください')
+    if errorcheck['status'] == 401:
+        if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
+            print(red('APIキーが無効です。正しい値を入力してください。'))
+            dstore('ボット',f'>>> APIキーが無効です。正しい値を入力してください')
+            exit()
+        else:
+            print(red('APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください。'))
+            dstore('ボット',f'>>> APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください')
+    if errorcheck['status'] == 503:
+        if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
+            print(red('APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください。'))
+            dstore('ボット',f'>>> APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください')
+            exit()
+        else:
+            print(red('APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。'))
+            dstore('ボット',f'>>> APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。')
+    credentials={}
+    try:
+        for count,mail in enumerate(data['fortnite']['email'].split(',')):
+            credentials[mail]=data['fortnite']['password'].split(',')[count]
+    except IndexError:
         if data['loglevel'] == 'debug':
-            print(yellow(f'\n{data}\n'))
-            dstore('ボット',f'\n```\n{data}\n```\n')
-        keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['partychat']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
-        for key in keys:
-            exec(f"errorcheck=data{key}")
-        try:
-            errorcheck=requests.get('https://fortnite-api.com/cosmetics/br/search?name=API-KEY-CHECK',headers={'x-api-key': data['api-key']}).json()
-        except UnicodeEncodeError:
-            if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
-                print(red('APIキーが無効です。正しい値を入力してください。'))
-                dstore('ボット',f'>>> APIキーが無効です。正しい値を入力してください')
-                exit()
-            else:
-                print(red('APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください。'))
-                dstore('ボット',f'>>> APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください')
-        if errorcheck['status'] == 401:
-            if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
-                print(red('APIキーが無効です。正しい値を入力してください。'))
-                dstore('ボット',f'>>> APIキーが無効です。正しい値を入力してください')
-                exit()
-            else:
-                print(red('APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください。'))
-                dstore('ボット',f'>>> APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください')
-        if errorcheck['status'] == 503:
-            if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
-                print(red('APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください。'))
-                dstore('ボット',f'>>> APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください')
-                exit()
-            else:
-                print(red('APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。'))
-                dstore('ボット',f'>>> APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。')
-        credentials={}
-        try:
-            for count,mail in enumerate(data['fortnite']['email'].split(',')):
-                credentials[mail]=data['fortnite']['password'].split(',')[count]
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-            print(red('メールアドレスの数に対しパスワードの数が足りません。'))
-            dstore('ボット',f'>>> メールアドレスの数に対しパスワードの数が足りません')
+            print(red(traceback.format_exc()))
+        print(red('メールアドレスの数に対しパスワードの数が足りません。'))
+        dstore('ボット',f'>>> メールアドレスの数に対しパスワードの数が足りません')
 except KeyError as e:
     print(red(traceback.format_exc()))
     print(red('config.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。アップデート後の場合は、最新のconfig.jsonファイルを確認してください。'))
@@ -764,33 +784,37 @@ except FileNotFoundError:
     exit()
 
 try:
-    with open('commands.json', 'r', encoding='utf-8') as f:
-        commands=json.load(f)
-        if data['loglevel'] == 'debug':
-            print(yellow(f'\n{commands}\n'))
-            dstore('ボット',f'\n```\n{commands}\n```\n')
-        keys=["['true']","['false']","['me']","['prev']", "['eval']", "['exec']","['restart']","['relogin']","['reload']","['get']","['friendcount']","['pendingcount']","['blockcount']","['skinmimic']","['emotemimic']","['partychat']","['acceptinvite']","['acceptfriend']","['joinmessageenable']","['randommessageenable']","['wait']","['join']","['joinid']","['leave']","['invite']","['message']","['partymessage']","['status']","['banner']","['level']","['bp']","['getuser']","['getfriend']","['getpending']","['getblock']","['info']","['info_party']","['info_item']","['pending']","['removepending']","['addfriend']","['removefriend']","['acceptpending']","['declinepending']","['blockfriend']","['unblockfriend']","['chatban']","['promote']","['kick']","['ready']","['unready']","['sitout']","['stop']","['allskin']","['allemote']","['setstyle']","['addvariant']","['skinasset']","['bagasset']","['pickasset']","['emoteasset']"]
-        for key in keys:
-            exec(f"errorcheck=commands{key}")
-        if data['caseinsensitive'] is True:
-            commands=dict((k.lower(), jaconv.kata2hira(v.lower())) for k,v in commands.items())
-        for checks in commands.items():
-            ignore=['ownercommands','true','false','me']
-            if checks[0] in ignore:
-                continue
-            if commands['ownercommands'] == '':
-                break
-            for command in commands['ownercommands'].split(','):
-                try:
-                    errorcheck=commands[command.lower()]
-                except KeyError as e:
-                    print(red(traceback.format_exc()))
-                    print(red('所有者コマンドの設定に失敗しました。キーの名前が間違っていないか確認してください。'))
-                    print(red(f'{str(e)} がありません。'))
-                    dstore('ボット',f'>>> {traceback.format_exc()}')
-                    dstore('ボット',f'>>> 所有者コマンドの設定に失敗しました。キーの名前が間違っていないか確認してください')
-                    dstore('ボット',f'>>> {str(e)} がありません')
-                    exit()
+    try:
+        with open('commands.json', 'r', encoding='utf-8') as f:
+            commands=json.load(f)
+    except json.decoder.JSONDecodeError:
+        with open('commands.json', 'r', encoding='utf-8-sig') as f:
+            commands=json.load(f)
+    if data['loglevel'] == 'debug':
+        print(yellow(f'\n{commands}\n'))
+        dstore('ボット',f'\n```\n{commands}\n```\n')
+    keys=["['true']","['false']","['me']","['prev']", "['eval']", "['exec']","['restart']","['relogin']","['reload']","['get']","['friendcount']","['pendingcount']","['blockcount']","['skinmimic']","['emotemimic']","['partychat']","['acceptinvite']","['acceptfriend']","['joinmessageenable']","['randommessageenable']","['wait']","['join']","['joinid']","['leave']","['invite']","['message']","['partymessage']","['status']","['banner']","['level']","['bp']","['getuser']","['getfriend']","['getpending']","['getblock']","['info']","['info_party']","['info_item']","['pending']","['removepending']","['addfriend']","['removefriend']","['acceptpending']","['declinepending']","['blockfriend']","['unblockfriend']","['chatban']","['promote']","['kick']","['ready']","['unready']","['sitout']","['stop']","['allskin']","['allemote']","['setstyle']","['addvariant']","['skinasset']","['bagasset']","['pickasset']","['emoteasset']"]
+    for key in keys:
+        exec(f"errorcheck=commands{key}")
+    if data['caseinsensitive'] is True:
+        commands=dict((k.lower(), jaconv.kata2hira(v.lower())) for k,v in commands.items())
+    for checks in commands.items():
+        ignore=['ownercommands','true','false','me']
+        if checks[0] in ignore:
+            continue
+        if commands['ownercommands'] == '':
+            break
+        for command in commands['ownercommands'].split(','):
+            try:
+                errorcheck=commands[command.lower()]
+            except KeyError as e:
+                print(red(traceback.format_exc()))
+                print(red('所有者コマンドの設定に失敗しました。キーの名前が間違っていないか確認してください。'))
+                print(red(f'{str(e)} がありません。'))
+                dstore('ボット',f'>>> {traceback.format_exc()}')
+                dstore('ボット',f'>>> 所有者コマンドの設定に失敗しました。キーの名前が間違っていないか確認してください')
+                dstore('ボット',f'>>> {str(e)} がありません')
+                exit()
 except KeyError as e:
     print(red(traceback.format_exc()))
     print(red('commands.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。アップデート後の場合は、最新のcommands.jsonファイルを確認してください。'))
@@ -799,11 +823,13 @@ except KeyError as e:
     dstore('ボット',f'>>> commands.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。アップデート後の場合は、最新のcommands.jsonファイルを確認してください')
     dstore('ボット',f'>>> {str(e)} がありません')
     exit()
-except json.decoder.JSONDecodeError:
+except json.decoder.JSONDecodeError as e:
     print(red(traceback.format_exc()))
     print(red('commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
+    print(red(str(e).replace('Expecting ','不明な',1).replace('Invalid control character at','無効なコントロール文字: ').replace('value','値',1).replace('delimiter','区切り文字',1).replace('line','行:',1).replace('column','文字:').replace('char ','',1)))
     dstore('ボット',f'>>> {traceback.format_exc()}')
     dstore('ボット',f'>>> commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
+    dstore('ボット',f'>>> {str(e).replace("Expecting ","不明な",1).replace("Invalid control character at","無効なコントロール文字: ").replace("value","値",1).replace("delimiter","区切り文字",1).replace("line","行:",1).replace("column","文字:").replace("char ","",1)}')
     exit()
 except FileNotFoundError:
     print(red(traceback.format_exc()))
@@ -813,18 +839,24 @@ except FileNotFoundError:
     exit()
 
 try:
-    with open('replies.json', 'r', encoding='utf-8') as f:
-        replies=json.load(f)
+    try:
+        with open('replies.json', 'r', encoding='utf-8') as f:
+            replies=json.load(f)
+    except json.decoder.JSONDecodeError:
+        with open('replies.json', 'r', encoding='utf-8-sig') as f:
+            replies=json.load(f)
     if data['loglevel'] == 'debug':
         print(yellow(f'\n{replies}\n'))
         dstore('ボット',f'\n```\n{replies}\n```\n')
     if data['caseinsensitive'] is True:
         replies=dict((jaconv.kata2hira(k.lower()), v) for k,v in replies.items())
-except json.decoder.JSONDecodeError:
+except json.decoder.JSONDecodeError as e:
     print(red(traceback.format_exc()))
     print(red('replies.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
+    print(red(str(e).replace('Expecting ','不明な',1).replace('Invalid control character at','無効なコントロール文字: ').replace('value','値',1).replace('delimiter','区切り文字',1).replace('line','行:',1).replace('column','文字:').replace('char ','',1)))
     dstore('ボット',f'>>> {traceback.format_exc()}')
     dstore('ボット',f'>>> replies.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
+    dstore('ボット',f'>>> {str(e).replace("Expecting ","不明な",1).replace("Invalid control character at","無効なコントロール文字: ").replace("value","値",1).replace("delimiter","区切り文字",1).replace("line","行:",1).replace("column","文字:").replace("char ","",1)}')
     exit()
 except FileNotFoundError:
     print(red(traceback.format_exc()))
