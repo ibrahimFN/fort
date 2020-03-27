@@ -16,6 +16,7 @@
 		"xpboost": 9999,
 		"friendxpboost": 9999,
 		"status": "ステータス",
+                "privacy": "private",
 		"partychat": true,
 		"joinmessage": "メッセージ\n改行",
 		"randommessage": "1,2,3,4,5",
