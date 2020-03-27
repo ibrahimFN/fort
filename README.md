@@ -31,6 +31,7 @@ tier                : ボットの初期ティア
 xpboost             : ボットの初期XPブースト
 friendxpboost       : ボットの初期フレンドXPブースト
 status              : ボットの初期ステータス
+private             : ボットの初期のプライバシー 後述
 partychat           : ボットがパーティーチャットからコマンドを受け付けるかどうか true か false
 joinmessage         : ボットのパーティーに誰かが参加した時のメッセージ \n で改行
 randommessage       : ボットのパーティーに誰かが参加した時のランダムメッセージ , で区切る \n で改行
@@ -96,6 +97,12 @@ status               : status [内容] ステータスを設定する
 banner               : banner [バナーID] [バナーの色] バナーを設定する
 level                : level [レベル] レベルを設定する
 bp                   : bp [ティア] [XPブースト] [フレンドXPブースト] バトルパス情報を設定する
+privacy              : privacy [privacy_public / privacy_friends_allow_friends_of_friends / privacy_friends / privacy_private_allow_friends_of_friends / privacy_private]
+privacy_public       : privacy コマンドで使う privacy_public
+privacy_friends_allow_friends_of_friends  : privacy コマンドで使う privacy_friends_allow_friends_of_friends
+privacy_friends      : privacy コマンドで使う privacy_friends
+privacy_private_allow_friends_of_friends  : privacy コマンドで使う privacy_private_allow_friends_of_friends
+privacy_private      : privacy コマンドで使う privacy_private
 getuser              : getuser [ユーザー名 / ユーザーID] ユーザーの名前とIDを表示する
 getfriend            : getefriend [ユーザー名 / ユーザーID] フレンドの名前とIDを表示する
 getpending           : getpending [ユーザー名 / ユーザーID] 保留中のフレンドの名前とIDを表示する
@@ -122,6 +129,7 @@ allskin              : 全てのスキンを表示する
 allemote             : 全てのエモートを表示する
 setstyle             : setstyle [skin / bag / pickaxe] [スタイル名]現在付けているアイテムのスタイル名を検索し、そのスタイルに設定する
 addstyle             : addstyle [skin / bag / pickaxe] [スタイル名]現在付けているアイテムのスタイル名を検索し、そのスタイルに現在のスタイルを追加する
+setenlightenment     : setenlightenment [数値] [数値] スキンのenlightenment情報を設定する 後述
 id                   : id [ID] IDでアイテムを検索する
 skin                 : skin [スキン名] スキン名でスキンを検索する
 bag                  : bag [バッグ名] バッグ名でバッグを検索する
@@ -158,6 +166,14 @@ Switch      : SWT
 IOS         : IOS
 Android     : AND
 ```
+プライバシー
+```
+public                           : パブリック
+friends_allow_friends_of_friends : フレンド(フレンドのフレンドを許可)
+friends                          : フレンド
+private_allow_friends_of_friends : プライベート(フレンドのフレンドを許可)
+private                          : プライベート
+```
 
 APIキー  
 ```
@@ -172,4 +188,10 @@ pattern/numeric/clothing_color/jersey_color/parts/progressive/particle/material/
 基本的にはmaterialやprogressive,partsなどか多く使われている
 紫スカルトルーパーの場合は clothing_color 1
 jersey_color はサッカースキンで使われます
+```
+
+enlightenment
+```
+8ボールvsスクラッチのグリッチなどの情報
+シーズン[チャプター2内] / 数値 の組み合わせ
 ```
