@@ -31,7 +31,7 @@ tier                : ボットの初期ティア
 xpboost             : ボットの初期XPブースト
 friendxpboost       : ボットの初期フレンドXPブースト
 status              : ボットの初期ステータス
-private             : ボットの初期のプライバシー 後述
+privacy             : ボットの初期のプライバシー 後述
 partychat           : ボットがパーティーチャットからコマンドを受け付けるかどうか true か false
 joinmessage         : ボットのパーティーに誰かが参加した時のメッセージ \n で改行
 randommessage       : ボットのパーティーに誰かが参加した時のランダムメッセージ , で区切る \n で改行
