@@ -4770,30 +4770,79 @@ async def event_friend_message(message):
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'outfit':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.skinlock is True:
+                                await message.reply('スキンロックが有効です')
+                                return
+                        elif client.skinlock is True:
+                            await message.reply('スキンロックが有効です')
+                            return
                         if 'banner' not in client.itemdata[1][0][0]:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.itemdata[1][0][0]))
                         else:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.itemdata[1][0][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                     if client.itemdata[1][0][2] == 'backpack':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.baglock is True:
+                                await message.reply('バッグロックが有効です')
+                                return
+                        elif client.baglock is True:
+                            await message.reply('バッグロックが有効です')
+                            return
                         if 'banner' not in client.itemdata[1][0][0]:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.itemdata[1][0][0]))
                         else:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.itemdata[1][0][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                     if client.itemdata[1][0][2] == 'pet':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.baglock is True:
+                                await message.reply('バッグロックが有効です')
+                                return
+                        elif client.baglock is True:
+                            await message.reply('バッグロックが有効です')
+                            return
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.itemdata[1][0][0]))
                     if client.itemdata[1][0][2] == 'pickaxe':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.picklock is True:
+                                await message.reply('ツルハシロックが有効です')
+                                return
+                        elif client.picklock is True:
+                            await message.reply('ツルハシロックが有効です')
+                            return
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.itemdata[1][0][0]))
                         await client.user.party.me.set_emote('EID_IceKing')
                     if client.itemdata[1][0][2] == 'emote':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.emotelock is True:
+                                await message.reply('エモートロックが有効です')
+                                return
+                        elif client.emotelock is True:
+                            await message.reply('エモートロックが有効です')
+                            return
                         if not client.user.party.me.emote is None:
                             if client.user.party.me.emote.lower() == client.itemdata[1][0][0].lower():
                                 await client.user.party.me.clear_emote()
                         await client.user.party.me.set_emote(client.itemdata[1][0][0])
                         client.eid=client.itemdata[1][0][0]
                     if client.itemdata[1][0][2] == 'emoji':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.emotelock is True:
+                                await message.reply('エモートロックが有効です')
+                                return
+                        elif client.emotelock is True:
+                            await message.reply('エモートロックが有効です')
+                            return
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}'
                     if client.itemdata[1][0][2] == 'toy':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.emotelock is True:
+                                await message.reply('エモートロックが有効です')
+                                return
+                        elif client.emotelock is True:
+                            await message.reply('エモートロックが有効です')
+                            return
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}'
                 if len(client.itemdata[1]) > 1:
@@ -4861,30 +4910,79 @@ async def event_friend_message(message):
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'outfit':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.skinlock is True:
+                                await message.reply('スキンロックが有効です')
+                                return
+                        elif client.skinlock is True:
+                            await message.reply('スキンロックが有効です')
+                            return
                         if 'banner' not in client.itemdata[1][0][0]:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.itemdata[1][0][0]))
                         else:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.itemdata[1][0][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                     if client.itemdata[1][0][2] == 'backpack':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.baglock is True:
+                                await message.reply('バッグロックが有効です')
+                                return
+                        elif client.baglock is True:
+                            await message.reply('バッグロックが有効です')
+                            return
                         if 'banner' not in client.itemdata[1][0][0]:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.itemdata[1][0][0]))
                         else:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.itemdata[1][0][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                     if client.itemdata[1][0][2] == 'pet':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.baglock is True:
+                                await message.reply('バッグロックが有効です')
+                                return
+                        elif client.baglock is True:
+                            await message.reply('バッグロックが有効です')
+                            return
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.itemdata[1][0][0]))
                     if client.itemdata[1][0][2] == 'pickaxe':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.picklock is True:
+                                await message.reply('ツルハシロックが有効です')
+                                return
+                        elif client.picklock is True:
+                            await message.reply('ツルハシロックが有効です')
+                            return
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.itemdata[1][0][0]))
                         await client.user.party.me.set_emote('EID_IceKing')
                     if client.itemdata[1][0][2] == 'emote':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.emotelock is True:
+                                await message.reply('エモートロックが有効です')
+                                return
+                        elif client.emotelock is True:
+                            await message.reply('エモートロックが有効です')
+                            return
                         if not client.user.party.me.emote is None:
                             if client.user.party.me.emote.lower() == client.itemdata[1][0][0].lower():
                                 await client.user.party.me.clear_emote()
                         await client.user.party.me.set_emote(client.itemdata[1][0][0])
                         client.eid=client.itemdata[1][0][0]
                     if client.itemdata[1][0][2] == 'emoji':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.emotelock is True:
+                                await message.reply('エモートロックが有効です')
+                                return
+                        elif client.emotelock is True:
+                            await message.reply('エモートロックが有効です')
+                            return
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}'
                     if client.itemdata[1][0][2] == 'toy':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.emotelock is True:
+                                await message.reply('エモートロックが有効です')
+                                return
+                        elif client.emotelock is True:
+                            await message.reply('エモートロックが有効です')
+                            return
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}'
                 if len(client.itemdata[1]) > 1:
@@ -8136,30 +8234,79 @@ async def event_party_message(message):
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'outfit':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.skinlock is True:
+                                await message.reply('スキンロックが有効です')
+                                return
+                        elif client.skinlock is True:
+                            await message.reply('スキンロックが有効です')
+                            return
                         if 'banner' not in client.itemdata[1][0][0]:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.itemdata[1][0][0]))
                         else:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.itemdata[1][0][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                     if client.itemdata[1][0][2] == 'backpack':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.baglock is True:
+                                await message.reply('バッグロックが有効です')
+                                return
+                        elif client.baglock is True:
+                            await message.reply('バッグロックが有効です')
+                            return
                         if 'banner' not in client.itemdata[1][0][0]:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.itemdata[1][0][0]))
                         else:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.itemdata[1][0][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                     if client.itemdata[1][0][2] == 'pet':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.baglock is True:
+                                await message.reply('バッグロックが有効です')
+                                return
+                        elif client.baglock is True:
+                            await message.reply('バッグロックが有効です')
+                            return
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.itemdata[1][0][0]))
                     if client.itemdata[1][0][2] == 'pickaxe':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.picklock is True:
+                                await message.reply('ツルハシロックが有効です')
+                                return
+                        elif client.picklock is True:
+                            await message.reply('ツルハシロックが有効です')
+                            return
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.itemdata[1][0][0]))
                         await client.user.party.me.set_emote('EID_IceKing')
                     if client.itemdata[1][0][2] == 'emote':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.emotelock is True:
+                                await message.reply('エモートロックが有効です')
+                                return
+                        elif client.emotelock is True:
+                            await message.reply('エモートロックが有効です')
+                            return
                         if not client.user.party.me.emote is None:
                             if client.user.party.me.emote.lower() == client.itemdata[1][0][0].lower():
                                 await client.user.party.me.clear_emote()
                         await client.user.party.me.set_emote(client.itemdata[1][0][0])
                         client.eid=client.itemdata[1][0][0]
                     if client.itemdata[1][0][2] == 'emoji':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.emotelock is True:
+                                await message.reply('エモートロックが有効です')
+                                return
+                        elif client.emotelock is True:
+                            await message.reply('エモートロックが有効です')
+                            return
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}'
                     if client.itemdata[1][0][2] == 'toy':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.emotelock is True:
+                                await message.reply('エモートロックが有効です')
+                                return
+                        elif client.emotelock is True:
+                            await message.reply('エモートロックが有効です')
+                            return
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}'
                 if len(client.itemdata[1]) > 1:
@@ -8227,30 +8374,79 @@ async def event_party_message(message):
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'outfit':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.skinlock is True:
+                                await message.reply('スキンロックが有効です')
+                                return
+                        elif client.skinlock is True:
+                            await message.reply('スキンロックが有効です')
+                            return
                         if 'banner' not in client.itemdata[1][0][0]:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.itemdata[1][0][0]))
                         else:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.itemdata[1][0][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                     if client.itemdata[1][0][2] == 'backpack':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.baglock is True:
+                                await message.reply('バッグロックが有効です')
+                                return
+                        elif client.baglock is True:
+                            await message.reply('バッグロックが有効です')
+                            return
                         if 'banner' not in client.itemdata[1][0][0]:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.itemdata[1][0][0]))
                         else:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.itemdata[1][0][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                     if client.itemdata[1][0][2] == 'pet':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.baglock is True:
+                                await message.reply('バッグロックが有効です')
+                                return
+                        elif client.baglock is True:
+                            await message.reply('バッグロックが有効です')
+                            return
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.itemdata[1][0][0]))
                     if client.itemdata[1][0][2] == 'pickaxe':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.picklock is True:
+                                await message.reply('ツルハシロックが有効です')
+                                return
+                        elif client.picklock is True:
+                            await message.reply('ツルハシロックが有効です')
+                            return
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.itemdata[1][0][0]))
                         await client.user.party.me.set_emote('EID_IceKing')
                     if client.itemdata[1][0][2] == 'emote':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.emotelock is True:
+                                await message.reply('エモートロックが有効です')
+                                return
+                        elif client.emotelock is True:
+                            await message.reply('エモートロックが有効です')
+                            return
                         if not client.user.party.me.emote is None:
                             if client.user.party.me.emote.lower() == client.itemdata[1][0][0].lower():
                                 await client.user.party.me.clear_emote()
                         await client.user.party.me.set_emote(client.itemdata[1][0][0])
                         client.eid=client.itemdata[1][0][0]
                     if client.itemdata[1][0][2] == 'emoji':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.emotelock is True:
+                                await message.reply('エモートロックが有効です')
+                                return
+                        elif client.emotelock is True:
+                            await message.reply('エモートロックが有効です')
+                            return
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}'
                     if client.itemdata[1][0][2] == 'toy':
+                        if not client.owner is None:
+                            if not client.owner.id == message.author.id and client.emotelock is True:
+                                await message.reply('エモートロックが有効です')
+                                return
+                        elif client.emotelock is True:
+                            await message.reply('エモートロックが有効です')
+                            return
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}'
                 if len(client.itemdata[1]) > 1:
