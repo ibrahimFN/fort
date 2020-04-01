@@ -15,48 +15,54 @@ exchange_codeを[公式サイト](https://www.epicgames.com "epicgames.com")で�
 
 # config
 ```
-email               : ボット用アカウントのメールアドレス , で区切ることで複数設定可
-password            : ボット用アカウントのパスワード , で区切ることで複数設定可
-owner               : 所有者として設定したいユーザーの名前またはID
-platform            : ボットのプラットフォーム 後述
-cid                 : ボットの初期スキンID
-bid                 : ボットの初期バッグのID
-pickaxe_id          : ボットの初期ツルハシのID
-eid                 : ボットの初期エモートのID
-playlist            : ボットの初期プレイリストのID
-banner              : ボットの初期バナーのID
-banner_color        : ボットの初期バナーの色ID
-level               : ボットの初期レベル
-tier                : ボットの初期ティア
-xpboost             : ボットの初期XPブースト
-friendxpboost       : ボットの初期フレンドXPブースト
-status              : ボットの初期ステータス
-privacy             : ボットの初期のプライバシー 後述
-partychat           : ボットがパーティーチャットからコマンドを受け付けるかどうか true か false
-joinmessage         : ボットのパーティーに誰かが参加した時のメッセージ \n で改行
-randommessage       : ボットのパーティーに誰かが参加した時のランダムメッセージ , で区切る \n で改行
-joinmessageenable   : ボットのパーティーに誰かが参加した時にメッセージを出すかどうか true か false
-randommessageenable : ボットのパーティーに誰かが参加した時にランダムメッセージを出すかどうか true か false
-skinmimic           : 他人のスキンを真似るかどうかの設定 true か false
-emotemimic          : 他人のエモートを真似るかどうかの設定 true か false
-acceptinvite        : ボットが招待を承諾するかどうかの設定 所有者からの招待は常に承諾 true か false
-acceptfriend        : ボットがフレンド申請を承諾するかどうかの設定 true か false か null
-addfriend           : ボットがパーティーメンバーにフレンド申請を送るかどうかの設定 true か false
-inviteinterval      : 招待を承諾した後intervalの秒数だけ招待を拒否するようにするかどうかの設定 true か false
-interval            : 招待を承諾した後招待を拒否する秒数
-waitinterval        : waitコマンドで招待を拒否する秒数
-no-logs             : コンソールにログを出すかどうかの設定 true か false
-ingame-error        : プレイヤーにエラーを送信するかどうかの設定 true か false
-discord-log         : Discordにログを送信するかどうかの設定 true か false
-hide-email          : Discordのログでメールアドレスを隠すかどうかの設定 true か false
-hide-password       : Discordのログでパスワードを隠すかどうかの設定 true か false
-hide-webhook        : Discordのログでwebhookのurlを隠すかどうかの設定 true か false
-hide-api-key        : DiscordのログでAPIキーを隠すかどうかの設定 true か false
-webhook             : Discordのwebhookのurl
-caseinsensitive     : コマンドを大文字小文字、平仮名片仮名を区別しないかどうかの設定 true か false
-api-key             : Fortnite-API.comのAPIキー 後述
-loglevel            : ログにどのくらいの情報を流すか normal か info か debug
-debug               : Fortnitepyのデバッグモードをオンにするかどうかの設定 true か false
+email                   : ボット用アカウントのメールアドレス , で区切ることで複数設定可
+password                : ボット用アカウントのパスワード , で区切ることで複数設定可
+owner                   : 所有者として設定したいユーザーの名前またはID
+platform                : ボットのプラットフォーム 後述
+cid                     : ボットの初期スキンID
+bid                     : ボットの初期バッグのID
+pickaxe_id              : ボットの初期ツルハシのID
+eid                     : ボットの初期エモートのID
+playlist                : ボットの初期プレイリストのID
+banner                  : ボットの初期バナーのID
+banner_color            : ボットの初期バナーの色ID
+level                   : ボットの初期レベル
+tier                    : ボットの初期ティア
+xpboost                 : ボットの初期XPブースト
+friendxpboost           : ボットの初期フレンドXPブースト
+status                  : ボットの初期ステータス
+privacy                 : ボットの初期のプライバシー 後述
+partychat               : ボットがパーティーチャットからコマンドを受け付けるかどうか true か false
+joinmessage             : ボットのパーティーに誰かが参加した時のメッセージ \n で改行
+randommessage           : ボットのパーティーに誰かが参加した時のランダムメッセージ , で区切る \n で改行
+joinmessageenable       : ボットのパーティーに誰かが参加した時にメッセージを出すかどうか true か false
+randommessageenable     : ボットのパーティーに誰かが参加した時にランダムメッセージを出すかどうか true か false
+skinmimic               : 他人のスキンを真似るかどうかの設定 true か false
+emotemimic              : 他人のエモートを真似るかどうかの設定 true か false
+acceptinvite            : ボットが招待を承諾するかどうかの設定 所有者からの招待は常に承諾 true か false
+acceptfriend            : ボットがフレンド申請を承諾するかどうかの設定 true か false か null
+addfriend               : ボットがパーティーメンバーにフレンド申請を送るかどうかの設定 true か false
+inviteinterval          : 招待を承諾した後intervalの秒数だけ招待を拒否するようにするかどうかの設定 true か false
+interval                : 招待を承諾した後招待を拒否する秒数
+waitinterval            : waitコマンドで招待を拒否する秒数
+blacklist               : ブラックリストに指定するユーザーのリスト ユーザー名かユーザーID
+blacklist-declineinvite : ブラックリストのユーザーからの招待を拒否するかどうかの設定 true か false
+blacklist-autoblock     : ブラックリストのユーザーをブロックするかの設定 true か false
+blacklist-autokick      : ブラックリストのユーザーを自動的にパーティーからキックするかの設定 true か false
+blacklist-autochatban   : ブラックリストのユーザーを自動的にチャットバンするかどうかの設定 true か false
+blacklist-ignorecommand : ブラックリストのユーザーからのコマンドを無視するかどうかの設定 true か false
+no-logs                 : コンソールにログを出すかどうかの設定 true か false
+ingame-error            : プレイヤーにエラーを送信するかどうかの設定 true か false
+discord-log             : Discordにログを送信するかどうかの設定 true か false
+hide-email              : Discordのログでメールアドレスを隠すかどうかの設定 true か false
+hide-password           : Discordのログでパスワードを隠すかどうかの設定 true か false
+hide-webhook            : Discordのログでwebhookのurlを隠すかどうかの設定 true か false
+hide-api-key            : DiscordのログでAPIキーを隠すかどうかの設定 true か false
+webhook                 : Discordのwebhookのurl
+caseinsensitive         : コマンドを大文字小文字、平仮名片仮名を区別しないかどうかの設定 true か false
+api-key                 : Fortnite-API.comのAPIキー 後述
+loglevel                : ログにどのくらいの情報を流すか normal か info か debug
+debug                   : Fortnitepyのデバッグモードをオンにするかどうかの設定 true か false
 ```
 
 # コマンド一覧
