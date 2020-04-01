@@ -1891,6 +1891,7 @@ async def event_friend_message(message):
                 await message.reply('ユーザーが見つかりません')
             else:
                 if user.display_name not in data["blacklist"] and user.id not in data["blacklist"]:
+                    blacklist.append(user.id)
                     if not user.display_name is None:
                         data["blacklist"].append(user.display_name)
                     else:
@@ -1927,6 +1928,7 @@ async def event_friend_message(message):
                 await message.reply('ユーザーが見つかりません')
             else:
                 if user.display_name in data["blacklist"] or user.id in data["blacklist"]:
+                    blacklist.remove(user.id)
                     try:
                         data["blacklist"].remove(user.display_name)
                     except ValueError:
