@@ -3,7 +3,7 @@ Fortnitepyを使用したFortniteのボット
 コマンドを送ることで操作ができる
 
 # 導入
-[Python 3.](https://www.python.org/downloads "Pythonダウンロード")以上が必要  
+[Python 3.7](https://www.python.org/downloads "Pythonダウンロード")以上が必要  
 Python 3.8はエラーが多く出るのでそれ以外を推奨  
 
 INSTALL.batを実行する  
