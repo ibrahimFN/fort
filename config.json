@@ -31,6 +31,15 @@
 		"interval": 10,
 		"waitinterval": 10
 	},
+	"blacklist": [
+		"Tfue",
+		"Ninja"
+	],
+	"blacklist-declineinvite": true,
+	"blacklist-autoblock": false,
+	"blacklist-autokick": true,
+	"blacklist-autochatban": false,
+	"blacklist-ignorecommand": false,
 	"no-logs": false,
 	"ingame-error": true,
 	"discord-log": false,
