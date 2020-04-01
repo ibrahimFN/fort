@@ -46,6 +46,7 @@ if os.getcwd().startswith('/app'):
 
 storedlog=[]
 kill=False
+blacklist_flag = True
 
 def dstore(username, content):
     global storedlog
@@ -169,7 +170,7 @@ def reload_configs(client):
         if data['loglevel'] == 'debug':
             print(yellow(f'\n{data}\n'))
             dstore('ボット',f'\n{data}\n')
-        keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['privacy']","['fortnite']['partychat']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
+        keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['privacy']","['fortnite']['partychat']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['blacklist']","['blacklist-declineinvite']","['blacklist-autoblock']","['blacklist-autokick']","['blacklist-autochatban']","['blacklist-ignorecommand']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
         for key in keys:
             exec(f"errorcheck=data{key}")
         try:
@@ -725,7 +726,7 @@ try:
     if data['loglevel'] == 'debug':
         print(yellow(f'\n{data}\n'))
         dstore('ボット',f'\n```\n{data}\n```\n')
-    keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['privacy']","['fortnite']['partychat']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
+    keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['privacy']","['fortnite']['partychat']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['blacklist']","['blacklist-declineinvite']","['blacklist-autoblock']","['blacklist-autokick']","['blacklist-autochatban']","['blacklist-ignorecommand']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
     for key in keys:
         exec(f"errorcheck=data{key}")
     try:
@@ -921,6 +922,8 @@ async def event_device_auth_generate(details, email):
     store_device_auth_details(email, details)
 
 async def event_ready(client):
+    global blacklist_flag
+    global blacklist
     if data['loglevel'] == 'normal':
         if data['no-logs'] is False:
             print(green(f'[{now_()}] ログイン: {client.user.display_name}'))
@@ -930,6 +933,28 @@ async def event_ready(client):
             print(green(f'[{now_()}] ログイン: {client.user.display_name} / {client.user.id}'))
         dstore('ボット',f'ログイン: {client.user.display_name} / {client.user.id}')
     client.isready=True
+
+    if blacklist_flag is True:
+        blacklist_flag = False
+        blacklist = []
+        for blacklistuser in data['blacklist']:
+            user = await client.fetch_profile(blacklistuser)
+            if user is None:
+                print(red(f'[{now_()}] [{client.user.display_name}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
+                dstore(client.user.display_name,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+            else:
+                blacklist.append(user.id)
+                if data['loglevel'] == 'debug':
+                    print(yellow(f"{user.display_name} / {user.id}"))
+                if data['blacklist-autoblock'] is True:
+                    try:
+                        await user.block()
+                    except Exception:
+                        if data['loglevel'] == 'debug':
+                            print(red(traceback.format_exc()))
+                            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+        if data['loglevel'] == "debug":
+            print(yellow(blacklist))
 
     try:
         client.owner=None
@@ -1018,11 +1043,21 @@ async def event_restart():
     dstore('ボット',f'>>> 正常に再ログインが完了しました')
 
 async def event_party_invite(invitation):
+    global blacklist
     if invitation is None:
         return
     client=invitation.client
     if client.isready is False:
         return
+    if invitation.sender.id in blacklist:
+        if data['blacklist-declineinvite'] is True:
+            try:
+                await invitation.decline()
+            except Exception:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            return
     if not client.owner is None:
         if invitation.sender.id == client.owner.id:
             await invitation_accept(invitation)
@@ -1155,6 +1190,7 @@ async def event_friend_remove(friend):
         dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id} [{platform_to_str(friend.platform)}] がフレンドから削除')
 
 async def event_party_member_join(member):
+    global blacklist
     if member is None:
         return
     client=member.client
@@ -1182,6 +1218,24 @@ async def event_party_member_join(member):
             if data['no-logs'] is False:
                 print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーに参加\n人数: {member.party.member_count}'))
             dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーに参加\n人数: {member.party.member_count}')
+    
+    if member.id in blacklist and client.user.party.me.leader is True:
+        if data['blacklist-autokick'] is True:
+            try:
+                await member.kick()
+            except Exception:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            return
+        if data['blacklist-autochatban'] is True:
+            try:
+                await member.chatban()
+            except Exception:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            return
     
     if data['fortnite']['addfriend'] is True:
         for member in member.party.members.keys():
@@ -1309,6 +1363,7 @@ async def event_party_member_kick(member):
             dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーからキック\n人数: {member.party.member_count}')
 
 async def event_party_member_promote(old_leader,new_leader):
+    global blacklist
     if old_leader is None or new_leader is None:
         return
     client=new_leader.client
@@ -1336,21 +1391,40 @@ async def event_party_member_promote(old_leader,new_leader):
             if data['no-logs'] is False:
                 print(magenta(f'[{now_()}] [パーティー/{new_leader.party.id}] [{client_user_display_name}] {str(old_leader.display_name)} / {old_leader.id} [{platform_to_str(old_leader.platform)}/{old_leader.input}] から {str(new_leader.display_name)} / {new_leader.id} [{platform_to_str(new_leader.platform)}/{new_leader.input}] にリーダーが譲渡'))
             dstore(client_user_display_name,f'[パーティー/{new_leader.party.id}] {str(old_leader.display_name)} / {old_leader.id} [{platform_to_str(old_leader.platform)}/{old_leader.input}] から {str(new_leader.display_name)} / {new_leader.id} [{platform_to_str(new_leader.platform)}/{new_leader.input}] にリーダーが譲渡')
+    
     if new_leader.id == client.user.id:
         try:
             await client.user.party.set_playlist(data['fortnite']['playlist'])
             await client.user.party.set_privacy(data['fortnite']['privacy'])
+            for member in client.user.party.members:
+                if member.id in blacklist:
+                    if data['blacklist-autokick'] is True:
+                        try:
+                            await member.kick()
+                        except Exception:
+                            if data['loglevel'] == 'debug':
+                                print(red(traceback.format_exc()))
+                                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                    if data['blacklist-autochatban'] is True:
+                        try:
+                            await member.chatban()
+                        except Exception:
+                            if data['loglevel'] == 'debug':
+                                print(red(traceback.format_exc()))
+                                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
 async def event_party_member_update(member):
+    global blacklist
     if member is None:
         return
     client=member.client
     if client.isready is False:
         return
+    
     client_user_display_name=str(client.user.display_name)
     member_joined_at_most=[]
     for member_ in client.user.party.members.values():
@@ -1369,8 +1443,26 @@ async def event_party_member_update(member):
             if data['no-logs'] is False:
                 print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] パーティーメンバー更新'))
             dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] パーティーメンバー更新')
+    
     if member.id == client.user.id:
         return
+    if member.id in blacklist and client.user.party.me.leader is True:
+        if data['blacklist-autokick'] is True:
+            try:
+                await member.kick()
+            except Exception:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            return
+        if data['blacklist-autochatban'] is True:
+            try:
+                await member.chatban()
+            except Exception:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            return
     if not member.outfit == client.prevoutfit or not member.outfit_variants == client.prevoutfitvariants:
         if not data['loglevel'] == 'normal':
             if client.user.id == member_joined_at_most[0]:
@@ -1562,10 +1654,14 @@ async def event_party_update(party):
 #========================================================================================================================
 
 async def event_friend_message(message):
+    global blacklist
+    global kill
     if message is None:
         return
     client=message.client
     if client.isready is False:
+        return
+    if message.author.id in blacklist and data['blacklist-ignorecommand'] is True:
         return
     content=message.content
     if data['caseinsensitive'] is True:
@@ -1720,6 +1816,7 @@ async def event_friend_message(message):
                 await message.reply('エラー')
                 return
             client.owner=None
+            flag = False
             try:
                 owner=await client.fetch_profile(data['fortnite']['owner'])
             except fortnitepy.HTTPException:
@@ -1728,34 +1825,53 @@ async def event_friend_message(message):
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
                 print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
                 dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-                return
+                flag = True
             if owner is None:
                 print(red(f'[{now_()}] [{client.user.display_name}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
                 dstore(client.user.display_name,f'>>> 所有者が見つかりません。正しい名前/IDになっているか確認してください')
-                return
-            client.owner=client.get_friend(owner.id)
-            if client.owner is None:
-                if data['fortnite']['addfriend'] is True:
-                    try:
-                        await client.add_friend(owner.id)
-                    except fortnitepy.HTTPException:
-                        if data['loglevel'] == 'debug':
+                flag = True
+            if flag is False:
+                client.owner=client.get_friend(owner.id)
+                if client.owner is None:
+                    if data['fortnite']['addfriend'] is True:
+                        try:
+                            await client.add_friend(owner.id)
+                        except fortnitepy.HTTPException:
+                            if data['loglevel'] == 'debug':
+                                print(red(traceback.format_exc()))
+                                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                            print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
+                            dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
+                        except Exception:
                             print(red(traceback.format_exc()))
                             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                        print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
-                        dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
-                    except Exception:
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] 所有者とフレンドではありません。フレンドになってからもう一度起動してください。'))
-                dstore(client.user.display_name,f'>>> 所有者とフレンドではありません。フレンドになってからもう一度起動してください')
-                return
-            if data['loglevel'] == 'normal':
-                print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name}'))
-                dstore(client.user.display_name,f'所有者: {client.owner.display_name}')
-            else:
-                print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name} / {client.owner.id}'))
-                dstore(client.user.display_name,f'所有者: {client.owner.display_name} / {client.owner.id}')
+                    print(red(f'[{now_()}] [{client.user.display_name}] 所有者とフレンドではありません。フレンドになってからもう一度起動してください。'))
+                    dstore(client.user.display_name,f'>>> 所有者とフレンドではありません。フレンドになってからもう一度起動してください')
+                else:
+                    if data['loglevel'] == 'normal':
+                        print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name}'))
+                        dstore(client.user.display_name,f'所有者: {client.owner.display_name}')
+                    else:
+                        print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name} / {client.owner.id}'))
+                        dstore(client.user.display_name,f'所有者: {client.owner.display_name} / {client.owner.id}')
+
+            for blacklistuser in data['blacklist']:
+                blacklist = []
+                user = await client.fetch_profile(blacklistuser)
+                if user is None:
+                    print(red(f'[{now_()}] [{client.user.display_name}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
+                    dstore(client.user.display_name,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                else:
+                    blacklist.append(user.id)
+                    if data['loglevel'] == 'debug':
+                        print(yellow(f"{user.display_name} / {user.id}"))
+                    if data['blacklist-autoblock'] is True:
+                        try:
+                            await user.block()
+                        except Exception:
+                            if data['loglevel'] == 'debug':
+                                print(red(traceback.format_exc()))
+                                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -5008,10 +5124,14 @@ async def event_friend_message(message):
 #========================================================================================================================
 
 async def event_party_message(message):
+    global blacklist
+    global kill
     if message is None:
         return
     client=message.client
     if client.isready is False:
+        return
+    if message.author.id in blacklist and data['blacklist-ignorecommand'] is True:
         return
     content=message.content
     if data['caseinsensitive'] is True:
@@ -5184,6 +5304,7 @@ async def event_party_message(message):
                 await message.reply('エラー')
                 return
             client.owner=None
+            flag = False
             try:
                 owner=await client.fetch_profile(data['fortnite']['owner'])
             except fortnitepy.HTTPException:
@@ -5192,34 +5313,53 @@ async def event_party_message(message):
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
                 print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
                 dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-                return
+                flag = True
             if owner is None:
                 print(red(f'[{now_()}] [{client.user.display_name}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
                 dstore(client.user.display_name,f'>>> 所有者が見つかりません。正しい名前/IDになっているか確認してください')
-                return
-            client.owner=client.get_friend(owner.id)
-            if client.owner is None:
-                if data['fortnite']['addfriend'] is True:
-                    try:
-                        await client.add_friend(owner.id)
-                    except fortnitepy.HTTPException:
-                        if data['loglevel'] == 'debug':
+                flag = True
+            if flag is False:
+                client.owner=client.get_friend(owner.id)
+                if client.owner is None:
+                    if data['fortnite']['addfriend'] is True:
+                        try:
+                            await client.add_friend(owner.id)
+                        except fortnitepy.HTTPException:
+                            if data['loglevel'] == 'debug':
+                                print(red(traceback.format_exc()))
+                                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                            print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
+                            dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
+                        except Exception:
                             print(red(traceback.format_exc()))
                             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                        print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
-                        dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
-                    except Exception:
-                        print(red(traceback.format_exc()))
-                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] 所有者とフレンドではありません。フレンドになってからもう一度起動してください。'))
-                dstore(client.user.display_name,f'>>> 所有者とフレンドではありません。フレンドになってからもう一度起動してください')
-                return
-            if data['loglevel'] == 'normal':
-                print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name}'))
-                dstore(client.user.display_name,f'所有者: {client.owner.display_name}')
-            else:
-                print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name} / {client.owner.id}'))
-                dstore(client.user.display_name,f'所有者: {client.owner.display_name} / {client.owner.id}')
+                    print(red(f'[{now_()}] [{client.user.display_name}] 所有者とフレンドではありません。フレンドになってからもう一度起動してください。'))
+                    dstore(client.user.display_name,f'>>> 所有者とフレンドではありません。フレンドになってからもう一度起動してください')
+                else:
+                    if data['loglevel'] == 'normal':
+                        print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name}'))
+                        dstore(client.user.display_name,f'所有者: {client.owner.display_name}')
+                    else:
+                        print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name} / {client.owner.id}'))
+                        dstore(client.user.display_name,f'所有者: {client.owner.display_name} / {client.owner.id}')
+
+            for blacklistuser in data['blacklist']:
+                blacklist = []
+                user = await client.fetch_profile(blacklistuser)
+                if user is None:
+                    print(red(f'[{now_()}] [{client.user.display_name}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
+                    dstore(client.user.display_name,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                else:
+                    blacklist.append(user.id)
+                    if data['loglevel'] == 'debug':
+                        print(yellow(f"{user.display_name} / {user.id}"))
+                    if data['blacklist-autoblock'] is True:
+                        try:
+                            await user.block()
+                        except Exception:
+                            if data['loglevel'] == 'debug':
+                                print(red(traceback.format_exc()))
+                                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
