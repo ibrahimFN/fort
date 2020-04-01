@@ -1895,9 +1895,14 @@ async def event_friend_message(message):
                         data["blacklist"].append(user.display_name)
                     else:
                         data["blacklist"].append(user.id)
-                    with open("config.json", "r", encoding="utf-8") as f:
-                        data_ = json.load(f)
-                        data_["blacklist"] = data["blacklist"]
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                            data_["blacklist"] = data["blacklist"]
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                            data_["blacklist"] = data["blacklist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
                     await message.reply(f"ユーザー {str(user.display_name)} / {user.id} をブラックリストに追加しました")
@@ -1926,9 +1931,14 @@ async def event_friend_message(message):
                         data["blacklist"].remove(user.display_name)
                     except ValueError:
                         data["blacklist"].remove(user.id)
-                    with open("config.json", "r", encoding="utf-8") as f:
-                        data_ = json.load(f)
-                        data_["blacklist"] = data["blacklist"]
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                            data_["blacklist"] = data["blacklist"]
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                            data_["blacklist"] = data["blacklist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
                     await message.reply(f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
@@ -5445,9 +5455,14 @@ async def event_party_message(message):
                         data["blacklist"].append(user.display_name)
                     else:
                         data["blacklist"].append(user.id)
-                    with open("config.json", "r", encoding="utf-8") as f:
-                        data_ = json.load(f)
-                        data_["blacklist"] = data["blacklist"]
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                            data_["blacklist"] = data["blacklist"]
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                            data_["blacklist"] = data["blacklist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
                     await message.reply(f"ユーザー {str(user.display_name)} / {user.id} をブラックリストに追加しました")
@@ -5476,9 +5491,14 @@ async def event_party_message(message):
                         data["blacklist"].remove(user.display_name)
                     except ValueError:
                         data["blacklist"].remove(user.id)
-                    with open("config.json", "r", encoding="utf-8") as f:
-                        data_ = json.load(f)
-                        data_["blacklist"] = data["blacklist"]
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                            data_["blacklist"] = data["blacklist"]
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                            data_["blacklist"] = data["blacklist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
                     await message.reply(f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
