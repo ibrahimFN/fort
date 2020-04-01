@@ -9,6 +9,8 @@
 	"restart": "restart",
 	"relogin": "relogin",
 	"reload": "reload",
+	"addblacklist": "addblacklist",
+	"removeblacklist": "removeblacklist",
 	"get": "get",
 	"friendcount": "friendcount",
 	"pendingcount": "pendingcount",
