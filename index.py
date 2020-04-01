@@ -1877,6 +1877,68 @@ async def event_friend_message(message):
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('エラー')
 
+    elif args[0] in commands['addblacklist'].split(','):
+        try:
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+            else:
+                if user.display_name not in data["blacklist"] and user.id not in data["blacklist"]:
+                    if not user.display_name is None:
+                        data["blacklist"].append(user.display_name)
+                    else:
+                        data["blacklist"].append(user.id)
+                    with open("config.json", "r", encoding="utf-8") as f:
+                        data_ = json.load(f)
+                        data_["blacklist"] = data["blacklist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await message.reply(f"ユーザー {str(user.display_name)} / {user.id} をブラックリストに追加しました")
+                else:
+                    await message.reply(f"ユーザー {str(user.display_name)} / {user.id} は既にブラックリストに追加されています")
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['removeblacklist'].split(','):
+        try:
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+            else:
+                if user.display_name in data["blacklist"] or user.id in data["blacklist"]:
+                    try:
+                        data["blacklist"].remove(user.display_name)
+                    except ValueError:
+                        data["blacklist"].remove(user.id)
+                    with open("config.json", "r", encoding="utf-8") as f:
+                        data_ = json.load(f)
+                        data_["blacklist"] = data["blacklist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await message.reply(f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
+                else:
+                    await message.reply(f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
     elif args[0] in commands['get'].split(','):
         try:
             if rawcontent == '':
@@ -5360,6 +5422,68 @@ async def event_party_message(message):
                             if data['loglevel'] == 'debug':
                                 print(red(traceback.format_exc()))
                                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['addblacklist'].split(','):
+        try:
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+            else:
+                if user.display_name not in data["blacklist"] and user.id not in data["blacklist"]:
+                    if not user.display_name is None:
+                        data["blacklist"].append(user.display_name)
+                    else:
+                        data["blacklist"].append(user.id)
+                    with open("config.json", "r", encoding="utf-8") as f:
+                        data_ = json.load(f)
+                        data_["blacklist"] = data["blacklist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await message.reply(f"ユーザー {str(user.display_name)} / {user.id} をブラックリストに追加しました")
+                else:
+                    await message.reply(f"ユーザー {str(user.display_name)} / {user.id} は既にブラックリストに追加されています")
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['removeblacklist'].split(','):
+        try:
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+            else:
+                if user.display_name in data["blacklist"] or user.id in data["blacklist"]:
+                    try:
+                        data["blacklist"].remove(user.display_name)
+                    except ValueError:
+                        data["blacklist"].remove(user.id)
+                    with open("config.json", "r", encoding="utf-8") as f:
+                        data_ = json.load(f)
+                        data_["blacklist"] = data["blacklist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await message.reply(f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
+                else:
+                    await message.reply(f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
