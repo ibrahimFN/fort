@@ -81,6 +81,8 @@ exec                 : exec [プログラム] 内容を文として評価し、�
 restart              : プログラムを再起動する
 relogin              : アカウントに再ログインする
 reload               : configとcommandsを再読み込みする
+addblacklist         : addblacklist [ユーザー名/ユーザーID] ユーザーをブラックリストに追加する
+removeblacklist      : removeblacklist [ユーザー名/ユーザーID] ユーザーをブラックリストから削除する
 get                  : get [ユーザー名/ユーザーID] ユーザーのアイテム各種の情報を取得する
 friendcount          : 現在のフレンド数を表示する
 pendingcount         : 現在のフレンド申請数を表示する(方向関係なし)
