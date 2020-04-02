@@ -170,7 +170,7 @@ def reload_configs(client):
         if data['loglevel'] == 'debug':
             print(yellow(f'\n{data}\n'))
             dstore('ボット',f'\n{data}\n')
-        keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['privacy']","['fortnite']['whisper']","['fortnite']['partychat']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['blacklist']","['blacklist-declineinvite']","['blacklist-autoblock']","['blacklist-autokick']","['blacklist-autochatban']","['blacklist-ignorecommand']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
+        keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['privacy']","['fortnite']['whisper']","['fortnite']['partychat']","['fortnite']['disablewhisperperfectly']","['fortnite']['disablepartychatperfectly']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['blacklist']","['blacklist-declineinvite']","['blacklist-autoblock']","['blacklist-autokick']","['blacklist-autochatban']","['blacklist-ignorecommand']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
         for key in keys:
             exec(f"errorcheck=data{key}")
         try:
@@ -227,6 +227,10 @@ def reload_configs(client):
     if data['fortnite']['privacy'] not in ('public', 'friends_allow_friends_of_friends', 'friends', 'private_allow_friends_of_friends', 'private'):
         data['fortnite']['privacy']='public'
     data['fortnite']['privacy']=eval(f"fortnitepy.PartyPrivacy.{data['fortnite']['privacy'].upper()}")
+    client.whisper=data['fortnite']['whisper']
+    client.partychat=data['fortnite']['partychat']
+    client.whisperperfect=data['fortnite']['disablewhisperperfectly']
+    client.partychatperfect=data['fortnite']['disablepartychatperfectly']
     client.joinmessageenable=data['fortnite']['joinmessageenable']
     client.randommessageenable=data['fortnite']['randommessageenable']
     client.skinmimic=data['fortnite']['skinmimic']
@@ -241,7 +245,7 @@ def reload_configs(client):
         except json.decoder.JSONDecodeError:
             with open('commands.json', 'r', encoding='utf-8-sig') as f:
                 commands=json.load(f)
-        keys=["['true']","['false']","['me']","['prev']", "['eval']", "['exec']","['restart']","['relogin']","['reload']","['addblacklist']","['removeblacklist']","['get']","['friendcount']","['pendingcount']","['blockcount']","['skinmimic']","['emotemimic']","['whisper']","['partychat']","['acceptinvite']","['acceptfriend']","['joinmessageenable']","['randommessageenable']","['wait']","['join']","['joinid']","['leave']","['invite']","['message']","['partymessage']","['status']","['banner']","['level']","['bp']","['privacy']","['privacy_public']","['privacy_friends_allow_friends_of_friends']","['privacy_friends']","['privacy_private_allow_friends_of_friends']","['privacy_private']","['getuser']","['getfriend']","['getpending']","['getblock']","['info']","['info_party']","['info_item']","['pending']","['removepending']","['addfriend']","['removefriend']","['acceptpending']","['declinepending']","['blockfriend']","['unblockfriend']","['chatban']","['promote']","['kick']","['ready']","['unready']","['sitout']","['skinlock']","['baglock']","['picklock']","['emotelock']","['stop']","['allskin']","['allemote']","['setstyle']","['addstyle']","['setenlightenment']","['addvariant']","['skinasset']","['bagasset']","['pickasset']","['emoteasset']"]
+        keys=["['true']","['false']","['me']","['prev']", "['eval']", "['exec']","['restart']","['relogin']","['reload']","['addblacklist']","['removeblacklist']","['get']","['friendcount']","['pendingcount']","['blockcount']","['skinmimic']","['emotemimic']","['whisper']","['partychat']","['disablewhisperperfectly']","['disablepartychatperfectly']","['acceptinvite']","['acceptfriend']","['joinmessageenable']","['randommessageenable']","['wait']","['join']","['joinid']","['leave']","['invite']","['message']","['partymessage']","['status']","['banner']","['level']","['bp']","['privacy']","['privacy_public']","['privacy_friends_allow_friends_of_friends']","['privacy_friends']","['privacy_private_allow_friends_of_friends']","['privacy_private']","['getuser']","['getfriend']","['getpending']","['getblock']","['info']","['info_party']","['info_item']","['pending']","['removepending']","['addfriend']","['removefriend']","['acceptpending']","['declinepending']","['blockfriend']","['unblockfriend']","['chatban']","['promote']","['kick']","['ready']","['unready']","['sitout']","['skinlock']","['baglock']","['picklock']","['emotelock']","['stop']","['allskin']","['allemote']","['setstyle']","['addstyle']","['setenlightenment']","['addvariant']","['skinasset']","['bagasset']","['pickasset']","['emoteasset']"]
         for key in keys:
             exec(f"errorcheck=commands{key}")
         if data['caseinsensitive'] is True:
@@ -580,16 +584,22 @@ async def invitation_accept(invitation):
                     print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾')
                     dstore(client.user.display_name, f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾")
     except KeyError:
+        if data['ingame-error'] is True:
+            await invitation.sender.reply('Error')
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
     except fortnitepy.PartyError:
+        if data['ingame-error'] is True:
+            await invitation.sender.reply('既にパーティーのメンバーです')
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
         print(red(f'[{now_()}] [{client.user.display_name}] 既にパーティーのメンバーです。'))
         dstore(client.user.display_name,f'>>> 既にパーティーのメンバーです')
     except fortnitepy.HTTPException:
+        if data['ingame-error'] is True:
+            await invitation.sender.reply('メンバーが見つかりません。')
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -630,12 +640,16 @@ async def invitation_decline(invitation):
                 print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を拒否')
             dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を拒否')
     except fortnitepy.PartyError:
+        if data['ingame-error'] is True:
+            await invitation.sender.send('受信したnet_clとクライアントのnet_clが一致しません')
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
         print(red(f'[{now_()}] [{client.user.display_name}] 受信したnet_clとクライアントのnet_clが一致しません。'))
         dstore(client.user.display_name,f'>>> 受信したnet_clとクライアントのnet_clが一致しません')
     except fortnitepy.HTTPException:
+        if data['ingame-error'] is True:
+            await invitation.sender.send('パーティー招待の拒否リクエストを処理中にエラーが発生しました。')
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -726,7 +740,7 @@ try:
     if data['loglevel'] == 'debug':
         print(yellow(f'\n{data}\n'))
         dstore('ボット',f'\n```\n{data}\n```\n')
-    keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['privacy']","['fortnite']['whisper']","['fortnite']['partychat']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['blacklist']","['blacklist-declineinvite']","['blacklist-autoblock']","['blacklist-autokick']","['blacklist-autochatban']","['blacklist-ignorecommand']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
+    keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['privacy']","['fortnite']['whisper']","['fortnite']['partychat']","['fortnite']['disablewhisperperfectly']","['fortnite']['disablepartychatperfectly']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['blacklist']","['blacklist-declineinvite']","['blacklist-autoblock']","['blacklist-autokick']","['blacklist-autochatban']","['blacklist-ignorecommand']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
     for key in keys:
         exec(f"errorcheck=data{key}")
     try:
@@ -797,7 +811,7 @@ try:
     if data['loglevel'] == 'debug':
         print(yellow(f'\n{commands}\n'))
         dstore('ボット',f'\n```\n{commands}\n```\n')
-    keys=["['true']","['false']","['me']","['prev']", "['eval']", "['exec']","['restart']","['relogin']","['reload']","['addblacklist']","['removeblacklist']","['get']","['friendcount']","['pendingcount']","['blockcount']","['skinmimic']","['emotemimic']","['whisper']","['partychat']","['acceptinvite']","['acceptfriend']","['joinmessageenable']","['randommessageenable']","['wait']","['join']","['joinid']","['leave']","['invite']","['message']","['partymessage']","['status']","['banner']","['level']","['bp']","['privacy']","['privacy_public']","['privacy_friends_allow_friends_of_friends']","['privacy_friends']","['privacy_private_allow_friends_of_friends']","['privacy_private']","['getuser']","['getfriend']","['getpending']","['getblock']","['info']","['info_party']","['info_item']","['pending']","['removepending']","['addfriend']","['removefriend']","['acceptpending']","['declinepending']","['blockfriend']","['unblockfriend']","['chatban']","['promote']","['kick']","['ready']","['unready']","['sitout']","['skinlock']","['baglock']","['picklock']","['emotelock']","['stop']","['allskin']","['allemote']","['setstyle']","['addstyle']","['setenlightenment']","['addvariant']","['skinasset']","['bagasset']","['pickasset']","['emoteasset']"]
+    keys=["['true']","['false']","['me']","['prev']", "['eval']", "['exec']","['restart']","['relogin']","['reload']","['addblacklist']","['removeblacklist']","['get']","['friendcount']","['pendingcount']","['blockcount']","['skinmimic']","['emotemimic']","['whisper']","['partychat']","['disablewhisperperfectly']","['disablepartychatperfectly']","['acceptinvite']","['acceptfriend']","['joinmessageenable']","['randommessageenable']","['wait']","['join']","['joinid']","['leave']","['invite']","['message']","['partymessage']","['status']","['banner']","['level']","['bp']","['privacy']","['privacy_public']","['privacy_friends_allow_friends_of_friends']","['privacy_friends']","['privacy_private_allow_friends_of_friends']","['privacy_private']","['getuser']","['getfriend']","['getpending']","['getblock']","['info']","['info_party']","['info_item']","['pending']","['removepending']","['addfriend']","['removefriend']","['acceptpending']","['declinepending']","['blockfriend']","['unblockfriend']","['chatban']","['promote']","['kick']","['ready']","['unready']","['sitout']","['skinlock']","['baglock']","['picklock']","['emotelock']","['stop']","['allskin']","['allemote']","['setstyle']","['addstyle']","['setenlightenment']","['addvariant']","['skinasset']","['bagasset']","['pickasset']","['emoteasset']"]
     for key in keys:
         exec(f"errorcheck=commands{key}")
     if data['caseinsensitive'] is True:
@@ -1673,8 +1687,11 @@ async def event_friend_message(message):
     rawcontent2 = ' '.join(rawargs[2:])
     user=None
     if not client.owner is None:
-        if client.whisper is False and not message.author.id == client.owner.id:
-            return
+        if client.whisper is False:
+            if client.whisperperfect is True:
+                return
+            elif not message.author.id == client.owner.id:
+                return
     else:
         if client.whisper is False:
             return
@@ -1701,6 +1718,17 @@ async def event_friend_message(message):
                     if args[0] in commands[command.lower()].split(','):
                         await message.reply('このコマンドは管理者しか使用できません')
                         return
+    else:
+        for checks in commands.items():
+            ignore=['ownercommands','true','false','me', 'privacy_public', 'privacy_friends_allow_friends_of_friends', 'privacy_friends', 'privacy_private_allow_friends_of_friends', 'privacy_private', 'info_party', 'info_item']
+            if checks[0] in ignore:
+                continue
+            if commands['ownercommands'] == '':
+                break
+            for command in commands['ownercommands'].split(','):
+                if args[0] in commands[command.lower()].split(','):
+                    await message.reply('このコマンドは管理者しか使用できません')
+                    return
 
     if args[0] in commands['prev'].split(','):
         if client.prevmessage.get(message.author.id) is None:
@@ -2139,6 +2167,42 @@ async def event_friend_message(message):
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply(f"[{commands['party']}] [[{commands['true']}] / [{commands['false']}]]")
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['disablewhisperperfectly'].split(','):
+        try:
+            if args[1] in commands['true'].split(','):
+                client.whisperperfect=True
+                await message.reply('囁きの完全無効をオンに設定')
+            elif args[1] in commands['false'].split(','):
+                client.whisperperfect=False
+                await message.reply('囁きの完全無効をオフに設定')
+        except IndexError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply(f"[{commands['disablewhisperperfectly']}] [[{commands['true']}] / [{commands['false']}]]")
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['disablepartychatperfectly'].split(','):
+        try:
+            if args[1] in commands['true'].split(','):
+                client.partychatperfect=True
+                await message.reply('パーティーチャットの完全無効をオンに設定')
+            elif args[1] in commands['false'].split(','):
+                client.partychatperfect=False
+                await message.reply('パーティーチャットの完全無効をオフに設定')
+        except IndexError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply(f"[{commands['disablepartychatperfectly']}] [[{commands['true']}] / [{commands['false']}]]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -5241,8 +5305,11 @@ async def event_party_message(message):
     rawcontent2 = ' '.join(rawargs[2:])
     user=None
     if not client.owner is None:
-        if client.partychat is False and not message.author.id == client.owner.id:
-            return
+        if client.partychat is False:
+            if client.partychatperfect is True:
+                return
+            elif not message.author.id == client.owner.id:
+                return
     else:
         if client.partychat is False:
             return
@@ -5281,6 +5348,17 @@ async def event_party_message(message):
                     if args[0] in commands[command.lower()].split(','):
                         await message.reply('このコマンドは管理者しか使用できません')
                         return
+    else:
+        for checks in commands.items():
+            ignore=['ownercommands','true','false','me', 'privacy_public', 'privacy_friends_allow_friends_of_friends', 'privacy_friends', 'privacy_private_allow_friends_of_friends', 'privacy_private', 'info_party', 'info_item']
+            if checks[0] in ignore:
+                continue
+            if commands['ownercommands'] == '':
+                break
+            for command in commands['ownercommands'].split(','):
+                if args[0] in commands[command.lower()].split(','):
+                    await message.reply('このコマンドは管理者しか使用できません')
+                    return
 
     if args[0] in commands['prev'].split(','):
         if client.prevmessage.get(message.author.id) is None:
@@ -5717,6 +5795,42 @@ async def event_party_message(message):
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply(f"[{commands['party']}] [[{commands['true']}] / [{commands['false']}]]")
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['disablewhisperperfectly'].split(','):
+        try:
+            if args[1] in commands['true'].split(','):
+                client.whisperperfect=True
+                await message.reply('囁きの完全無効をオンに設定')
+            elif args[1] in commands['false'].split(','):
+                client.whisperperfect=False
+                await message.reply('囁きの完全無効をオフに設定')
+        except IndexError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply(f"[{commands['disablewhisperperfectly']}] [[{commands['true']}] / [{commands['false']}]]")
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['disablepartychatperfectly'].split(','):
+        try:
+            if args[1] in commands['true'].split(','):
+                client.partychatperfect=True
+                await message.reply('パーティーチャットの完全無効をオンに設定')
+            elif args[1] in commands['false'].split(','):
+                client.partychatperfect=False
+                await message.reply('パーティーチャットの完全無効をオフに設定')
+        except IndexError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply(f"[{commands['disablepartychatperfectly']}] [[{commands['true']}] / [{commands['false']}]]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -8846,6 +8960,8 @@ for email, password in credentials.items():
     client.prevmessage={}
     client.whisper=data['fortnite']['whisper']
     client.partychat=data['fortnite']['partychat']
+    client.whisperperfect=data['fortnite']['disablewhisperperfectly']
+    client.partychatperfect=data['fortnite']['disablepartychatperfectly']
     client.joinmessageenable=data['fortnite']['joinmessageenable']
     client.randommessageenable=data['fortnite']['randommessageenable']
     client.skinmimic=data['fortnite']['skinmimic']
