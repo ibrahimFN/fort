@@ -22,6 +22,8 @@
 	"emotemimic": "emotemimic",
 	"whisper": "whisper",
 	"partychat": "partychat",
+	"disablewhisperperfectly": "whisperperfect",
+        "disablepartychatperfectly": "partychatperfect",
 	"acceptinvite": "acceptinvite",
 	"acceptfriend": "acceptfriend",
 	"joinmessageenable": "joinmessage",
