@@ -19,6 +19,8 @@
                 "privacy": "private",
 		"whisper": true,
 		"partychat": true,
+		"disablewhisperperfectly": false,
+                "disablepartychatperfectly": false,
 		"joinmessage": "メッセージ\n改行",
 		"randommessage": "1,2,3,4,5",
 		"joinmessageenable": false,
