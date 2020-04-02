@@ -32,6 +32,7 @@ xpboost                 : ボットの初期XPブースト
 friendxpboost           : ボットの初期フレンドXPブースト
 status                  : ボットの初期ステータス
 privacy                 : ボットの初期のプライバシー 後述
+whisper                 : ボットが囁きからコマンドを受け付けるかどうか true か false
 partychat               : ボットがパーティーチャットからコマンドを受け付けるかどうか true か false
 joinmessage             : ボットのパーティーに誰かが参加した時のメッセージ \n で改行
 randommessage           : ボットのパーティーに誰かが参加した時のランダムメッセージ , で区切る \n で改行
@@ -89,6 +90,7 @@ pendingcount         : 現在のフレンド申請数を表示する(方向関�
 blockcount           : 現在のブロック数を表示する
 skinmimic            : skinmimic [true / false] 他人のスキンを真似るかどうかの設定
 emotemimic           : emotemimic [true / false] 他人のエモートを真似るかどうかの設定
+whisper              : whisper [true / false] 囁きからのコマンドを受け付けるかどうかの設定
 partychat            : partychat [true / false] パーティーチャットからのコマンドを受け付けるかどうかの設定
 acceptinvite         : acceptinvite [true / false] パーティー招待を承諾するかどうかの設定
 acceptfriend         : acceptfriend [true / false] フレンド申請を承諾するかどうかの設定
