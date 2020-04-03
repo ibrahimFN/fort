@@ -2583,7 +2583,7 @@ async def event_friend_message(message):
             elif args[1] in commands['privacy_private_allow_friends_of_friends'].split(','):
                 await client.user.party.set_privacy(fortnitepy.PartyPrivacy.PRIVATE_ALLOW_FRIENDS_OF_FRIENDS)
                 await message.reply('プライバシーを プライベート(フレンドのフレンドを許可) に設定')
-            elif args[1] in commands['privacy_privacte'].split(','):
+            elif args[1] in commands['privacy_private'].split(','):
                 await client.user.party.set_privacy(fortnitepy.PartyPrivacy.PRIVATE)
                 await message.reply('プライバシーを プライベート に設定')
         except fortnitepy.Forbidden:
@@ -2595,7 +2595,7 @@ async def event_friend_message(message):
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-            await message.reply(f"[{commands['privacy']}] [[{commands['privacy_public']}] / [{commands['privacy_friends_allow_friends_of_friends']}] / [{commands['privacy_friends']}] / [{commands['privacy_private_allow_friends_of_friends']}] / [{commands['privacy_privacte']}]]")
+            await message.reply(f"[{commands['privacy']}] [[{commands['privacy_public']}] / [{commands['privacy_friends_allow_friends_of_friends']}] / [{commands['privacy_friends']}] / [{commands['privacy_private_allow_friends_of_friends']}] / [{commands['privacy_private']}]]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -6211,7 +6211,7 @@ async def event_party_message(message):
             elif args[1] in commands['privacy_private_allow_friends_of_friends'].split(','):
                 await client.user.party.set_privacy(fortnitepy.PartyPrivacy.PRIVATE_ALLOW_FRIENDS_OF_FRIENDS)
                 await message.reply('プライバシーを プライベート(フレンドのフレンドを許可) に設定')
-            elif args[1] in commands['privacy_privacte'].split(','):
+            elif args[1] in commands['privacy_private'].split(','):
                 await client.user.party.set_privacy(fortnitepy.PartyPrivacy.PRIVATE)
                 await message.reply('プライバシーを プライベート に設定')
         except fortnitepy.Forbidden:
@@ -6223,7 +6223,7 @@ async def event_party_message(message):
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-            await message.reply(f"[{commands['privacy']}] [[{commands['privacy_public']}] / [{commands['privacy_friends_allow_friends_of_friends']}] / [{commands['privacy_friends']}] / [{commands['privacy_private_allow_friends_of_friends']}] / [{commands['privacy_privacte']}]]")
+            await message.reply(f"[{commands['privacy']}] [[{commands['privacy_public']}] / [{commands['privacy_friends_allow_friends_of_friends']}] / [{commands['privacy_friends']}] / [{commands['privacy_private_allow_friends_of_friends']}] / [{commands['privacy_private']}]]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
