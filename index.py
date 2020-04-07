@@ -47,6 +47,7 @@ if os.getcwd().startswith('/app'):
 storedlog=[]
 kill=False
 blacklist_flag = True
+whitelist_flag = True
 
 def dstore(username, content):
     global storedlog
@@ -170,7 +171,7 @@ def reload_configs(client):
         if data['loglevel'] == 'debug':
             print(yellow(f'\n{data}\n'))
             dstore('ボット',f'\n{data}\n')
-        keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['privacy']","['fortnite']['whisper']","['fortnite']['partychat']","['fortnite']['disablewhisperperfectly']","['fortnite']['disablepartychatperfectly']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['blacklist']","['blacklist-declineinvite']","['blacklist-autoblock']","['blacklist-autokick']","['blacklist-autochatban']","['blacklist-ignorecommand']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
+        keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['privacy']","['fortnite']['whisper']","['fortnite']['partychat']","['fortnite']['disablewhisperperfectly']","['fortnite']['disablepartychatperfectly']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['blacklist']","['blacklist-declineinvite']","['blacklist-autoblock']","['blacklist-autokick']","['blacklist-autochatban']","['blacklist-ignorecommand']","['whitelist']","['whitelist-allowinvite']","['whitelist-declineinvite']","['whitelist-ignorelock']","['whitelist-ownercommand']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
         for key in keys:
             exec(f"errorcheck=data{key}")
         try:
@@ -245,7 +246,7 @@ def reload_configs(client):
         except json.decoder.JSONDecodeError:
             with open('commands.json', 'r', encoding='utf-8-sig') as f:
                 commands=json.load(f)
-        keys=["['true']","['false']","['me']","['prev']", "['eval']", "['exec']","['restart']","['relogin']","['reload']","['addblacklist']","['removeblacklist']","['get']","['friendcount']","['pendingcount']","['blockcount']","['skinmimic']","['emotemimic']","['whisper']","['partychat']","['disablewhisperperfectly']","['disablepartychatperfectly']","['acceptinvite']","['acceptfriend']","['joinmessageenable']","['randommessageenable']","['wait']","['join']","['joinid']","['leave']","['invite']","['message']","['partymessage']","['status']","['banner']","['level']","['bp']","['privacy']","['privacy_public']","['privacy_friends_allow_friends_of_friends']","['privacy_friends']","['privacy_private_allow_friends_of_friends']","['privacy_private']","['getuser']","['getfriend']","['getpending']","['getblock']","['info']","['info_party']","['info_item']","['pending']","['removepending']","['addfriend']","['removefriend']","['acceptpending']","['declinepending']","['blockfriend']","['unblockfriend']","['chatban']","['promote']","['kick']","['ready']","['unready']","['sitout']","['skinlock']","['baglock']","['picklock']","['emotelock']","['stop']","['allskin']","['allemote']","['setstyle']","['addstyle']","['setenlightenment']","['addvariant']","['skinasset']","['bagasset']","['pickasset']","['emoteasset']"]
+        keys=["['true']","['false']","['me']","['prev']", "['eval']", "['exec']","['restart']","['relogin']","['reload']","['addblacklist']","['removeblacklist']","['addwhitelist']","['removewhitelist']","['get']","['friendcount']","['pendingcount']","['blockcount']","['skinmimic']","['emotemimic']","['whisper']","['partychat']","['disablewhisperperfectly']","['disablepartychatperfectly']","['acceptinvite']","['acceptfriend']","['joinmessageenable']","['randommessageenable']","['wait']","['join']","['joinid']","['leave']","['invite']","['message']","['partymessage']","['status']","['banner']","['level']","['bp']","['privacy']","['privacy_public']","['privacy_friends_allow_friends_of_friends']","['privacy_friends']","['privacy_private_allow_friends_of_friends']","['privacy_private']","['getuser']","['getfriend']","['getpending']","['getblock']","['info']","['info_party']","['info_item']","['pending']","['removepending']","['addfriend']","['removefriend']","['acceptpending']","['declinepending']","['blockfriend']","['unblockfriend']","['chatban']","['promote']","['kick']","['ready']","['unready']","['sitout']","['skinlock']","['baglock']","['picklock']","['emotelock']","['stop']","['allskin']","['allemote']","['setstyle']","['addstyle']","['setenlightenment']","['addvariant']","['skinasset']","['bagasset']","['pickasset']","['emoteasset']"]
         for key in keys:
             exec(f"errorcheck=commands{key}")
         if data['caseinsensitive'] is True:
@@ -446,7 +447,7 @@ async def search_set_item(lang, setname):
         for item in alldata['data']:
             if item['type'] in ignoretype:
                 continue
-            if not item['set'] is None:
+            if item['set'] is not None:
                 if data['caseinsensitive'] is True:
                     setname=jaconv.hira2kata(setname.lower())
                     setname_=jaconv.hira2kata(item['set'].lower())
@@ -521,7 +522,7 @@ async def search_style(lang, stylename, itemid):
             itemid=jaconv.hira2kata(itemid.lower())
             itemid_=jaconv.hira2kata(item['id'].lower())
             if itemid in itemid_:
-                if not item['variants'] is None:
+                if item['variants'] is not None:
                     variants=[]
                     for variant in item['variants']:
                         for option in variant['options']:
@@ -550,39 +551,21 @@ async def invitation_accept(invitation):
     client=invitation.client
     try:
         await invitation.accept()
-        if not client.owner is None:
-            if invitation.sender.id == client.owner.id:
-                client.acceptinvite_interval=False
-                try:
-                    client.timer.cancel()
-                except Exception:
-                    pass
-                client.timer=Timer(data['fortnite']['interval'], inviteinterval, [client])
-                client.timer.start()
-                if data['loglevel'] == 'normal':
-                    if data['no-logs'] is False:
-                        print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を承諾')
-                    dstore(client.user.display_name, f"{str(invitation.sender.display_name)} からの招待を承諾")
-                else:
-                    if data['no-logs'] is False:
-                        print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾')
-                    dstore(client.user.display_name, f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾")
+        client.acceptinvite_interval=False
+        try:
+            client.timer.cancel()
+        except Exception:
+            pass
+        client.timer=Timer(data['fortnite']['interval'], inviteinterval, [client])
+        client.timer.start()
+        if data['loglevel'] == 'normal':
+            if data['no-logs'] is False:
+                print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を承諾')
+            dstore(client.user.display_name, f"{str(invitation.sender.display_name)} からの招待を承諾")
         else:
-            client.acceptinvite_interval=False
-            try:
-                client.timer.cancel()
-            except Exception:
-                pass
-            client.timer=Timer(data['fortnite']['interval'], inviteinterval, [client])
-            client.timer.start()
-            if data['loglevel'] == 'normal':
-                if data['no-logs'] is False:
-                    print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を承諾')
-                    dstore(client.user.display_name, f"{str(invitation.sender.display_name)} からの招待を承諾")
-            else:
-                if data['no-logs'] is False:
-                    print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾')
-                    dstore(client.user.display_name, f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾")
+            if data['no-logs'] is False:
+                print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾')
+            dstore(client.user.display_name, f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾")
     except KeyError:
         if data['ingame-error'] is True:
             await invitation.sender.reply('Error')
@@ -702,12 +685,46 @@ async def invitation_decline_owner(invitation):
         await invitation.sender.send('所有者がパーティーにいるため招待を拒否します')
         if data['loglevel'] == 'normal':
             if data['no-logs'] is False:
-                print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を{str(data['fortnite']['interval'])}秒拒否")
-            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} からの招待を{str(data["fortnite"]["interval"])}秒拒否')
+                print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を所有者拒否")
+            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} からの招待を所有者拒否')
         else:
             if data['no-logs'] is False:
-                print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
-            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を{str(data["fortnite"]["interval"])}秒拒否')
+                print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を所有者拒否")
+            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を所有者拒否')
+    except fortnitepy.PartyError:
+        if data['ingame-error'] is True:
+            await invitation.sender.send('受信したnet_clとクライアントのnet_clが一致しません')
+        if data['loglevel'] == 'debug':
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+        print(red(f'[{now_()}] [{client.user.display_name}] 受信したnet_clとクライアントのnet_clが一致しません。'))
+        dstore(client.user.display_name,f'>>> 受信したnet_clとクライアントのnet_clが一致しません')
+    except fortnitepy.HTTPException:
+        if data['ingame-error'] is True:
+            await invitation.sender.send('パーティー招待の拒否リクエストを処理中にエラーが発生しました')
+        if data['loglevel'] == 'debug':
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+        print(red(f'[{now_()}] [{client.user.display_name}] パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
+        dstore(client.user.display_name,f'>>> パーティー招待の拒否リクエストを処理中にエラーが発生しました')
+    except Exception:
+        if data['ingame-error'] is True:
+            await invitation.sender.send('エラー')
+        print(red(traceback.format_exc()))
+        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+
+async def invitation_decline_whitelist(invitation):
+    try:
+        await invitation.decline()
+        await invitation.sender.send('ホワイトリストのユーザーがパーティーにいるため招待を拒否します')
+        if data['loglevel'] == 'normal':
+            if data['no-logs'] is False:
+                print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待をホワイトリスト拒否")
+            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} からの招待をホワイトリスト拒否')
+        else:
+            if data['no-logs'] is False:
+                print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待をホワイトリスト拒否")
+            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待をホワイトリスト拒否')
     except fortnitepy.PartyError:
         if data['ingame-error'] is True:
             await invitation.sender.send('受信したnet_clとクライアントのnet_clが一致しません')
@@ -740,7 +757,7 @@ try:
     if data['loglevel'] == 'debug':
         print(yellow(f'\n{data}\n'))
         dstore('ボット',f'\n```\n{data}\n```\n')
-    keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['privacy']","['fortnite']['whisper']","['fortnite']['partychat']","['fortnite']['disablewhisperperfectly']","['fortnite']['disablepartychatperfectly']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['blacklist']","['blacklist-declineinvite']","['blacklist-autoblock']","['blacklist-autokick']","['blacklist-autochatban']","['blacklist-ignorecommand']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
+    keys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['privacy']","['fortnite']['whisper']","['fortnite']['partychat']","['fortnite']['disablewhisperperfectly']","['fortnite']['disablepartychatperfectly']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['skinmimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['blacklist']","['blacklist-declineinvite']","['blacklist-autoblock']","['blacklist-autokick']","['blacklist-autochatban']","['blacklist-ignorecommand']","['whitelist']","['whitelist-allowinvite']","['whitelist-declineinvite']","['whitelist-ignorelock']","['whitelist-ownercommand']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
     for key in keys:
         exec(f"errorcheck=data{key}")
     try:
@@ -811,7 +828,7 @@ try:
     if data['loglevel'] == 'debug':
         print(yellow(f'\n{commands}\n'))
         dstore('ボット',f'\n```\n{commands}\n```\n')
-    keys=["['true']","['false']","['me']","['prev']", "['eval']", "['exec']","['restart']","['relogin']","['reload']","['addblacklist']","['removeblacklist']","['get']","['friendcount']","['pendingcount']","['blockcount']","['skinmimic']","['emotemimic']","['whisper']","['partychat']","['disablewhisperperfectly']","['disablepartychatperfectly']","['acceptinvite']","['acceptfriend']","['joinmessageenable']","['randommessageenable']","['wait']","['join']","['joinid']","['leave']","['invite']","['message']","['partymessage']","['status']","['banner']","['level']","['bp']","['privacy']","['privacy_public']","['privacy_friends_allow_friends_of_friends']","['privacy_friends']","['privacy_private_allow_friends_of_friends']","['privacy_private']","['getuser']","['getfriend']","['getpending']","['getblock']","['info']","['info_party']","['info_item']","['pending']","['removepending']","['addfriend']","['removefriend']","['acceptpending']","['declinepending']","['blockfriend']","['unblockfriend']","['chatban']","['promote']","['kick']","['ready']","['unready']","['sitout']","['skinlock']","['baglock']","['picklock']","['emotelock']","['stop']","['allskin']","['allemote']","['setstyle']","['addstyle']","['setenlightenment']","['addvariant']","['skinasset']","['bagasset']","['pickasset']","['emoteasset']"]
+    keys=["['true']","['false']","['me']","['prev']", "['eval']", "['exec']","['restart']","['relogin']","['reload']","['addblacklist']","['removeblacklist']","['addwhitelist']","['removewhitelist']","['get']","['friendcount']","['pendingcount']","['blockcount']","['skinmimic']","['emotemimic']","['whisper']","['partychat']","['disablewhisperperfectly']","['disablepartychatperfectly']","['acceptinvite']","['acceptfriend']","['joinmessageenable']","['randommessageenable']","['wait']","['join']","['joinid']","['leave']","['invite']","['message']","['partymessage']","['status']","['banner']","['level']","['bp']","['privacy']","['privacy_public']","['privacy_friends_allow_friends_of_friends']","['privacy_friends']","['privacy_private_allow_friends_of_friends']","['privacy_private']","['getuser']","['getfriend']","['getpending']","['getblock']","['info']","['info_party']","['info_item']","['pending']","['removepending']","['addfriend']","['removefriend']","['acceptpending']","['declinepending']","['blockfriend']","['unblockfriend']","['chatban']","['promote']","['kick']","['ready']","['unready']","['sitout']","['skinlock']","['baglock']","['picklock']","['emotelock']","['stop']","['allskin']","['allemote']","['setstyle']","['addstyle']","['setenlightenment']","['addvariant']","['skinasset']","['bagasset']","['pickasset']","['emoteasset']"]
     for key in keys:
         exec(f"errorcheck=commands{key}")
     if data['caseinsensitive'] is True:
@@ -938,6 +955,8 @@ async def event_device_auth_generate(details, email):
 async def event_ready(client):
     global blacklist_flag
     global blacklist
+    global whitelist_flag
+    global whitelist
     if data['loglevel'] == 'normal':
         if data['no-logs'] is False:
             print(green(f'[{now_()}] ログイン: {client.user.display_name}'))
@@ -969,6 +988,20 @@ async def event_ready(client):
                             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
         if data['loglevel'] == "debug":
             print(yellow(blacklist))
+    if whitelist_flag is True:
+        whitelist_flag = False
+        whitelist = []
+        for whitelistuser in data['whitelist']:
+            user = await client.fetch_profile(whitelistuser)
+            if user is None:
+                print(red(f'[{now_()}] [{client.user.display_name}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
+                dstore(client.user.display_name,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+            else:
+                whitelist.append(user.id)
+                if data['loglevel'] == 'debug':
+                    print(yellow(f"{user.display_name} / {user.id}"))
+        if data['loglevel'] == "debug":
+            print(yellow(whitelist))
 
     try:
         client.owner=None
@@ -1012,7 +1045,7 @@ async def event_ready(client):
         print(red(traceback.format_exc()))
         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
     
-    if not client.owner is None:
+    if client.owner is not None:
         await client.owner.send('ここをクリックして招待')
 
     if data['fortnite']['acceptfriend'] is True:
@@ -1058,6 +1091,7 @@ async def event_restart():
 
 async def event_party_invite(invitation):
     global blacklist
+    global whitelist
     if invitation is None:
         return
     client=invitation.client
@@ -1072,8 +1106,15 @@ async def event_party_invite(invitation):
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             return
-    if not client.owner is None:
+    if client.owner is not None:
         if invitation.sender.id == client.owner.id:
+            await invitation_accept(invitation)
+            return
+        elif invitation.sender.id in whitelist and data['whitelist-allowinvite']:
+            await invitation_accept(invitation)
+            return
+    else:
+        if invitation.sender.id in whitelist and data['whitelist-allowinvite']:
             await invitation_accept(invitation)
             return
     if data['loglevel'] == 'normal':
@@ -1085,27 +1126,66 @@ async def event_party_invite(invitation):
             print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待')
         dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待')
 
-    if not client.owner is None:
-        if not client.owner.id in client.user.party.members.keys():
-            if client.acceptinvite is True:
-                if client.acceptinvite_interval is True:
-                    await invitation_accept(invitation)
-                    return
+    if client.owner is not None:
+        if client.owner.id not in client.user.party.members.keys():
+            await invitation_decline_owner(invitation)
+            return
+    if data['whitelist-declineinvite'] is True and True in [memberid in whitelist for memberid in client.user.party.members.keys()]:
+        await invitation_decline_whitelist(invitation)
+    elif client.acceptinvite is False:
+        await invitation_decline(invitation)
+    elif client.acceptinvite_interval is False:
+        await invitation_decline_interval(invitation)
+    else:
+        await invitation_accept(invitation)
+
+    """if client.owner is not None:
+        if client.owner.id not in client.user.party.members.keys():
+            if data['whitelist-declineinvite'] is True:
+                if True not in [memberid in whitelist for memberid in client.user.party.members.keys()]:
+                    if client.acceptinvite is True:
+                        if client.acceptinvite_interval is True:
+                            await invitation_accept(invitation)
+                            return
+                        else:
+                            await invitation_decline_interval(invitation)
+                            return
+                    else:
+                        await invitation_decline(invitation)
                 else:
-                    await invitation_decline_interval(invitation)
-                    return
+                    await invitation_decline_whitelist(invitation)
             else:
-                await invitation_decline(invitation)
+                if client.acceptinvite is True:
+                    if client.acceptinvite_interval is True:
+                        await invitation_accept(invitation)
+                        return
+                    else:
+                        await invitation_decline_interval(invitation)
+                        return
+                else:
+                    await invitation_decline(invitation)
         else:
             await invitation_decline_owner(invitation)
     else:
-        if client.acceptinvite is True:
-            if client.acceptinvite_interval is True:
-                await invitation_accept(invitation)
+        if data['whitelist-declineinvite'] is True:
+            if True not in [memberid in whitelist for memberid in client.user.party.members.keys()]:
+                if client.acceptinvite is True:
+                    if client.acceptinvite_interval is True:
+                        await invitation_accept(invitation)
+                    else:
+                        await invitation_decline_interval(invitation)
+                else:
+                    await invitation_decline(invitation)
             else:
-                await invitation_decline_interval(invitation)
+                await invitation_decline_whitelist(invitation)
         else:
-            await invitation_decline(invitation)
+            if client.acceptinvite is True:
+                if client.acceptinvite_interval is True:
+                        await invitation_accept(invitation)
+                    else:
+                        await invitation_decline_interval(invitation)
+                else:
+                    await invitation_decline(invitation)"""
 
 async def event_friend_request(request):
     if request is None:
@@ -1230,8 +1310,8 @@ async def event_party_member_join(member):
             dstore(client_user_display_name,f'[パーティー] {str(member.display_name)} がパーティーに参加\n人数: {member.party.member_count}')
         else:
             if data['no-logs'] is False:
-                print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーに参加\n人数: {member.party.member_count}'))
-            dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーに参加\n人数: {member.party.member_count}')
+                print(magenta(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーに参加\n人数: {member.party.member_count}'))
+            dstore(client_user_display_name,f'[パーティー/{client.user.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーに参加\n人数: {member.party.member_count}')
     
     if member.id in blacklist and client.user.party.me.leader is True:
         if data['blacklist-autokick'] is True:
@@ -1285,7 +1365,7 @@ async def event_party_member_join(member):
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
-    if not client.user.party.me.emote is None:
+    if client.user.party.me.emote is not None:
         if client.user.party.me.emote.lower() == client.eid.lower():
             await client.user.party.me.clear_emote()
     try:
@@ -1330,8 +1410,8 @@ async def event_party_member_leave(member):
             dstore(client_user_display_name,f'[パーティー] {str(member.display_name)} がパーティーを離脱\n人数: {member.party.member_count}')
         else:
             if data['no-logs'] is False:
-                print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーを離脱\n人数: {member.party.member_count}'))
-            dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーを離脱\n人数: {member.party.member_count}')
+                print(magenta(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーを離脱\n人数: {member.party.member_count}'))
+            dstore(client_user_display_name,f'[パーティー/{client.user.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーを離脱\n人数: {member.party.member_count}')
 
     if data['fortnite']['addfriend'] is True:
         for member in member.party.members.keys():
@@ -1346,6 +1426,35 @@ async def event_party_member_leave(member):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+
+async def event_party_member_confirm(confirmation):
+    global blacklist
+    if confirmation is None:
+        return
+    client=confirmation.client
+    if client.isready is False:
+        return
+    if data['loglevel'] != 'normal':
+        if data['no-logs'] is False:
+            print(magenta(f'[{now_()}] [パーティー/{client.user.party.id}] [{client.user.display_name}] {str(confirmation.user.display_name)} / {confirmation.user.id} からのパーティー参加リクエスト'))
+        dstore(client.user.display_name,f'[パーティー/{client.user.party.id}] {str(confirmation.user.display_name)} / {confirmation.user.id} からのパーティー参加リクエスト')
+            
+    if data['blacklist-autokick'] is True and confirmation.user.id in blacklist:
+        try:
+            await confirmation.reject()
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == "debug":
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            print(red("パーティーへの参加リクエストの拒否リクエストを処理中にエラーが発生しました"))
+    else:
+        try:
+            await confirmation.confirm()
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == "debug":
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            print(red("パーティーへの参加リクエストの承認リクエストを処理中にエラーが発生しました"))
 
 async def event_party_member_kick(member):
     if member is None:
@@ -1373,8 +1482,8 @@ async def event_party_member_kick(member):
             dstore(client_user_display_name,f'[パーティー] {str(member.party.leader.display_name)} が {str(member.display_name)} をパーティーからキック\n人数: {member.party.member_count}')
         else:
             if data['no-logs'] is False:
-                print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーからキック\n人数: {member.party.member_count}'))
-            dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーからキック\n人数: {member.party.member_count}')
+                print(magenta(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーからキック\n人数: {member.party.member_count}'))
+            dstore(client_user_display_name,f'[パーティー/{client.user.party.id}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーからキック\n人数: {member.party.member_count}')
 
 async def event_party_member_promote(old_leader,new_leader):
     global blacklist
@@ -1403,14 +1512,14 @@ async def event_party_member_promote(old_leader,new_leader):
             dstore(client_user_display_name,f'[パーティー] {str(old_leader.display_name)} から {str(new_leader.display_name)} にリーダーが譲渡')
         else:
             if data['no-logs'] is False:
-                print(magenta(f'[{now_()}] [パーティー/{new_leader.party.id}] [{client_user_display_name}] {str(old_leader.display_name)} / {old_leader.id} [{platform_to_str(old_leader.platform)}/{old_leader.input}] から {str(new_leader.display_name)} / {new_leader.id} [{platform_to_str(new_leader.platform)}/{new_leader.input}] にリーダーが譲渡'))
-            dstore(client_user_display_name,f'[パーティー/{new_leader.party.id}] {str(old_leader.display_name)} / {old_leader.id} [{platform_to_str(old_leader.platform)}/{old_leader.input}] から {str(new_leader.display_name)} / {new_leader.id} [{platform_to_str(new_leader.platform)}/{new_leader.input}] にリーダーが譲渡')
+                print(magenta(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] {str(old_leader.display_name)} / {old_leader.id} [{platform_to_str(old_leader.platform)}/{old_leader.input}] から {str(new_leader.display_name)} / {new_leader.id} [{platform_to_str(new_leader.platform)}/{new_leader.input}] にリーダーが譲渡'))
+            dstore(client_user_display_name,f'[パーティー/{client.user.party.id}] {str(old_leader.display_name)} / {old_leader.id} [{platform_to_str(old_leader.platform)}/{old_leader.input}] から {str(new_leader.display_name)} / {new_leader.id} [{platform_to_str(new_leader.platform)}/{new_leader.input}] にリーダーが譲渡')
     
     if new_leader.id == client.user.id:
         try:
             await client.user.party.set_playlist(data['fortnite']['playlist'])
             await client.user.party.set_privacy(data['fortnite']['privacy'])
-            for member in client.user.party.members:
+            for member in client.user.party.members.values():
                 if member.id in blacklist:
                     if data['blacklist-autokick'] is True:
                         try:
@@ -1453,10 +1562,10 @@ async def event_party_member_update(member):
     if member_joined_at_most == []:
         member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
-        if not data['loglevel'] == 'normal':
+        if data['loglevel'] != 'normal':
             if data['no-logs'] is False:
-                print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] パーティーメンバー更新'))
-            dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] パーティーメンバー更新')
+                print(magenta(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] パーティーメンバー更新'))
+            dstore(client_user_display_name,f'[パーティー/{client.user.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] パーティーメンバー更新')
     
     if member.id == client.user.id:
         return
@@ -1477,8 +1586,8 @@ async def event_party_member_update(member):
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             return
-    if not member.outfit == client.prevoutfit or not member.outfit_variants == client.prevoutfitvariants:
-        if not data['loglevel'] == 'normal':
+    if member.outfit != client.prevoutfit or member.outfit_variants != client.prevoutfitvariants:
+        if data['loglevel'] != 'normal':
             if client.user.id == member_joined_at_most[0]:
                 if data['no-logs'] is False:
                     print(str(member.outfit))
@@ -1498,8 +1607,8 @@ async def event_party_member_update(member):
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-    if not member.backpack == client.prevbackpack or not member.backpack_variants == client.prevbackpackvariants:
-        if not data['loglevel'] == 'normal':
+    if member.backpack != client.prevbackpack or member.backpack_variants != client.prevbackpackvariants:
+        if data['loglevel'] != 'normal':
             if client.user.id == member_joined_at_most[0]:
                 if data['no-logs'] is False:
                     print(str(member.backpack))
@@ -1519,8 +1628,8 @@ async def event_party_member_update(member):
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-    if not member.pickaxe == client.prevpickaxe or not member.pickaxe_variants == client.prevpickaxevariants:
-        if not data['loglevel'] == 'normal':
+    if member.pickaxe != client.prevpickaxe or member.pickaxe_variants != client.prevpickaxevariants:
+        if data['loglevel'] != 'normal':
             if client.user.id == member_joined_at_most[0]:
                 if data['no-logs'] is False:
                     print(str(member.pickaxe))
@@ -1547,8 +1656,8 @@ async def event_party_member_update(member):
     client.prevpickaxe=member.pickaxe
     client.prevpickaxevariants=member.pickaxe_variants
 
-    if not member.emote is None:
-        if not data['loglevel'] == 'normal':
+    if member.emote is not None:
+        if data['loglevel'] != 'normal':
             if client.user.id == member_joined_at_most[0]:
                 if data['no-logs'] is False:
                     print(str(member.emote))
@@ -1594,8 +1703,16 @@ async def event_party_member_disconnect(member):
             dstore(client_user_display_name,f'[パーティー] {str(member.display_name)} の接続が切断')
         else:
             if data['no-logs'] is False:
-                print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] の接続が切断'))
-            dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] の接続が切断')
+                print(magenta(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] の接続が切断'))
+            dstore(client_user_display_name,f'[パーティー/{client.user.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] の接続が切断')
+    
+    if client.user.party.me.leader is True:
+        try:
+            await member.kick()
+        except Exception:
+            if data['loglevel'] == "debug":
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
 async def event_party_member_chatban(member, reason):
     if member is None:
@@ -1629,12 +1746,12 @@ async def event_party_member_chatban(member, reason):
         else:
             if reason is None:
                 if data['no-logs'] is False:
-                    print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン'))
-                dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン')
+                    print(magenta(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン'))
+                dstore(client_user_display_name,f'[パーティー/{client.user.party.id}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン')
             else:
                 if data['no-logs'] is False:
-                    print(magenta(f'[{now_()}] [パーティー/{member.party.id}] [{client_user_display_name}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン | 理由: {reason}'))
-                dstore(client_user_display_name,f'[パーティー/{member.party.id}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン | 理由: {reason}')
+                    print(magenta(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン | 理由: {reason}'))
+                dstore(client_user_display_name,f'[パーティー/{client.user.party.id}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン | 理由: {reason}')
 
 async def event_party_update(party):
     if party is None:
@@ -1656,10 +1773,10 @@ async def event_party_update(party):
     if member_joined_at_most == []:
         member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
-        if not data['loglevel'] == 'normal':
+        if data['loglevel'] != 'normal':
             if data['no-logs'] is False:
-                print(magenta(f'[{now_()}] [パーティー/{party.id}] [{client_user_display_name}] パーティー更新'))
-            dstore(client_user_display_name,f'[パーティー/{party.id}] パーティー更新')
+                print(magenta(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] パーティー更新'))
+            dstore(client_user_display_name,f'[パーティー/{client.user.party.id}] パーティー更新')
 
 #========================================================================================================================
 #========================================================================================================================
@@ -1669,6 +1786,7 @@ async def event_party_update(party):
 
 async def event_friend_message(message):
     global blacklist
+    global whitelist
     global kill
     if message is None:
         return
@@ -1686,15 +1804,16 @@ async def event_friend_message(message):
     rawcontent = ' '.join(rawargs[1:])
     rawcontent2 = ' '.join(rawargs[2:])
     user=None
-    if not client.owner is None:
+    if client.owner is not None:
         if client.whisper is False:
             if client.whisperperfect is True:
                 return
-            elif not message.author.id == client.owner.id:
+            elif message.author.id != client.owner.id and message.author.id not in whitelist:
                 return
     else:
         if client.whisper is False:
-            return
+            if message.author.id not in whitelist:
+                return
     if rawcontent in commands['me'].split(','):
         rawcontent=str(message.author.display_name)
     if data['loglevel'] == 'normal':
@@ -1706,19 +1825,21 @@ async def event_friend_message(message):
             print(f'[{now_()}] [{client.user.display_name}] {str(message.author.display_name)}/ {message.author.id} [{platform_to_str(message.author.platform)}] | {content}')
         dstore(f'{message.author.display_name} / {message.author.id}',content)
 
-    if not client.owner is None:
-        if not client.owner.id == message.author.id:
-            for checks in commands.items():
-                ignore=['ownercommands','true','false','me', 'privacy_public', 'privacy_friends_allow_friends_of_friends', 'privacy_friends', 'privacy_private_allow_friends_of_friends', 'privacy_private', 'info_party', 'info_item']
-                if checks[0] in ignore:
-                    continue
-                if commands['ownercommands'] == '':
-                    break
-                for command in commands['ownercommands'].split(','):
-                    if args[0] in commands[command.lower()].split(','):
-                        await message.reply('このコマンドは管理者しか使用できません')
-                        return
+    flag = False
+    if client.owner is not None:
+        if data['whitelist-ownercommand'] is True:
+            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                flag = True
+        else:
+            if client.owner.id != message.author.id:
+                flag = True
     else:
+        if data['whitelist-ownercommand'] is True:
+            if message.author.id not in whitelist:
+                flag = True
+        else:
+            flag = True
+    if flag is True:
         for checks in commands.items():
             ignore=['ownercommands','true','false','me', 'privacy_public', 'privacy_friends_allow_friends_of_friends', 'privacy_friends', 'privacy_private_allow_friends_of_friends', 'privacy_private', 'info_party', 'info_item']
             if checks[0] in ignore:
@@ -1809,14 +1930,28 @@ async def event_friend_message(message):
 
     elif args[0] in commands['restart'].split(','):
         try:
-            if client.acceptinvite is False and client.owner is None:
+            flag = False
+            if client.acceptinvite is False:
+                if client.owner is not None:
+                    if data['whitelist-ownercommand'] is True:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ownercommand'] is True:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if message.author.id not in whitelist:
+                            flag = True
+            if flag is True:
                 await message.reply('招待が拒否に設定されているので実行できません')
-            elif client.acceptinvite is False and not message.author.id == client.owner.id:
-                await message.reply('招待が拒否に設定されているので実行できません')
-            else:
-                await message.reply('プログラムを再起動します...')
-                os.chdir(os.getcwd())
-                os.execv(os.sys.executable,['python','index.py'])
+                return
+            await message.reply('プログラムを再起動します...')
+            os.chdir(os.getcwd())
+            os.execv(os.sys.executable,['python','index.py'])
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -1824,6 +1959,25 @@ async def event_friend_message(message):
 
     elif args[0] in commands['relogin'].split(','):
         try:
+            flag = False
+            if client.acceptinvite is False:
+                if client.owner is not None:
+                    if data['whitelist-ownercommand'] is True:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ownercommand'] is True:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if message.author.id not in whitelist:
+                            flag = True
+            if flag is True:
+                await message.reply('招待が拒否に設定されているので実行できません')
+                return
             await message.reply('アカウントに再ログインします...')
             await client.restart()
         except fortnitepy.AuthException:
@@ -1889,8 +2043,8 @@ async def event_friend_message(message):
                         print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name} / {client.owner.id}'))
                         dstore(client.user.display_name,f'所有者: {client.owner.display_name} / {client.owner.id}')
 
+            blacklist = []
             for blacklistuser in data['blacklist']:
-                blacklist = []
                 user = await client.fetch_profile(blacklistuser)
                 if user is None:
                     print(red(f'[{now_()}] [{client.user.display_name}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
@@ -1906,6 +2060,20 @@ async def event_friend_message(message):
                             if data['loglevel'] == 'debug':
                                 print(red(traceback.format_exc()))
                                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            print(yellow(blacklist))
+            whitelist = []
+            for whitelistuser in data['whitelist']:
+                user = await client.fetch_profile(whitelistuser)
+                if user is None:
+                    print(red(f'[{now_()}] [{client.user.display_name}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
+                    dstore(client.user.display_name,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                else:
+                    whitelist.append(user.id)
+                    if data['loglevel'] == 'debug':
+                        print(yellow(f"{user.display_name} / {user.id}"))
+            if data['loglevel'] == "debug":
+                print(yellow(whitelist))
+
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -1926,7 +2094,7 @@ async def event_friend_message(message):
             else:
                 if user.display_name not in data["blacklist"] and user.id not in data["blacklist"]:
                     blacklist.append(user.id)
-                    if not user.display_name is None:
+                    if user.display_name is not None:
                         data["blacklist"].append(user.display_name)
                     else:
                         data["blacklist"].append(user.id)
@@ -1985,6 +2153,80 @@ async def event_friend_message(message):
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('エラー')
 
+    elif args[0] in commands['addwhitelist'].split(','):
+        try:
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+            else:
+                if user.display_name not in data["whitelist"] and user.id not in data["whitelist"]:
+                    whitelist.append(user.id)
+                    if user.display_name is not None:
+                        data["whitelist"].append(user.display_name)
+                    else:
+                        data["whitelist"].append(user.id)
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                            data_["whitelist"] = data["whitelist"]
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                            data_["whitelist"] = data["whitelist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await message.reply(f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストに追加しました")
+                else:
+                    await message.reply(f"ユーザー {str(user.display_name)} / {user.id} は既にホワイトリストに追加されています")
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['removewhitelist'].split(','):
+        try:
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+            else:
+                if user.display_name in data["whitelist"] or user.id in data["whitelist"]:
+                    whitelist.remove(user.id)
+                    try:
+                        data["whitelist"].remove(user.display_name)
+                    except ValueError:
+                        data["whitelist"].remove(user.id)
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                            data_["whitelist"] = data["whitelist"]
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                            data_["whitelist"] = data["whitelist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await message.reply(f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストから削除")
+                else:
+                    await message.reply(f"ユーザー {str(user.display_name)} / {user.id} はホワイトリストに含まれていません")
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
     elif args[0] in commands['get'].split(','):
         try:
             if rawcontent == '':
@@ -2001,12 +2243,14 @@ async def event_friend_message(message):
             if user is None:
                 await message.reply('ユーザーが見つかりません')
                 return
-            if not user.id in client.user.party.members.keys():
+            if user.id not in client.user.party.members.keys():
                 await message.reply('ユーザーがパーティーにいません')
                 return
             member=client.user.party.members.get(user.id)
             if data['no-logs'] is False:
                 print(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
+            if data['loglevel'] == 'debug':
+                print(json.dumps(member.meta.schema, indent=2))
             dstore(client.user.display_name,f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
             await message.reply(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
         except Exception:
@@ -2292,7 +2536,7 @@ async def event_friend_message(message):
                 client.timer_.start()
                 await message.reply(f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")
             else:
-                if client.owner.id in client.user.party.members.keys() and not message.author.id == client.owner.id:
+                if client.owner.id in client.user.party.members.keys() and message.author.id != client.owner.id:
                     await message.reply('現在利用できません')
                     return
                 client.acceptinvite=False
@@ -2647,7 +2891,7 @@ async def event_friend_message(message):
                     print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
                 dstore(client.user.display_name,f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
                 await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
-            if not friend.last_logout is None:
+            if friend.last_logout is not None:
                 await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
@@ -2729,6 +2973,8 @@ async def event_friend_message(message):
                         print(f'{str(member.display_name)} / {member.id}')
                         dstore(client.user.display_name,f'{str(member.display_name)} / {member.id}')
                         await message.reply(f'{str(member.display_name)} / {member.id}')
+                if data['loglevel'] == 'debug':
+                    print(json.dumps(client.user.party.meta.schema, indent=2))
             elif args[1] in commands['info_item'].split(','):
                 if rawcontent2 == '':
                     await message.reply(f"[{commands['info']}] [{commands['info_item']}] [アイテム名]")
@@ -3178,7 +3424,7 @@ async def event_friend_message(message):
             if user is None:
                 await message.reply('ユーザーが見つかりません')
                 return
-            if not user.id in client.blocked_users.keys():
+            if user.id not in client.blocked_users.keys():
                 await message.reply('ユーザーをブロックしていません')
                 return
             await client.unblock_user(user.id)
@@ -3213,7 +3459,7 @@ async def event_friend_message(message):
             if user is None:
                 await message.reply('ユーザーが見つかりません')
                 return
-            if not user.id in client.user.party.members.keys():
+            if user.id not in client.user.party.members.keys():
                 await message.reply('ユーザーがパーティーにいません')
                 return
             member=client.user.party.members.get(user.id)
@@ -3261,7 +3507,7 @@ async def event_friend_message(message):
             if user is None:
                 await message.reply('ユーザーが見つかりません')
                 return
-            if not user.id in client.user.party.members.keys():
+            if user.id not in client.user.party.members.keys():
                 await message.reply('ユーザーがパーティーにいません')
                 return
             member=client.user.party.members.get(user.id)
@@ -3306,7 +3552,7 @@ async def event_friend_message(message):
             if user is None:
                 await message.reply('ユーザーが見つかりません')
                 return
-            if not user.id in client.user.party.members.keys():
+            if user.id not in client.user.party.members.keys():
                 await message.reply('ユーザーがパーティーにいません')
                 return
             member=client.user.party.members.get(user.id)
@@ -3440,8 +3686,8 @@ async def event_friend_message(message):
 
     elif args[0] in commands['stop'].split(','):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.emotelock is True:
+            if client.owner is not None:
+                if client.owner.id != message.author.id and client.emotelock is True:
                     await message.reply('エモートロックが有効です')
                     return
             elif client.emotelock is True:
@@ -3457,11 +3703,22 @@ async def event_friend_message(message):
 
     elif args[0] in commands['allskin'].split(','):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.skinlock is True:
-                    await message.reply('スキンロックが有効です')
-                    return
-            elif client.skinlock is True:
+            flag = False
+            if client.skinlock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('スキンロックが有効です')
                 return
             with open('allen.json', 'r', encoding='utf-8') as f:
@@ -3484,11 +3741,22 @@ async def event_friend_message(message):
 
     elif args[0] in commands['allemote'].split(','):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.emotelock is True:
-                    await message.reply('エモートロックが有効です')
-                    return
-            elif client.emotelock is True:
+            flag = False
+            if client.emotelock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('エモートロックが有効です')
                 return
             with open('allen.json', 'r', encoding='utf-8') as f:
@@ -3513,32 +3781,54 @@ async def event_friend_message(message):
             return
         try:
             if args[1] in commands['skin']:
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.skinlock is True:
-                        await message.reply('スキンロックが有効です')
-                        return
-                elif client.skinlock is True:
+                flag = False
+                if client.skinlock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('スキンロックが有効です')
                     return
                 variants=await search_style("ja", rawcontent2, client.user.party.me.outfit)
                 if variants is None:
                     variants=await search_style("en", rawcontent2, client.user.party.me.outfit)
-                if not variants is None:
+                if variants is not None:
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.user.party.me.outfit,variants=variants))
                 else:
                     await message.reply('見つかりません')
             elif args[1] in commands['bag']:
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.baglock is True:
-                        await message.reply('バッグロックが有効です')
-                        return
-                elif client.baglock is True:
+                flag = False
+                if client.baglock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('バッグロックが有効です')
                     return
                 variants=await search_style("ja", rawcontent2, client.user.party.me.backpack)
                 if variants is None:
                     variants=await search_style("en", rawcontent2, client.user.party.me.backpack)
-                if not variants is None:
+                if variants is not None:
                     if client.user.party.me.backpack.lower().startswith('bid_'):
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.user.party.me.backpack,variants=variants))
                     elif client.user.party.me.backpack.lower().startswith('petcarrier_'):
@@ -3546,17 +3836,28 @@ async def event_friend_message(message):
                 else:
                     await message.reply('見つかりません')
             elif args[1] in commands['pickaxe']:
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.picklock is True:
-                        await message.reply('ツルハシロックが有効です')
-                        return
-                elif client.picklock is True:
+                flag = False
+                if client.picklock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('ツルハシロックが有効です')
                     return
                 variants=await search_style("ja", rawcontent2, client.user.pickaxe)
                 if variants is None:
                     variants=await search_style("en", rawcontent2, client.user.party.me.pickaxe)
-                if not variants is None:
+                if variants is not None:
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.user.party.me.pickaxe,variants=variants))
                 else:
                     await message.reply('見つかりません')
@@ -3581,28 +3882,50 @@ async def event_friend_message(message):
             return
         try:
             if args[1] in commands['skin']:
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.skinlock is True:
-                        await message.reply('スキンロックが有効です')
-                        return
-                elif client.skinlock is True:
+                flag = False
+                if client.skinlock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('スキンロックが有効です')
                     return
                 variants=await search_style("ja", rawcontent2, client.user.party.me.outfit)
                 if variants is None:
                     variants=await search_style("en", rawcontent2, client.user.party.me.outfit)
-                if not variants is None:
+                if variants is not None:
                     for val in client.user.party.me.outfit_variants:
                         variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.user.party.me.outfit,variants=variants))
                 else:
                     await message.reply('見つかりません')
             elif args[1] in commands['bag']:
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.baglock is True:
-                        await message.reply('バッグロックが有効です')
-                        return
-                elif client.baglock is True:
+                flag = False
+                if client.baglock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('バッグロックが有効です')
                     return
                 variants=await search_style("ja", rawcontent2, client.user.party.me.backpack)
@@ -3610,7 +3933,7 @@ async def event_friend_message(message):
                     variants=await search_style("en", rawcontent2, client.user.party.me.backpack)
                 for val in client.user.party.me.backpack_variants:
                     variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
-                if not variants is None:
+                if variants is not None:
                     if client.user.party.me.backpack.lower().startswith('bid_'):
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.user.party.me.backpack,variants=variants))
                     elif client.user.party.me.backpack.lower().startswith('petcarrier_'):
@@ -3618,17 +3941,28 @@ async def event_friend_message(message):
                 else:
                     await message.reply('見つかりません')
             elif args[1] in commands['pickaxe']:
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.picklock is True:
-                        await message.reply('ツルハシロックが有効です')
-                        return
-                elif client.picklock is True:
+                flag = False
+                if client.picklock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('ツルハシロックが有効です')
                     return
                 variants=await search_style("ja", rawcontent2, client.user.pickaxe)
                 if variants is None:
                     variants=await search_style("en", rawcontent2, client.user.party.me.pickaxe)
-                if not variants is None:
+                if variants is not None:
                     for val in client.user.party.me.pickaxe_variants:
                         variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.user.party.me.pickaxe,variants=variants))
@@ -3651,11 +3985,22 @@ async def event_friend_message(message):
 
     elif args[0] in commands['setenlightenment'].split(','):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.skinlock is True:
-                    await message.reply('スキンロックが有効です')
-                    return
-            elif client.skinlock is True:
+            flag = False
+            if client.skinlock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('スキンロックが有効です')
                 return
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.user.party.me.outfit,variants=client.user.party.me.outfit_variants,enlightenment=(args[1],args[2])))
@@ -3723,16 +4068,27 @@ async def event_friend_message(message):
                         else:
                             await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'outfit':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.skinlock is True:
-                                await message.reply('スキンロックが有効です')
-                                return
-                        elif client.skinlock is True:
+                        flag = False
+                        if client.skinlock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('スキンロックが有効です')
                             return
                         if 'banner' not in client.itemdata[1][0][0]:
@@ -3740,11 +4096,22 @@ async def event_friend_message(message):
                         else:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.itemdata[1][0][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                     if client.itemdata[1][0][2] == 'backpack':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                return
-                        elif client.baglock is True:
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('バッグロックが有効です')
                             return
                         if 'banner' not in client.itemdata[1][0][0]:
@@ -3752,56 +4119,111 @@ async def event_friend_message(message):
                         else:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.itemdata[1][0][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                     if client.itemdata[1][0][2] == 'pet':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                return
-                        elif client.baglock is True:
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('バッグロックが有効です')
                             return
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.itemdata[1][0][0]))
                     if client.itemdata[1][0][2] == 'pickaxe':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.picklock is True:
-                                await message.reply('ツルハシロックが有効です')
-                                return
-                        elif client.picklock is True:
+                        flag = False
+                        if client.picklock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('ツルハシロックが有効です')
                             return
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.itemdata[1][0][0]))
-                        if not client.user.party.me.emote is None:
+                        if client.user.party.me.emote is not None:
                             if client.user.party.me.emote.lower() == 'eid_iceking':
                                 await client.user.party.me.clear_emote()
                         await client.user.party.me.set_emote('EID_IceKing')
                     if client.itemdata[1][0][2] == 'emote':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                return
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             return
-                        if not client.user.party.me.emote is None:
+                        if client.user.party.me.emote is not None:
                             if client.user.party.me.emote.lower() == client.itemdata[1][0][0].lower():
                                 await client.user.party.me.clear_emote()
                         await client.user.party.me.set_emote(client.itemdata[1][0][0])
                         client.eid=client.itemdata[1][0][0]
                     if client.itemdata[1][0][2] == 'emoji':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                return
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             return
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}'
                     if client.itemdata[1][0][2] == 'toy':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                return
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             return
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}')
@@ -3837,14 +4259,25 @@ async def event_friend_message(message):
                     else:
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.skinlock is True:
-                            await message.reply('スキンロックが有効です')
-                            return
-                    elif client.skinlock is True:
+                    flag = False
+                    if client.skinlock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('スキンロックが有効です')
                         return
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
@@ -3867,14 +4300,25 @@ async def event_friend_message(message):
                     else:
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.skinlock is True:
-                            await message.reply('スキンロックが有効です')
-                            return
-                    elif client.skinlock is True:
+                    flag = False
+                    if client.skinlock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('スキンロックが有効です')
                         return
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
@@ -3913,14 +4357,25 @@ async def event_friend_message(message):
                     else:
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.baglock is True:
-                            await message.reply('バッグロックが有効です')
-                            return
-                    elif client.baglock is True:
+                    flag = False
+                    if client.baglock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('バッグロックが有効です')
                         return
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
@@ -3946,14 +4401,25 @@ async def event_friend_message(message):
                         else:
                             await message.reply(f'{count+1}: {item[1]}')
                     if len(client.itemdata[1]) == 1:
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                return
-                        elif client.baglock is True:
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('バッグロックが有効です')
                             return
-                        if not data['loglevel'] == 'normal':
+                        if data['loglevel'] != 'normal':
                             if data['no-logs'] is False:
                                 print(client.itemdata[1][0][0])
                             dstore(client.user.display_name,client.itemdata[1][0][0])
@@ -3995,19 +4461,30 @@ async def event_friend_message(message):
                     else:
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.picklock is True:
-                            await message.reply('ツルハシロックが有効です')
-                            return
-                    elif client.picklock is True:
+                    flag = False
+                    if client.picklock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('ツルハシロックが有効です')
                         return
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.itemdata[1][0][0]))
-                    if not client.user.party.me.emote is None:
+                    if client.user.party.me.emote is not None:
                         if client.user.party.me.emote.lower() == 'eid_iceking':
                             await client.user.party.me.clear_emote()
                     await client.user.party.me.set_emote('EID_IceKing')
@@ -4026,14 +4503,25 @@ async def event_friend_message(message):
                     else:
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.picklock is True:
-                            await message.reply('ツルハシロックが有効です')
-                            return
-                    elif client.picklock is True:
+                    flag = False
+                    if client.picklock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('ツルハシロックが有効です')
                         return
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
@@ -4070,14 +4558,25 @@ async def event_friend_message(message):
                     else:
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.emotelock is True:
-                            await message.reply('エモートロックが有効です')
-                            return
-                    elif client.emotelock is True:
+                    flag = False
+                    if client.emotelock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('エモートロックが有効です')
                         return
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
@@ -4105,14 +4604,25 @@ async def event_friend_message(message):
                     else:
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.emotelock is True:
-                            await message.reply('エモートロックが有効です')
-                            return
-                    elif client.emotelock is True:
+                    flag = False
+                    if client.emotelock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('エモートロックが有効です')
                         return
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
@@ -4148,7 +4658,7 @@ async def event_friend_message(message):
             if isitem[0] == 'True':
                 client.itemdata=isitem
                 for count,item in enumerate(client.itemdata[1]):
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(item[0])
                         dstore(client.user.display_name,item[0])
@@ -4157,11 +4667,22 @@ async def event_friend_message(message):
                             await message.reply(f'スキン: {item[1]}')
                         else:
                             await message.reply(f'{count+1} スキン: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.skinlock is True:
-                                await message.reply('スキンロックが有効です')
-                                continue
-                        elif client.skinlock is True:
+                        flag = False
+                        if client.skinlock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('スキンロックが有効です')
                             continue
                         if 'banner' not in item[0]:
@@ -4173,11 +4694,22 @@ async def event_friend_message(message):
                             await message.reply(f'バッグ: {item[1]}')
                         else:
                             await message.reply(f'{count+1} バッグ: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                continue
-                        elif client.baglock is True:
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('バッグロックが有効です')
                             continue
                         if 'banner' not in item[0]:
@@ -4189,11 +4721,22 @@ async def event_friend_message(message):
                             await message.reply(f'バッグ: {item[1]}')
                         else:
                             await message.reply(f'{count+1} バッグ: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                continue
-                        elif client.baglock is True:
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('バッグロックが有効です')
                             continue
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,item[0]))
@@ -4202,118 +4745,22 @@ async def event_friend_message(message):
                             await message.reply(f'ツルハシ: {item[1]}')
                         else:
                             await message.reply(f'{count+1} ツルハシ: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.picklock is True:
-                                await message.reply('ツルハシロックが有効です')
-                                continue
-                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,item[0]))
-                        await client.user.party.me.set_emote('EID_IceKing')
-                    if item[2] == 'emote':
-                        if len(client.itemdata[1]) == 1:
-                            await message.reply(f'エモート: {item[1]}')
-                        else:
-                            await message.reply(f'{count+1} エモート: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                continue
-                        elif client.emotelock is True:
-                            await message.reply('エモートロックが有効です')
-                            continue
-                        await client.user.party.me.set_emote(item[0])
-                        client.eid=item[0]
-                    if item[2] == 'emoji':
-                        if len(client.itemdata[1]) == 1:
-                            await message.reply(f'エモート: {item[1]}')
-                        else:
-                            await message.reply(f'{count+1} エモート: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                continue
-                        elif client.emotelock is True:
-                            await message.reply('エモートロックが有効です')
-                            continue
-                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}')
-                        client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}'
-                    if item[2] == 'toy':
-                        if len(client.itemdata[1]) == 1:
-                            await message.reply(f'エモート: {item[1]}')
-                        else:
-                            await message.reply(f'{count+1} エモート: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                continue
-                        elif client.emotelock is True:
-                            await message.reply('エモートロックが有効です')
-                            continue
-                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}')
-                        client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}'
-                return
-            isitem = await search_set_item("en", rawcontent)
-            if isitem[0] == 'True':
-                client.itemdata=isitem
-                for count,item in enumerate(client.itemdata[1]):
-                    if not data['loglevel'] == 'normal':
-                        if data['no-logs'] is False:
-                            print(item[0])
-                        dstore(client.user.display_name,item[0])
-                    if item[2] == 'outfit':
-                        if len(client.itemdata[1]) == 1:
-                            await message.reply(f'スキン: {item[1]}')
-                        else:
-                            await message.reply(f'{count+1} スキン: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.skinlock is True:
-                                await message.reply('スキンロックが有効です')
-                                continue
-                        elif client.skinlock is True:
-                            await message.reply('スキンロックが有効です')
-                            continue
-                        if 'banner' not in item[0]:
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,item[0]))
-                        else:
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,item[0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
-                    if item[2] == 'backpack':
-                        if len(client.itemdata[1]) == 1:
-                            await message.reply(f'バッグ: {item[1]}')
-                        else:
-                            await message.reply(f'{count+1} バッグ: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                continue
-                        elif client.baglock is True:
-                            await message.reply('バッグロックが有効です')
-                            continue
-                        if 'banner' not in item[0]:
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,item[0]))
-                        else:
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,item[0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
-                    if item[2] == 'pet':
-                        if len(client.itemdata[1]) == 1:
-                            await message.reply(f'バッグ: {item[1]}')
-                        else:
-                            await message.reply(f'{count+1} バッグ: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                continue
-                        elif client.baglock is True:
-                            await message.reply('バッグロックが有効です')
-                            continue
-                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,item[0]))
-                    if item[2] == 'pickaxe':
-                        if len(client.itemdata[1]) == 1:
-                            await message.reply(f'ツルハシ: {item[1]}')
-                        else:
-                            await message.reply(f'{count+1} ツルハシ: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.picklock is True:
-                                await message.reply('ツルハシロックが有効です')
-                                continue
-                        elif client.picklock is True:
+                        flag = False
+                        if client.picklock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('ツルハシロックが有効です')
                             continue
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,item[0]))
@@ -4323,11 +4770,22 @@ async def event_friend_message(message):
                             await message.reply(f'エモート: {item[1]}')
                         else:
                             await message.reply(f'{count+1} エモート: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                continue
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             continue
                         await client.user.party.me.set_emote(item[0])
@@ -4337,11 +4795,22 @@ async def event_friend_message(message):
                             await message.reply(f'エモート: {item[1]}')
                         else:
                             await message.reply(f'{count+1} エモート: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                continue
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             continue
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}')
@@ -4351,11 +4820,209 @@ async def event_friend_message(message):
                             await message.reply(f'エモート: {item[1]}')
                         else:
                             await message.reply(f'{count+1} エモート: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                continue
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
+                            await message.reply('エモートロックが有効です')
+                            continue
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}'
+                return
+            isitem = await search_set_item("en", rawcontent)
+            if isitem[0] == 'True':
+                client.itemdata=isitem
+                for count,item in enumerate(client.itemdata[1]):
+                    if data['loglevel'] != 'normal':
+                        if data['no-logs'] is False:
+                            print(item[0])
+                        dstore(client.user.display_name,item[0])
+                    if item[2] == 'outfit':
+                        if len(client.itemdata[1]) == 1:
+                            await message.reply(f'スキン: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} スキン: {item[1]}')
+                        flag = False
+                        if client.skinlock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
+                            await message.reply('スキンロックが有効です')
+                            continue
+                        if 'banner' not in item[0]:
+                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,item[0]))
+                        else:
+                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,item[0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
+                    if item[2] == 'backpack':
+                        if len(client.itemdata[1]) == 1:
+                            await message.reply(f'バッグ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[1]}')
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
+                            await message.reply('バッグロックが有効です')
+                            continue
+                        if 'banner' not in item[0]:
+                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,item[0]))
+                        else:
+                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,item[0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
+                    if item[2] == 'pet':
+                        if len(client.itemdata[1]) == 1:
+                            await message.reply(f'バッグ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[1]}')
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
+                            await message.reply('バッグロックが有効です')
+                            continue
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,item[0]))
+                    if item[2] == 'pickaxe':
+                        if len(client.itemdata[1]) == 1:
+                            await message.reply(f'ツルハシ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} ツルハシ: {item[1]}')
+                        flag = False
+                        if client.picklock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
+                            await message.reply('ツルハシロックが有効です')
+                            continue
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,item[0]))
+                        await client.user.party.me.set_emote('EID_IceKing')
+                    if item[2] == 'emote':
+                        if len(client.itemdata[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
+                            await message.reply('エモートロックが有効です')
+                            continue
+                        await client.user.party.me.set_emote(item[0])
+                        client.eid=item[0]
+                    if item[2] == 'emoji':
+                        if len(client.itemdata[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
+                            await message.reply('エモートロックが有効です')
+                            continue
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}'
+                    if item[2] == 'toy':
+                        if len(client.itemdata[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             continue
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}')
@@ -4383,11 +5050,22 @@ async def event_friend_message(message):
                 except IndexError:
                     break
             if args[1].startswith('cid_'):
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.skinlock is True:
-                        await message.reply('スキンロックが有効です')
-                        return
-                elif client.skinlock is True:
+                flag = False
+                if client.skinlock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('スキンロックが有効です')
                     return
                 if 'banner' not in args[1]:
@@ -4399,11 +5077,22 @@ async def event_friend_message(message):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,asset=args[1],variants=variants))
                 await message.reply(f'スキンを {args[1]} {variants} に設定')
             elif args[1].startswith('bid_'):
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.baglock is True:
-                        await message.reply('バッグロックが有効です')
-                        return
-                elif client.baglock is True:
+                flag = False
+                if client.baglock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('バッグロックが有効です')
                     return
                 if 'banner' not in args[1]:
@@ -4415,22 +5104,44 @@ async def event_friend_message(message):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,asset=args[1],variants=variants))
                 await message.reply(f'バッグを {args[1]} {variants} に設定')
             elif args[1].startswith('petcarrier_'):
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.baglock is True:
-                        await message.reply('バッグロックが有効です')
-                        return
-                elif client.baglock is True:
+                flag = False
+                if client.baglock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('バッグロックが有効です')
                     return
                 variants=client.user.party.me.create_variants(item='AthenaBackpack',**variantdict)
                 await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,asset=args[1],variants=variants))
                 await message.reply(f'バッグを {args[1]} {variants} に設定')
             elif args[1].startswith('pickaxe_id_'):
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.picklock is True:
-                        await message.reply('ツルハシロックが有効です')
-                        return
-                elif client.picklock is True:
+                flag = False
+                if client.picklock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('ツルハシロックが有効です')
                     return
                 variants=client.user.party.me.create_variants(item='AthenaPickaxe',**variantdict)
@@ -4464,11 +5175,22 @@ async def event_friend_message(message):
                 except IndexError:
                     break
             if args[1].startswith('cid_'):
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.skinlock is True:
-                        await message.reply('スキンロックが有効です')
-                        return
-                elif client.skinlock is True:
+                flag = False
+                if client.skinlock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('スキンロックが有効です')
                     return
                 if 'banner' not in args[1]:
@@ -4484,11 +5206,22 @@ async def event_friend_message(message):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,asset=args[1],variants=variants))
                 await message.reply(f'スキンを {args[1]} {variants} に設定')
             elif args[1].startswith('bid_'):
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.baglock is True:
-                        await message.reply('バッグロックが有効です')
-                        return
-                elif client.baglock is True:
+                flag = False
+                if client.baglock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('バッグロックが有効です')
                     return
                 if 'banner' not in args[1]:
@@ -4504,11 +5237,22 @@ async def event_friend_message(message):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,asset=args[1],variants=variants))
                 await message.reply(f'バッグを {args[1]} {variants} に設定')
             elif args[1].startswith('petcarrier_'):
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.baglock is True:
-                        await message.reply('バッグロックが有効です')
-                        return
-                elif client.baglock is True:
+                flag = False
+                if client.baglock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('バッグロックが有効です')
                     return
                 variants=client.user.party.me.create_variants(item='AthenaBackpack',**variantdict)
@@ -4517,11 +5261,22 @@ async def event_friend_message(message):
                 await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,asset=args[1],variants=variants))
                 await message.reply(f'バッグを {args[1]} {variants} に設定')
             elif args[1].startswith('pickaxe_id_'):
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.picklock is True:
-                        await message.reply('ツルハシロックが有効です')
-                        return
-                elif client.picklock is True:
+                flag = False
+                if client.picklock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('ツルハシロックが有効です')
                     return
                 variants=client.user.party.me.create_variants(item='AthenaPickaxe',**variantdict)
@@ -4548,11 +5303,22 @@ async def event_friend_message(message):
 
     elif args[0] in commands['skinasset'].split(','):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.skinlock is True:
-                    await message.reply('スキンロックが有効です')
-                    return
-            elif client.skinlock is True:
+            flag = False
+            if client.skinlock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('スキンロックが有効です')
                 return
             if 'banner' not in args[0]:
@@ -4576,11 +5342,22 @@ async def event_friend_message(message):
 
     elif args[0] in commands['bagasset'].split(','):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.baglock is True:
-                    await message.reply('バッグロックが有効です')
-                    return
-            elif client.baglock is True:
+            flag = False
+            if client.baglock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('バッグロックが有効です')
                 return
             if 'banner' not in args[0]:
@@ -4604,11 +5381,22 @@ async def event_friend_message(message):
 
     elif args[0] in commands['pickasset'].split(','):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.picklock is True:
-                    await message.reply('ツルハシロックが有効です')
-                    return
-            elif client.picklock is True:
+            flag = False
+            if client.picklock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('ツルハシロックが有効です')
                 return
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,rawcontent))
@@ -4630,11 +5418,22 @@ async def event_friend_message(message):
 
     elif args[0] in commands['emoteasset'].split(','):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.emotelock is True:
-                    await message.reply('エモートロックが有効です')
-                    return
-            elif client.emotelock is True:
+            flag = False
+            if client.emotelock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('エモートロックが有効です')
                 return
             await client.user.party.me.clear_emote()
@@ -4656,14 +5455,25 @@ async def event_friend_message(message):
 
     elif args[0].lower().startswith('cid_'):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.skinlock is True:
-                    await message.reply('スキンロックが有効です')
-                    return
-            elif client.skinlock is True:
+            flag = False
+            if client.skinlock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('スキンロックが有効です')
                 return
-            if not data['loglevel'] == 'normal':
+            if data['loglevel'] != 'normal':
                 if data['no-logs'] is False:
                     print(args[0])
                 dstore(client.user.display_name,args[0])
@@ -4684,14 +5494,25 @@ async def event_friend_message(message):
 
     elif args[0].lower().startswith('bid_'):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.baglock is True:
-                    await message.reply('バッグロックが有効です')
-                    return
-            elif client.baglock is True:
+            flag = False
+            if client.baglock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('バッグロックが有効です')
                 return
-            if not data['loglevel'] == 'normal':
+            if data['loglevel'] != 'normal':
                 if data['no-logs'] is False:
                     print(args[0])
                 dstore(client.user.display_name,args[0])
@@ -4712,14 +5533,25 @@ async def event_friend_message(message):
 
     elif args[0].lower().startswith('pet_carrier'):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.baglock is True:
-                    await message.reply('バッグロックが有効です')
-                    return
-            elif client.baglock is True:
+            flag = False
+            if client.baglock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('バッグロックが有効です')
                 return
-            if not data['loglevel'] == 'normal':
+            if data['loglevel'] != 'normal':
                 if data['no-logs'] is False:
                     print(args[0])
                 dstore(client.user.display_name,args[0])
@@ -4737,14 +5569,25 @@ async def event_friend_message(message):
 
     elif args[0].lower().startswith('pickaxe_id'):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.picklock is True:
-                    await message.reply('ツルハシロックが有効です')
-                    return
-            elif client.picklock is True:
+            flag = False
+            if client.picklock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('ツルハシロックが有効です')
                 return
-            if not data['loglevel'] == 'normal':
+            if data['loglevel'] != 'normal':
                 if data['no-logs'] is False:
                     print(args[0])
                 dstore(client.user.display_name,args[0])
@@ -4763,18 +5606,29 @@ async def event_friend_message(message):
 
     elif args[0].lower().startswith('eid_'):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.emotelock is True:
-                    await message.reply('エモートロックが有効です')
-                    return
-            elif client.emotelock is True:
+            flag = False
+            if client.emotelock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('エモートロックが有効です')
                 return
-            if not data['loglevel'] == 'normal':
+            if data['loglevel'] != 'normal':
                 if data['no-logs'] is False:
                     print(args[0])
                 dstore(client.user.display_name,args[0])
-            if not client.user.party.me.emote is None:
+            if client.user.party.me.emote is not None:
                 if client.user.party.me.emote.lower() == args[0].lower():
                     await client.user.party.me.clear_emote()
             await client.user.party.me.set_emote(args[0])
@@ -4792,17 +5646,28 @@ async def event_friend_message(message):
 
     elif args[0].lower().startswith('shout_'):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.emotelock is True:
-                    await message.reply('エモートロックが有効です')
-                    return
-            elif client.emotelock is True:
+            flag = False
+            if client.emotelock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('エモートロックが有効です')
                 return
-            if not data['loglevel'] == 'normal':
+            if data['loglevel'] != 'normal':
                 if data['no-logs'] is False:
                     print(args[0])
-            if not client.user.party.me.emote is None:
+            if client.user.party.me.emote is not None:
                 if client.user.party.me.emote.lower() == args[0].lower():
                     await client.user.party.me.clear_emote()
             await client.user.party.me.set_shout(args[0])
@@ -4820,18 +5685,29 @@ async def event_friend_message(message):
 
     elif args[0].lower().startswith('emoji_'):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.emotelock is True:
-                    await message.reply('エモートロックが有効です')
-                    return
-            elif client.emotelock is True:
+            flag = False
+            if client.emotelock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('エモートロックが有効です')
                 return
-            if not data['loglevel'] == 'normal':
+            if data['loglevel'] != 'normal':
                 if data['no-logs'] is False:
                     print(args[0])
                 dstore(client.user.display_name,args[0])
-            if not client.user.party.me.emote is None:
+            if client.user.party.me.emote is not None:
                 if client.user.party.me.emote.lower() == args[0].lower():
                     await client.user.party.me.clear_emote()
             await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{args[0]}.{args[0]}')
@@ -4849,18 +5725,29 @@ async def event_friend_message(message):
 
     elif args[0].lower().startswith('toy_'):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.emotelock is True:
-                    await message.reply('エモートロックが有効です')
-                    return
-            elif client.emotelock is True:
+            flag = False
+            if client.emotelock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('エモートロックが有効です')
                 return
-            if not data['loglevel'] == 'normal':
+            if data['loglevel'] != 'normal':
                 if data['no-logs'] is False:
                     print(args[0])
                 dstore(client.user.display_name,args[0])
-            if not client.user.party.me.emote is None:
+            if client.user.party.me.emote is not None:
                 if client.user.party.me.emote.lower() == args[0].lower():
                     await client.user.party.me.clear_emote()
             await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{args[0]}.{args[0]}')
@@ -4896,16 +5783,27 @@ async def event_friend_message(message):
             return
         try:
             if args[0].isdigit() and client.itemdata[0] == 'True':
-                if not data['loglevel'] == 'normal':
+                if data['loglevel'] != 'normal':
                     if data['no-logs'] is False:
                         print(client.itemdata[1][int(args[0])-1][0])
                     dstore(client.user.display_name,client.itemdata[1][int(args[0])-1][0])
                 if client.itemdata[1][int(args[0])-1][2] == 'outfit':
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.skinlock is True:
-                            await message.reply('スキンロックが有効です')
-                            return
-                    elif client.skinlock is True:
+                    flag = False
+                    if client.skinlock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('スキンロックが有効です')
                         return
                     if 'banner' not in client.itemdata[1][int(args[0])-1][0]:
@@ -4913,11 +5811,22 @@ async def event_friend_message(message):
                     else:
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.itemdata[1][int(args[0])-1][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                 if client.itemdata[1][int(args[0])-1][2] == 'backpack':
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.baglock is True:
-                            await message.reply('バッグロックが有効です')
-                            return
-                    elif client.baglock is True:
+                    flag = False
+                    if client.baglock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('バッグロックが有効です')
                         return
                     if 'banner' not in client.itemdata[1][int(args[0])-1][0]:
@@ -4925,53 +5834,108 @@ async def event_friend_message(message):
                     else:
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.itemdata[1][int(args[0])-1][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                 if client.itemdata[1][int(args[0])-1][2] == 'pet':
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.baglock is True:
-                            await message.reply('バッグロックが有効です')
-                            return
-                    elif client.baglock is True:
+                    flag = False
+                    if client.baglock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('バッグロックが有効です')
                         return
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.itemdata[1][int(args[0])-1][0]))
                 if client.itemdata[1][int(args[0])-1][2] == 'pickaxe':
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.picklock is True:
-                            await message.reply('ツルハシロックが有効です')
-                            return
-                    elif client.picklock is True:
+                    flag = False
+                    if client.picklock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('ツルハシロックが有効です')
                         return
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.itemdata[1][int(args[0])-1][0]))
                     await client.user.party.me.set_emote('EID_IceKing')
                 if client.itemdata[1][int(args[0])-1][2] == 'emote':
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.emotelock is True:
-                            await message.reply('エモートロックが有効です')
-                            return
-                    elif client.emotelock is True:
+                    flag = False
+                    if client.emotelock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('エモートロックが有効です')
                         return
-                    if not client.user.party.me.emote is None:
+                    if client.user.party.me.emote is not None:
                         if client.user.party.me.emote.lower() == client.itemdata[1][int(args[0])-1][0].lower():
                             await client.user.party.me.clear_emote()
                     await client.user.party.me.set_emote(client.itemdata[1][int(args[0])-1][0])
                     client.eid=client.itemdata[1][int(args[0])-1][0]
                 if client.itemdata[1][int(args[0])-1][2] == 'emoji':
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.emotelock is True:
-                            await message.reply('エモートロックが有効です')
-                            return
-                    elif client.emotelock is True:
+                    flag = False
+                    if client.emotelock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('エモートロックが有効です')
                         return
                     await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][int(args[0])-1][0]}.{client.itemdata[1][int(args[0])-1][0]}')
                     client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][int(args[0])-1][0]}.{client.itemdata[1][int(args[0])-1][0]}'
                 if client.itemdata[1][int(args[0])-1][2] == 'toy':
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.emotelock is True:
-                            await message.reply('エモートロックが有効です')
-                            return
-                    elif client.emotelock is True:
+                    flag = False
+                    if client.emotelock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('エモートロックが有効です')
                         return
                     await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.itemdata[1][int(args[0])-1][0]}.{client.itemdata[1][int(args[0])-1][0]}')
@@ -5043,16 +6007,27 @@ async def event_friend_message(message):
                         else:
                             await message.reply(f'{count+1} エモート: {item[1]}')
                 if len(client.itemdata[1]) == 1:
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'outfit':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.skinlock is True:
-                                await message.reply('スキンロックが有効です')
-                                return
-                        elif client.skinlock is True:
+                        flag = False
+                        if client.skinlock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('スキンロックが有効です')
                             return
                         if 'banner' not in client.itemdata[1][0][0]:
@@ -5060,11 +6035,22 @@ async def event_friend_message(message):
                         else:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.itemdata[1][0][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                     if client.itemdata[1][0][2] == 'backpack':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                return
-                        elif client.baglock is True:
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('バッグロックが有効です')
                             return
                         if 'banner' not in client.itemdata[1][0][0]:
@@ -5072,53 +6058,108 @@ async def event_friend_message(message):
                         else:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.itemdata[1][0][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                     if client.itemdata[1][0][2] == 'pet':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                return
-                        elif client.baglock is True:
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('バッグロックが有効です')
                             return
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.itemdata[1][0][0]))
                     if client.itemdata[1][0][2] == 'pickaxe':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.picklock is True:
-                                await message.reply('ツルハシロックが有効です')
-                                return
-                        elif client.picklock is True:
+                        flag = False
+                        if client.picklock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('ツルハシロックが有効です')
                             return
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.itemdata[1][0][0]))
                         await client.user.party.me.set_emote('EID_IceKing')
                     if client.itemdata[1][0][2] == 'emote':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                return
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             return
-                        if not client.user.party.me.emote is None:
+                        if client.user.party.me.emote is not None:
                             if client.user.party.me.emote.lower() == client.itemdata[1][0][0].lower():
                                 await client.user.party.me.clear_emote()
                         await client.user.party.me.set_emote(client.itemdata[1][0][0])
                         client.eid=client.itemdata[1][0][0]
                     if client.itemdata[1][0][2] == 'emoji':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                return
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             return
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}'
                     if client.itemdata[1][0][2] == 'toy':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                return
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             return
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}')
@@ -5183,16 +6224,27 @@ async def event_friend_message(message):
                         else:
                             await message.reply(f'{count+1} エモート: {item[1]}')
                 if len(client.itemdata[1]) == 1:
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'outfit':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.skinlock is True:
-                                await message.reply('スキンロックが有効です')
-                                return
-                        elif client.skinlock is True:
+                        flag = False
+                        if client.skinlock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('スキンロックが有効です')
                             return
                         if 'banner' not in client.itemdata[1][0][0]:
@@ -5200,11 +6252,22 @@ async def event_friend_message(message):
                         else:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.itemdata[1][0][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                     if client.itemdata[1][0][2] == 'backpack':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                return
-                        elif client.baglock is True:
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('バッグロックが有効です')
                             return
                         if 'banner' not in client.itemdata[1][0][0]:
@@ -5212,53 +6275,108 @@ async def event_friend_message(message):
                         else:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.itemdata[1][0][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                     if client.itemdata[1][0][2] == 'pet':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                return
-                        elif client.baglock is True:
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('バッグロックが有効です')
                             return
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.itemdata[1][0][0]))
                     if client.itemdata[1][0][2] == 'pickaxe':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.picklock is True:
-                                await message.reply('ツルハシロックが有効です')
-                                return
-                        elif client.picklock is True:
+                        flag = False
+                        if client.picklock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('ツルハシロックが有効です')
                             return
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.itemdata[1][0][0]))
                         await client.user.party.me.set_emote('EID_IceKing')
                     if client.itemdata[1][0][2] == 'emote':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                return
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             return
-                        if not client.user.party.me.emote is None:
+                        if client.user.party.me.emote is not None:
                             if client.user.party.me.emote.lower() == client.itemdata[1][0][0].lower():
                                 await client.user.party.me.clear_emote()
                         await client.user.party.me.set_emote(client.itemdata[1][0][0])
                         client.eid=client.itemdata[1][0][0]
                     if client.itemdata[1][0][2] == 'emoji':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                return
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             return
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}'
                     if client.itemdata[1][0][2] == 'toy':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                return
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             return
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}')
@@ -5287,6 +6405,7 @@ async def event_friend_message(message):
 
 async def event_party_message(message):
     global blacklist
+    global whitelist
     global kill
     if message is None:
         return
@@ -5336,19 +6455,21 @@ async def event_party_message(message):
                 print(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] {message.author.display_name} / {message.author.id} [{platform_to_str(message.author.platform)}/{message.author.input}] | {content}')
             dstore(f'{message.author.display_name} / {message.author.id} [{platform_to_str(message.author.platform)}/{message.author.input}]',f'[{client_user_display_name}] [パーティー/{client.user.party.id}] {content}')
 
-    if not client.owner is None:
-        if not client.owner.id == message.author.id:
-            for checks in commands.items():
-                ignore=['ownercommands','true','false','me', 'privacy_public', 'privacy_friends_allow_friends_of_friends', 'privacy_friends', 'privacy_private_allow_friends_of_friends', 'privacy_private', 'info_party', 'info_item']
-                if checks[0] in ignore:
-                    continue
-                if commands['ownercommands'] == '':
-                    break
-                for command in commands['ownercommands'].split(','):
-                    if args[0] in commands[command.lower()].split(','):
-                        await message.reply('このコマンドは管理者しか使用できません')
-                        return
+    flag = False
+    if client.owner is not None:
+        if data['whitelist-ownercommand'] is True:
+            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                flag = True
+        else:
+            if client.owner.id != message.author.id:
+                flag = True
     else:
+        if data['whitelist-ownercommand'] is True:
+            if message.author.id not in whitelist:
+                flag = True
+        else:
+            flag = True
+    if flag is True:
         for checks in commands.items():
             ignore=['ownercommands','true','false','me', 'privacy_public', 'privacy_friends_allow_friends_of_friends', 'privacy_friends', 'privacy_private_allow_friends_of_friends', 'privacy_private', 'info_party', 'info_item']
             if checks[0] in ignore:
@@ -5439,14 +6560,28 @@ async def event_party_message(message):
 
     elif args[0] in commands['restart'].split(','):
         try:
-            if client.acceptinvite is False and client.owner is None:
+            flag = False
+            if client.acceptinvite is False:
+                if client.owner is not None:
+                    if data['whitelist-ownercommand'] is True:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ownercommand'] is True:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if message.author.id not in whitelist:
+                            flag = True
+            if flag is True:
                 await message.reply('招待が拒否に設定されているので実行できません')
-            elif client.acceptinvite is False and not message.author.id == client.owner.id:
-                await message.reply('招待が拒否に設定されているので実行できません')
-            else:
-                await message.reply('プログラムを再起動します...')
-                os.chdir(os.getcwd())
-                os.execv(os.sys.executable,['python','index.py'])
+                return
+            await message.reply('プログラムを再起動します...')
+            os.chdir(os.getcwd())
+            os.execv(os.sys.executable,['python','index.py'])
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -5454,6 +6589,25 @@ async def event_party_message(message):
 
     elif args[0] in commands['relogin'].split(','):
         try:
+            flag = False
+            if client.acceptinvite is False:
+                if client.owner is not None:
+                    if data['whitelist-ownercommand'] is True:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ownercommand'] is True:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if message.author.id not in whitelist:
+                            flag = True
+            if flag is True:
+                await message.reply('招待が拒否に設定されているので実行できません')
+                return
             await message.reply('アカウントに再ログインします...')
             await client.restart()
         except fortnitepy.AuthException:
@@ -5519,8 +6673,8 @@ async def event_party_message(message):
                         print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name} / {client.owner.id}'))
                         dstore(client.user.display_name,f'所有者: {client.owner.display_name} / {client.owner.id}')
 
+            blacklist = []
             for blacklistuser in data['blacklist']:
-                blacklist = []
                 user = await client.fetch_profile(blacklistuser)
                 if user is None:
                     print(red(f'[{now_()}] [{client.user.display_name}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
@@ -5536,6 +6690,20 @@ async def event_party_message(message):
                             if data['loglevel'] == 'debug':
                                 print(red(traceback.format_exc()))
                                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            print(yellow(blacklist))
+            whitelist = []
+            for whitelistuser in data['whitelist']:
+                user = await client.fetch_profile(whitelistuser)
+                if user is None:
+                    print(red(f'[{now_()}] [{client.user.display_name}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
+                    dstore(client.user.display_name,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                else:
+                    whitelist.append(user.id)
+                    if data['loglevel'] == 'debug':
+                        print(yellow(f"{user.display_name} / {user.id}"))
+            if data['loglevel'] == "debug":
+                print(yellow(whitelist))
+
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -5555,7 +6723,8 @@ async def event_party_message(message):
                 await message.reply('ユーザーが見つかりません')
             else:
                 if user.display_name not in data["blacklist"] and user.id not in data["blacklist"]:
-                    if not user.display_name is None:
+                    blacklist.append(user.id)
+                    if user.display_name is not None:
                         data["blacklist"].append(user.display_name)
                     else:
                         data["blacklist"].append(user.id)
@@ -5591,6 +6760,7 @@ async def event_party_message(message):
                 await message.reply('ユーザーが見つかりません')
             else:
                 if user.display_name in data["blacklist"] or user.id in data["blacklist"]:
+                    blacklist.remove(user.id)
                     try:
                         data["blacklist"].remove(user.display_name)
                     except ValueError:
@@ -5613,6 +6783,80 @@ async def event_party_message(message):
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             await message.reply('エラー')
 
+    elif args[0] in commands['addwhitelist'].split(','):
+        try:
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+            else:
+                if user.display_name not in data["whitelist"] and user.id not in data["whitelist"]:
+                    whitelist.append(user.id)
+                    if user.display_name is not None:
+                        data["whitelist"].append(user.display_name)
+                    else:
+                        data["whitelist"].append(user.id)
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                            data_["whitelist"] = data["whitelist"]
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                            data_["whitelist"] = data["whitelist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await message.reply(f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストに追加しました")
+                else:
+                    await message.reply(f"ユーザー {str(user.display_name)} / {user.id} は既にホワイトリストに追加されています")
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
+    elif args[0] in commands['removewhitelist'].split(','):
+        try:
+            try:
+                user=await client.fetch_profile(rawcontent)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                await message.reply('ユーザー情報のリクエストを処理中にエラーが発生しました')
+                return
+            if user is None:
+                await message.reply('ユーザーが見つかりません')
+            else:
+                if user.display_name in data["whitelist"] or user.id in data["whitelist"]:
+                    whitelist.remove(user.id)
+                    try:
+                        data["whitelist"].remove(user.display_name)
+                    except ValueError:
+                        data["whitelist"].remove(user.id)
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                            data_["whitelist"] = data["whitelist"]
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                            data_["whitelist"] = data["whitelist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await message.reply(f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストから削除")
+                else:
+                    await message.reply(f"ユーザー {str(user.display_name)} / {user.id} はホワイトリストに含まれていません")
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            await message.reply('エラー')
+
     elif args[0] in commands['get'].split(','):
         try:
             if rawcontent == '':
@@ -5629,12 +6873,14 @@ async def event_party_message(message):
             if user is None:
                 await message.reply('ユーザーが見つかりません')
                 return
-            if not user.id in client.user.party.members.keys():
+            if user.id not in client.user.party.members.keys():
                 await message.reply('ユーザーがパーティーにいません')
                 return
             member=client.user.party.members.get(user.id)
             if data['no-logs'] is False:
                 print(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
+            if data['loglevel'] == 'debug':
+                print(json.dumps(member.meta.schema, indent=2))
             dstore(client.user.display_name,f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
             await message.reply(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{member.backpack} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{member.emote}')
         except Exception:
@@ -5920,7 +7166,7 @@ async def event_party_message(message):
                 client.timer_.start()
                 await message.reply(f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")
             else:
-                if client.owner.id in client.user.party.members.keys() and not message.author.id == client.owner.id:
+                if client.owner.id in client.user.party.members.keys() and message.author.id != client.owner.id:
                     await message.reply('現在利用できません')
                     return
                 client.acceptinvite=False
@@ -6275,7 +7521,7 @@ async def event_party_message(message):
                     print(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
                 dstore(client.user.display_name,f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
                 await message.reply(f'{friend.nickname}({str(friend.display_name)}) / {friend.id}')
-            if not friend.last_logout is None:
+            if friend.last_logout is not None:
                 await message.reply('最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
@@ -6357,6 +7603,8 @@ async def event_party_message(message):
                         print(f'{str(member.display_name)} / {member.id}')
                         dstore(client.user.display_name,f'{str(member.display_name)} / {member.id}')
                         await message.reply(f'{str(member.display_name)} / {member.id}')
+                if data['loglevel'] == 'debug':
+                    print(json.dumps(client.user.party.meta.schema, indent=2))
             elif args[1] in commands['info_item'].split(','):
                 if rawcontent2 == '':
                     await message.reply(f"[{commands['info']}] [{commands['info_item']}] [アイテム名]")
@@ -6806,7 +8054,7 @@ async def event_party_message(message):
             if user is None:
                 await message.reply('ユーザーが見つかりません')
                 return
-            if not user.id in client.blocked_users.keys():
+            if user.id not in client.blocked_users.keys():
                 await message.reply('ユーザーをブロックしていません')
                 return
             await client.unblock_user(user.id)
@@ -6841,7 +8089,7 @@ async def event_party_message(message):
             if user is None:
                 await message.reply('ユーザーが見つかりません')
                 return
-            if not user.id in client.user.party.members.keys():
+            if user.id not in client.user.party.members.keys():
                 await message.reply('ユーザーがパーティーにいません')
                 return
             member=client.user.party.members.get(user.id)
@@ -6889,7 +8137,7 @@ async def event_party_message(message):
             if user is None:
                 await message.reply('ユーザーが見つかりません')
                 return
-            if not user.id in client.user.party.members.keys():
+            if user.id not in client.user.party.members.keys():
                 await message.reply('ユーザーがパーティーにいません')
                 return
             member=client.user.party.members.get(user.id)
@@ -6934,7 +8182,7 @@ async def event_party_message(message):
             if user is None:
                 await message.reply('ユーザーが見つかりません')
                 return
-            if not user.id in client.user.party.members.keys():
+            if user.id not in client.user.party.members.keys():
                 await message.reply('ユーザーがパーティーにいません')
                 return
             member=client.user.party.members.get(user.id)
@@ -7068,8 +8316,8 @@ async def event_party_message(message):
 
     elif args[0] in commands['stop'].split(','):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.emotelock is True:
+            if client.owner is not None:
+                if client.owner.id != message.author.id and client.emotelock is True:
                     await message.reply('エモートロックが有効です')
                     return
             elif client.emotelock is True:
@@ -7085,11 +8333,22 @@ async def event_party_message(message):
 
     elif args[0] in commands['allskin'].split(','):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.skinlock is True:
-                    await message.reply('スキンロックが有効です')
-                    return
-            elif client.skinlock is True:
+            flag = False
+            if client.skinlock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('スキンロックが有効です')
                 return
             with open('allen.json', 'r', encoding='utf-8') as f:
@@ -7112,11 +8371,22 @@ async def event_party_message(message):
 
     elif args[0] in commands['allemote'].split(','):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.emotelock is True:
-                    await message.reply('エモートロックが有効です')
-                    return
-            elif client.emotelock is True:
+            flag = False
+            if client.emotelock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('エモートロックが有効です')
                 return
             with open('allen.json', 'r', encoding='utf-8') as f:
@@ -7141,32 +8411,54 @@ async def event_party_message(message):
             return
         try:
             if args[1] in commands['skin']:
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.skinlock is True:
-                        await message.reply('スキンロックが有効です')
-                        return
-                elif client.skinlock is True:
+                flag = False
+                if client.skinlock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('スキンロックが有効です')
                     return
                 variants=await search_style("ja", rawcontent2, client.user.party.me.outfit)
                 if variants is None:
                     variants=await search_style("en", rawcontent2, client.user.party.me.outfit)
-                if not variants is None:
+                if variants is not None:
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.user.party.me.outfit,variants=variants))
                 else:
                     await message.reply('見つかりません')
             elif args[1] in commands['bag']:
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.baglock is True:
-                        await message.reply('バッグロックが有効です')
-                        return
-                elif client.baglock is True:
+                flag = False
+                if client.baglock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('バッグロックが有効です')
                     return
                 variants=await search_style("ja", rawcontent2, client.user.party.me.backpack)
                 if variants is None:
                     variants=await search_style("en", rawcontent2, client.user.party.me.backpack)
-                if not variants is None:
+                if variants is not None:
                     if client.user.party.me.backpack.lower().startswith('bid_'):
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.user.party.me.backpack,variants=variants))
                     elif client.user.party.me.backpack.lower().startswith('petcarrier_'):
@@ -7174,17 +8466,28 @@ async def event_party_message(message):
                 else:
                     await message.reply('見つかりません')
             elif args[1] in commands['pickaxe']:
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.picklock is True:
-                        await message.reply('ツルハシロックが有効です')
-                        return
-                elif client.picklock is True:
+                flag = False
+                if client.picklock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('ツルハシロックが有効です')
                     return
                 variants=await search_style("ja", rawcontent2, client.user.pickaxe)
                 if variants is None:
                     variants=await search_style("en", rawcontent2, client.user.party.me.pickaxe)
-                if not variants is None:
+                if variants is not None:
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.user.party.me.pickaxe,variants=variants))
                 else:
                     await message.reply('見つかりません')
@@ -7209,28 +8512,50 @@ async def event_party_message(message):
             return
         try:
             if args[1] in commands['skin']:
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.skinlock is True:
-                        await message.reply('スキンロックが有効です')
-                        return
-                elif client.skinlock is True:
+                flag = False
+                if client.skinlock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('スキンロックが有効です')
                     return
                 variants=await search_style("ja", rawcontent2, client.user.party.me.outfit)
                 if variants is None:
                     variants=await search_style("en", rawcontent2, client.user.party.me.outfit)
-                if not variants is None:
+                if variants is not None:
                     for val in client.user.party.me.outfit_variants:
                         variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.user.party.me.outfit,variants=variants))
                 else:
                     await message.reply('見つかりません')
             elif args[1] in commands['bag']:
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.baglock is True:
-                        await message.reply('バッグロックが有効です')
-                        return
-                elif client.baglock is True:
+                flag = False
+                if client.baglock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('バッグロックが有効です')
                     return
                 variants=await search_style("ja", rawcontent2, client.user.party.me.backpack)
@@ -7238,7 +8563,7 @@ async def event_party_message(message):
                     variants=await search_style("en", rawcontent2, client.user.party.me.backpack)
                 for val in client.user.party.me.backpack_variants:
                     variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
-                if not variants is None:
+                if variants is not None:
                     if client.user.party.me.backpack.lower().startswith('bid_'):
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.user.party.me.backpack,variants=variants))
                     elif client.user.party.me.backpack.lower().startswith('petcarrier_'):
@@ -7246,17 +8571,28 @@ async def event_party_message(message):
                 else:
                     await message.reply('見つかりません')
             elif args[1] in commands['pickaxe']:
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.picklock is True:
-                        await message.reply('ツルハシロックが有効です')
-                        return
-                elif client.picklock is True:
+                flag = False
+                if client.picklock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('ツルハシロックが有効です')
                     return
                 variants=await search_style("ja", rawcontent2, client.user.pickaxe)
                 if variants is None:
                     variants=await search_style("en", rawcontent2, client.user.party.me.pickaxe)
-                if not variants is None:
+                if variants is not None:
                     for val in client.user.party.me.pickaxe_variants:
                         variants.append({'item': val['item'], 'channel': val['channel'], 'variant': val['variant']})
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.user.party.me.pickaxe,variants=variants))
@@ -7279,11 +8615,22 @@ async def event_party_message(message):
 
     elif args[0] in commands['setenlightenment'].split(','):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.skinlock is True:
-                    await message.reply('スキンロックが有効です')
-                    return
-            elif client.skinlock is True:
+            flag = False
+            if client.skinlock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('スキンロックが有効です')
                 return
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.user.party.me.outfit,variants=client.user.party.me.outfit_variants,enlightenment=(args[1],args[2])))
@@ -7351,16 +8698,27 @@ async def event_party_message(message):
                         else:
                             await message.reply(f'{count+1} エモート: {item[0]}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'outfit':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.skinlock is True:
-                                await message.reply('スキンロックが有効です')
-                                return
-                        elif client.skinlock is True:
+                        flag = False
+                        if client.skinlock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('スキンロックが有効です')
                             return
                         if 'banner' not in client.itemdata[1][0][0]:
@@ -7368,11 +8726,22 @@ async def event_party_message(message):
                         else:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.itemdata[1][0][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                     if client.itemdata[1][0][2] == 'backpack':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                return
-                        elif client.baglock is True:
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('バッグロックが有効です')
                             return
                         if 'banner' not in client.itemdata[1][0][0]:
@@ -7380,56 +8749,111 @@ async def event_party_message(message):
                         else:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.itemdata[1][0][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                     if client.itemdata[1][0][2] == 'pet':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                return
-                        elif client.baglock is True:
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('バッグロックが有効です')
                             return
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.itemdata[1][0][0]))
                     if client.itemdata[1][0][2] == 'pickaxe':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.picklock is True:
-                                await message.reply('ツルハシロックが有効です')
-                                return
-                        elif client.picklock is True:
+                        flag = False
+                        if client.picklock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('ツルハシロックが有効です')
                             return
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.itemdata[1][0][0]))
-                        if not client.user.party.me.emote is None:
+                        if client.user.party.me.emote is not None:
                             if client.user.party.me.emote.lower() == 'eid_iceking':
                                 await client.user.party.me.clear_emote()
                         await client.user.party.me.set_emote('EID_IceKing')
                     if client.itemdata[1][0][2] == 'emote':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                return
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             return
-                        if not client.user.party.me.emote is None:
+                        if client.user.party.me.emote is not None:
                             if client.user.party.me.emote.lower() == client.itemdata[1][0][0].lower():
                                 await client.user.party.me.clear_emote()
                         await client.user.party.me.set_emote(client.itemdata[1][0][0])
                         client.eid=client.itemdata[1][0][0]
                     if client.itemdata[1][0][2] == 'emoji':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                return
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             return
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}'
                     if client.itemdata[1][0][2] == 'toy':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                return
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             return
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}')
@@ -7465,14 +8889,25 @@ async def event_party_message(message):
                     else:
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.skinlock is True:
-                            await message.reply('スキンロックが有効です')
-                            return
-                    elif client.skinlock is True:
+                    flag = False
+                    if client.skinlock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('スキンロックが有効です')
                         return
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
@@ -7495,14 +8930,25 @@ async def event_party_message(message):
                     else:
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.skinlock is True:
-                            await message.reply('スキンロックが有効です')
-                            return
-                    elif client.skinlock is True:
+                    flag = False
+                    if client.skinlock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('スキンロックが有効です')
                         return
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
@@ -7541,14 +8987,25 @@ async def event_party_message(message):
                     else:
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.baglock is True:
-                            await message.reply('バッグロックが有効です')
-                            return
-                    elif client.baglock is True:
+                    flag = False
+                    if client.baglock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('バッグロックが有効です')
                         return
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
@@ -7574,14 +9031,25 @@ async def event_party_message(message):
                         else:
                             await message.reply(f'{count+1}: {item[1]}')
                     if len(client.itemdata[1]) == 1:
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                return
-                        elif client.baglock is True:
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('バッグロックが有効です')
                             return
-                        if not data['loglevel'] == 'normal':
+                        if data['loglevel'] != 'normal':
                             if data['no-logs'] is False:
                                 print(client.itemdata[1][0][0])
                             dstore(client.user.display_name,client.itemdata[1][0][0])
@@ -7623,19 +9091,30 @@ async def event_party_message(message):
                     else:
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.picklock is True:
-                            await message.reply('ツルハシロックが有効です')
-                            return
-                    elif client.picklock is True:
+                    flag = False
+                    if client.picklock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('ツルハシロックが有効です')
                         return
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.itemdata[1][0][0]))
-                    if not client.user.party.me.emote is None:
+                    if client.user.party.me.emote is not None:
                         if client.user.party.me.emote.lower() == 'eid_iceking':
                             await client.user.party.me.clear_emote()
                     await client.user.party.me.set_emote('EID_IceKing')
@@ -7654,14 +9133,25 @@ async def event_party_message(message):
                     else:
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.picklock is True:
-                            await message.reply('ツルハシロックが有効です')
-                            return
-                    elif client.picklock is True:
+                    flag = False
+                    if client.picklock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('ツルハシロックが有効です')
                         return
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
@@ -7698,14 +9188,25 @@ async def event_party_message(message):
                     else:
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.emotelock is True:
-                            await message.reply('エモートロックが有効です')
-                            return
-                    elif client.emotelock is True:
+                    flag = False
+                    if client.emotelock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('エモートロックが有効です')
                         return
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
@@ -7733,14 +9234,25 @@ async def event_party_message(message):
                     else:
                         await message.reply(f'{count+1}: {item[1]}')
                 if len(client.itemdata[1]) == 1:
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.emotelock is True:
-                            await message.reply('エモートロックが有効です')
-                            return
-                    elif client.emotelock is True:
+                    flag = False
+                    if client.emotelock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('エモートロックが有効です')
                         return
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
@@ -7776,7 +9288,7 @@ async def event_party_message(message):
             if isitem[0] == 'True':
                 client.itemdata=isitem
                 for count,item in enumerate(client.itemdata[1]):
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(item[0])
                         dstore(client.user.display_name,item[0])
@@ -7785,11 +9297,22 @@ async def event_party_message(message):
                             await message.reply(f'スキン: {item[1]}')
                         else:
                             await message.reply(f'{count+1} スキン: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.skinlock is True:
-                                await message.reply('スキンロックが有効です')
-                                continue
-                        elif client.skinlock is True:
+                        flag = False
+                        if client.skinlock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('スキンロックが有効です')
                             continue
                         if 'banner' not in item[0]:
@@ -7801,11 +9324,22 @@ async def event_party_message(message):
                             await message.reply(f'バッグ: {item[1]}')
                         else:
                             await message.reply(f'{count+1} バッグ: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                continue
-                        elif client.baglock is True:
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('バッグロックが有効です')
                             continue
                         if 'banner' not in item[0]:
@@ -7817,11 +9351,22 @@ async def event_party_message(message):
                             await message.reply(f'バッグ: {item[1]}')
                         else:
                             await message.reply(f'{count+1} バッグ: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                continue
-                        elif client.baglock is True:
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('バッグロックが有効です')
                             continue
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,item[0]))
@@ -7830,118 +9375,22 @@ async def event_party_message(message):
                             await message.reply(f'ツルハシ: {item[1]}')
                         else:
                             await message.reply(f'{count+1} ツルハシ: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.picklock is True:
-                                await message.reply('ツルハシロックが有効です')
-                                continue
-                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,item[0]))
-                        await client.user.party.me.set_emote('EID_IceKing')
-                    if item[2] == 'emote':
-                        if len(client.itemdata[1]) == 1:
-                            await message.reply(f'エモート: {item[1]}')
-                        else:
-                            await message.reply(f'{count+1} エモート: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                continue
-                        elif client.emotelock is True:
-                            await message.reply('エモートロックが有効です')
-                            continue
-                        await client.user.party.me.set_emote(item[0])
-                        client.eid=item[0]
-                    if item[2] == 'emoji':
-                        if len(client.itemdata[1]) == 1:
-                            await message.reply(f'エモート: {item[1]}')
-                        else:
-                            await message.reply(f'{count+1} エモート: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                continue
-                        elif client.emotelock is True:
-                            await message.reply('エモートロックが有効です')
-                            continue
-                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}')
-                        client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}'
-                    if item[2] == 'toy':
-                        if len(client.itemdata[1]) == 1:
-                            await message.reply(f'エモート: {item[1]}')
-                        else:
-                            await message.reply(f'{count+1} エモート: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                continue
-                        elif client.emotelock is True:
-                            await message.reply('エモートロックが有効です')
-                            continue
-                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}')
-                        client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}'
-                return
-            isitem = await search_set_item("en", rawcontent)
-            if isitem[0] == 'True':
-                client.itemdata=isitem
-                for count,item in enumerate(client.itemdata[1]):
-                    if not data['loglevel'] == 'normal':
-                        if data['no-logs'] is False:
-                            print(item[0])
-                        dstore(client.user.display_name,item[0])
-                    if item[2] == 'outfit':
-                        if len(client.itemdata[1]) == 1:
-                            await message.reply(f'スキン: {item[1]}')
-                        else:
-                            await message.reply(f'{count+1} スキン: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.skinlock is True:
-                                await message.reply('スキンロックが有効です')
-                                continue
-                        elif client.skinlock is True:
-                            await message.reply('スキンロックが有効です')
-                            continue
-                        if 'banner' not in item[0]:
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,item[0]))
-                        else:
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,item[0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
-                    if item[2] == 'backpack':
-                        if len(client.itemdata[1]) == 1:
-                            await message.reply(f'バッグ: {item[1]}')
-                        else:
-                            await message.reply(f'{count+1} バッグ: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                continue
-                        elif client.baglock is True:
-                            await message.reply('バッグロックが有効です')
-                            continue
-                        if 'banner' not in item[0]:
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,item[0]))
-                        else:
-                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,item[0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
-                    if item[2] == 'pet':
-                        if len(client.itemdata[1]) == 1:
-                            await message.reply(f'バッグ: {item[1]}')
-                        else:
-                            await message.reply(f'{count+1} バッグ: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                continue
-                        elif client.baglock is True:
-                            await message.reply('バッグロックが有効です')
-                            continue
-                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,item[0]))
-                    if item[2] == 'pickaxe':
-                        if len(client.itemdata[1]) == 1:
-                            await message.reply(f'ツルハシ: {item[1]}')
-                        else:
-                            await message.reply(f'{count+1} ツルハシ: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.picklock is True:
-                                await message.reply('ツルハシロックが有効です')
-                                continue
-                        elif client.picklock is True:
+                        flag = False
+                        if client.picklock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('ツルハシロックが有効です')
                             continue
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,item[0]))
@@ -7951,11 +9400,22 @@ async def event_party_message(message):
                             await message.reply(f'エモート: {item[1]}')
                         else:
                             await message.reply(f'{count+1} エモート: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                continue
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             continue
                         await client.user.party.me.set_emote(item[0])
@@ -7965,11 +9425,22 @@ async def event_party_message(message):
                             await message.reply(f'エモート: {item[1]}')
                         else:
                             await message.reply(f'{count+1} エモート: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                continue
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             continue
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}')
@@ -7979,11 +9450,209 @@ async def event_party_message(message):
                             await message.reply(f'エモート: {item[1]}')
                         else:
                             await message.reply(f'{count+1} エモート: {item[1]}')
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                continue
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
+                            await message.reply('エモートロックが有効です')
+                            continue
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}'
+                return
+            isitem = await search_set_item("en", rawcontent)
+            if isitem[0] == 'True':
+                client.itemdata=isitem
+                for count,item in enumerate(client.itemdata[1]):
+                    if data['loglevel'] != 'normal':
+                        if data['no-logs'] is False:
+                            print(item[0])
+                        dstore(client.user.display_name,item[0])
+                    if item[2] == 'outfit':
+                        if len(client.itemdata[1]) == 1:
+                            await message.reply(f'スキン: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} スキン: {item[1]}')
+                        flag = False
+                        if client.skinlock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
+                            await message.reply('スキンロックが有効です')
+                            continue
+                        if 'banner' not in item[0]:
+                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,item[0]))
+                        else:
+                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,item[0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
+                    if item[2] == 'backpack':
+                        if len(client.itemdata[1]) == 1:
+                            await message.reply(f'バッグ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[1]}')
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
+                            await message.reply('バッグロックが有効です')
+                            continue
+                        if 'banner' not in item[0]:
+                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,item[0]))
+                        else:
+                            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,item[0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
+                    if item[2] == 'pet':
+                        if len(client.itemdata[1]) == 1:
+                            await message.reply(f'バッグ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} バッグ: {item[1]}')
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
+                            await message.reply('バッグロックが有効です')
+                            continue
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,item[0]))
+                    if item[2] == 'pickaxe':
+                        if len(client.itemdata[1]) == 1:
+                            await message.reply(f'ツルハシ: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} ツルハシ: {item[1]}')
+                        flag = False
+                        if client.picklock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
+                            await message.reply('ツルハシロックが有効です')
+                            continue
+                        await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,item[0]))
+                        await client.user.party.me.set_emote('EID_IceKing')
+                    if item[2] == 'emote':
+                        if len(client.itemdata[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
+                            await message.reply('エモートロックが有効です')
+                            continue
+                        await client.user.party.me.set_emote(item[0])
+                        client.eid=item[0]
+                    if item[2] == 'emoji':
+                        if len(client.itemdata[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
+                            await message.reply('エモートロックが有効です')
+                            continue
+                        await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}')
+                        client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{item[0]}.{item[0]}'
+                    if item[2] == 'toy':
+                        if len(client.itemdata[1]) == 1:
+                            await message.reply(f'エモート: {item[1]}')
+                        else:
+                            await message.reply(f'{count+1} エモート: {item[1]}')
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             continue
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{item[0]}.{item[0]}')
@@ -8011,11 +9680,22 @@ async def event_party_message(message):
                 except IndexError:
                     break
             if args[1].startswith('cid_'):
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.skinlock is True:
-                        await message.reply('スキンロックが有効です')
-                        return
-                elif client.skinlock is True:
+                flag = False
+                if client.skinlock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('スキンロックが有効です')
                     return
                 if 'banner' not in args[1]:
@@ -8027,11 +9707,22 @@ async def event_party_message(message):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,asset=args[1],variants=variants))
                 await message.reply(f'スキンを {args[1]} {variants} に設定')
             elif args[1].startswith('bid_'):
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.baglock is True:
-                        await message.reply('バッグロックが有効です')
-                        return
-                elif client.baglock is True:
+                flag = False
+                if client.baglock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('バッグロックが有効です')
                     return
                 if 'banner' not in args[1]:
@@ -8043,22 +9734,44 @@ async def event_party_message(message):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,asset=args[1],variants=variants))
                 await message.reply(f'バッグを {args[1]} {variants} に設定')
             elif args[1].startswith('petcarrier_'):
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.baglock is True:
-                        await message.reply('バッグロックが有効です')
-                        return
-                elif client.baglock is True:
+                flag = False
+                if client.baglock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('バッグロックが有効です')
                     return
                 variants=client.user.party.me.create_variants(item='AthenaBackpack',**variantdict)
                 await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,asset=args[1],variants=variants))
                 await message.reply(f'バッグを {args[1]} {variants} に設定')
             elif args[1].startswith('pickaxe_id_'):
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.picklock is True:
-                        await message.reply('ツルハシロックが有効です')
-                        return
-                elif client.picklock is True:
+                flag = False
+                if client.picklock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('ツルハシロックが有効です')
                     return
                 variants=client.user.party.me.create_variants(item='AthenaPickaxe',**variantdict)
@@ -8092,11 +9805,22 @@ async def event_party_message(message):
                 except IndexError:
                     break
             if args[1].startswith('cid_'):
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.skinlock is True:
-                        await message.reply('スキンロックが有効です')
-                        return
-                elif client.skinlock is True:
+                flag = False
+                if client.skinlock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('スキンロックが有効です')
                     return
                 if 'banner' not in args[1]:
@@ -8112,11 +9836,22 @@ async def event_party_message(message):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,asset=args[1],variants=variants))
                 await message.reply(f'スキンを {args[1]} {variants} に設定')
             elif args[1].startswith('bid_'):
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.baglock is True:
-                        await message.reply('バッグロックが有効です')
-                        return
-                elif client.baglock is True:
+                flag = False
+                if client.baglock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('バッグロックが有効です')
                     return
                 if 'banner' not in args[1]:
@@ -8132,11 +9867,22 @@ async def event_party_message(message):
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,asset=args[1],variants=variants))
                 await message.reply(f'バッグを {args[1]} {variants} に設定')
             elif args[1].startswith('petcarrier_'):
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.baglock is True:
-                        await message.reply('バッグロックが有効です')
-                        return
-                elif client.baglock is True:
+                flag = False
+                if client.baglock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('バッグロックが有効です')
                     return
                 variants=client.user.party.me.create_variants(item='AthenaBackpack',**variantdict)
@@ -8145,11 +9891,22 @@ async def event_party_message(message):
                 await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,asset=args[1],variants=variants))
                 await message.reply(f'バッグを {args[1]} {variants} に設定')
             elif args[1].startswith('pickaxe_id_'):
-                if not client.owner is None:
-                    if not client.owner.id == message.author.id and client.picklock is True:
-                        await message.reply('ツルハシロックが有効です')
-                        return
-                elif client.picklock is True:
+                flag = False
+                if client.picklock is True:
+                    if client.owner is not None:
+                        if data['whitelist-ignorelock']:
+                            if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            if client.owner.id != message.author.id:
+                                flag = True
+                    else:
+                        if data['whitelist-ignorelock']:
+                            if message.author.id not in whitelist:
+                                flag = True
+                        else:
+                            flag = True
+                if flag is True:
                     await message.reply('ツルハシロックが有効です')
                     return
                 variants=client.user.party.me.create_variants(item='AthenaPickaxe',**variantdict)
@@ -8176,11 +9933,22 @@ async def event_party_message(message):
 
     elif args[0] in commands['skinasset'].split(','):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.skinlock is True:
-                    await message.reply('スキンロックが有効です')
-                    return
-            elif client.skinlock is True:
+            flag = False
+            if client.skinlock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('スキンロックが有効です')
                 return
             if 'banner' not in args[0]:
@@ -8204,11 +9972,22 @@ async def event_party_message(message):
 
     elif args[0] in commands['bagasset'].split(','):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.baglock is True:
-                    await message.reply('バッグロックが有効です')
-                    return
-            elif client.baglock is True:
+            flag = False
+            if client.baglock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('バッグロックが有効です')
                 return
             if 'banner' not in args[0]:
@@ -8232,11 +10011,22 @@ async def event_party_message(message):
 
     elif args[0] in commands['pickasset'].split(','):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.picklock is True:
-                    await message.reply('ツルハシロックが有効です')
-                    return
-            elif client.picklock is True:
+            flag = False
+            if client.picklock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('ツルハシロックが有効です')
                 return
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,rawcontent))
@@ -8258,11 +10048,22 @@ async def event_party_message(message):
 
     elif args[0] in commands['emoteasset'].split(','):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.emotelock is True:
-                    await message.reply('エモートロックが有効です')
-                    return
-            elif client.emotelock is True:
+            flag = False
+            if client.emotelock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('エモートロックが有効です')
                 return
             await client.user.party.me.clear_emote()
@@ -8284,14 +10085,25 @@ async def event_party_message(message):
 
     elif args[0].lower().startswith('cid_'):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.skinlock is True:
-                    await message.reply('スキンロックが有効です')
-                    return
-            elif client.skinlock is True:
+            flag = False
+            if client.skinlock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('スキンロックが有効です')
                 return
-            if not data['loglevel'] == 'normal':
+            if data['loglevel'] != 'normal':
                 if data['no-logs'] is False:
                     print(args[0])
                 dstore(client.user.display_name,args[0])
@@ -8312,14 +10124,25 @@ async def event_party_message(message):
 
     elif args[0].lower().startswith('bid_'):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.baglock is True:
-                    await message.reply('バッグロックが有効です')
-                    return
-            elif client.baglock is True:
+            flag = False
+            if client.baglock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('バッグロックが有効です')
                 return
-            if not data['loglevel'] == 'normal':
+            if data['loglevel'] != 'normal':
                 if data['no-logs'] is False:
                     print(args[0])
                 dstore(client.user.display_name,args[0])
@@ -8340,14 +10163,25 @@ async def event_party_message(message):
 
     elif args[0].lower().startswith('pet_carrier'):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.baglock is True:
-                    await message.reply('バッグロックが有効です')
-                    return
-            elif client.baglock is True:
+            flag = False
+            if client.baglock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('バッグロックが有効です')
                 return
-            if not data['loglevel'] == 'normal':
+            if data['loglevel'] != 'normal':
                 if data['no-logs'] is False:
                     print(args[0])
                 dstore(client.user.display_name,args[0])
@@ -8365,14 +10199,25 @@ async def event_party_message(message):
 
     elif args[0].lower().startswith('pickaxe_id'):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.picklock is True:
-                    await message.reply('ツルハシロックが有効です')
-                    return
-            elif client.picklock is True:
+            flag = False
+            if client.picklock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('ツルハシロックが有効です')
                 return
-            if not data['loglevel'] == 'normal':
+            if data['loglevel'] != 'normal':
                 if data['no-logs'] is False:
                     print(args[0])
                 dstore(client.user.display_name,args[0])
@@ -8391,18 +10236,29 @@ async def event_party_message(message):
 
     elif args[0].lower().startswith('eid_'):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.emotelock is True:
-                    await message.reply('エモートロックが有効です')
-                    return
-            elif client.emotelock is True:
+            flag = False
+            if client.emotelock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('エモートロックが有効です')
                 return
-            if not data['loglevel'] == 'normal':
+            if data['loglevel'] != 'normal':
                 if data['no-logs'] is False:
                     print(args[0])
                 dstore(client.user.display_name,args[0])
-            if not client.user.party.me.emote is None:
+            if client.user.party.me.emote is not None:
                 if client.user.party.me.emote.lower() == args[0].lower():
                     await client.user.party.me.clear_emote()
             await client.user.party.me.set_emote(args[0])
@@ -8420,17 +10276,28 @@ async def event_party_message(message):
 
     elif args[0].lower().startswith('shout_'):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.emotelock is True:
-                    await message.reply('エモートロックが有効です')
-                    return
-            elif client.emotelock is True:
+            flag = False
+            if client.emotelock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('エモートロックが有効です')
                 return
-            if not data['loglevel'] == 'normal':
+            if data['loglevel'] != 'normal':
                 if data['no-logs'] is False:
                     print(args[0])
-            if not client.user.party.me.emote is None:
+            if client.user.party.me.emote is not None:
                 if client.user.party.me.emote.lower() == args[0].lower():
                     await client.user.party.me.clear_emote()
             await client.user.party.me.set_shout(args[0])
@@ -8448,18 +10315,29 @@ async def event_party_message(message):
 
     elif args[0].lower().startswith('emoji_'):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.emotelock is True:
-                    await message.reply('エモートロックが有効です')
-                    return
-            elif client.emotelock is True:
+            flag = False
+            if client.emotelock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('エモートロックが有効です')
                 return
-            if not data['loglevel'] == 'normal':
+            if data['loglevel'] != 'normal':
                 if data['no-logs'] is False:
                     print(args[0])
                 dstore(client.user.display_name,args[0])
-            if not client.user.party.me.emote is None:
+            if client.user.party.me.emote is not None:
                 if client.user.party.me.emote.lower() == args[0].lower():
                     await client.user.party.me.clear_emote()
             await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{args[0]}.{args[0]}')
@@ -8477,18 +10355,29 @@ async def event_party_message(message):
 
     elif args[0].lower().startswith('toy_'):
         try:
-            if not client.owner is None:
-                if not client.owner.id == message.author.id and client.emotelock is True:
-                    await message.reply('エモートロックが有効です')
-                    return
-            elif client.emotelock is True:
+            flag = False
+            if client.emotelock is True:
+                if client.owner is not None:
+                    if data['whitelist-ignorelock']:
+                        if client.owner.id != message.author.id and message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        if client.owner.id != message.author.id:
+                            flag = True
+                else:
+                    if data['whitelist-ignorelock']:
+                        if message.author.id not in whitelist:
+                            flag = True
+                    else:
+                        flag = True
+            if flag is True:
                 await message.reply('エモートロックが有効です')
                 return
-            if not data['loglevel'] == 'normal':
+            if data['loglevel'] != 'normal':
                 if data['no-logs'] is False:
                     print(args[0])
                 dstore(client.user.display_name,args[0])
-            if not client.user.party.me.emote is None:
+            if client.user.party.me.emote is not None:
                 if client.user.party.me.emote.lower() == args[0].lower():
                     await client.user.party.me.clear_emote()
             await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{args[0]}.{args[0]}')
@@ -8524,16 +10413,27 @@ async def event_party_message(message):
             return
         try:
             if args[0].isdigit() and client.itemdata[0] == 'True':
-                if not data['loglevel'] == 'normal':
+                if data['loglevel'] != 'normal':
                     if data['no-logs'] is False:
                         print(client.itemdata[1][int(args[0])-1][0])
                     dstore(client.user.display_name,client.itemdata[1][int(args[0])-1][0])
                 if client.itemdata[1][int(args[0])-1][2] == 'outfit':
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.skinlock is True:
-                            await message.reply('スキンロックが有効です')
-                            return
-                    elif client.skinlock is True:
+                    flag = False
+                    if client.skinlock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('スキンロックが有効です')
                         return
                     if 'banner' not in client.itemdata[1][int(args[0])-1][0]:
@@ -8541,11 +10441,22 @@ async def event_party_message(message):
                     else:
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.itemdata[1][int(args[0])-1][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                 if client.itemdata[1][int(args[0])-1][2] == 'backpack':
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.baglock is True:
-                            await message.reply('バッグロックが有効です')
-                            return
-                    elif client.baglock is True:
+                    flag = False
+                    if client.baglock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('バッグロックが有効です')
                         return
                     if 'banner' not in client.itemdata[1][int(args[0])-1][0]:
@@ -8553,53 +10464,108 @@ async def event_party_message(message):
                     else:
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.itemdata[1][int(args[0])-1][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                 if client.itemdata[1][int(args[0])-1][2] == 'pet':
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.baglock is True:
-                            await message.reply('バッグロックが有効です')
-                            return
-                    elif client.baglock is True:
+                    flag = False
+                    if client.baglock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('バッグロックが有効です')
                         return
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.itemdata[1][int(args[0])-1][0]))
                 if client.itemdata[1][int(args[0])-1][2] == 'pickaxe':
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.picklock is True:
-                            await message.reply('ツルハシロックが有効です')
-                            return
-                    elif client.picklock is True:
+                    flag = False
+                    if client.picklock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('ツルハシロックが有効です')
                         return
                     await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.itemdata[1][int(args[0])-1][0]))
                     await client.user.party.me.set_emote('EID_IceKing')
                 if client.itemdata[1][int(args[0])-1][2] == 'emote':
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.emotelock is True:
-                            await message.reply('エモートロックが有効です')
-                            return
-                    elif client.emotelock is True:
+                    flag = False
+                    if client.emotelock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('エモートロックが有効です')
                         return
-                    if not client.user.party.me.emote is None:
+                    if client.user.party.me.emote is not None:
                         if client.user.party.me.emote.lower() == client.itemdata[1][int(args[0])-1][0].lower():
                             await client.user.party.me.clear_emote()
                     await client.user.party.me.set_emote(client.itemdata[1][int(args[0])-1][0])
                     client.eid=client.itemdata[1][int(args[0])-1][0]
                 if client.itemdata[1][int(args[0])-1][2] == 'emoji':
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.emotelock is True:
-                            await message.reply('エモートロックが有効です')
-                            return
-                    elif client.emotelock is True:
+                    flag = False
+                    if client.emotelock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('エモートロックが有効です')
                         return
                     await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][int(args[0])-1][0]}.{client.itemdata[1][int(args[0])-1][0]}')
                     client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][int(args[0])-1][0]}.{client.itemdata[1][int(args[0])-1][0]}'
                 if client.itemdata[1][int(args[0])-1][2] == 'toy':
-                    if not client.owner is None:
-                        if not client.owner.id == message.author.id and client.emotelock is True:
-                            await message.reply('エモートロックが有効です')
-                            return
-                    elif client.emotelock is True:
+                    flag = False
+                    if client.emotelock is True:
+                        if client.owner is not None:
+                            if data['whitelist-ignorelock']:
+                                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                if client.owner.id != message.author.id:
+                                    flag = True
+                        else:
+                            if data['whitelist-ignorelock']:
+                                if message.author.id not in whitelist:
+                                    flag = True
+                            else:
+                                flag = True
+                    if flag is True:
                         await message.reply('エモートロックが有効です')
                         return
                     await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.itemdata[1][int(args[0])-1][0]}.{client.itemdata[1][int(args[0])-1][0]}')
@@ -8671,16 +10637,27 @@ async def event_party_message(message):
                         else:
                             await message.reply(f'{count+1} エモート: {item[1]}')
                 if len(client.itemdata[1]) == 1:
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'outfit':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.skinlock is True:
-                                await message.reply('スキンロックが有効です')
-                                return
-                        elif client.skinlock is True:
+                        flag = False
+                        if client.skinlock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('スキンロックが有効です')
                             return
                         if 'banner' not in client.itemdata[1][0][0]:
@@ -8688,11 +10665,22 @@ async def event_party_message(message):
                         else:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.itemdata[1][0][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                     if client.itemdata[1][0][2] == 'backpack':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                return
-                        elif client.baglock is True:
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('バッグロックが有効です')
                             return
                         if 'banner' not in client.itemdata[1][0][0]:
@@ -8700,53 +10688,108 @@ async def event_party_message(message):
                         else:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.itemdata[1][0][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                     if client.itemdata[1][0][2] == 'pet':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                return
-                        elif client.baglock is True:
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('バッグロックが有効です')
                             return
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.itemdata[1][0][0]))
                     if client.itemdata[1][0][2] == 'pickaxe':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.picklock is True:
-                                await message.reply('ツルハシロックが有効です')
-                                return
-                        elif client.picklock is True:
+                        flag = False
+                        if client.picklock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('ツルハシロックが有効です')
                             return
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.itemdata[1][0][0]))
                         await client.user.party.me.set_emote('EID_IceKing')
                     if client.itemdata[1][0][2] == 'emote':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                return
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             return
-                        if not client.user.party.me.emote is None:
+                        if client.user.party.me.emote is not None:
                             if client.user.party.me.emote.lower() == client.itemdata[1][0][0].lower():
                                 await client.user.party.me.clear_emote()
                         await client.user.party.me.set_emote(client.itemdata[1][0][0])
                         client.eid=client.itemdata[1][0][0]
                     if client.itemdata[1][0][2] == 'emoji':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                return
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             return
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}'
                     if client.itemdata[1][0][2] == 'toy':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                return
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             return
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}')
@@ -8811,16 +10854,27 @@ async def event_party_message(message):
                         else:
                             await message.reply(f'{count+1} エモート: {item[1]}')
                 if len(client.itemdata[1]) == 1:
-                    if not data['loglevel'] == 'normal':
+                    if data['loglevel'] != 'normal':
                         if data['no-logs'] is False:
                             print(client.itemdata[1][0][0])
                         dstore(client.user.display_name,client.itemdata[1][0][0])
                     if client.itemdata[1][0][2] == 'outfit':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.skinlock is True:
-                                await message.reply('スキンロックが有効です')
-                                return
-                        elif client.skinlock is True:
+                        flag = False
+                        if client.skinlock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('スキンロックが有効です')
                             return
                         if 'banner' not in client.itemdata[1][0][0]:
@@ -8828,11 +10882,22 @@ async def event_party_message(message):
                         else:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit,client.itemdata[1][0][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                     if client.itemdata[1][0][2] == 'backpack':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                return
-                        elif client.baglock is True:
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('バッグロックが有効です')
                             return
                         if 'banner' not in client.itemdata[1][0][0]:
@@ -8840,53 +10905,108 @@ async def event_party_message(message):
                         else:
                             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack,client.itemdata[1][0][0],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner')))
                     if client.itemdata[1][0][2] == 'pet':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.baglock is True:
-                                await message.reply('バッグロックが有効です')
-                                return
-                        elif client.baglock is True:
+                        flag = False
+                        if client.baglock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('バッグロックが有効です')
                             return
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet,client.itemdata[1][0][0]))
                     if client.itemdata[1][0][2] == 'pickaxe':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.picklock is True:
-                                await message.reply('ツルハシロックが有効です')
-                                return
-                        elif client.picklock is True:
+                        flag = False
+                        if client.picklock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('ツルハシロックが有効です')
                             return
                         await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe,client.itemdata[1][0][0]))
                         await client.user.party.me.set_emote('EID_IceKing')
                     if client.itemdata[1][0][2] == 'emote':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                return
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             return
-                        if not client.user.party.me.emote is None:
+                        if client.user.party.me.emote is not None:
                             if client.user.party.me.emote.lower() == client.itemdata[1][0][0].lower():
                                 await client.user.party.me.clear_emote()
                         await client.user.party.me.set_emote(client.itemdata[1][0][0])
                         client.eid=client.itemdata[1][0][0]
                     if client.itemdata[1][0][2] == 'emoji':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                return
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             return
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}')
                         client.eid=f'/Game/Athena/Items/Cosmetics/Dances/Emoji/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}'
                     if client.itemdata[1][0][2] == 'toy':
-                        if not client.owner is None:
-                            if not client.owner.id == message.author.id and client.emotelock is True:
-                                await message.reply('エモートロックが有効です')
-                                return
-                        elif client.emotelock is True:
+                        flag = False
+                        if client.emotelock is True:
+                            if client.owner is not None:
+                                if data['whitelist-ignorelock']:
+                                    if client.owner.id != message.author.id and message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    if client.owner.id != message.author.id:
+                                        flag = True
+                            else:
+                                if data['whitelist-ignorelock']:
+                                    if message.author.id not in whitelist:
+                                        flag = True
+                                else:
+                                    flag = True
+                        if flag is True:
                             await message.reply('エモートロックが有効です')
                             return
                         await client.user.party.me.set_emote(f'/Game/Athena/Items/Cosmetics/Toys/{client.itemdata[1][0][0]}.{client.itemdata[1][0][0]}')
@@ -8977,6 +11097,7 @@ for email, password in credentials.items():
     client.add_event_handler('friend_remove', event_friend_remove)
     client.add_event_handler('party_member_join', event_party_member_join)
     client.add_event_handler('party_member_leave', event_party_member_leave)
+    client.add_event_handler('party_member_confirm', event_party_member_confirm)
     client.add_event_handler('party_member_kick', event_party_member_kick)
     client.add_event_handler('party_member_promote', event_party_member_promote)
     client.add_event_handler('party_member_update', event_party_member_update)
