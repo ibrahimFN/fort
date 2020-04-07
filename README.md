@@ -55,6 +55,11 @@ blacklist-autoblock       : ブラックリストのユーザーをブロック�
 blacklist-autokick        : ブラックリストのユーザーを自動的にパーティーからキックするかの設定 true か false
 blacklist-autochatban     : ブラックリストのユーザーを自動的にチャットバンするかどうかの設定 true か false
 blacklist-ignorecommand   : ブラックリストのユーザーからのコマンドを無視するかどうかの設定 true か false
+whitelist                 : ホワイトリストに指定するユーザーのリスト ユーザー名かユーザーID
+whitelist-allowinvite     : ホワイトリストのユーザーがボットをいつでも招待できるようにするかの設定 true か false
+whitelist-declineinvite   : ホワイトリストのユーザーがパーティーにいるとき、招待を拒否するかどうかの設定 true か false
+whitelist-ignorelock      : ホワイトリストのユーザーがスキンロック等を無視できるかどうかの設定 true か false
+whitelist-ownercommand    : ホワイトリストのユーザーが所有者コマンドを使えるかどうかの設定 true か false
 no-logs                   : コンソールにログを出すかどうかの設定 true か false
 ingame-error              : プレイヤーにエラーを送信するかどうかの設定 true か false
 discord-log               : Discordにログを送信するかどうかの設定 true か false
@@ -87,6 +92,8 @@ relogin                                   : アカウントに再ログインす
 reload                                    : configとcommandsを再読み込みする
 addblacklist                              : addblacklist [ユーザー名/ユーザーID] ユーザーをブラックリストに追加する
 removeblacklist                           : removeblacklist [ユーザー名/ユーザーID] ユーザーをブラックリストから削除する
+addwhitelist                              : addwhitelist [ユーザー名/ユーザーID] ユーザーをホワイトリストに追加する
+removewhitelist                           : removewhitelist [ユーザー名/ユーザーID] ユーザーをホワイトリストから削除する
 get                                       : get [ユーザー名/ユーザーID] ユーザーのアイテム各種の情報を取得する
 friendcount                               : 現在のフレンド数を表示する
 pendingcount                              : 現在のフレンド申請数を表示する(方向関係なし)
