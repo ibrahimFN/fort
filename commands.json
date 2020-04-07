@@ -11,6 +11,8 @@
 	"reload": "reload",
 	"addblacklist": "addblacklist",
 	"removeblacklist": "removeblacklist",
+	"addwhitelist": "addwhitelist",
+	"removewhitelist": "removewhitelist",
 	"get": "get",
 	"friendcount": "friendcount",
 	"pendingcount": "pendingcount",
