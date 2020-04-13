@@ -1127,7 +1127,7 @@ async def event_party_invite(invitation):
         dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待')
 
     if client.owner is not None:
-        if client.owner.id not in client.user.party.members.keys():
+        if client.owner.id in client.user.party.members.keys():
             await invitation_decline_owner(invitation)
             return
     if data['whitelist-declineinvite'] is True and True in [memberid in whitelist for memberid in client.user.party.members.keys()]:
