@@ -49,7 +49,7 @@
 		"whitelist-allowinvite": true,
 		"whitelist-declineinvite": true,
 		"whitelist-ignorelock": true,
-		"whitelist-ownercommand": true,
+		"whitelist-ownercommand": true
 	},
 	"discord": {
 		"enabled": true,
