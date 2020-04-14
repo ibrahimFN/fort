@@ -57,7 +57,6 @@
 		"owner": ,
 		"channelname": "{name}-command-channel",
 		"status": "ステータス",
-		"statustype": "",
 		"discord": true,
 		"disablediscordperfectly": false,
 		"blacklist": [
