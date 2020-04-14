@@ -53,8 +53,8 @@
 	},
 	"discord": {
 		"enabled": true,
-		"token": "",
-		"owner": ,
+		"token": "Discord Botのトークン",
+		"owner": 所有者のID,
 		"channelname": "{name}-command-channel",
 		"status": "ステータス",
 		"discord": true,
