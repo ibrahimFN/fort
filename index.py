@@ -94,7 +94,7 @@ whitelist_flag = True
 discord_flag = True
 discord_ready = False
 kill=False
-configkeys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['privacy']","['fortnite']['whisper']","['fortnite']['partychat']","['fortnite']['disablewhisperperfectly']","['fortnite']['disablepartychatperfectly']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['outfitmimic']","['fortnite']['backpackmimic']","['fortnite']['pickaxemimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['invite-ownerdecline']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['fortnite']['blacklist']","['fortnite']['blacklist-declineinvite']","['fortnite']['blacklist-autoblock']","['fortnite']['blacklist-autokick']","['fortnite']['blacklist-autochatban']","['fortnite']['blacklist-ignorecommand']","['fortnite']['whitelist']","['fortnite']['whitelist-allowinvite']","['fortnite']['whitelist-declineinvite']","['fortnite']['whitelist-ignorelock']","['fortnite']['whitelist-ownercommand']","['discord']['enabled']","['discord']['token']","['discord']['owner']","['discord']['status']","['discord']['statustype']","['discord']['discord']","['discord']['disablediscordperfectly']","['discord']['blacklist']","['discord']['blacklist-ignorecommand']","['discord']['whitelist']","['discord']['whitelist-ignorelock']","['discord']['whitelist-ownercommand']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-token']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
+configkeys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['privacy']","['fortnite']['whisper']","['fortnite']['partychat']","['fortnite']['disablewhisperperfectly']","['fortnite']['disablepartychatperfectly']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['outfitmimic']","['fortnite']['backpackmimic']","['fortnite']['pickaxemimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['invite-ownerdecline']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['fortnite']['blacklist']","['fortnite']['blacklist-declineinvite']","['fortnite']['blacklist-autoblock']","['fortnite']['blacklist-autokick']","['fortnite']['blacklist-autochatban']","['fortnite']['blacklist-ignorecommand']","['fortnite']['whitelist']","['fortnite']['whitelist-allowinvite']","['fortnite']['whitelist-declineinvite']","['fortnite']['whitelist-ignorelock']","['fortnite']['whitelist-ownercommand']","['discord']['enabled']","['discord']['token']","['discord']['owner']","['discord']['status']","['discord']['discord']","['discord']['disablediscordperfectly']","['discord']['blacklist']","['discord']['blacklist-ignorecommand']","['discord']['whitelist']","['discord']['whitelist-ignorelock']","['discord']['whitelist-ownercommand']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-token']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
 commandskeys=['ownercommands','true','false','me','prev','eval','exec','restart','relogin','reload','addblacklist','removeblacklist','addwhitelist','removewhitelist','addblacklist_discord','removeblacklist_discord','addwhitelist_discord','removewhitelist_discord','get','friendcount','pendingcount','blockcount','friendlist','pendinglist','blocklist','outfitmimic','backpackmimic','pickaxemimic','emotemimic','whisper','partychat','discord','disablewhisperperfectly','disablepartychatperfectly','disablediscordperfectly','acceptinvite','acceptfriend','joinmessageenable','randommessageenable','wait','join','joinid','leave','invite','message','partymessage','status','banner','level','bp','privacy','privacy_public','privacy_friends_allow_friends_of_friends','privacy_friends','privacy_private_allow_friends_of_friends','privacy_private','getuser','getfriend','getpending','getblock','info','info_party','pending','removepending','addfriend','removefriend','acceptpending','declinepending','blockfriend','unblockfriend','chatban','promote','kick','ready','unready','sitout','outfitlock','backpacklock','pickaxelock','emotelock','stop','alloutfit','allbackpack','allpickaxe','allemote','cid','bid','petcarrier','pickaxe_id','eid','emoji_id','toy_id','shout_id','id','outfit','backpack','pet','pickaxe','emote','emoji','toy','shout','item','set','setvariant','addvariant','setstyle','addstyle','setenlightenment','outfitasset','backpackasset','pickaxeasset','emoteasset']
 ignore=['ownercommands','true','false','me', 'privacy_public', 'privacy_friends_allow_friends_of_friends', 'privacy_friends', 'privacy_private_allow_friends_of_friends', 'privacy_private', 'info_party']
 
@@ -1321,8 +1321,6 @@ if True:
         data['discord']['whitelist-ignorelock'] = False
     if data['discord']['whitelist-ownercommand'] not in (True, False):
         data['discord']['whitelist-ownercommand'] = False
-    if data['discord']['statustype'] not in ('playing', 'streaming', 'listening', 'watching', 'custom'):
-        data['discord']['statustype'] = 'playing'
 
 if True:
     if data['no-logs'] not in (True, False):
@@ -2426,6 +2424,8 @@ async def event_friend_message(message):
                 return
             client.owner=None
             flag = False
+            activity = discord.Game(name=data['discord']['status'])
+            await dclient.change_presence(activity=activity)
             try:
                 owner=await client.fetch_profile(data['fortnite']['owner'])
             except fortnitepy.HTTPException:
@@ -5753,6 +5753,8 @@ async def event_party_message(message):
                 return
             client.owner=None
             flag = False
+            activity = discord.Game(name=data['discord']['status'])
+            await dclient.change_presence(activity=activity)
             try:
                 owner=await client.fetch_profile(data['fortnite']['owner'])
             except fortnitepy.HTTPException:
@@ -8848,6 +8850,8 @@ if discord_ready is True:
                 print(green(f'[{now_()}] ログイン: {dclient.user} / {dclient.user.id}'))
             dstore(dclient.user,f'ログイン: {dclient.user} / {dclient.user.id}')
         dclient.isready = True
+        activity = discord.Game(name=data['discord']['status'])
+        await dclient.change_presence(activity=activity)
 
         blacklist_ = []
         for blacklistuser in data['discord']['blacklist']:
@@ -9191,6 +9195,8 @@ if discord_ready is True:
                     return
                 client.owner=None
                 flag = False
+                activity = discord.Game(name=data['discord']['status'])
+                await dclient.change_presence(activity=activity)
                 try:
                     owner=await client.fetch_profile(data['fortnite']['owner'])
                 except fortnitepy.HTTPException:
