@@ -8940,7 +8940,7 @@ if discord_ready is True:
         for clientname, client in client_name.items():
             if client.isready is False:
                 continue
-            if message.channel.name == data['discord']['channelname'].format(name=clientname, id=client.user.id).lower():
+            if message.channel.name == data['discord']['channelname'].format(name=clientname, id=client.user.id).replace(" ","-").lower():
                 break
         else:
             return
