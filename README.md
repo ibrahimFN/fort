@@ -242,6 +242,21 @@ friends                          : フレンド
 private_allow_friends_of_friends : プライベート(フレンドのフレンドを許可)
 private                          : プライベート
 ```
+チャンネル名
+使用可能な変数
+```
+{name}                           : ボットのディスプレイネーム
+{id}                             : ボットのID
+```
+デフォルトの
+{name}-command-channel
+でボットの名前が
+Test Bot1
+Test Bot2
+の場合
+Test-Bot1-command-channel
+Test-Bot2-command-channel
+がそれぞれコマンドチャンネルとして使える
 
 APIキー  
 ```
