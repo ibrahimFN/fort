@@ -1,3 +1,4 @@
+  
 {
 	"fortnite": {
 		"email": "ボットのメールアドレス",
@@ -32,42 +33,25 @@
 		"addfriend": false,
 		"inviteinterval": true,
 		"interval": 10,
-		"waitinterval": 10,
-		"blacklist": [
-			"Tfue",
-			"Ninja"
-		],
-		"blacklist-declineinvite": true,
-		"blacklist-autoblock": false,
-		"blacklist-autokick": true,
-		"blacklist-autochatban": false,
-		"blacklist-ignorecommand": false,
-		"whitelist": [
-			"Crazy_Shotyan",
-			"CR.Daruma"
-		],
-		"whitelist-allowinvite": true,
-		"whitelist-declineinvite": true,
-		"whitelist-ignorelock": true,
-		"whitelist-ownercommand": true,
+		"waitinterval": 10
 	},
-	"discord": {
-		"enabled": true,
-		"token": "",
-		"owner": ,
-		"channelname": "{name}-command-channel",
-		"status": "ステータス",
-		"statustype": "",
-		"discord": true,
-		"disablediscordperfectly": false,
-		"blacklist": [
-		],
-		"blacklist-ignorecommand": false,
-		"whitelist": [
-		],
-		"whitelist-ignorelock": true,
-		"whitelist-ownercommand": true
-	    },
+	"blacklist": [
+		"Tfue",
+		"Ninja"
+	],
+	"blacklist-declineinvite": true,
+	"blacklist-autoblock": false,
+	"blacklist-autokick": true,
+	"blacklist-autochatban": false,
+	"blacklist-ignorecommand": false,
+	"whitelist": [
+		"Crazy_Shotyan",
+		"CR.Daruma"
+	],
+	"whitelist-allowinvite": true,
+	"whitelist-declineinvite": true,
+	"whitelist-ignorelock": true,
+	"whitelist-ownercommand": true,
 	"no-logs": false,
 	"ingame-error": true,
 	"discord-log": false,
