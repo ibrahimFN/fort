@@ -1,4 +1,5 @@
 fortnitepy
+discord.py
 requests
 crayons
 jaconv
