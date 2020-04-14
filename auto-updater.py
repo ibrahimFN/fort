@@ -1,4 +1,9 @@
-import time,requests,sys,os,json,traceback
+import traceback
+import requests
+import time
+import json
+import sys
+import os
 
 def AddNewKey(data: dict, new: dict) -> dict:
     result = data.copy()
@@ -17,7 +22,7 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
             break
     else:
         extension == ""
-    if extension == ".py" or extension == "":
+    if extension == ".py" or extension == ".bat" or extension == ".txt" or extension == "":
         if os.path.isfile(filename):
             with open(filename, encoding='utf-8') as f:
                 current = f.read()
@@ -44,8 +49,12 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
                 with open(filename, 'bw') as f:
                     f.write(github)
                 print(f'{filename} の更新が完了しました!\n')
+                CheckUpdate("auto-updater.py", githuburl)
+                CheckUpdate("requirements.txt", githuburl)
                 CheckUpdate("config.json", githuburl)
                 CheckUpdate("commands.json", githuburl)
+                CheckUpdate("Check update.bat", githuburl)
+                CheckUpdate("INSTALL IFNOTWORK.bat", githuburl)
                 return True
         else:
             print(f'{filename} の更新はありません!\n')
@@ -94,8 +103,15 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
         print(f'拡張子 {extension} は対応していません\n')
         exit()
 
-githuburl = "https://raw.githubusercontent.com/gomashio1596/Fortnite-LobbyBot/master/"
+if "-dev" in sys.argv:
+    githuburl = "https://raw.githubusercontent.com/gomashio1596/Fortnite-LobbyBot/Dev/"
+else:
+    githuburl = "https://raw.githubusercontent.com/gomashio1596/Fortnite-LobbyBot/master/"
 if CheckUpdate("index.py", githuburl) is False and "-all" in sys.argv:
+    CheckUpdate("auto-updater.py", githuburl)
+    CheckUpdate("requirements.txt", githuburl)
     CheckUpdate("config.json", githuburl)
     CheckUpdate("commands.json", githuburl)
+    CheckUpdate("Check update.bat", githuburl)
+    CheckUpdate("INSTALL IFNOTWORK.bat", githuburl)
 print("すべてのアップデートが完了しました")
