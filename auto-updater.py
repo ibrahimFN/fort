@@ -41,6 +41,11 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
             if current.replace('\n','').replace('\r','').encode(encoding='utf-8') != github.decode().replace('\n','').replace('\r','').encode(encoding='utf-8'):
                 print(f'{filename} のアップデートを確認しました!')
                 print(f'{filename} をバックアップ中...')
+                if os.path.isfile(f'{filename_}_old{extension}'):
+                    try:
+                        os.remove(f'{filename_}_old{extension}')
+                    except PermissionError:
+                        print(f'{filename} ファイルを削除できませんでした。\n{traceback.format_exc()}')
                 try:
                     os.rename(filename, f'{filename_}_old{extension}')
                 except PermissionError:
