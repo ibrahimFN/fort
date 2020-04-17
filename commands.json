@@ -17,6 +17,8 @@
 	"removeblacklist_discord": "removeblacklist2",
 	"addwhitelist_discord": "addwhitelist2",
 	"removewhitelist_discord": "removewhitelist2",
+	"addinvitelist": "addinvitelist",
+	"removeinvitelist": "removeinvitelist",
 	"get": "get",
 	"friendcount": "friendcount",
 	"pendingcount": "pendingcount",
