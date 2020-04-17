@@ -47,6 +47,7 @@ emotemimic                : 他人のエモートを真似るかどうかの設�
 acceptinvite              : ボットが招待を承諾するかどうかの設定 所有者からの招待は常に承諾 true か false
 acceptfriend              : ボットがフレンド申請を承諾するかどうかの設定 true か false か null
 addfriend                 : ボットがパーティーメンバーにフレンド申請を送るかどうかの設定 true か false
+invite-ownerdecline       : ボットの所有者がパーティーにいるときに招待を拒否するかどうかの設定 true か false
 inviteinterval            : 招待を承諾した後intervalの秒数だけ招待を拒否するようにするかどうかの設定 true か false
 interval                  : 招待を承諾した後招待を拒否する秒数
 waitinterval              : waitコマンドで招待を拒否する秒数
@@ -61,6 +62,7 @@ whitelist-allowinvite     : ホワイトリストのユーザーがボットを�
 whitelist-declineinvite   : ホワイトリストのユーザーがパーティーにいるとき、招待を拒否するかどうかの設定 true か false
 whitelist-ignorelock      : ホワイトリストのユーザーがスキンロック等を無視できるかどうかの設定 true か false
 whitelist-ownercommand    : ホワイトリストのユーザーが所有者コマンドを使えるかどうかの設定 true か false
+invitelist                : inviteallコマンドで招待するユーザーのリスト
 
 Discord
 enabled                   : Discord Botを起動するかどうかの設定 true か false
@@ -141,6 +143,7 @@ join                                      : join [ユーザー名/ユーザーID
 joinid                                    : joinid [パーティーID] パーティーに参加する
 leave                                     : パーティーを離脱する
 invite                                    : invite [ユーザー名 / ユーザーID] ユーザーをパーティーに招待する
+inviteall                                 : configのinvitelistのユーザーを招待する
 message                                   : message [ユーザー名 / ユーザーID] : [内容] ユーザーにメッセージを送信する
 partymessage                              : partymessage [内容] パーティーチャットにメッセージを送信する
 status                                    : status [内容] ステータスを設定する
@@ -177,10 +180,11 @@ outfitlock                                : outfitlock [true / false] スキン�
 backpacklock                              : backpacklock [true / false] バッグの変更をするかどうかの設定
 pickaxelock                               : pickaxelock [true / false] ツルハシの変更をするかどうかの設定
 emotelock                                 : emotelock [true / false] エモートの変更をするかどうかの設定
-stop                                      : エモート/全てのスキン/全てのエモートを停止する
-alloutfit                                 : 全てのスキンを表示する
-allbackpack                               : 全てのバッグを表示する
-allpickaxe                                : 全てのツルハシを表示する
+stop                                      : エモート/all系コマンドの表示を停止する
+alloutfit                                 : 全てのコスチュームを表示する
+allbackpack                               : 全てのバックアクセサリーを表示する
+allpet                                    : 全てのペットを表示する
+allpickaxe                                : 全ての収集ツールを表示する
 allemote                                  : 全てのエモートを表示する
 cid                                       : cid [CID] CIDでアイテムを検索する
 bid                                       : bid [BID] BIDでアイテムを検索する
@@ -191,10 +195,10 @@ emoji_id                                  : emoji_id [Emoji] Emojiでアイテ�
 toy_id                                    : toy_id [Toy] Toyでアイテムを検索する
 shout_id                                  : shout_id [Shout] Shoutでアイテムを検索する
 id                                        : id [ID] IDでアイテムを検索する
-outfit                                    : outfit [スキン名] スキン名でスキンを検索する
-backpack                                  : backpack [バッグ名] バッグ名でバッグを検索する
+outfit                                    : outfit [コスチューム名] コスチューム名でコスチュームを検索する
+backpack                                  : backpack [バックアクセサリー名] バックアクセサリー名でバックアクセサリーを検索する
 pet                                       : pet [ペット名] ペット名でペットを検索する
-pickaxe                                   : pickaxe [ツルハシ名] ツルハシ名でツルハシを検索する
+pickaxe                                   : pickaxe [収集ツール名] 収集ツール名で収集ツールを検索する
 emote                                     : emote [エモート名] エモート名でエモートを検索する
 emoji                                     : emoji [エモートアイコン名] エモートアイコン名でエモートアイコンを検索する
 toy                                       : toy [おもちゃ名] おもちゃ名でおもちゃを検索する
