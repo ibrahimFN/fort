@@ -87,15 +87,19 @@ if os.getcwd().startswith('/app'):
 filename = 'device_auths.json'
 storedlog = []
 loadedclients = []
+whitelist = []
+whitelist_ = []
+blacklist = []
+blacklist_ = []
 client_name = {}
 cache_users = {}
 blacklist_flag = True
 whitelist_flag = True
+invitelist_flag = True
 discord_flag = True
-discord_ready = False
 kill=False
-configkeys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['privacy']","['fortnite']['whisper']","['fortnite']['partychat']","['fortnite']['disablewhisperperfectly']","['fortnite']['disablepartychatperfectly']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['outfitmimic']","['fortnite']['backpackmimic']","['fortnite']['pickaxemimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['invite-ownerdecline']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['fortnite']['blacklist']","['fortnite']['blacklist-declineinvite']","['fortnite']['blacklist-autoblock']","['fortnite']['blacklist-autokick']","['fortnite']['blacklist-autochatban']","['fortnite']['blacklist-ignorecommand']","['fortnite']['whitelist']","['fortnite']['whitelist-allowinvite']","['fortnite']['whitelist-declineinvite']","['fortnite']['whitelist-ignorelock']","['fortnite']['whitelist-ownercommand']","['discord']['enabled']","['discord']['token']","['discord']['owner']","['discord']['status']","['discord']['discord']","['discord']['disablediscordperfectly']","['discord']['blacklist']","['discord']['blacklist-ignorecommand']","['discord']['whitelist']","['discord']['whitelist-ignorelock']","['discord']['whitelist-ownercommand']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-token']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
-commandskeys=['ownercommands','true','false','me','prev','eval','exec','restart','relogin','reload','addblacklist','removeblacklist','addwhitelist','removewhitelist','addblacklist_discord','removeblacklist_discord','addwhitelist_discord','removewhitelist_discord','get','friendcount','pendingcount','blockcount','friendlist','pendinglist','blocklist','outfitmimic','backpackmimic','pickaxemimic','emotemimic','whisper','partychat','discord','disablewhisperperfectly','disablepartychatperfectly','disablediscordperfectly','acceptinvite','acceptfriend','joinmessageenable','randommessageenable','wait','join','joinid','leave','invite','message','partymessage','status','banner','level','bp','privacy','privacy_public','privacy_friends_allow_friends_of_friends','privacy_friends','privacy_private_allow_friends_of_friends','privacy_private','getuser','getfriend','getpending','getblock','info','info_party','pending','removepending','addfriend','removefriend','acceptpending','declinepending','blockfriend','unblockfriend','chatban','promote','kick','ready','unready','sitout','outfitlock','backpacklock','pickaxelock','emotelock','stop','alloutfit','allbackpack','allpickaxe','allemote','cid','bid','petcarrier','pickaxe_id','eid','emoji_id','toy_id','shout_id','id','outfit','backpack','pet','pickaxe','emote','emoji','toy','shout','item','set','setvariant','addvariant','setstyle','addstyle','setenlightenment','outfitasset','backpackasset','pickaxeasset','emoteasset']
+configkeys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['privacy']","['fortnite']['whisper']","['fortnite']['partychat']","['fortnite']['disablewhisperperfectly']","['fortnite']['disablepartychatperfectly']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['outfitmimic']","['fortnite']['backpackmimic']","['fortnite']['pickaxemimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['invite-ownerdecline']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['fortnite']['blacklist']","['fortnite']['blacklist-declineinvite']","['fortnite']['blacklist-autoblock']","['fortnite']['blacklist-autokick']","['fortnite']['blacklist-autochatban']","['fortnite']['blacklist-ignorecommand']","['fortnite']['whitelist']","['fortnite']['whitelist-allowinvite']","['fortnite']['whitelist-declineinvite']","['fortnite']['whitelist-ignorelock']","['fortnite']['whitelist-ownercommand']","['fortnite']['invitelist']","['discord']['enabled']","['discord']['token']","['discord']['owner']","['discord']['status']","['discord']['discord']","['discord']['disablediscordperfectly']","['discord']['blacklist']","['discord']['blacklist-ignorecommand']","['discord']['whitelist']","['discord']['whitelist-ignorelock']","['discord']['whitelist-ownercommand']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-token']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
+commandskeys=['ownercommands','true','false','me','prev','eval','exec','restart','relogin','reload','addblacklist','removeblacklist','addwhitelist','removewhitelist','addblacklist_discord','removeblacklist_discord','addwhitelist_discord','removewhitelist_discord','get','friendcount','pendingcount','blockcount','friendlist','pendinglist','blocklist','outfitmimic','backpackmimic','pickaxemimic','emotemimic','whisper','partychat','discord','disablewhisperperfectly','disablepartychatperfectly','disablediscordperfectly','acceptinvite','acceptfriend','joinmessageenable','randommessageenable','wait','join','joinid','leave','invite','inviteall','message','partymessage','status','banner','level','bp','privacy','privacy_public','privacy_friends_allow_friends_of_friends','privacy_friends','privacy_private_allow_friends_of_friends','privacy_private','getuser','getfriend','getpending','getblock','info','info_party','pending','removepending','addfriend','removefriend','acceptpending','declinepending','blockfriend','unblockfriend','chatban','promote','kick','ready','unready','sitout','outfitlock','backpacklock','pickaxelock','emotelock','stop','alloutfit','allbackpack','allpet','allpickaxe','allemote','allemoji','alltoy','allshout','cid','bid','petcarrier','pickaxe_id','eid','emoji_id','toy_id','shout_id','id','outfit','backpack','pet','pickaxe','emote','emoji','toy','shout','item','set','setvariant','addvariant','setstyle','addstyle','setenlightenment','outfitasset','backpackasset','pickaxeasset','emoteasset']
 ignore=['ownercommands','true','false','me', 'privacy_public', 'privacy_friends_allow_friends_of_friends', 'privacy_friends', 'privacy_private_allow_friends_of_friends', 'privacy_private', 'info_party']
 
 def dstore(username, content):
@@ -135,33 +139,49 @@ def dprint():
         if data['discord-log'] is True:
             if len(storedlog) != 0:
                 for send in storedlog:
-                    username=list(send.keys())[0]
-                    content=list(send.values())[0]
-                    if len(content) > 2000:
-                        text=[content[i: i+2000] for i in range(0, len(content), 2000)]
-                        for text_ in text:
+                    try:
+                        username=list(send.keys())[0]
+                        content=list(send.values())[0]
+                        if len(content) > 2000:
+                            text=[content[i: i+2000] for i in range(0, len(content), 2000)]
+                            for text_ in text:
+                                r=requests.post(
+                                data['webhook'],
+                                json={
+                                    'username': username,
+                                    'content': text_
+                                }
+                            )
+                        else:
                             r=requests.post(
-                            data['webhook'],
-                            json={
-                                'username': username,
-                                'content': text_
-                            }
-                        )
-                    else:
-                        r=requests.post(
-                            data['webhook'],
-                            json={
-                                'username': username,
-                                'content': content
-                            }
-                        )
-                    if data['loglevel'] == 'debug':
-                        print(yellow(f'[{r.status_code}] {username}: {content}'))
-                    if r.status_code == 204:
-                        storedlog.remove(send)
-                    if r.status_code == 429:
-                        break
-            time.sleep(5)
+                                data['webhook'],
+                                json={
+                                    'username': username,
+                                    'content': content
+                                }
+                            )
+                        if data['loglevel'] == 'debug':
+                            print(yellow(f'[{r.status_code}] {username}: {content}'))
+                        if r.status_code == 204:
+                            storedlog.remove(send)
+                        if r.status_code == 429:
+                            break
+                    except TypeError:
+                        if data['loglevel'] == 'debug':
+                            print(red(traceback.format_exc()))
+                            dstore("ボット", f">>> {traceback.format_exc()}")
+                        try:
+                            storedlog.remove(send)
+                        except Exception:
+                            pass
+                        continue
+                    except Exception:
+                        print(red(traceback.format_exc()))
+                        dstore("ボット", f">>> {traceback.format_exc()}")
+                        print(yellow(f'{username}: {content} の送信中にエラーが発生しました'))
+                        dstore("ボット", f"{username}: {content} の送信中にエラーが発生しました")
+                        continue
+                time.sleep(5)
 
 def get_device_auth_details():
     if os.path.isfile(filename):
@@ -177,9 +197,6 @@ def store_device_auth_details(email, details):
 
 def now_():
     return datetime.datetime.now().strftime('%H:%M:%S')
-
-def insert(target, point, insert):
-    return target[:point] + insert + target[point:]
 
 def platform_to_str(platform):
     if platform is fortnitepy.Platform.WINDOWS:
@@ -403,8 +420,6 @@ def reload_configs(client):
             data['discord']['whitelist-ignorelock'] = False
         if data['discord']['whitelist-ownercommand'] not in (True, False):
             data['discord']['whitelist-ownercommand'] = False
-        if data['discord']['statustype'] not in ('playing', 'streaming', 'listening', 'watching', 'custom'):
-            data['discord']['statustype'] = 'playing'
 
     if True:
         if data['no-logs'] not in (True, False):
@@ -427,7 +442,7 @@ def reload_configs(client):
             data['loglevel'] = 'normal'
         if data['fortnite']['privacy'] not in ('public', 'friends_allow_friends_of_friends', 'friends', 'private_allow_friends_of_friends', 'private'):
             data['fortnite']['privacy'] = 'public'
-    
+
     data['fortnite']['privacy']=eval(f"fortnitepy.PartyPrivacy.{data['fortnite']['privacy'].upper()}")
     client.whisper=data['fortnite']['whisper']
     client.partychat=data['fortnite']['partychat']
@@ -452,7 +467,7 @@ def reload_configs(client):
             with open('commands.json', 'r', encoding='utf-8-sig') as f:
                 commands=json.load(f)
         for key in commandskeys:
-            exec(f"errorcheck=commands{key}")
+            exec(f"errorcheck=commands['{key}']")
         if data['caseinsensitive'] is True:
             commands=dict((k.lower(), jaconv.kata2hira(v.lower())) for k,v in commands.items())
         for checks in commands.items():
@@ -546,6 +561,10 @@ def get_item_info():
         if req.status_code == 200:
             with open('allja.json', 'w') as f:
                 json.dump(allcosmja, f)
+    except UnicodeEncodeError:
+        if data['loglevel'] == 'debug':
+            print(red(traceback.format_exc()))
+            dstore('ボット',f'>>> {traceback.format_exc()}')
     except Exception:
         print(red(traceback.format_exc()))
         dstore('ボット',f'>>> {traceback.format_exc()}')
@@ -586,6 +605,22 @@ def member_asset(member, asset):
         return partymember_emote(member)
     else:
         return eval(f"member.{asset}")
+
+def lock_check(client, author_id):
+    if client.owner is not None:
+        if data['fortnite']['whitelist-ignorelock']:
+            if client.owner.id != author_id and author_id not in whitelist:
+                return True
+        else:
+            if client.owner.id != author_id:
+                return True
+    else:
+        if data['fortnite']['whitelist-ignorelock']:
+            if author_id not in whitelist:
+                return True
+        else:
+            return True
+    return False
 
 def search_item(lang, mode, text, type_ = None):
     ignoretype = [
@@ -673,6 +708,10 @@ async def reply(message, content):
         await message.channel.send(content)
 
 async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenment = (0, 0)):
+    global blacklist
+    global blacklist_
+    global whitelist
+    global whitelist_
     if 'banner' in id_:
         variants = client.user.party.me.create_variants(profile_banner='ProfileBanner')
         variants += variants_ 
@@ -681,19 +720,7 @@ async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenm
     if type_ == "outfit":
         flag = False
         if client.outfitlock is True:
-            if client.owner is not None:
-                if data['fortnite']['whitelist-ignorelock']:
-                    if client.owner.id != author_id and author_id not in whitelist:
-                        flag = True
-                else:
-                    if client.owner.id != author_id:
-                        flag = True
-            else:
-                if data['fortnite']['whitelist-ignorelock']:
-                    if author_id not in whitelist:
-                        flag = True
-                else:
-                    flag = True
+            flag = lock_check(client, author_id)
         if flag is True:
             return False
         else:
@@ -701,19 +728,7 @@ async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenm
     elif type_ == "backpack":
         flag = False
         if client.backpacklock is True:
-            if client.owner is not None:
-                if data['fortnite']['whitelist-ignorelock']:
-                    if client.owner.id != author_id and author_id not in whitelist:
-                        flag = True
-                else:
-                    if client.owner.id != author_id:
-                        flag = True
-            else:
-                if data['fortnite']['whitelist-ignorelock']:
-                    if author_id not in whitelist:
-                        flag = True
-                else:
-                    flag = True
+            flag = lock_check(client, author_id)
         if flag is True:
             return False
         else:
@@ -721,19 +736,7 @@ async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenm
     elif type_ == "pet":
         flag = False
         if client.backpacklock is True:
-            if client.owner is not None:
-                if data['fortnite']['whitelist-ignorelock']:
-                    if client.owner.id != author_id and author_id not in whitelist:
-                        flag = True
-                else:
-                    if client.owner.id != author_id:
-                        flag = True
-            else:
-                if data['fortnite']['whitelist-ignorelock']:
-                    if author_id not in whitelist:
-                        flag = True
-                else:
-                    flag = True
+            flag = lock_check(client, author_id)
         if flag is True:
             return False
         else:
@@ -741,19 +744,7 @@ async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenm
     elif type_ == "pickaxe":
         flag = False
         if client.pickaxelock is True:
-            if client.owner is not None:
-                if data['fortnite']['whitelist-ignorelock']:
-                    if client.owner.id != author_id and author_id not in whitelist:
-                        flag = True
-                else:
-                    if client.owner.id != author_id:
-                        flag = True
-            else:
-                if data['fortnite']['whitelist-ignorelock']:
-                    if author_id not in whitelist:
-                        flag = True
-                else:
-                    flag = True
+            flag = lock_check(client, author_id)
         if flag is True:
             return False
         else:
@@ -761,19 +752,7 @@ async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenm
     elif type_ == "emote":
         flag = False
         if client.emotelock is True:
-            if client.owner is not None:
-                if data['fortnite']['whitelist-ignorelock']:
-                    if client.owner.id != author_id and author_id not in whitelist:
-                        flag = True
-                else:
-                    if client.owner.id != author_id:
-                        flag = True
-            else:
-                if data['fortnite']['whitelist-ignorelock']:
-                    if author_id not in whitelist:
-                        flag = True
-                else:
-                    flag = True
+            flag = lock_check(client, author_id)
         if flag is True:
             return False
         else:
@@ -785,19 +764,7 @@ async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenm
     elif type_ == "emoji":
         flag = False
         if client.emotelock is True:
-            if client.owner is not None:
-                if data['fortnite']['whitelist-ignorelock']:
-                    if client.owner.id != author_id and author_id not in whitelist:
-                        flag = True
-                else:
-                    if client.owner.id != author_id:
-                        flag = True
-            else:
-                if data['fortnite']['whitelist-ignorelock']:
-                    if author_id not in whitelist:
-                        flag = True
-                else:
-                    flag = True
+            flag = lock_check(client, author_id)
         if flag is True:
             return False
         else:
@@ -810,19 +777,7 @@ async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenm
     elif type_ == "toy":
         flag = False
         if client.emotelock is True:
-            if client.owner is not None:
-                if data['fortnite']['whitelist-ignorelock']:
-                    if client.owner.id != author_id and author_id not in whitelist:
-                        flag = True
-                else:
-                    if client.owner.id != author_id:
-                        flag = True
-            else:
-                if data['fortnite']['whitelist-ignorelock']:
-                    if author_id not in whitelist:
-                        flag = True
-                else:
-                    flag = True
+            flag = lock_check(client, author_id)
         if flag is True:
             return False
         else:
@@ -835,19 +790,7 @@ async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenm
     elif type_ == "shout":
         flag = False
         if client.emotelock is True:
-            if client.owner is not None:
-                if data['fortnite']['whitelist-ignorelock']:
-                    if client.owner.id != author_id and author_id not in whitelist:
-                        flag = True
-                else:
-                    if client.owner.id != author_id:
-                        flag = True
-            else:
-                if data['fortnite']['whitelist-ignorelock']:
-                    if author_id not in whitelist:
-                        flag = True
-                else:
-                    flag = True
+            flag = lock_check(client, author_id)
         if flag is True:
             return False
         else:
@@ -880,13 +823,13 @@ async def invitation_accept(invitation):
             dstore(client.user.display_name, f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾")
     except KeyError:
         if data['ingame-error'] is True:
-            await invitation.sender.reply('Error')
+            await invitation.sender.send('Error')
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
     except fortnitepy.PartyError:
         if data['ingame-error'] is True:
-            await invitation.sender.reply('既にパーティーのメンバーです')
+            await invitation.sender.send('既にパーティーのメンバーです')
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -894,7 +837,7 @@ async def invitation_accept(invitation):
         dstore(client.user.display_name,f'>>> 既にパーティーのメンバーです')
     except fortnitepy.HTTPException:
         if data['ingame-error'] is True:
-            await invitation.sender.reply('メンバーが見つかりません。')
+            await invitation.sender.send('メンバーが見つかりません。')
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -902,7 +845,7 @@ async def invitation_accept(invitation):
         dstore(client.user.display_name,f'>>> メンバーが見つかりません')
     except fortnitepy.Forbidden:
         if data['ingame-error'] is True:
-            await invitation.sender.reply('以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)')
+            await invitation.sender.send('以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)')
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -910,7 +853,7 @@ async def invitation_accept(invitation):
         dstore(client.user.display_name,f'>>> 以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)')
     except fortnitepy.HTTPException:
         if data['ingame-error'] is True:
-            await invitation.sender.reply('パーティー招待の承諾リクエストを処理中にエラーが発生しました')
+            await invitation.sender.send('パーティー招待の承諾リクエストを処理中にエラーが発生しました')
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -1060,28 +1003,42 @@ async def invitation_decline_whitelist(invitation):
         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
 async def aexec(code, variable):
+    _ = lambda l: re.match(r"(\u0020|\u3000)*", l).end() * u"\u0020"
     scode = code.split('\n')
-    lines = []
-    for line in scode:
-        result = re.match(r" *.+.*=", line)
-        if result is not None:
+    delete = len(_(scode[0]))
+    lines = [i.replace(u"\u0020", "", delete) for i in scode]
+    var = []
+    for line in lines:
+        result = re.match(r" *.+ *=", line)
+        if result is not None and "(" not in result.group(0) and "[" not in result.group(0):
             text = result.group(0)
-            text_ = line.replace(text, "")
-            text = text.replace("=", "").rstrip()
-            text = insert(text, 0, "var['")
-            text += "'] ="
-            text += text_
-        lines.append(text)
+            text = text.replace("=", "").strip()
+            if text not in var:
+                var.append(text)
+    if data['loglevel'] == 'debug':
+        print(var)
+    
+    text = ""
+    for v in var:
+        text += f"\n {v} = var['{v}']"
+    
     code = '\n'.join(lines)
     locals_ = {}
+    if data['loglevel'] == 'debug':
+        print(
+            f'var = locals()\nasync def __ex():\n global var'
+            + text
+            + ''.join(f'\n {l}' for l in code.split('\n'))
+        )
     exec(
         f'var = locals()\nasync def __ex():\n global var'
-        + ''.join(f'\n globals().update(var)\n {l}' for l in code.split('\n')),
+        + text
+        + ''.join(f'\n {l}' for l in code.split('\n')),
         variable,
         locals_
     )
     result = await locals_["__ex"]()
-    for key, in locals_.keys():
+    for key in locals_.keys():
         if key != "__ex":
             globals()[key] = locals_[key]
     return result
@@ -1108,22 +1065,23 @@ try:
         else:
             print(red('APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください。'))
             dstore('ボット',f'>>> APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください')
-    if errorcheck['status'] == 401:
-        if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
-            print(red('APIキーが無効です。正しい値を入力してください。'))
-            dstore('ボット',f'>>> APIキーが無効です。正しい値を入力してください')
-            exit()
-        else:
-            print(red('APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください。'))
-            dstore('ボット',f'>>> APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください')
-    if errorcheck['status'] == 503:
-        if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
-            print(red('APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください。'))
-            dstore('ボット',f'>>> APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください')
-            exit()
-        else:
-            print(red('APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。'))
-            dstore('ボット',f'>>> APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。')
+    else:
+        if errorcheck['status'] == 401:
+            if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
+                print(red('APIキーが無効です。正しい値を入力してください。'))
+                dstore('ボット',f'>>> APIキーが無効です。正しい値を入力してください')
+                exit()
+            else:
+                print(red('APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください。'))
+                dstore('ボット',f'>>> APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください')
+        if errorcheck['status'] == 503:
+            if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
+                print(red('APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください。'))
+                dstore('ボット',f'>>> APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください')
+                exit()
+            else:
+                print(red('APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。'))
+                dstore('ボット',f'>>> APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。')
     credentials={}
     try:
         for count,mail in enumerate(data['fortnite']['email'].split(',')):
@@ -1133,12 +1091,6 @@ try:
             print(red(traceback.format_exc()))
         print(red('メールアドレスの数に対しパスワードの数が足りません。読み込めたアカウントのみ起動されます'))
         dstore('ボット',f'>>> メールアドレスの数に対しパスワードの数が足りません。読み込めたアカウントのみ起動されます')
-    if data['discord']['enabled'] is True:
-        if len(credentials) > len(data['discord']['token'].split(',')):
-            print(red('読み込めたアカウントの数に対しトークンの数が足りません。Discord Botは起動されません'))
-            dstore('ボット',f'>>> 読み込めたアカウントの数に対しトークンの数が足りません。Discord Botは起動されません')
-        else:
-            discord_ready = True
 except KeyError as e:
     print(red(traceback.format_exc()))
     print(red('config.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。アップデート後の場合は、最新のconfig.jsonファイルを確認してください。'))
@@ -1382,6 +1334,7 @@ async def event_ready(client):
     global blacklist
     global whitelist_flag
     global whitelist
+    global invitelist_flag
     global discord_flag
     global client_name
     if data['loglevel'] == 'normal':
@@ -1401,44 +1354,6 @@ async def event_ready(client):
         add_cache(client, pending_)
     for block_ in client.blocked_users.values():
         add_cache(client, block_)
-
-    if blacklist_flag is True:
-        blacklist_flag = False
-        blacklist = []
-        for blacklistuser in data['fortnite']['blacklist']:
-            user = await client.fetch_profile(blacklistuser)
-            add_cache(client, user)
-            if user is None:
-                print(red(f'[{now_()}] [{client.user.display_name}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
-                dstore(client.user.display_name,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください')
-            else:
-                blacklist.append(user.id)
-                if data['loglevel'] == 'debug':
-                    print(yellow(f"{user.display_name} / {user.id}"))
-                if data['fortnite']['blacklist-autoblock'] is True:
-                    try:
-                        await user.block()
-                    except Exception:
-                        if data['loglevel'] == 'debug':
-                            print(red(traceback.format_exc()))
-                            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-        if data['loglevel'] == "debug":
-            print(yellow(blacklist))
-    if whitelist_flag is True:
-        whitelist_flag = False
-        whitelist = []
-        for whitelistuser in data['fortnite']['whitelist']:
-            user = await client.fetch_profile(whitelistuser)
-            add_cache(client, user)
-            if user is None:
-                print(red(f'[{now_()}] [{client.user.display_name}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
-                dstore(client.user.display_name,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
-            else:
-                whitelist.append(user.id)
-                if data['loglevel'] == 'debug':
-                    print(yellow(f"{user.display_name} / {user.id}"))
-        if data['loglevel'] == "debug":
-            print(yellow(whitelist))
 
     try:
         client.owner=None
@@ -1486,6 +1401,102 @@ async def event_ready(client):
     if client.owner is not None:
         await client.owner.send('ここをクリックして招待')
 
+    if blacklist_flag is True:
+        blacklist_flag = False
+        for blacklistuser in data['fortnite']['blacklist']:
+            try:
+                user = await client.fetch_profile(blacklistuser)
+                add_cache(client, user)
+                if user is None:
+                    print(red(f'[{now_()}] [{client.user.display_name}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
+                    dstore(client.user.display_name,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                else:
+                    blacklist.append(user.id)
+                    if data['loglevel'] == 'debug':
+                        print(yellow(f"{str(user.display_name)} / {user.id}"))
+                    if data['fortnite']['blacklist-autoblock'] is True:
+                        try:
+                            await user.block()
+                        except Exception:
+                            if data['loglevel'] == 'debug':
+                                print(red(traceback.format_exc()))
+                                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+        if data['loglevel'] == "debug":
+            print(yellow(blacklist))
+    if whitelist_flag is True:
+        whitelist_flag = False
+        for whitelistuser in data['fortnite']['whitelist']:
+            try:
+                user = await client.fetch_profile(whitelistuser)
+                add_cache(client, user)
+                if user is None:
+                    print(red(f'[{now_()}] [{client.user.display_name}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
+                    dstore(client.user.display_name,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                else:
+                    whitelist.append(user.id)
+                    if data['loglevel'] == 'debug':
+                        print(yellow(f"{str(user.display_name)} / {user.id}"))
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+        if data['loglevel'] == "debug":
+            print(yellow(whitelist))
+
+    for invitelistuser in data['fortnite']['invitelist']:
+        try:
+            user = await client.fetch_profile(invitelistuser)
+            if user is None:
+                print(red(f'[{now_()}] [{client.user.display_name}] 招待リストのユーザー {invitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
+                dstore(client.user.display_name,f'>>>招待リストのユーザー {invitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+            else:
+                friend = client.get_friend(user.id)
+                if friend is None and user.id != client.user.id:
+                    if data['fortnite']['addfriend'] is True:
+                        try:
+                            await client.add_friend(owner.id)
+                        except fortnitepy.HTTPException:
+                            if data['loglevel'] == 'debug':
+                                print(red(traceback.format_exc()))
+                                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                            print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
+                            dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
+                        except Exception:
+                            print(red(traceback.format_exc()))
+                            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                    print(red(f"[{now_()}] [{client.user.display_name}] 招待リストのユーザー {invitelistuser} とフレンドではありません。フレンドになってからもう一度起動するか、[{commands['reload']}] コマンドで再読み込みしてください。"))
+                    dstore(client.user.display_name,f'>>> 招待リストのユーザー {invitelistuser} とフレンドではありません。フレンドになってからもう一度起動するか、[{commands["reload"]}] コマンドで再読み込みしてください')
+                else:
+                    add_cache(client, user)
+                    client.invitelist.append(user.id)
+                    if data['loglevel'] == 'debug':
+                        print(yellow(f"{str(user.display_name)} / {user.id}"))
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+            dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+    if data['loglevel'] == "debug":
+        print(yellow(client.invitelist))
+
     if data['fortnite']['acceptfriend'] is True:
         pendings=[]
         for pending in client.pending_friends.copy().values():
@@ -1523,7 +1534,7 @@ async def event_ready(client):
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
     
-    if discord_ready is True and discord_flag is True:
+    if data['discord']['enabled'] is True and discord_flag is True:
         discord_flag = False
         await dclient.start(data['discord']['token'])
 
@@ -1694,14 +1705,19 @@ async def event_party_member_join(member):
     member_joined_at_most=[]
     for member_ in client.user.party.members.values():
         add_cache(client, member_)
-        if member_joined_at_most != []:
-            if member_.id in [i.user.id for i in clients]:
-                if member_.id != client.user.id:
-                    client_user_display_name+=f"/{str(member_.display_name)}"
-                if member_.joined_at < member_joined_at_most[1]:
-                    member_joined_at_most=[member_.id, member_.joined_at]
-        else:
-            member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+        try:
+            if member_joined_at_most != []:
+                if member_.id in [i.user.id for i in clients]:
+                    if member_.id != client.user.id:
+                        client_user_display_name+=f"/{str(member_.display_name)}"
+                    if member_.joined_at < member_joined_at_most[1]:
+                        member_joined_at_most=[member_.id, member_.joined_at]
+            else:
+                member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+        except Exception:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
     if member_joined_at_most == []:
         member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
@@ -1794,14 +1810,19 @@ async def event_party_member_leave(member):
     member_joined_at_most=[]
     for member_ in client.user.party.members.values():
         add_cache(client, member_)
-        if member_joined_at_most != []:
-            if member_.id in [i.user.id for i in clients]:
-                if member_.id != client.user.id:
-                    client_user_display_name+=f"/{str(member_.display_name)}"
-                if member_.joined_at < member_joined_at_most[1]:
-                    member_joined_at_most=[member_.id, member_.joined_at]
-        else:
-            member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+        try:
+            if member_joined_at_most != []:
+                if member_.id in [i.user.id for i in clients]:
+                    if member_.id != client.user.id:
+                        client_user_display_name+=f"/{str(member_.display_name)}"
+                    if member_.joined_at < member_joined_at_most[1]:
+                        member_joined_at_most=[member_.id, member_.joined_at]
+            else:
+                member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+        except Exception:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
     if member_joined_at_most == []:
         member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
@@ -1869,14 +1890,19 @@ async def event_party_member_kick(member):
     member_joined_at_most=[]
     for member_ in client.user.party.members.values():
         add_cache(client, member_)
-        if member_joined_at_most != []:
-            if member_.id in [i.user.id for i in clients]:
-                if member_.id != client.user.id:
-                    client_user_display_name+=f"/{str(member_.display_name)}"
-                if member_.joined_at < member_joined_at_most[1]:
-                    member_joined_at_most=[member_.id, member_.joined_at]
-        else:
-            member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+        try:
+            if member_joined_at_most != []:
+                if member_.id in [i.user.id for i in clients]:
+                    if member_.id != client.user.id:
+                        client_user_display_name+=f"/{str(member_.display_name)}"
+                    if member_.joined_at < member_joined_at_most[1]:
+                        member_joined_at_most=[member_.id, member_.joined_at]
+            else:
+                member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+        except Exception:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
     if member_joined_at_most == []:
         member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
@@ -1899,14 +1925,20 @@ async def event_party_member_promote(old_leader,new_leader):
     client_user_display_name=str(client.user.display_name)
     member_joined_at_most=[]
     for member_ in client.user.party.members.values():
-        if member_joined_at_most != []:
-            if member_.id in [i.user.id for i in clients]:
-                if member_.id != client.user.id:
-                    client_user_display_name+=f"/{str(member_.display_name)}"
-                if member_.joined_at < member_joined_at_most[1]:
-                    member_joined_at_most=[member_.id, member_.joined_at]
-        else:
-            member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+        add_cache(client, member_)
+        try:
+            if member_joined_at_most != []:
+                if member_.id in [i.user.id for i in clients]:
+                    if member_.id != client.user.id:
+                        client_user_display_name+=f"/{str(member_.display_name)}"
+                    if member_.joined_at < member_joined_at_most[1]:
+                        member_joined_at_most=[member_.id, member_.joined_at]
+            else:
+                member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+        except Exception:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
     if member_joined_at_most == []:
         member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
@@ -1954,14 +1986,20 @@ async def event_party_member_update(member):
     client_user_display_name=str(client.user.display_name)
     member_joined_at_most=[]
     for member_ in client.user.party.members.values():
-        if member_joined_at_most != []:
-            if member_.id in [i.user.id for i in clients]:
-                if member_.id != client.user.id:
-                    client_user_display_name+=f"/{str(member_.display_name)}"
-                if member_.joined_at < member_joined_at_most[1]:
-                    member_joined_at_most=[member_.id, member_.joined_at]
-        else:
-            member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+        add_cache(client, member_)
+        try:
+            if member_joined_at_most != []:
+                if member_.id in [i.user.id for i in clients]:
+                    if member_.id != client.user.id:
+                        client_user_display_name+=f"/{str(member_.display_name)}"
+                    if member_.joined_at < member_joined_at_most[1]:
+                        member_joined_at_most=[member_.id, member_.joined_at]
+            else:
+                member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+        except Exception:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
     if member_joined_at_most == []:
         member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
@@ -2087,14 +2125,19 @@ async def event_party_member_disconnect(member):
     member_joined_at_most=[]
     for member_ in client.user.party.members.values():
         add_cache(client, member_)
-        if member_joined_at_most != []:
-            if member_.id in [i.user.id for i in clients]:
-                if member_.id != client.user.id:
-                    client_user_display_name+=f"/{str(member_.display_name)}"
-                if member_.joined_at < member_joined_at_most[1]:
-                    member_joined_at_most=[member_.id, member_.joined_at]
-        else:
-            member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+        try:
+            if member_joined_at_most != []:
+                if member_.id in [i.user.id for i in clients]:
+                    if member_.id != client.user.id:
+                        client_user_display_name+=f"/{str(member_.display_name)}"
+                    if member_.joined_at < member_joined_at_most[1]:
+                        member_joined_at_most=[member_.id, member_.joined_at]
+            else:
+                member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+        except Exception:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
     if member_joined_at_most == []:
         member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
@@ -2124,14 +2167,20 @@ async def event_party_member_chatban(member, reason):
     client_user_display_name=str(client.user.display_name)
     member_joined_at_most=[]
     for member_ in client.user.party.members.values():
-        if member_joined_at_most != []:
-            if member_.id in [i.user.id for i in clients]:
-                if member_.id != client.user.id:
-                    client_user_display_name+=f"/{str(member_.display_name)}"
-                if member_.joined_at < member_joined_at_most[1]:
-                    member_joined_at_most=[member_.id, member_.joined_at]
-        else:
-            member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+        add_cache(client, member_)
+        try:
+            if member_joined_at_most != []:
+                if member_.id in [i.user.id for i in clients]:
+                    if member_.id != client.user.id:
+                        client_user_display_name+=f"/{str(member_.display_name)}"
+                    if member_.joined_at < member_joined_at_most[1]:
+                        member_joined_at_most=[member_.id, member_.joined_at]
+            else:
+                member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+        except Exception:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
     if member_joined_at_most == []:
         member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
@@ -2163,14 +2212,20 @@ async def event_party_update(party):
     client_user_display_name=str(client.user.display_name)
     member_joined_at_most=[]
     for member_ in client.user.party.members.values():
-        if member_joined_at_most != []:
-            if member_.id in [i.user.id for i in clients]:
-                if member_.id != client.user.id:
-                    client_user_display_name+=f"/{str(member_.display_name)}"
-                if member_.joined_at < member_joined_at_most[1]:
-                    member_joined_at_most=[member_.id, member_.joined_at]
-        else:
-            member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+        add_cache(client, member_)
+        try:
+            if member_joined_at_most != []:
+                if member_.id in [i.user.id for i in clients]:
+                    if member_.id != client.user.id:
+                        client_user_display_name+=f"/{str(member_.display_name)}"
+                    if member_.joined_at < member_joined_at_most[1]:
+                        member_joined_at_most=[member_.id, member_.joined_at]
+            else:
+                member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+        except Exception:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
     if member_joined_at_most == []:
         member_joined_at_most=[client.user.id]
     if client.user.id == member_joined_at_most[0]:
@@ -2194,9 +2249,12 @@ async def event_friend_message(message):
     if message is None:
         return
     client=message.client
-    if client.isready is False or dclient.isready is False:
+    if data['discord']['enabled'] is True and dclient.isready is False:
+        return
+    if client.isready is False:
         return
     name=client.user.display_name
+    author_id = message.author.id
     loop = asyncio.get_event_loop()
     add_cache(client, message.author)
     if message.author.id in blacklist and data['fortnite']['blacklist-ignorecommand'] is True:
@@ -2246,6 +2304,20 @@ async def event_friend_message(message):
                     flag = True
             else:
                 flag = True
+    else:
+        if dclient.owner is not None:
+            if data['discord']['whitelist-ownercommand'] is True:
+                if client.owner.id != message.author.id and message.author.id not in whitelist_:
+                    flag = True
+            else:
+                if client.owner.id != message.author.id:
+                    flag = True
+        else:
+            if data['discord']['whitelist-ownercommand'] is True:
+                if message.author.id not in whitelist_:
+                    flag = True
+            else:
+                flag = True
     if flag is True:
         for checks in commands.items():
             if checks[0] in ignore:
@@ -2280,6 +2352,167 @@ async def event_friend_message(message):
                 dstore(name,f'>>> {traceback.format_exc()}')
                 await reply(message, 'エラー')
             return
+
+    if data['discord']['enabled'] is True and dclient.isready is True:
+        if args[0] in commands['addblacklist_discord'].split(','):
+            try:
+                if rawcontent == '' or args[1].isdigit() is False:
+                    await reply(message, f"[{commands['addblacklist_discord']}] [ユーザーID]")
+                    return
+                user = dclient.get_user(int(args[1]))
+                if user is None:
+                    user = await dclient.fetch_user(int(args[1]))
+                if user.id not in blacklist_:
+                    blacklist_.append(user.id)
+                    data["discord"]["blacklist"].append(user.id)
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                    data_["discord"]["blacklist"] = data["discord"]["blacklist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await reply(message, f"ユーザー {user} / {user.id} をブラックリストに追加しました")
+                else:
+                    await reply(message, f"ユーザー {user} / {user.id} は既にブラックリストに追加されています")
+            except discord.NotFound:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'ユーザーが見つかりません')
+            except discord.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'エラー')
+
+        elif args[0] in commands['removeblacklist_discord'].split(','):
+            try:
+                if rawcontent == '' or args[1].isdigit() is False:
+                    await reply(message, f"[{commands['removeblacklist_discord']}] [ユーザーID]")
+                    return
+                user = dclient.get_user(int(args[1]))
+                if user is None:
+                    user = await dclient.fetch_user(int(args[1]))
+                if user.id in blacklist_:
+                    blacklist_.remove(user.id)
+                    data["discord"]["blacklist"].remove(user.id)
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                    data_["discord"]["blacklist"] = data["discord"]["blacklist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await reply(message, f"ユーザー {user} / {user.id} をブラックリストから削除")
+                else:
+                    await reply(message, f"ユーザー {user} / {user.id} はブラックリストに含まれていません")
+            except discord.NotFound:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'ユーザーが見つかりません')
+            except discord.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'エラー')
+
+        elif args[0] in commands['addwhitelist_discord'].split(','):
+            try:
+                if rawcontent == '' or args[1].isdigit() is False:
+                    await reply(message, f"[{commands['addwhitelist_discord']}] [ユーザーID]")
+                    return
+                user = dclient.get_user(int(args[1]))
+                if user is None:
+                    user = await dclient.fetch_user(int(args[1]))
+                if user.id not in whitelist_:
+                    whitelist_.append(user.id)
+                    data["discord"]["whitelist"].append(user.id)
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                    data_["discord"]["whitelist"] = data["discord"]["whitelist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await reply(message, f"ユーザー {user} / {user.id} をホワイトリストに追加しました")
+                else:
+                    await reply(message, f"ユーザー {user} / {user.id} は既にホワイトリストに追加されています")
+            except discord.NotFound:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'ユーザーが見つかりません')
+            except discord.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'エラー')
+
+        elif args[0] in commands['removewhitelist_discord'].split(','):
+            try:
+                if rawcontent == '' or args[1].isdigit() is False:
+                    await reply(message, f"[{commands['removewhitelist_discord']}] [ユーザーID]")
+                    return
+                user = dclient.get_user(int(args[1]))
+                if user is None:
+                    user = await dclient.fetch_user(int(args[1]))
+                if user.id in whitelist_:
+                    whitelist_.remove(user.id)
+                    data["discord"]["whitelist"].remove(user.id)
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                    data_["discord"]["whitelist"] = data["discord"]["whitelist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await reply(message, f"ユーザー {user} / {user.id} をホワイトリストから削除")
+                else:
+                    await reply(message, f"ユーザー {user} / {user.id} はホワイトリストに含まれていません")
+            except discord.NotFound:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'ユーザーが見つかりません')
+            except discord.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'エラー')
 
     if args[0] in commands['eval'].split(','):
         try:
@@ -2422,79 +2655,183 @@ async def event_friend_message(message):
             else:
                 await reply(message, 'エラー')
                 return
-            client.owner=None
-            flag = False
-            activity = discord.Game(name=data['discord']['status'])
-            await dclient.change_presence(activity=activity)
             try:
+                client.owner=None
                 owner=await client.fetch_profile(data['fortnite']['owner'])
+                if owner is None:
+                    print(red(f'[{now_()}] [{client.user.display_name}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
+                    dstore(client.user.display_name,'>>> 所有者が見つかりません。正しい名前/IDになっているか確認してください')
+                else:
+                    add_cache(client, owner)
+                    client.owner=client.get_friend(owner.id)
+                    if client.owner is None:
+                        if data['fortnite']['addfriend'] is True:
+                            try:
+                                await client.add_friend(owner.id)
+                            except fortnitepy.HTTPException:
+                                if data['loglevel'] == 'debug':
+                                    print(red(traceback.format_exc()))
+                                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                                print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
+                                dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
+                            except Exception:
+                                print(red(traceback.format_exc()))
+                                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                        print(red(f"[{now_()}] [{client.user.display_name}] 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{commands['reload']}] コマンドで再読み込みしてください。"))
+                        dstore(client.user.display_name,f'>>> 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{commands["reload"]}] コマンドで再読み込みしてください')
+                    else:
+                        if data['loglevel'] == 'normal':
+                            if data['no-logs'] is False:
+                                print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name}'))
+                            dstore(client.user.display_name,f'所有者: {client.owner.display_name}')
+                        else:
+                            if data['no-logs'] is False:
+                                print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name} / {client.owner.id}'))
+                            dstore(client.user.display_name,f'所有者: {client.owner.display_name} / {client.owner.id}')
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
-                    dstore(name,f'>>> {traceback.format_exc()}')
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
                 print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-                flag = True
-            if owner is None:
-                print(red(f'[{now_()}] [{client.user.display_name}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
-                dstore(name,f'>>> 所有者が見つかりません。正しい名前/IDになっているか確認してください')
-                flag = True
-            if flag is False:
-                client.owner=client.get_friend(owner.id)
-                if client.owner is None:
-                    if data['fortnite']['addfriend'] is True:
-                        try:
-                            await client.add_friend(owner.id)
-                        except fortnitepy.HTTPException:
-                            if data['loglevel'] == 'debug':
-                                print(red(traceback.format_exc()))
-                                dstore(name,f'>>> {traceback.format_exc()}')
-                            print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
-                            dstore(name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
-                        except Exception:
-                            print(red(traceback.format_exc()))
-                            dstore(name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] [{client.user.display_name}] 所有者とフレンドではありません。フレンドになってからもう一度起動してください。'))
-                    dstore(name,f'>>> 所有者とフレンドではありません。フレンドになってからもう一度起動してください')
-                else:
-                    if data['loglevel'] == 'normal':
-                        print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name}'))
-                        dstore(name,f'所有者: {client.owner.display_name}')
-                    else:
-                        print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name} / {client.owner.id}'))
-                        dstore(name,f'所有者: {client.owner.display_name} / {client.owner.id}')
+                dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
-            blacklist = []
             for blacklistuser in data['fortnite']['blacklist']:
-                user = await client.fetch_profile(blacklistuser)
-                if user is None:
-                    print(red(f'[{now_()}] [{client.user.display_name}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
-                    dstore(name,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください')
-                else:
-                    blacklist.append(user.id)
+                try:
+                    user = await client.fetch_profile(blacklistuser)
+                    add_cache(client, user)
+                    if user is None:
+                        print(red(f'[{now_()}] [{client.user.display_name}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
+                        dstore(client.user.display_name,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                    else:
+                        blacklist.append(user.id)
+                        if data['loglevel'] == 'debug':
+                            print(yellow(f"{str(user.display_name)} / {user.id}"))
+                        if data['fortnite']['blacklist-autoblock'] is True:
+                            try:
+                                await user.block()
+                            except Exception:
+                                if data['loglevel'] == 'debug':
+                                    print(red(traceback.format_exc()))
+                                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                except fortnitepy.HTTPException:
                     if data['loglevel'] == 'debug':
-                        print(yellow(f"{user.display_name} / {user.id}"))
-                    if data['fortnite']['blacklist-autoblock'] is True:
-                        try:
-                            await user.block()
-                        except Exception:
-                            if data['loglevel'] == 'debug':
-                                print(red(traceback.format_exc()))
-                                dstore(name,f'>>> {traceback.format_exc()}')
-            print(yellow(blacklist))
-            whitelist = []
+                        print(red(traceback.format_exc()))
+                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                    print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                    dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                except Exception:
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            if data['loglevel'] == "debug":
+                print(yellow(blacklist))
             for whitelistuser in data['fortnite']['whitelist']:
-                user = await client.fetch_profile(whitelistuser)
-                if user is None:
-                    print(red(f'[{now_()}] [{client.user.display_name}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
-                    dstore(name,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
-                else:
-                    whitelist.append(user.id)
+                try:
+                    user = await client.fetch_profile(whitelistuser)
+                    add_cache(client, user)
+                    if user is None:
+                        print(red(f'[{now_()}] [{client.user.display_name}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
+                        dstore(client.user.display_name,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                    else:
+                        whitelist.append(user.id)
+                        if data['loglevel'] == 'debug':
+                            print(yellow(f"{str(user.display_name)} / {user.id}"))
+                except fortnitepy.HTTPException:
                     if data['loglevel'] == 'debug':
-                        print(yellow(f"{user.display_name} / {user.id}"))
+                        print(red(traceback.format_exc()))
+                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                    print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                    dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                except Exception:
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             if data['loglevel'] == "debug":
                 print(yellow(whitelist))
 
+            for invitelistuser in data['fortnite']['invitelist']:
+                try:
+                    user = await client.fetch_profile(invitelistuser)
+                    if user is None:
+                        print(red(f'[{now_()}] [{client.user.display_name}] 招待リストのユーザー {invitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
+                        dstore(client.user.display_name,f'>>>招待リストのユーザー {invitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                    else:
+                        friend = client.get_friend(user.id)
+                        if friend is None and user.id != client.user.id:
+                            if data['fortnite']['addfriend'] is True:
+                                try:
+                                    await client.add_friend(owner.id)
+                                except fortnitepy.HTTPException:
+                                    if data['loglevel'] == 'debug':
+                                        print(red(traceback.format_exc()))
+                                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                                    print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
+                                    dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
+                                except Exception:
+                                    print(red(traceback.format_exc()))
+                                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                            print(red(f"[{now_()}] [{client.user.display_name}] 招待リストのユーザー {invitelistuser} とフレンドではありません。フレンドになってからもう一度起動するか、[{commands['reload']}] コマンドで再読み込みしてください。"))
+                            dstore(client.user.display_name,f'>>> 招待リストのユーザー {invitelistuser} とフレンドではありません。フレンドになってからもう一度起動するか、[{commands["reload"]}] コマンドで再読み込みしてください')
+                        else:
+                            add_cache(client, user)
+                            client.invitelist.append(user.id)
+                            if data['loglevel'] == 'debug':
+                                print(yellow(f"{str(user.display_name)} / {user.id}"))
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                    print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                    dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                except Exception:
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            if data['loglevel'] == "debug":
+                print(yellow(client.invitelist))
+            if data['discord']['enabled'] is True:
+                dclient_user = str(dclient.user)
+                activity = discord.Game(name=data['discord']['status'])
+                await dclient.change_presence(activity=activity)
+
+                for blacklistuser in data['discord']['blacklist']:
+                    user = dclient.get_user(blacklistuser)
+                    if user is None:
+                        try:
+                            user = await dclient.fetch_user(blacklistuser)
+                        except discord.NotFound:
+                            if data['loglevel'] == "debug":
+                                print(red(traceback.format_exc()))
+                                dstore(dclient_user,f'>>> {traceback.format_exc()}')
+                            user = None
+                    if user is None:
+                        print(red(f'[{now_()}] [{dclient_user}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しいIDになっているか確認してください。'))
+                        dstore(dclient_user,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しいIDになっているか確認してください')
+                    else:
+                        blacklist_.append(user.id)
+                        if data['loglevel'] == 'debug':
+                            print(yellow(f"{user} / {user.id}"))
+                if data['loglevel'] == "debug":
+                    print(yellow(blacklist_))
+                for whitelistuser in data['discord']['whitelist']:
+                    user = dclient.get_user(whitelistuser)
+                    if user is None:
+                        try:
+                            user = await dclient.fetch_user(whitelistuser)
+                        except discord.NotFound:
+                            if data['loglevel'] == "debug":
+                                print(red(traceback.format_exc()))
+                                dstore(dclient_user,f'>>> {traceback.format_exc()}')
+                            user = None
+                    if user is None:
+                        print(red(f'[{now_()}] [{dclient_user}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しいIDになっているか確認してください。'))
+                        dstore(dclient_user,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しいIDになっているか確認してください')
+                    else:
+                        whitelist_.append(user.id)
+                        if data['loglevel'] == 'debug':
+                            print(yellow(f"{user.display_name} / {user.id}"))
+                if data['loglevel'] == "debug":
+                    print(yellow(whitelist_))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
@@ -2505,11 +2842,11 @@ async def event_friend_message(message):
             if rawcontent == '':
                 await reply(message, f"[{commands['addblacklist']}] [ユーザー名/ユーザーID]")
                 return
-            users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id}
+            users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id and user.id not in blacklist}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
-                    if user.display_name is not None:
+                    if user.display_name is not None and user.id not in blacklist:
                         users[user.display_name] = user
                         add_cache(client, user)
             except fortnitepy.HTTPException:
@@ -2547,25 +2884,24 @@ async def event_friend_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            if user.id not in blacklist:
-                                blacklist.append(user.id)
-                                if user.display_name is not None:
-                                    data["fortnite"]["blacklist"].append(user.display_name)
-                                else:
-                                    data["fortnite"]["blacklist"].append(user.id)
-                                try:
-                                    with open("config.json", "r", encoding="utf-8") as f:
-                                        data_ = json.load(f)
-                                except json.decoder.JSONDecodeError:
-                                    with open("config.json", "r", encoding="utf-8-sig") as f:
-                                        data_ = json.load(f)
-                                data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
-                                with open("config.json", "w", encoding="utf-8") as f:
-                                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストに追加しました")
-                            else:
-                                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にブラックリストに追加されています")
-                        """ for name, user in users.items()
+        if user.id not in blacklist:
+            blacklist.append(user.id)
+            if user.display_name is not None:
+                data["fortnite"]["blacklist"].append(user.display_name)
+            else:
+                data["fortnite"]["blacklist"].append(user.id)
+            try:
+                with open("config.json", "r", encoding="utf-8") as f:
+                    data_ = json.load(f)
+            except json.decoder.JSONDecodeError:
+                with open("config.json", "r", encoding="utf-8-sig") as f:
+                    data_ = json.load(f)
+            data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
+            with open("config.json", "w", encoding="utf-8") as f:
+                json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストに追加しました")
+        else:
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にブラックリストに追加されています")""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -2586,11 +2922,11 @@ async def event_friend_message(message):
             if rawcontent == '':
                 await reply(message, f"[{commands['removeblacklist']}] [ユーザー名/ユーザーID]")
                 return
-            users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id}
+            users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id and user.id in blacklist}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
-                    if user.display_name is not None:
+                    if user.display_name is not None and user.id in blacklist:
                         users[user.display_name] = user
                         add_cache(client, user)
             except fortnitepy.HTTPException:
@@ -2628,25 +2964,24 @@ async def event_friend_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            if user.id in blacklist:
-                                blacklist.remove(user.id)
-                                try:
-                                    data["fortnite"]["blacklist"].remove(user.display_name)
-                                except ValueError:
-                                    data["fortnite"]["blacklist"].remove(user.id)
-                                try:
-                                    with open("config.json", "r", encoding="utf-8") as f:
-                                        data_ = json.load(f)
-                                except json.decoder.JSONDecodeError:
-                                    with open("config.json", "r", encoding="utf-8-sig") as f:
-                                        data_ = json.load(f)
-                                data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
-                                with open("config.json", "w", encoding="utf-8") as f:
-                                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
-                            else:
-                                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")
-                        """ for name, user in users.items()
+        if user.id in blacklist:
+            blacklist.remove(user.id)
+            try:
+                data["fortnite"]["blacklist"].remove(user.display_name)
+            except ValueError:
+                data["fortnite"]["blacklist"].remove(user.id)
+            try:
+                with open("config.json", "r", encoding="utf-8") as f:
+                    data_ = json.load(f)
+            except json.decoder.JSONDecodeError:
+                with open("config.json", "r", encoding="utf-8-sig") as f:
+                    data_ = json.load(f)
+            data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
+            with open("config.json", "w", encoding="utf-8") as f:
+                json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
+        else:
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -2667,11 +3002,11 @@ async def event_friend_message(message):
             if rawcontent == '':
                 await reply(message, f"[{commands['addwhitelist']}] [ユーザー名/ユーザーID]")
                 return
-            users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id}
+            users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id and user.id not in whitelist}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
-                    if user.display_name is not None:
+                    if user.display_name is not None and user.id not in whitelist:
                         users[user.display_name] = user
                         add_cache(client, user)
             except fortnitepy.HTTPException:
@@ -2709,25 +3044,24 @@ async def event_friend_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            if user.id not in whitelist:
-                                whitelist.append(user.id)
-                                if user.display_name is not None:
-                                    data["fortnite"]["whitelist"].append(user.display_name)
-                                else:
-                                    data["fortnite"]["whitelist"].append(user.id)
-                                try:
-                                    with open("config.json", "r", encoding="utf-8") as f:
-                                        data_ = json.load(f)
-                                except json.decoder.JSONDecodeError:
-                                    with open("config.json", "r", encoding="utf-8-sig") as f:
-                                        data_ = json.load(f)
-                                data_["fortnite"]["whitelist"] = data["fortnite"]["whitelist"]
-                                with open("config.json", "w", encoding="utf-8") as f:
-                                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストに追加しました")
-                            else:
-                                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にホワイトリストに追加されています")
-                        """ for name, user in users.items()
+        if user.id not in whitelist:
+            whitelist.append(user.id)
+            if user.display_name is not None:
+                data["fortnite"]["whitelist"].append(user.display_name)
+            else:
+                data["fortnite"]["whitelist"].append(user.id)
+            try:
+                with open("config.json", "r", encoding="utf-8") as f:
+                    data_ = json.load(f)
+            except json.decoder.JSONDecodeError:
+                with open("config.json", "r", encoding="utf-8-sig") as f:
+                    data_ = json.load(f)
+            data_["fortnite"]["whitelist"] = data["fortnite"]["whitelist"]
+            with open("config.json", "w", encoding="utf-8") as f:
+                json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストに追加しました")
+        else:
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にホワイトリストに追加されています")""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -2748,11 +3082,11 @@ async def event_friend_message(message):
             if rawcontent == '':
                 await reply(message, f"[{commands['removewhitelist']}] [ユーザー名/ユーザーID]")
                 return
-            users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id}
+            users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id and user.id in whitelist}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
-                    if user.display_name is not None:
+                    if user.display_name is not None and user.id in whitelist:
                         users[user.display_name] = user
                         add_cache(client, user)
             except fortnitepy.HTTPException:
@@ -2790,25 +3124,24 @@ async def event_friend_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            if user.display_name in data["blacklist"] or user.id in data["blacklist"]:
-                                blacklist.remove(user.id)
-                                try:
-                                    data["blacklist"].remove(user.display_name)
-                                except ValueError:
-                                    data["blacklist"].remove(user.id)
-                                try:
-                                    with open("config.json", "r", encoding="utf-8") as f:
-                                        data_ = json.load(f)
-                                except json.decoder.JSONDecodeError:
-                                    with open("config.json", "r", encoding="utf-8-sig") as f:
-                                        data_ = json.load(f)
-                                data_["blacklist"] = data["blacklist"]
-                                with open("config.json", "w", encoding="utf-8") as f:
-                                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
-                            else:
-                                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")
-                        """ for name, user in users.items()
+        if user.display_name in data["blacklist"] or user.id in data["blacklist"]:
+            blacklist.remove(user.id)
+            try:
+                data["blacklist"].remove(user.display_name)
+            except ValueError:
+                data["blacklist"].remove(user.id)
+            try:
+                with open("config.json", "r", encoding="utf-8") as f:
+                    data_ = json.load(f)
+            except json.decoder.JSONDecodeError:
+                with open("config.json", "r", encoding="utf-8-sig") as f:
+                    data_ = json.load(f)
+            data_["blacklist"] = data["blacklist"]
+            with open("config.json", "w", encoding="utf-8") as f:
+                json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
+        else:
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -2819,166 +3152,6 @@ async def event_friend_message(message):
                     text += f"\n{count+1} {user.display_name} / {user.id}"
                 text += "\n数字を入力することでそのユーザーをホワイトリストから削除します"
                 await reply(message, text)
-        except Exception:
-            print(red(traceback.format_exc()))
-            dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
-
-    elif args[0] in commands['addblacklist_discord'].split(','):
-        try:
-            if rawcontent == '' or args[1].isdigit() is False:
-                await reply(message, f"[{commands['addblacklist_discord']}] [ユーザーID]")
-                return
-            user = dclient.get_user(int(args[1]))
-            if user is None:
-                user = await dclient.fetch_user(int(args[1]))
-            if user.id not in blacklist_:
-                blacklist_.append(user.id)
-                data["discord"]["blacklist"].append(user.id)
-                try:
-                    with open("config.json", "r", encoding="utf-8") as f:
-                        data_ = json.load(f)
-                except json.decoder.JSONDecodeError:
-                    with open("config.json", "r", encoding="utf-8-sig") as f:
-                        data_ = json.load(f)
-                data_["discord"]["blacklist"] = data["discord"]["blacklist"]
-                with open("config.json", "w", encoding="utf-8") as f:
-                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                await reply(message, f"ユーザー {user} / {user.id} をブラックリストに追加しました")
-            else:
-                await reply(message, f"ユーザー {user} / {user.id} は既にブラックリストに追加されています")
-        except discord.NotFound:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-                dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'ユーザーが見つかりません')
-        except discord.HTTPException:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-                dstore(name,f'>>> {traceback.format_exc()}')
-            print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-            dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-            await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
-        except Exception:
-            print(red(traceback.format_exc()))
-            dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
-
-    elif args[0] in commands['removeblacklist_discord'].split(','):
-        try:
-            if rawcontent == '' or args[1].isdigit() is False:
-                await reply(message, f"[{commands['removeblacklist_discord']}] [ユーザーID]")
-                return
-            user = dclient.get_user(int(args[1]))
-            if user is None:
-                user = await dclient.fetch_user(int(args[1]))
-            if user.id in blacklist_:
-                blacklist_.remove(user.id)
-                data["discord"]["blacklist"].remove(user.id)
-                try:
-                    with open("config.json", "r", encoding="utf-8") as f:
-                        data_ = json.load(f)
-                except json.decoder.JSONDecodeError:
-                    with open("config.json", "r", encoding="utf-8-sig") as f:
-                        data_ = json.load(f)
-                data_["discord"]["blacklist"] = data["discord"]["blacklist"]
-                with open("config.json", "w", encoding="utf-8") as f:
-                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                await reply(message, f"ユーザー {user} / {user.id} をブラックリストから削除")
-            else:
-                await reply(message, f"ユーザー {user} / {user.id} はブラックリストに含まれていません")
-        except discord.NotFound:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-                dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'ユーザーが見つかりません')
-        except discord.HTTPException:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-                dstore(name,f'>>> {traceback.format_exc()}')
-            print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-            dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-            await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
-        except Exception:
-            print(red(traceback.format_exc()))
-            dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
-
-    elif args[0] in commands['addwhitelist_discord'].split(','):
-        try:
-            if rawcontent == '' or args[1].isdigit() is False:
-                await reply(message, f"[{commands['addwhitelist_discord']}] [ユーザーID]")
-                return
-            user = dclient.get_user(int(args[1]))
-            if user is None:
-                user = await dclient.fetch_user(int(args[1]))
-            if user.id not in whitelist_:
-                whitelist_.append(user.id)
-                data["discord"]["whitelist"].append(user.id)
-                try:
-                    with open("config.json", "r", encoding="utf-8") as f:
-                        data_ = json.load(f)
-                except json.decoder.JSONDecodeError:
-                    with open("config.json", "r", encoding="utf-8-sig") as f:
-                        data_ = json.load(f)
-                data_["discord"]["whitelist"] = data["discord"]["whitelist"]
-                with open("config.json", "w", encoding="utf-8") as f:
-                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                await reply(message, f"ユーザー {user} / {user.id} をホワイトリストに追加しました")
-            else:
-                await reply(message, f"ユーザー {user} / {user.id} は既にホワイトリストに追加されています")
-        except discord.NotFound:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-                dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'ユーザーが見つかりません')
-        except discord.HTTPException:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-                dstore(name,f'>>> {traceback.format_exc()}')
-            print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-            dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-            await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
-        except Exception:
-            print(red(traceback.format_exc()))
-            dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
-
-    elif args[0] in commands['removewhitelist_discord'].split(','):
-        try:
-            if rawcontent == '' or args[1].isdigit() is False:
-                await reply(message, f"[{commands['removewhitelist_discord']}] [ユーザーID]")
-                return
-            user = dclient.get_user(int(args[1]))
-            if user is None:
-                user = await dclient.fetch_user(int(args[1]))
-            if user.id in whitelist_:
-                whitelist_.remove(user.id)
-                data["discord"]["whitelist"].remove(user.id)
-                try:
-                    with open("config.json", "r", encoding="utf-8") as f:
-                        data_ = json.load(f)
-                except json.decoder.JSONDecodeError:
-                    with open("config.json", "r", encoding="utf-8-sig") as f:
-                        data_ = json.load(f)
-                data_["discord"]["whitelist"] = data["discord"]["whitelist"]
-                with open("config.json", "w", encoding="utf-8") as f:
-                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                await reply(message, f"ユーザー {user} / {user.id} をホワイトリストから削除")
-            else:
-                await reply(message, f"ユーザー {user} / {user.id} はホワイトリストに含まれていません")
-        except discord.NotFound:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-                dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'ユーザーが見つかりません')
-        except discord.HTTPException:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-                dstore(name,f'>>> {traceback.format_exc()}')
-            print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-            dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-            await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
@@ -3023,17 +3196,16 @@ async def event_friend_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            member=client.user.party.members.get(user.id)
-                            if member is None:
-                                await reply(message, "ユーザーがパーティーにいません")
-                                return
-                            if data['no-logs'] is False:
-                                print(f'''{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}''')
-                            if data['loglevel'] == 'debug':
-                                print(json.dumps(member.meta.schema, indent=2))
-                            dstore(name,f'''{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}''')
-                            await reply(message, f'''{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}''')
-                        """ for name, user in users.items()
+        member=client.user.party.members.get(user.id)
+        if member is None:
+            await reply(message, "ユーザーがパーティーにいません")
+            return
+        if data['no-logs'] is False:
+            print(f'''{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}''')
+        if data['loglevel'] == 'debug':
+            print(json.dumps(member.meta.schema, indent=2))
+        dstore(name,f'''{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}''')
+        await reply(message, f'''{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}''')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -3453,33 +3625,32 @@ async def event_friend_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                friend=client.get_friend(user.id)
-                                if friend is None:
-                                    await reply(message, 'ユーザーとフレンドではありません')
-                                else:
-                                    await friend.join_party()
-                            except fortnitepy.PartyError:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティーが満員か、既にパーティーにいるか、ユーザーがオフラインです')
-                            except fortnitepy.NotFound:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティーが見つかりません')
-                            except fortnitepy.Forbidden:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティーがプライベートです')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティーの参加リクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            friend=client.get_friend(user.id)
+            if friend is None:
+                await reply(message, 'ユーザーとフレンドではありません')
+            else:
+                await friend.join_party()
+        except fortnitepy.PartyError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティーが満員か、既にパーティーにいるか、ユーザーがオフラインです')
+        except fortnitepy.NotFound:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティーが見つかりません')
+        except fortnitepy.Forbidden:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティーがプライベートです')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティーの参加リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -3595,27 +3766,26 @@ async def event_friend_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                friend=client.get_friend(user.id)
-                                if friend is None:
-                                    await reply(message, 'ユーザーとフレンドではありません')
-                                    return
-                                await friend.invite()
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(friend.display_name)} をパーティーに招待')
-                                else:
-                                    await reply(message, f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
-                            except fortnitepy.PartyError:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティーが満員か、既にパーティーにいます')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティー招待の送信リクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            friend=client.get_friend(user.id)
+            if friend is None:
+                await reply(message, 'ユーザーとフレンドではありません')
+                return
+            await friend.invite()
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(friend.display_name)} をパーティーに招待')
+            else:
+                await reply(message, f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
+        except fortnitepy.PartyError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティーが満員か、既にパーティーにいます')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティー招待の送信リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -3636,6 +3806,32 @@ async def event_friend_message(message):
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
             await reply(message, 'パーティー招待の送信リクエストを処理中にエラーが発生しました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'エラー')
+
+    elif args[0] in commands['inviteall'].split(','):
+        try:
+            for inviteuser in client.invitelist:
+                if inviteuser != client.user.id and inviteuser not in client.user.party.members:
+                    try:
+                        await client.user.party.invite(inviteuser)
+                    except fortnitepy.PartyError:
+                        if data['loglevel'] == 'debug':
+                            print(red(traceback.format_exc()))
+                            dstore(name,f'>>> {traceback.format_exc()}')
+                        await reply(message, 'パーティーが満員か、既にパーティーにいます')
+                    except fortnitepy.Forbidden:
+                        if data['loglevel'] == 'debug':
+                            print(red(traceback.format_exc()))
+                            dstore(name,f'>>> {traceback.format_exc()}')
+                        await reply(message, 'ユーザーとフレンドではありません')
+                    except fortnitepy.HTTPException:
+                        if data['loglevel'] == 'debug':
+                            print(red(traceback.format_exc()))
+                            dstore(name,f'>>> {traceback.format_exc()}')
+                        await reply(message, 'パーティー招待の送信リクエストを処理中にエラーが発生しました')
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
@@ -3680,22 +3876,21 @@ async def event_friend_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                friend=client.get_friend(user.id)
-                                if friend is None:
-                                    await reply(message, 'ユーザーとフレンドではありません')
-                                    return
-                                await friend.send(send[1])
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
-                                else:
-                                    await reply(message, f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            friend=client.get_friend(user.id)
+            if friend is None:
+                await reply(message, 'ユーザーとフレンドではありません')
+                return
+            await friend.send(send[1])
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
+            else:
+                await reply(message, f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user, "send": send} for name, user in users.items()
@@ -4202,21 +4397,20 @@ async def event_friend_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                if client.has_friend(user.id) is True:
-                                    await reply(message, '既にユーザーとフレンドです')
-                                    return
-                                await client.add_friend(user.id)
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(user.display_name)} にフレンド申請を送信')
-                                else:
-                                    await reply(message, f'{str(user.display_name)} / {user.id} にフレンド申請を送信')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'フレンド申請の送信リクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            if client.has_friend(user.id) is True:
+                await reply(message, '既にユーザーとフレンドです')
+                return
+            await client.add_friend(user.id)
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(user.display_name)} にフレンド申請を送信')
+            else:
+                await reply(message, f'{str(user.display_name)} / {user.id} にフレンド申請を送信')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'フレンド申請の送信リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -4274,21 +4468,20 @@ async def event_friend_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                if client.has_friend(user.id) is False:
-                                    await reply(message, 'ユーザーとフレンドではありません')
-                                    return
-                                await client.remove_or_decline_friend(user.id)
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(user.display_name)} をフレンドから削除')
-                                else:
-                                    await reply(message, f'{str(user.display_name)} / {user.id} をフレンドから削除')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'フレンドの削除リクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            if client.has_friend(user.id) is False:
+                await reply(message, 'ユーザーとフレンドではありません')
+                return
+            await client.remove_or_decline_friend(user.id)
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(user.display_name)} をフレンドから削除')
+            else:
+                await reply(message, f'{str(user.display_name)} / {user.id} をフレンドから削除')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'フレンドの削除リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -4346,21 +4539,20 @@ async def event_friend_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                if client.is_pending(user.id) is False:
-                                    await reply(message, 'ユーザーからのフレンド申請がありません')
-                                    return
-                                await client.accept_friend(user.id)
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(user.display_name)} をフレンドに追加')
-                                else:
-                                    await reply(message, f'{str(user.display_name)} / {user.id} をフレンドに追加')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'フレンドの追加リクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            if client.is_pending(user.id) is False:
+                await reply(message, 'ユーザーからのフレンド申請がありません')
+                return
+            await client.accept_friend(user.id)
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(user.display_name)} をフレンドに追加')
+            else:
+                await reply(message, f'{str(user.display_name)} / {user.id} をフレンドに追加')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'フレンドの追加リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -4418,21 +4610,20 @@ async def event_friend_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                if client.is_pending(user.id) is False:
-                                    await reply(message, 'ユーザーからのフレンド申請がありません')
-                                    return
-                                await client.remove_or_decline_friend(user.id)
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(user.display_name)} のフレンド申請を拒否')
-                                else:
-                                    await reply(message, f'{str(user.display_name)} / {user.id} のフレンド申請を拒否')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'フレンド申請の拒否リクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            if client.is_pending(user.id) is False:
+                await reply(message, 'ユーザーからのフレンド申請がありません')
+                return
+            await client.remove_or_decline_friend(user.id)
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(user.display_name)} のフレンド申請を拒否')
+            else:
+                await reply(message, f'{str(user.display_name)} / {user.id} のフレンド申請を拒否')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'フレンド申請の拒否リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -4490,21 +4681,20 @@ async def event_friend_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                if client.is_blocked(user.id) is True:
-                                    await reply(message, '既にユーザーをブロックしています')
-                                    return
-                                await client.block_user(user.id)
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(user.display_name)} をブロック')
-                                else:
-                                    await reply(message, f'{str(user.display_name)} / {user.id} をブロック')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'フレンドのブロックリクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            if client.is_blocked(user.id) is True:
+                await reply(message, '既にユーザーをブロックしています')
+                return
+            await client.block_user(user.id)
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(user.display_name)} をブロック')
+            else:
+                await reply(message, f'{str(user.display_name)} / {user.id} をブロック')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'フレンドのブロックリクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -4562,21 +4752,20 @@ async def event_friend_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                if client.is_blocked(user.id) is False:
-                                    await reply(message, 'ユーザーをブロックしていません')
-                                    return
-                                await client.unblock_user(user.id)
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(user.display_name)} をブロック解除')
-                                else:
-                                    await reply(message, f'{str(user.display_name)} / {user.id} をブロック解除')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'ブロックしたユーザーのブロック解除リクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            if client.is_blocked(user.id) is False:
+                await reply(message, 'ユーザーをブロックしていません')
+                return
+            await client.unblock_user(user.id)
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(user.display_name)} をブロック解除')
+            else:
+                await reply(message, f'{str(user.display_name)} / {user.id} をブロック解除')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'ブロックしたユーザーのブロック解除リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -4639,35 +4828,34 @@ async def event_friend_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                if client.user.party.members.get(user.id) is None:
-                                    await reply(message, 'ユーザーがパーティーにいません')
-                                    return
-                                member=client.user.party.members.get(user.id)
-                                try:
-                                    await member.chatban(reason[1])
-                                except IndexError:
-                                    await member.chatban()
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(user.display_name)} をバン')
-                                else:
-                                    await reply(message, f'{str(user.display_name)} / {user.id} をバン')
-                            except fortnitepy.Forbidden:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティーリーダーではありません')
-                            except fortnitepy.NotFound:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'メンバーが見つかりません')
-                            except ValueError:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, '既にバンされています')
-                        """ for name, user in users.items()
+        try:
+            if client.user.party.members.get(user.id) is None:
+                await reply(message, 'ユーザーがパーティーにいません')
+                return
+            member=client.user.party.members.get(user.id)
+            try:
+                await member.chatban(reason[1])
+            except IndexError:
+                await member.chatban()
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(user.display_name)} をバン')
+            else:
+                await reply(message, f'{str(user.display_name)} / {user.id} をバン')
+        except fortnitepy.Forbidden:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティーリーダーではありません')
+        except fortnitepy.NotFound:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'メンバーが見つかりません')
+        except ValueError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, '既にバンされています')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user, "reason": reason} for name, user in users.items()
@@ -4736,32 +4924,31 @@ async def event_friend_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                if client.user.party.members.get(user.id) is None:
-                                    await reply(message, 'ユーザーがパーティーにいません')
-                                    return
-                                member=client.user.party.members.get(user.id)
-                                await member.promote()
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(user.display_name)} に譲渡')
-                                else:
-                                    await reply(message, f'{str(user.display_name)} / {user.id} に譲渡')
-                            except fortnitepy.Forbidden:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティーリーダーではありません')
-                            except fortnitepy.PartyError:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, '既にパーティーリーダーです')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティーリーダーの譲渡リクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            if client.user.party.members.get(user.id) is None:
+                await reply(message, 'ユーザーがパーティーにいません')
+                return
+            member=client.user.party.members.get(user.id)
+            await member.promote()
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(user.display_name)} に譲渡')
+            else:
+                await reply(message, f'{str(user.display_name)} / {user.id} に譲渡')
+        except fortnitepy.Forbidden:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティーリーダーではありません')
+        except fortnitepy.PartyError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, '既にパーティーリーダーです')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティーリーダーの譲渡リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -4830,32 +5017,31 @@ async def event_friend_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                if client.user.party.members.get(user.id) is None:
-                                    await reply(message, 'ユーザーがパーティーにいません')
-                                    return
-                                member=client.user.party.members.get(user.id)
-                                await member.kick()
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(user.display_name)} をキック')
-                                else:
-                                    await reply(message, f'{str(user.display_name)} / {user.id} をキック')
-                            except fortnitepy.Forbidden:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティーリーダーではありません')
-                            except fortnitepy.PartyError:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, '自分をキックすることはできません')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティーメンバーのキックリクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            if client.user.party.members.get(user.id) is None:
+                await reply(message, 'ユーザーがパーティーにいません')
+                return
+            member=client.user.party.members.get(user.id)
+            await member.kick()
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(user.display_name)} をキック')
+            else:
+                await reply(message, f'{str(user.display_name)} / {user.id} をキック')
+        except fortnitepy.Forbidden:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティーリーダーではありません')
+        except fortnitepy.PartyError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, '自分をキックすることはできません')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティーメンバーのキックリクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -5004,19 +5190,7 @@ async def event_friend_message(message):
         try:
             flag = False
             if client.outfitlock is True:
-                if client.owner is not None:
-                    if data['fortnite']['whitelist-ignorelock']:
-                        if client.owner.id != message.author.id and message.author.id not in whitelist:
-                            flag = True
-                    else:
-                        if client.owner.id != message.author.id:
-                            flag = True
-                else:
-                    if data['fortnite']['whitelist-ignorelock']:
-                        if message.author.id not in whitelist:
-                            flag = True
-                    else:
-                        flag = True
+                flag = lock_check(client, author_id)
             if flag is True:
                 await reply(message, 'ロックされています')
                 return
@@ -5041,20 +5215,8 @@ async def event_friend_message(message):
     elif args[0] in commands['allbackpack'].split(','):
         try:
             flag = False
-            if client.outfitlock is True:
-                if client.owner is not None:
-                    if data['fortnite']['whitelist-ignorelock']:
-                        if client.owner.id != message.author.id and message.author.id not in whitelist:
-                            flag = True
-                    else:
-                        if client.owner.id != message.author.id:
-                            flag = True
-                else:
-                    if data['fortnite']['whitelist-ignorelock']:
-                        if message.author.id not in whitelist:
-                            flag = True
-                    else:
-                        flag = True
+            if client.backpacklock is True:
+                flag = lock_check(client, author_id)
             if flag is True:
                 await reply(message, 'ロックされています')
                 return
@@ -5076,23 +5238,37 @@ async def event_friend_message(message):
             dstore(name,f'>>> {traceback.format_exc()}')
             await reply(message, 'エラー')
 
+    elif args[0] in commands['allpet'].split(','):
+        try:
+            flag = False
+            if client.backpacklock is True:
+                flag = lock_check(client, author_id)
+            if flag is True:
+                await reply(message, 'ロックされています')
+                return
+            with open('allen.json', 'r', encoding='utf-8') as f:
+                allskin = json.load(f)
+            for item in allskin['data']:
+                if client.stopcheck is True:
+                    client.stopcheck=False
+                    break
+                if item['type'] == 'pet':
+                    if 'banner' not in item['id']:
+                        await client.user.party.me.set_backpack(item['id'])
+                    else:
+                        await client.user.party.me.set_backpack(item['id'],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner'))
+                    await asyncio.sleep(2)
+            await reply(message, '全てのペットを表示し終わりました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'エラー')
+
     elif args[0] in commands['allpickaxe'].split(','):
         try:
             flag = False
-            if client.outfitlock is True:
-                if client.owner is not None:
-                    if data['fortnite']['whitelist-ignorelock']:
-                        if client.owner.id != message.author.id and message.author.id not in whitelist:
-                            flag = True
-                    else:
-                        if client.owner.id != message.author.id:
-                            flag = True
-                else:
-                    if data['fortnite']['whitelist-ignorelock']:
-                        if message.author.id not in whitelist:
-                            flag = True
-                    else:
-                        flag = True
+            if client.pickaxelock is True:
+                flag = lock_check(client, author_id)
             if flag is True:
                 await reply(message, 'ロックされています')
                 return
@@ -5118,19 +5294,7 @@ async def event_friend_message(message):
         try:
             flag = False
             if client.emotelock is True:
-                if client.owner is not None:
-                    if data['fortnite']['whitelist-ignorelock']:
-                        if client.owner.id != message.author.id and message.author.id not in whitelist:
-                            flag = True
-                    else:
-                        if client.owner.id != message.author.id:
-                            flag = True
-                else:
-                    if data['fortnite']['whitelist-ignorelock']:
-                        if message.author.id not in whitelist:
-                            flag = True
-                    else:
-                        flag = True
+                flag = lock_check(client, author_id)
             if flag is True:
                 await reply(message, 'ロックされています')
                 return
@@ -5145,6 +5309,78 @@ async def event_friend_message(message):
                     await asyncio.sleep(5)
             else:
                 await reply(message, '全てのエモートを表示し終わりました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'エラー')
+
+    elif args[0] in commands['allemoji'].split(','):
+        try:
+            flag = False
+            if client.emotelock is True:
+                flag = lock_check(client, author_id)
+            if flag is True:
+                await reply(message, 'ロックされています')
+                return
+            with open('allen.json', 'r', encoding='utf-8') as f:
+                allemote = json.load(f)
+            for item in allemote['data']:
+                if client.stopcheck is True:
+                    client.stopcheck=False
+                    break
+                if item['type'] == 'emoji':
+                    await client.user.party.me.set_emote(item['id'])
+                    await asyncio.sleep(5)
+            else:
+                await reply(message, '全てのエモートアイコンを表示し終わりました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'エラー')
+
+    elif args[0] in commands['alltoy'].split(','):
+        try:
+            flag = False
+            if client.emotelock is True:
+                flag = lock_check(client, author_id)
+            if flag is True:
+                await reply(message, 'ロックされています')
+                return
+            with open('allen.json', 'r', encoding='utf-8') as f:
+                allemote = json.load(f)
+            for item in allemote['data']:
+                if client.stopcheck is True:
+                    client.stopcheck=False
+                    break
+                if item['type'] == 'toy':
+                    await client.user.party.me.set_emote(item['id'])
+                    await asyncio.sleep(5)
+            else:
+                await reply(message, '全てのおもちゃを表示し終わりました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'エラー')
+
+    elif args[0] in commands['allshout'].split(','):
+        try:
+            flag = False
+            if client.emotelock is True:
+                flag = lock_check(client, author_id)
+            if flag is True:
+                await reply(message, 'ロックされています')
+                return
+            with open('allen.json', 'r', encoding='utf-8') as f:
+                allemote = json.load(f)
+            for item in allemote['data']:
+                if client.stopcheck is True:
+                    client.stopcheck=False
+                    break
+                if item['type'] == 'shout':
+                    await client.user.party.me.set_emote(item['id'])
+                    await asyncio.sleep(5)
+            else:
+                await reply(message, '全てのshoutを表示し終わりました')
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
@@ -5512,9 +5748,12 @@ async def event_party_message(message):
     if message is None:
         return
     client=message.client
-    if client.isready is False or dclient.isready is False:
+    if data['discord']['enabled'] is True and dclient.isready is False:
+        return
+    if client.isready is False:
         return
     name=client.user.display_name
+    author_id = message.author.id
     loop = asyncio.get_event_loop()
     add_cache(client, message.author)
     if message.author.id in blacklist and data['fortnite']['blacklist-ignorecommand'] is True:
@@ -5542,14 +5781,20 @@ async def event_party_message(message):
     client_user_display_name=name
     member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
     for member_ in client.user.party.members.values():
-        if member_joined_at_most != []:
-            if member_.id in [i.user.id for i in clients]:
-                if member_.id != client.user.id and member_.id != message.author.id:
-                    client_user_display_name+=f"/{str(member_.display_name)}"
-                if member_.joined_at < member_joined_at_most[1]:
-                    member_joined_at_most=[member_.id, member_.joined_at]
-        else:
-            member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+        add_cache(client, member_)
+        try:
+            if member_joined_at_most != []:
+                if member_.id in [i.user.id for i in clients]:
+                    if member_.id != client.user.id:
+                        client_user_display_name+=f"/{str(member_.display_name)}"
+                    if member_.joined_at < member_joined_at_most[1]:
+                        member_joined_at_most=[member_.id, member_.joined_at]
+            else:
+                member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+        except Exception:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] == 'normal':
             if data['no-logs'] is False:
@@ -5561,19 +5806,34 @@ async def event_party_message(message):
             dstore(f'{message.author.display_name} / {message.author.id} [{platform_to_str(message.author.platform)}/{message.author.input}]',f'[{client_user_display_name}] [パーティー/{client.user.party.id}] {content}')
 
     flag = False
-    if client.owner is not None:
-        if data['fortnite']['whitelist-ownercommand'] is True:
-            if client.owner.id != message.author.id and message.author.id not in whitelist:
-                flag = True
+    if isinstance(message, fortnitepy.message.MessageBase) is True:
+        if client.owner is not None:
+            if data['fortnite']['whitelist-ownercommand'] is True:
+                if client.owner.id != message.author.id and message.author.id not in whitelist:
+                    flag = True
+            else:
+                if client.owner.id != message.author.id:
+                    flag = True
         else:
-            if client.owner.id != message.author.id:
+            if data['fortnite']['whitelist-ownercommand'] is True:
+                if message.author.id not in whitelist:
+                    flag = True
+            else:
                 flag = True
     else:
-        if data['fortnite']['whitelist-ownercommand'] is True:
-            if message.author.id not in whitelist:
-                flag = True
+        if dclient.owner is not None:
+            if data['discord']['whitelist-ownercommand'] is True:
+                if client.owner.id != message.author.id and message.author.id not in whitelist_:
+                    flag = True
+            else:
+                if client.owner.id != message.author.id:
+                    flag = True
         else:
-            flag = True
+            if data['discord']['whitelist-ownercommand'] is True:
+                if message.author.id not in whitelist_:
+                    flag = True
+            else:
+                flag = True
     if flag is True:
         for checks in commands.items():
             ignore=['ownercommands','true','false','me', 'privacy_public', 'privacy_friends_allow_friends_of_friends', 'privacy_friends', 'privacy_private_allow_friends_of_friends', 'privacy_private', 'info_party', 'info_item']
@@ -5609,6 +5869,167 @@ async def event_party_message(message):
                 dstore(name,f'>>> {traceback.format_exc()}')
                 await reply(message, 'エラー')
             return
+
+    if data['discord']['enabled'] is True and dclient.isready is True:
+        if args[0] in commands['addblacklist_discord'].split(','):
+            try:
+                if rawcontent == '' or args[1].isdigit() is False:
+                    await reply(message, f"[{commands['addblacklist_discord']}] [ユーザーID]")
+                    return
+                user = dclient.get_user(int(args[1]))
+                if user is None:
+                    user = await dclient.fetch_user(int(args[1]))
+                if user.id not in blacklist_:
+                    blacklist_.append(user.id)
+                    data["discord"]["blacklist"].append(user.id)
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                    data_["discord"]["blacklist"] = data["discord"]["blacklist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await reply(message, f"ユーザー {user} / {user.id} をブラックリストに追加しました")
+                else:
+                    await reply(message, f"ユーザー {user} / {user.id} は既にブラックリストに追加されています")
+            except discord.NotFound:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'ユーザーが見つかりません')
+            except discord.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'エラー')
+
+        elif args[0] in commands['removeblacklist_discord'].split(','):
+            try:
+                if rawcontent == '' or args[1].isdigit() is False:
+                    await reply(message, f"[{commands['removeblacklist_discord']}] [ユーザーID]")
+                    return
+                user = dclient.get_user(int(args[1]))
+                if user is None:
+                    user = await dclient.fetch_user(int(args[1]))
+                if user.id in blacklist_:
+                    blacklist_.remove(user.id)
+                    data["discord"]["blacklist"].remove(user.id)
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                    data_["discord"]["blacklist"] = data["discord"]["blacklist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await reply(message, f"ユーザー {user} / {user.id} をブラックリストから削除")
+                else:
+                    await reply(message, f"ユーザー {user} / {user.id} はブラックリストに含まれていません")
+            except discord.NotFound:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'ユーザーが見つかりません')
+            except discord.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'エラー')
+
+        elif args[0] in commands['addwhitelist_discord'].split(','):
+            try:
+                if rawcontent == '' or args[1].isdigit() is False:
+                    await reply(message, f"[{commands['addwhitelist_discord']}] [ユーザーID]")
+                    return
+                user = dclient.get_user(int(args[1]))
+                if user is None:
+                    user = await dclient.fetch_user(int(args[1]))
+                if user.id not in whitelist_:
+                    whitelist_.append(user.id)
+                    data["discord"]["whitelist"].append(user.id)
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                    data_["discord"]["whitelist"] = data["discord"]["whitelist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await reply(message, f"ユーザー {user} / {user.id} をホワイトリストに追加しました")
+                else:
+                    await reply(message, f"ユーザー {user} / {user.id} は既にホワイトリストに追加されています")
+            except discord.NotFound:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'ユーザーが見つかりません')
+            except discord.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'エラー')
+
+        elif args[0] in commands['removewhitelist_discord'].split(','):
+            try:
+                if rawcontent == '' or args[1].isdigit() is False:
+                    await reply(message, f"[{commands['removewhitelist_discord']}] [ユーザーID]")
+                    return
+                user = dclient.get_user(int(args[1]))
+                if user is None:
+                    user = await dclient.fetch_user(int(args[1]))
+                if user.id in whitelist_:
+                    whitelist_.remove(user.id)
+                    data["discord"]["whitelist"].remove(user.id)
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                    data_["discord"]["whitelist"] = data["discord"]["whitelist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await reply(message, f"ユーザー {user} / {user.id} をホワイトリストから削除")
+                else:
+                    await reply(message, f"ユーザー {user} / {user.id} はホワイトリストに含まれていません")
+            except discord.NotFound:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'ユーザーが見つかりません')
+            except discord.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'エラー')
 
     if args[0] in commands['eval'].split(','):
         try:
@@ -5751,79 +6172,183 @@ async def event_party_message(message):
             else:
                 await reply(message, 'エラー')
                 return
-            client.owner=None
-            flag = False
-            activity = discord.Game(name=data['discord']['status'])
-            await dclient.change_presence(activity=activity)
             try:
+                client.owner=None
                 owner=await client.fetch_profile(data['fortnite']['owner'])
+                if owner is None:
+                    print(red(f'[{now_()}] [{client.user.display_name}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
+                    dstore(client.user.display_name,'>>> 所有者が見つかりません。正しい名前/IDになっているか確認してください')
+                else:
+                    add_cache(client, owner)
+                    client.owner=client.get_friend(owner.id)
+                    if client.owner is None:
+                        if data['fortnite']['addfriend'] is True:
+                            try:
+                                await client.add_friend(owner.id)
+                            except fortnitepy.HTTPException:
+                                if data['loglevel'] == 'debug':
+                                    print(red(traceback.format_exc()))
+                                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                                print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
+                                dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
+                            except Exception:
+                                print(red(traceback.format_exc()))
+                                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                        print(red(f"[{now_()}] [{client.user.display_name}] 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{commands['reload']}] コマンドで再読み込みしてください。"))
+                        dstore(client.user.display_name,f'>>> 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{commands["reload"]}] コマンドで再読み込みしてください')
+                    else:
+                        if data['loglevel'] == 'normal':
+                            if data['no-logs'] is False:
+                                print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name}'))
+                            dstore(client.user.display_name,f'所有者: {client.owner.display_name}')
+                        else:
+                            if data['no-logs'] is False:
+                                print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name} / {client.owner.id}'))
+                            dstore(client.user.display_name,f'所有者: {client.owner.display_name} / {client.owner.id}')
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
-                    dstore(name,f'>>> {traceback.format_exc()}')
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
                 print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-                flag = True
-            if owner is None:
-                print(red(f'[{now_()}] [{client.user.display_name}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
-                dstore(name,f'>>> 所有者が見つかりません。正しい名前/IDになっているか確認してください')
-                flag = True
-            if flag is False:
-                client.owner=client.get_friend(owner.id)
-                if client.owner is None:
-                    if data['fortnite']['addfriend'] is True:
-                        try:
-                            await client.add_friend(owner.id)
-                        except fortnitepy.HTTPException:
-                            if data['loglevel'] == 'debug':
-                                print(red(traceback.format_exc()))
-                                dstore(name,f'>>> {traceback.format_exc()}')
-                            print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
-                            dstore(name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
-                        except Exception:
-                            print(red(traceback.format_exc()))
-                            dstore(name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] [{client.user.display_name}] 所有者とフレンドではありません。フレンドになってからもう一度起動してください。'))
-                    dstore(name,f'>>> 所有者とフレンドではありません。フレンドになってからもう一度起動してください')
-                else:
-                    if data['loglevel'] == 'normal':
-                        print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name}'))
-                        dstore(name,f'所有者: {client.owner.display_name}')
-                    else:
-                        print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name} / {client.owner.id}'))
-                        dstore(name,f'所有者: {client.owner.display_name} / {client.owner.id}')
+                dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
-            blacklist = []
             for blacklistuser in data['fortnite']['blacklist']:
-                user = await client.fetch_profile(blacklistuser)
-                if user is None:
-                    print(red(f'[{now_()}] [{client.user.display_name}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
-                    dstore(name,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください')
-                else:
-                    blacklist.append(user.id)
+                try:
+                    user = await client.fetch_profile(blacklistuser)
+                    add_cache(client, user)
+                    if user is None:
+                        print(red(f'[{now_()}] [{client.user.display_name}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
+                        dstore(client.user.display_name,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                    else:
+                        blacklist.append(user.id)
+                        if data['loglevel'] == 'debug':
+                            print(yellow(f"{str(user.display_name)} / {user.id}"))
+                        if data['fortnite']['blacklist-autoblock'] is True:
+                            try:
+                                await user.block()
+                            except Exception:
+                                if data['loglevel'] == 'debug':
+                                    print(red(traceback.format_exc()))
+                                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                except fortnitepy.HTTPException:
                     if data['loglevel'] == 'debug':
-                        print(yellow(f"{user.display_name} / {user.id}"))
-                    if data['fortnite']['blacklist-autoblock'] is True:
-                        try:
-                            await user.block()
-                        except Exception:
-                            if data['loglevel'] == 'debug':
-                                print(red(traceback.format_exc()))
-                                dstore(name,f'>>> {traceback.format_exc()}')
-            print(yellow(blacklist))
-            whitelist = []
+                        print(red(traceback.format_exc()))
+                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                    print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                    dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                except Exception:
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            if data['loglevel'] == "debug":
+                print(yellow(blacklist))
             for whitelistuser in data['fortnite']['whitelist']:
-                user = await client.fetch_profile(whitelistuser)
-                if user is None:
-                    print(red(f'[{now_()}] [{client.user.display_name}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
-                    dstore(name,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
-                else:
-                    whitelist.append(user.id)
+                try:
+                    user = await client.fetch_profile(whitelistuser)
+                    add_cache(client, user)
+                    if user is None:
+                        print(red(f'[{now_()}] [{client.user.display_name}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
+                        dstore(client.user.display_name,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                    else:
+                        whitelist.append(user.id)
+                        if data['loglevel'] == 'debug':
+                            print(yellow(f"{str(user.display_name)} / {user.id}"))
+                except fortnitepy.HTTPException:
                     if data['loglevel'] == 'debug':
-                        print(yellow(f"{user.display_name} / {user.id}"))
+                        print(red(traceback.format_exc()))
+                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                    print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                    dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                except Exception:
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
             if data['loglevel'] == "debug":
                 print(yellow(whitelist))
 
+            for invitelistuser in data['fortnite']['invitelist']:
+                try:
+                    user = await client.fetch_profile(invitelistuser)
+                    if user is None:
+                        print(red(f'[{now_()}] [{client.user.display_name}] 招待リストのユーザー {invitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
+                        dstore(client.user.display_name,f'>>>招待リストのユーザー {invitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                    else:
+                        friend = client.get_friend(user.id)
+                        if friend is None and user.id != client.user.id:
+                            if data['fortnite']['addfriend'] is True:
+                                try:
+                                    await client.add_friend(owner.id)
+                                except fortnitepy.HTTPException:
+                                    if data['loglevel'] == 'debug':
+                                        print(red(traceback.format_exc()))
+                                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                                    print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
+                                    dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
+                                except Exception:
+                                    print(red(traceback.format_exc()))
+                                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                            print(red(f"[{now_()}] [{client.user.display_name}] 招待リストのユーザー {invitelistuser} とフレンドではありません。フレンドになってからもう一度起動するか、[{commands['reload']}] コマンドで再読み込みしてください。"))
+                            dstore(client.user.display_name,f'>>> 招待リストのユーザー {invitelistuser} とフレンドではありません。フレンドになってからもう一度起動するか、[{commands["reload"]}] コマンドで再読み込みしてください')
+                        else:
+                            add_cache(client, user)
+                            client.invitelist.append(user.id)
+                            if data['loglevel'] == 'debug':
+                                print(yellow(f"{str(user.display_name)} / {user.id}"))
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                    print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                    dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                except Exception:
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+            if data['loglevel'] == "debug":
+                print(yellow(client.invitelist))
+            if data['discord']['enabled'] is True:
+                dclient_user = str(dclient.user)
+                activity = discord.Game(name=data['discord']['status'])
+                await dclient.change_presence(activity=activity)
+
+                for blacklistuser in data['discord']['blacklist']:
+                    user = dclient.get_user(blacklistuser)
+                    if user is None:
+                        try:
+                            user = await dclient.fetch_user(blacklistuser)
+                        except discord.NotFound:
+                            if data['loglevel'] == "debug":
+                                print(red(traceback.format_exc()))
+                                dstore(dclient_user,f'>>> {traceback.format_exc()}')
+                            user = None
+                    if user is None:
+                        print(red(f'[{now_()}] [{dclient_user}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しいIDになっているか確認してください。'))
+                        dstore(dclient_user,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しいIDになっているか確認してください')
+                    else:
+                        blacklist_.append(user.id)
+                        if data['loglevel'] == 'debug':
+                            print(yellow(f"{user} / {user.id}"))
+                if data['loglevel'] == "debug":
+                    print(yellow(blacklist_))
+                for whitelistuser in data['discord']['whitelist']:
+                    user = dclient.get_user(whitelistuser)
+                    if user is None:
+                        try:
+                            user = await dclient.fetch_user(whitelistuser)
+                        except discord.NotFound:
+                            if data['loglevel'] == "debug":
+                                print(red(traceback.format_exc()))
+                                dstore(dclient_user,f'>>> {traceback.format_exc()}')
+                            user = None
+                    if user is None:
+                        print(red(f'[{now_()}] [{dclient_user}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しいIDになっているか確認してください。'))
+                        dstore(dclient_user,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しいIDになっているか確認してください')
+                    else:
+                        whitelist_.append(user.id)
+                        if data['loglevel'] == 'debug':
+                            print(yellow(f"{user.display_name} / {user.id}"))
+                if data['loglevel'] == "debug":
+                    print(yellow(whitelist_))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
@@ -5834,11 +6359,11 @@ async def event_party_message(message):
             if rawcontent == '':
                 await reply(message, f"[{commands['addblacklist']}] [ユーザー名/ユーザーID]")
                 return
-            users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id}
+            users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id and user.id not in blacklist}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
-                    if user.display_name is not None:
+                    if user.display_name is not None and user.id not in blacklist:
                         users[user.display_name] = user
                         add_cache(client, user)
             except fortnitepy.HTTPException:
@@ -5876,25 +6401,24 @@ async def event_party_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            if user.id not in blacklist:
-                                blacklist.append(user.id)
-                                if user.display_name is not None:
-                                    data["fortnite"]["blacklist"].append(user.display_name)
-                                else:
-                                    data["fortnite"]["blacklist"].append(user.id)
-                                try:
-                                    with open("config.json", "r", encoding="utf-8") as f:
-                                        data_ = json.load(f)
-                                except json.decoder.JSONDecodeError:
-                                    with open("config.json", "r", encoding="utf-8-sig") as f:
-                                        data_ = json.load(f)
-                                data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
-                                with open("config.json", "w", encoding="utf-8") as f:
-                                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストに追加しました")
-                            else:
-                                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にブラックリストに追加されています")
-                        """ for name, user in users.items()
+        if user.id not in blacklist:
+            blacklist.append(user.id)
+            if user.display_name is not None:
+                data["fortnite"]["blacklist"].append(user.display_name)
+            else:
+                data["fortnite"]["blacklist"].append(user.id)
+            try:
+                with open("config.json", "r", encoding="utf-8") as f:
+                    data_ = json.load(f)
+            except json.decoder.JSONDecodeError:
+                with open("config.json", "r", encoding="utf-8-sig") as f:
+                    data_ = json.load(f)
+            data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
+            with open("config.json", "w", encoding="utf-8") as f:
+                json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストに追加しました")
+        else:
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にブラックリストに追加されています")""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -5915,11 +6439,11 @@ async def event_party_message(message):
             if rawcontent == '':
                 await reply(message, f"[{commands['removeblacklist']}] [ユーザー名/ユーザーID]")
                 return
-            users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id}
+            users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id and user.id in blacklist}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
-                    if user.display_name is not None:
+                    if user.display_name is not None and user.id in blacklist:
                         users[user.display_name] = user
                         add_cache(client, user)
             except fortnitepy.HTTPException:
@@ -5957,25 +6481,24 @@ async def event_party_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            if user.id in blacklist:
-                                blacklist.remove(user.id)
-                                try:
-                                    data["fortnite"]["blacklist"].remove(user.display_name)
-                                except ValueError:
-                                    data["fortnite"]["blacklist"].remove(user.id)
-                                try:
-                                    with open("config.json", "r", encoding="utf-8") as f:
-                                        data_ = json.load(f)
-                                except json.decoder.JSONDecodeError:
-                                    with open("config.json", "r", encoding="utf-8-sig") as f:
-                                        data_ = json.load(f)
-                                data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
-                                with open("config.json", "w", encoding="utf-8") as f:
-                                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
-                            else:
-                                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")
-                        """ for name, user in users.items()
+        if user.id in blacklist:
+            blacklist.remove(user.id)
+            try:
+                data["fortnite"]["blacklist"].remove(user.display_name)
+            except ValueError:
+                data["fortnite"]["blacklist"].remove(user.id)
+            try:
+                with open("config.json", "r", encoding="utf-8") as f:
+                    data_ = json.load(f)
+            except json.decoder.JSONDecodeError:
+                with open("config.json", "r", encoding="utf-8-sig") as f:
+                    data_ = json.load(f)
+            data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
+            with open("config.json", "w", encoding="utf-8") as f:
+                json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
+        else:
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -5996,11 +6519,11 @@ async def event_party_message(message):
             if rawcontent == '':
                 await reply(message, f"[{commands['addwhitelist']}] [ユーザー名/ユーザーID]")
                 return
-            users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id}
+            users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id and user.id not in whitelist}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
-                    if user.display_name is not None:
+                    if user.display_name is not None and user.id not in whitelist:
                         users[user.display_name] = user
                         add_cache(client, user)
             except fortnitepy.HTTPException:
@@ -6038,25 +6561,24 @@ async def event_party_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            if user.id not in whitelist:
-                                whitelist.append(user.id)
-                                if user.display_name is not None:
-                                    data["fortnite"]["whitelist"].append(user.display_name)
-                                else:
-                                    data["fortnite"]["whitelist"].append(user.id)
-                                try:
-                                    with open("config.json", "r", encoding="utf-8") as f:
-                                        data_ = json.load(f)
-                                except json.decoder.JSONDecodeError:
-                                    with open("config.json", "r", encoding="utf-8-sig") as f:
-                                        data_ = json.load(f)
-                                data_["fortnite"]["whitelist"] = data["fortnite"]["whitelist"]
-                                with open("config.json", "w", encoding="utf-8") as f:
-                                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストに追加しました")
-                            else:
-                                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にホワイトリストに追加されています")
-                        """ for name, user in users.items()
+        if user.id not in whitelist:
+            whitelist.append(user.id)
+            if user.display_name is not None:
+                data["fortnite"]["whitelist"].append(user.display_name)
+            else:
+                data["fortnite"]["whitelist"].append(user.id)
+            try:
+                with open("config.json", "r", encoding="utf-8") as f:
+                    data_ = json.load(f)
+            except json.decoder.JSONDecodeError:
+                with open("config.json", "r", encoding="utf-8-sig") as f:
+                    data_ = json.load(f)
+            data_["fortnite"]["whitelist"] = data["fortnite"]["whitelist"]
+            with open("config.json", "w", encoding="utf-8") as f:
+                json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストに追加しました")
+        else:
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にホワイトリストに追加されています")""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -6077,11 +6599,11 @@ async def event_party_message(message):
             if rawcontent == '':
                 await reply(message, f"[{commands['removewhitelist']}] [ユーザー名/ユーザーID]")
                 return
-            users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id}
+            users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id and user.id in whitelist}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
-                    if user.display_name is not None:
+                    if user.display_name is not None and user.id in whitelist:
                         users[user.display_name] = user
                         add_cache(client, user)
             except fortnitepy.HTTPException:
@@ -6119,25 +6641,24 @@ async def event_party_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            if user.display_name in data["blacklist"] or user.id in data["blacklist"]:
-                                blacklist.remove(user.id)
-                                try:
-                                    data["blacklist"].remove(user.display_name)
-                                except ValueError:
-                                    data["blacklist"].remove(user.id)
-                                try:
-                                    with open("config.json", "r", encoding="utf-8") as f:
-                                        data_ = json.load(f)
-                                except json.decoder.JSONDecodeError:
-                                    with open("config.json", "r", encoding="utf-8-sig") as f:
-                                        data_ = json.load(f)
-                                data_["blacklist"] = data["blacklist"]
-                                with open("config.json", "w", encoding="utf-8") as f:
-                                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
-                            else:
-                                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")
-                        """ for name, user in users.items()
+        if user.display_name in data["blacklist"] or user.id in data["blacklist"]:
+            blacklist.remove(user.id)
+            try:
+                data["blacklist"].remove(user.display_name)
+            except ValueError:
+                data["blacklist"].remove(user.id)
+            try:
+                with open("config.json", "r", encoding="utf-8") as f:
+                    data_ = json.load(f)
+            except json.decoder.JSONDecodeError:
+                with open("config.json", "r", encoding="utf-8-sig") as f:
+                    data_ = json.load(f)
+            data_["blacklist"] = data["blacklist"]
+            with open("config.json", "w", encoding="utf-8") as f:
+                json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
+        else:
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -6148,166 +6669,6 @@ async def event_party_message(message):
                     text += f"\n{count+1} {user.display_name} / {user.id}"
                 text += "\n数字を入力することでそのユーザーをホワイトリストから削除します"
                 await reply(message, text)
-        except Exception:
-            print(red(traceback.format_exc()))
-            dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
-
-    elif args[0] in commands['addblacklist_discord'].split(','):
-        try:
-            if rawcontent == '' or args[1].isdigit() is False:
-                await reply(message, f"[{commands['addblacklist_discord']}] [ユーザーID]")
-                return
-            user = dclient.get_user(int(args[1]))
-            if user is None:
-                user = await dclient.fetch_user(int(args[1]))
-            if user.id not in blacklist_:
-                blacklist_.append(user.id)
-                data["discord"]["blacklist"].append(user.id)
-                try:
-                    with open("config.json", "r", encoding="utf-8") as f:
-                        data_ = json.load(f)
-                except json.decoder.JSONDecodeError:
-                    with open("config.json", "r", encoding="utf-8-sig") as f:
-                        data_ = json.load(f)
-                data_["discord"]["blacklist"] = data["discord"]["blacklist"]
-                with open("config.json", "w", encoding="utf-8") as f:
-                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                await reply(message, f"ユーザー {user} / {user.id} をブラックリストに追加しました")
-            else:
-                await reply(message, f"ユーザー {user} / {user.id} は既にブラックリストに追加されています")
-        except discord.NotFound:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-                dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'ユーザーが見つかりません')
-        except discord.HTTPException:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-                dstore(name,f'>>> {traceback.format_exc()}')
-            print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-            dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-            await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
-        except Exception:
-            print(red(traceback.format_exc()))
-            dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
-
-    elif args[0] in commands['removeblacklist_discord'].split(','):
-        try:
-            if rawcontent == '' or args[1].isdigit() is False:
-                await reply(message, f"[{commands['removeblacklist_discord']}] [ユーザーID]")
-                return
-            user = dclient.get_user(int(args[1]))
-            if user is None:
-                user = await dclient.fetch_user(int(args[1]))
-            if user.id in blacklist_:
-                blacklist_.remove(user.id)
-                data["discord"]["blacklist"].remove(user.id)
-                try:
-                    with open("config.json", "r", encoding="utf-8") as f:
-                        data_ = json.load(f)
-                except json.decoder.JSONDecodeError:
-                    with open("config.json", "r", encoding="utf-8-sig") as f:
-                        data_ = json.load(f)
-                data_["discord"]["blacklist"] = data["discord"]["blacklist"]
-                with open("config.json", "w", encoding="utf-8") as f:
-                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                await reply(message, f"ユーザー {user} / {user.id} をブラックリストから削除")
-            else:
-                await reply(message, f"ユーザー {user} / {user.id} はブラックリストに含まれていません")
-        except discord.NotFound:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-                dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'ユーザーが見つかりません')
-        except discord.HTTPException:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-                dstore(name,f'>>> {traceback.format_exc()}')
-            print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-            dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-            await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
-        except Exception:
-            print(red(traceback.format_exc()))
-            dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
-
-    elif args[0] in commands['addwhitelist_discord'].split(','):
-        try:
-            if rawcontent == '' or args[1].isdigit() is False:
-                await reply(message, f"[{commands['addwhitelist_discord']}] [ユーザーID]")
-                return
-            user = dclient.get_user(int(args[1]))
-            if user is None:
-                user = await dclient.fetch_user(int(args[1]))
-            if user.id not in whitelist_:
-                whitelist_.append(user.id)
-                data["discord"]["whitelist"].append(user.id)
-                try:
-                    with open("config.json", "r", encoding="utf-8") as f:
-                        data_ = json.load(f)
-                except json.decoder.JSONDecodeError:
-                    with open("config.json", "r", encoding="utf-8-sig") as f:
-                        data_ = json.load(f)
-                data_["discord"]["whitelist"] = data["discord"]["whitelist"]
-                with open("config.json", "w", encoding="utf-8") as f:
-                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                await reply(message, f"ユーザー {user} / {user.id} をホワイトリストに追加しました")
-            else:
-                await reply(message, f"ユーザー {user} / {user.id} は既にホワイトリストに追加されています")
-        except discord.NotFound:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-                dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'ユーザーが見つかりません')
-        except discord.HTTPException:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-                dstore(name,f'>>> {traceback.format_exc()}')
-            print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-            dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-            await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
-        except Exception:
-            print(red(traceback.format_exc()))
-            dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
-
-    elif args[0] in commands['removewhitelist_discord'].split(','):
-        try:
-            if rawcontent == '' or args[1].isdigit() is False:
-                await reply(message, f"[{commands['removewhitelist_discord']}] [ユーザーID]")
-                return
-            user = dclient.get_user(int(args[1]))
-            if user is None:
-                user = await dclient.fetch_user(int(args[1]))
-            if user.id in whitelist_:
-                whitelist_.remove(user.id)
-                data["discord"]["whitelist"].remove(user.id)
-                try:
-                    with open("config.json", "r", encoding="utf-8") as f:
-                        data_ = json.load(f)
-                except json.decoder.JSONDecodeError:
-                    with open("config.json", "r", encoding="utf-8-sig") as f:
-                        data_ = json.load(f)
-                data_["discord"]["whitelist"] = data["discord"]["whitelist"]
-                with open("config.json", "w", encoding="utf-8") as f:
-                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                await reply(message, f"ユーザー {user} / {user.id} をホワイトリストから削除")
-            else:
-                await reply(message, f"ユーザー {user} / {user.id} はホワイトリストに含まれていません")
-        except discord.NotFound:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-                dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'ユーザーが見つかりません')
-        except discord.HTTPException:
-            if data['loglevel'] == 'debug':
-                print(red(traceback.format_exc()))
-                dstore(name,f'>>> {traceback.format_exc()}')
-            print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-            dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-            await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
@@ -6352,17 +6713,16 @@ async def event_party_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            member=client.user.party.members.get(user.id)
-                            if member is None:
-                                await reply(message, "ユーザーがパーティーにいません")
-                                return
-                            if data['no-logs'] is False:
-                                print(f'''{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}''')
-                            if data['loglevel'] == 'debug':
-                                print(json.dumps(member.meta.schema, indent=2))
-                            dstore(name,f'''{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}''')
-                            await reply(message, f'''{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}''')
-                        """ for name, user in users.items()
+        member=client.user.party.members.get(user.id)
+        if member is None:
+            await reply(message, "ユーザーがパーティーにいません")
+            return
+        if data['no-logs'] is False:
+            print(f'''{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}''')
+        if data['loglevel'] == 'debug':
+            print(json.dumps(member.meta.schema, indent=2))
+        dstore(name,f'''{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}''')
+        await reply(message, f'''{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}''')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -6782,33 +7142,32 @@ async def event_party_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                friend=client.get_friend(user.id)
-                                if friend is None:
-                                    await reply(message, 'ユーザーとフレンドではありません')
-                                else:
-                                    await friend.join_party()
-                            except fortnitepy.PartyError:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティーが満員か、既にパーティーにいるか、ユーザーがオフラインです')
-                            except fortnitepy.NotFound:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティーが見つかりません')
-                            except fortnitepy.Forbidden:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティーがプライベートです')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティーの参加リクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            friend=client.get_friend(user.id)
+            if friend is None:
+                await reply(message, 'ユーザーとフレンドではありません')
+            else:
+                await friend.join_party()
+        except fortnitepy.PartyError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティーが満員か、既にパーティーにいるか、ユーザーがオフラインです')
+        except fortnitepy.NotFound:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティーが見つかりません')
+        except fortnitepy.Forbidden:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティーがプライベートです')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティーの参加リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -6924,27 +7283,26 @@ async def event_party_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                friend=client.get_friend(user.id)
-                                if friend is None:
-                                    await reply(message, 'ユーザーとフレンドではありません')
-                                    return
-                                await friend.invite()
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(friend.display_name)} をパーティーに招待')
-                                else:
-                                    await reply(message, f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
-                            except fortnitepy.PartyError:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティーが満員か、既にパーティーにいます')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティー招待の送信リクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            friend=client.get_friend(user.id)
+            if friend is None:
+                await reply(message, 'ユーザーとフレンドではありません')
+                return
+            await friend.invite()
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(friend.display_name)} をパーティーに招待')
+            else:
+                await reply(message, f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
+        except fortnitepy.PartyError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティーが満員か、既にパーティーにいます')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティー招待の送信リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -6965,6 +7323,32 @@ async def event_party_message(message):
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
             await reply(message, 'パーティー招待の送信リクエストを処理中にエラーが発生しました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'エラー')
+
+    elif args[0] in commands['inviteall'].split(','):
+        try:
+            for inviteuser in client.invitelist:
+                if inviteuser != client.user.id:
+                    try:
+                        await client.user.party.invite(inviteuser)
+                    except fortnitepy.PartyError:
+                        if data['loglevel'] == 'debug':
+                            print(red(traceback.format_exc()))
+                            dstore(name,f'>>> {traceback.format_exc()}')
+                        await reply(message, 'パーティーが満員か、既にパーティーにいます')
+                    except fortnitepy.Forbidden:
+                        if data['loglevel'] == 'debug':
+                            print(red(traceback.format_exc()))
+                            dstore(name,f'>>> {traceback.format_exc()}')
+                        await reply(message, 'ユーザーとフレンドではありません')
+                    except fortnitepy.HTTPException:
+                        if data['loglevel'] == 'debug':
+                            print(red(traceback.format_exc()))
+                            dstore(name,f'>>> {traceback.format_exc()}')
+                        await reply(message, 'パーティー招待の送信リクエストを処理中にエラーが発生しました')
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
@@ -7009,22 +7393,21 @@ async def event_party_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                friend=client.get_friend(user.id)
-                                if friend is None:
-                                    await reply(message, 'ユーザーとフレンドではありません')
-                                    return
-                                await friend.send(send[1])
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
-                                else:
-                                    await reply(message, f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            friend=client.get_friend(user.id)
+            if friend is None:
+                await reply(message, 'ユーザーとフレンドではありません')
+                return
+            await friend.send(send[1])
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
+            else:
+                await reply(message, f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user, "send": send} for name, user in users.items()
@@ -7531,21 +7914,20 @@ async def event_party_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                if client.has_friend(user.id) is True:
-                                    await reply(message, '既にユーザーとフレンドです')
-                                    return
-                                await client.add_friend(user.id)
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(user.display_name)} にフレンド申請を送信')
-                                else:
-                                    await reply(message, f'{str(user.display_name)} / {user.id} にフレンド申請を送信')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'フレンド申請の送信リクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            if client.has_friend(user.id) is True:
+                await reply(message, '既にユーザーとフレンドです')
+                return
+            await client.add_friend(user.id)
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(user.display_name)} にフレンド申請を送信')
+            else:
+                await reply(message, f'{str(user.display_name)} / {user.id} にフレンド申請を送信')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'フレンド申請の送信リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -7603,21 +7985,20 @@ async def event_party_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                if client.has_friend(user.id) is False:
-                                    await reply(message, 'ユーザーとフレンドではありません')
-                                    return
-                                await client.remove_or_decline_friend(user.id)
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(user.display_name)} をフレンドから削除')
-                                else:
-                                    await reply(message, f'{str(user.display_name)} / {user.id} をフレンドから削除')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'フレンドの削除リクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            if client.has_friend(user.id) is False:
+                await reply(message, 'ユーザーとフレンドではありません')
+                return
+            await client.remove_or_decline_friend(user.id)
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(user.display_name)} をフレンドから削除')
+            else:
+                await reply(message, f'{str(user.display_name)} / {user.id} をフレンドから削除')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'フレンドの削除リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -7675,21 +8056,20 @@ async def event_party_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                if client.is_pending(user.id) is False:
-                                    await reply(message, 'ユーザーからのフレンド申請がありません')
-                                    return
-                                await client.accept_friend(user.id)
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(user.display_name)} をフレンドに追加')
-                                else:
-                                    await reply(message, f'{str(user.display_name)} / {user.id} をフレンドに追加')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'フレンドの追加リクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            if client.is_pending(user.id) is False:
+                await reply(message, 'ユーザーからのフレンド申請がありません')
+                return
+            await client.accept_friend(user.id)
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(user.display_name)} をフレンドに追加')
+            else:
+                await reply(message, f'{str(user.display_name)} / {user.id} をフレンドに追加')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'フレンドの追加リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -7747,21 +8127,20 @@ async def event_party_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                if client.is_pending(user.id) is False:
-                                    await reply(message, 'ユーザーからのフレンド申請がありません')
-                                    return
-                                await client.remove_or_decline_friend(user.id)
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(user.display_name)} のフレンド申請を拒否')
-                                else:
-                                    await reply(message, f'{str(user.display_name)} / {user.id} のフレンド申請を拒否')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'フレンド申請の拒否リクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            if client.is_pending(user.id) is False:
+                await reply(message, 'ユーザーからのフレンド申請がありません')
+                return
+            await client.remove_or_decline_friend(user.id)
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(user.display_name)} のフレンド申請を拒否')
+            else:
+                await reply(message, f'{str(user.display_name)} / {user.id} のフレンド申請を拒否')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'フレンド申請の拒否リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -7819,21 +8198,20 @@ async def event_party_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                if client.is_blocked(user.id) is True:
-                                    await reply(message, '既にユーザーをブロックしています')
-                                    return
-                                await client.block_user(user.id)
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(user.display_name)} をブロック')
-                                else:
-                                    await reply(message, f'{str(user.display_name)} / {user.id} をブロック')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'フレンドのブロックリクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            if client.is_blocked(user.id) is True:
+                await reply(message, '既にユーザーをブロックしています')
+                return
+            await client.block_user(user.id)
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(user.display_name)} をブロック')
+            else:
+                await reply(message, f'{str(user.display_name)} / {user.id} をブロック')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'フレンドのブロックリクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -7891,21 +8269,20 @@ async def event_party_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                if client.is_blocked(user.id) is False:
-                                    await reply(message, 'ユーザーをブロックしていません')
-                                    return
-                                await client.unblock_user(user.id)
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(user.display_name)} をブロック解除')
-                                else:
-                                    await reply(message, f'{str(user.display_name)} / {user.id} をブロック解除')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'ブロックしたユーザーのブロック解除リクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            if client.is_blocked(user.id) is False:
+                await reply(message, 'ユーザーをブロックしていません')
+                return
+            await client.unblock_user(user.id)
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(user.display_name)} をブロック解除')
+            else:
+                await reply(message, f'{str(user.display_name)} / {user.id} をブロック解除')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'ブロックしたユーザーのブロック解除リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -7968,35 +8345,34 @@ async def event_party_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                if client.user.party.members.get(user.id) is None:
-                                    await reply(message, 'ユーザーがパーティーにいません')
-                                    return
-                                member=client.user.party.members.get(user.id)
-                                try:
-                                    await member.chatban(reason[1])
-                                except IndexError:
-                                    await member.chatban()
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(user.display_name)} をバン')
-                                else:
-                                    await reply(message, f'{str(user.display_name)} / {user.id} をバン')
-                            except fortnitepy.Forbidden:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティーリーダーではありません')
-                            except fortnitepy.NotFound:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'メンバーが見つかりません')
-                            except ValueError:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, '既にバンされています')
-                        """ for name, user in users.items()
+        try:
+            if client.user.party.members.get(user.id) is None:
+                await reply(message, 'ユーザーがパーティーにいません')
+                return
+            member=client.user.party.members.get(user.id)
+            try:
+                await member.chatban(reason[1])
+            except IndexError:
+                await member.chatban()
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(user.display_name)} をバン')
+            else:
+                await reply(message, f'{str(user.display_name)} / {user.id} をバン')
+        except fortnitepy.Forbidden:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティーリーダーではありません')
+        except fortnitepy.NotFound:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'メンバーが見つかりません')
+        except ValueError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, '既にバンされています')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user, "reason": reason} for name, user in users.items()
@@ -8065,32 +8441,31 @@ async def event_party_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                if client.user.party.members.get(user.id) is None:
-                                    await reply(message, 'ユーザーがパーティーにいません')
-                                    return
-                                member=client.user.party.members.get(user.id)
-                                await member.promote()
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(user.display_name)} に譲渡')
-                                else:
-                                    await reply(message, f'{str(user.display_name)} / {user.id} に譲渡')
-                            except fortnitepy.Forbidden:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティーリーダーではありません')
-                            except fortnitepy.PartyError:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, '既にパーティーリーダーです')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティーリーダーの譲渡リクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            if client.user.party.members.get(user.id) is None:
+                await reply(message, 'ユーザーがパーティーにいません')
+                return
+            member=client.user.party.members.get(user.id)
+            await member.promote()
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(user.display_name)} に譲渡')
+            else:
+                await reply(message, f'{str(user.display_name)} / {user.id} に譲渡')
+        except fortnitepy.Forbidden:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティーリーダーではありません')
+        except fortnitepy.PartyError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, '既にパーティーリーダーです')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティーリーダーの譲渡リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -8159,32 +8534,31 @@ async def event_party_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-                            try:
-                                if client.user.party.members.get(user.id) is None:
-                                    await reply(message, 'ユーザーがパーティーにいません')
-                                    return
-                                member=client.user.party.members.get(user.id)
-                                await member.kick()
-                                if data['loglevel'] == 'normal':
-                                    await reply(message, f'{str(user.display_name)} をキック')
-                                else:
-                                    await reply(message, f'{str(user.display_name)} / {user.id} をキック')
-                            except fortnitepy.Forbidden:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティーリーダーではありません')
-                            except fortnitepy.PartyError:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, '自分をキックすることはできません')
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                await reply(message, 'パーティーメンバーのキックリクエストを処理中にエラーが発生しました')
-                        """ for name, user in users.items()
+        try:
+            if client.user.party.members.get(user.id) is None:
+                await reply(message, 'ユーザーがパーティーにいません')
+                return
+            member=client.user.party.members.get(user.id)
+            await member.kick()
+            if data['loglevel'] == 'normal':
+                await reply(message, f'{str(user.display_name)} をキック')
+            else:
+                await reply(message, f'{str(user.display_name)} / {user.id} をキック')
+        except fortnitepy.Forbidden:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティーリーダーではありません')
+        except fortnitepy.PartyError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, '自分をキックすることはできません')
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'パーティーメンバーのキックリクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -8333,19 +8707,7 @@ async def event_party_message(message):
         try:
             flag = False
             if client.outfitlock is True:
-                if client.owner is not None:
-                    if data['fortnite']['whitelist-ignorelock']:
-                        if client.owner.id != message.author.id and message.author.id not in whitelist:
-                            flag = True
-                    else:
-                        if client.owner.id != message.author.id:
-                            flag = True
-                else:
-                    if data['fortnite']['whitelist-ignorelock']:
-                        if message.author.id not in whitelist:
-                            flag = True
-                    else:
-                        flag = True
+                flag = lock_check(client, author_id)
             if flag is True:
                 await reply(message, 'ロックされています')
                 return
@@ -8370,20 +8732,8 @@ async def event_party_message(message):
     elif args[0] in commands['allbackpack'].split(','):
         try:
             flag = False
-            if client.outfitlock is True:
-                if client.owner is not None:
-                    if data['fortnite']['whitelist-ignorelock']:
-                        if client.owner.id != message.author.id and message.author.id not in whitelist:
-                            flag = True
-                    else:
-                        if client.owner.id != message.author.id:
-                            flag = True
-                else:
-                    if data['fortnite']['whitelist-ignorelock']:
-                        if message.author.id not in whitelist:
-                            flag = True
-                    else:
-                        flag = True
+            if client.backpacklock is True:
+                flag = lock_check(client, author_id)
             if flag is True:
                 await reply(message, 'ロックされています')
                 return
@@ -8405,23 +8755,37 @@ async def event_party_message(message):
             dstore(name,f'>>> {traceback.format_exc()}')
             await reply(message, 'エラー')
 
+    elif args[0] in commands['allpet'].split(','):
+        try:
+            flag = False
+            if client.backpacklock is True:
+                flag = lock_check(client, author_id)
+            if flag is True:
+                await reply(message, 'ロックされています')
+                return
+            with open('allen.json', 'r', encoding='utf-8') as f:
+                allskin = json.load(f)
+            for item in allskin['data']:
+                if client.stopcheck is True:
+                    client.stopcheck=False
+                    break
+                if item['type'] == 'pet':
+                    if 'banner' not in item['id']:
+                        await client.user.party.me.set_backpack(item['id'])
+                    else:
+                        await client.user.party.me.set_backpack(item['id'],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner'))
+                    await asyncio.sleep(2)
+            await reply(message, '全てのペットを表示し終わりました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'エラー')
+
     elif args[0] in commands['allpickaxe'].split(','):
         try:
             flag = False
-            if client.outfitlock is True:
-                if client.owner is not None:
-                    if data['fortnite']['whitelist-ignorelock']:
-                        if client.owner.id != message.author.id and message.author.id not in whitelist:
-                            flag = True
-                    else:
-                        if client.owner.id != message.author.id:
-                            flag = True
-                else:
-                    if data['fortnite']['whitelist-ignorelock']:
-                        if message.author.id not in whitelist:
-                            flag = True
-                    else:
-                        flag = True
+            if client.pickaxelock is True:
+                flag = lock_check(client, author_id)
             if flag is True:
                 await reply(message, 'ロックされています')
                 return
@@ -8447,19 +8811,7 @@ async def event_party_message(message):
         try:
             flag = False
             if client.emotelock is True:
-                if client.owner is not None:
-                    if data['fortnite']['whitelist-ignorelock']:
-                        if client.owner.id != message.author.id and message.author.id not in whitelist:
-                            flag = True
-                    else:
-                        if client.owner.id != message.author.id:
-                            flag = True
-                else:
-                    if data['fortnite']['whitelist-ignorelock']:
-                        if message.author.id not in whitelist:
-                            flag = True
-                    else:
-                        flag = True
+                flag = lock_check(client, author_id)
             if flag is True:
                 await reply(message, 'ロックされています')
                 return
@@ -8474,6 +8826,78 @@ async def event_party_message(message):
                     await asyncio.sleep(5)
             else:
                 await reply(message, '全てのエモートを表示し終わりました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'エラー')
+
+    elif args[0] in commands['allemoji'].split(','):
+        try:
+            flag = False
+            if client.emotelock is True:
+                flag = lock_check(client, author_id)
+            if flag is True:
+                await reply(message, 'ロックされています')
+                return
+            with open('allen.json', 'r', encoding='utf-8') as f:
+                allemote = json.load(f)
+            for item in allemote['data']:
+                if client.stopcheck is True:
+                    client.stopcheck=False
+                    break
+                if item['type'] == 'emoji':
+                    await client.user.party.me.set_emote(item['id'])
+                    await asyncio.sleep(5)
+            else:
+                await reply(message, '全てのエモートアイコンを表示し終わりました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'エラー')
+
+    elif args[0] in commands['alltoy'].split(','):
+        try:
+            flag = False
+            if client.emotelock is True:
+                flag = lock_check(client, author_id)
+            if flag is True:
+                await reply(message, 'ロックされています')
+                return
+            with open('allen.json', 'r', encoding='utf-8') as f:
+                allemote = json.load(f)
+            for item in allemote['data']:
+                if client.stopcheck is True:
+                    client.stopcheck=False
+                    break
+                if item['type'] == 'toy':
+                    await client.user.party.me.set_emote(item['id'])
+                    await asyncio.sleep(5)
+            else:
+                await reply(message, '全てのおもちゃを表示し終わりました')
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'エラー')
+
+    elif args[0] in commands['allshout'].split(','):
+        try:
+            flag = False
+            if client.emotelock is True:
+                flag = lock_check(client, author_id)
+            if flag is True:
+                await reply(message, 'ロックされています')
+                return
+            with open('allen.json', 'r', encoding='utf-8') as f:
+                allemote = json.load(f)
+            for item in allemote['data']:
+                if client.stopcheck is True:
+                    client.stopcheck=False
+                    break
+                if item['type'] == 'shout':
+                    await client.user.party.me.set_emote(item['id'])
+                    await asyncio.sleep(5)
+            else:
+                await reply(message, '全てのshoutを表示し終わりました')
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
@@ -8832,28 +9256,27 @@ async def event_party_message(message):
 #========================================================================================================================
 #========================================================================================================================
 
-if discord_ready is True:
-    dclient=discord.Client()
-    dclient.isready=False
-    dclient.owner=None
-
+dclient=discord.Client()
+dclient.isready=False
+dclient.owner=None
+if data['discord']['enabled'] is True:
     @dclient.event
     async def on_ready():
         global blacklist_
         global whitelist_
+        dclient_user = str(dclient.user)
         if data['loglevel'] == 'normal':
             if data['no-logs'] is False:
-                print(green(f'[{now_()}] ログイン: {dclient.user}'))
-            dstore(dclient.user,f'ログイン: {dclient.user}')
+                print(green(f'[{now_()}] ログイン: {dclient_user}'))
+            dstore(dclient_user,f'ログイン: {dclient_user}')
         else:
             if data['no-logs'] is False:
-                print(green(f'[{now_()}] ログイン: {dclient.user} / {dclient.user.id}'))
-            dstore(dclient.user,f'ログイン: {dclient.user} / {dclient.user.id}')
+                print(green(f'[{now_()}] ログイン: {dclient_user} / {dclient.user.id}'))
+            dstore(dclient_user,f'ログイン: {dclient_user} / {dclient.user.id}')
         dclient.isready = True
         activity = discord.Game(name=data['discord']['status'])
         await dclient.change_presence(activity=activity)
 
-        blacklist_ = []
         for blacklistuser in data['discord']['blacklist']:
             user = dclient.get_user(blacklistuser)
             if user is None:
@@ -8862,18 +9285,17 @@ if discord_ready is True:
                 except discord.NotFound:
                     if data['loglevel'] == "debug":
                         print(red(traceback.format_exc()))
-                        dstore(dclient.user,f'>>> {traceback.format_exc()}')
+                        dstore(dclient_user,f'>>> {traceback.format_exc()}')
                     user = None
             if user is None:
-                print(red(f'[{now_()}] [{dclient.user}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しいIDになっているか確認してください。'))
-                dstore(dclient.user,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しいIDになっているか確認してください')
+                print(red(f'[{now_()}] [{dclient_user}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しいIDになっているか確認してください。'))
+                dstore(dclient_user,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しいIDになっているか確認してください')
             else:
                 blacklist_.append(user.id)
                 if data['loglevel'] == 'debug':
                     print(yellow(f"{user} / {user.id}"))
         if data['loglevel'] == "debug":
             print(yellow(blacklist_))
-        whitelist_ = []
         for whitelistuser in data['discord']['whitelist']:
             user = dclient.get_user(whitelistuser)
             if user is None:
@@ -8882,11 +9304,11 @@ if discord_ready is True:
                 except discord.NotFound:
                     if data['loglevel'] == "debug":
                         print(red(traceback.format_exc()))
-                        dstore(dclient.user,f'>>> {traceback.format_exc()}')
+                        dstore(dclient_user,f'>>> {traceback.format_exc()}')
                     user = None
             if user is None:
-                print(red(f'[{now_()}] [{dclient.user}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しいIDになっているか確認してください。'))
-                dstore(dclient.user,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しいIDになっているか確認してください')
+                print(red(f'[{now_()}] [{dclient_user}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しいIDになっているか確認してください。'))
+                dstore(dclient_user,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しいIDになっているか確認してください')
             else:
                 whitelist_.append(user.id)
                 if data['loglevel'] == 'debug':
@@ -8903,30 +9325,30 @@ if discord_ready is True:
                 except discord.NotFound:
                     if data['loglevel'] == "debug":
                         print(red(traceback.format_exc()))
-                        dstore(dclient.user,f'>>> {traceback.format_exc()}')
+                        dstore(dclient_user,f'>>> {traceback.format_exc()}')
                     owner = None
             if owner is None:
-                print(red(f'[{now_()}] [{dclient.user}] 所有者が見つかりません。正しいIDになっているか確認してください。'))
-                dstore(dclient.user,'>>> 所有者が見つかりません。正しいIDになっているか確認してください')
+                print(red(f'[{now_()}] [{dclient_user}] 所有者が見つかりません。正しいIDになっているか確認してください。'))
+                dstore(dclient_user,'>>> 所有者が見つかりません。正しいIDになっているか確認してください')
             else:
                 dclient.owner=owner
                 if data['loglevel'] == 'normal':
                     if data['no-logs'] is False:
-                        print(green(f'[{now_()}] [{dclient.user}] 所有者: {dclient.owner}'))
-                    dstore(dclient.user,f'所有者: {dclient.owner}')
+                        print(green(f'[{now_()}] [{dclient_user}] 所有者: {dclient.owner}'))
+                    dstore(dclient_user,f'所有者: {dclient.owner}')
                 else:
                     if data['no-logs'] is False:
-                        print(green(f'[{now_()}] [{dclient.user}] 所有者: {dclient.owner} / {dclient.owner.id}'))
-                    dstore(dclient.user,f'所有者: {dclient.owner} / {dclient.owner.id}')
+                        print(green(f'[{now_()}] [{dclient_user}] 所有者: {dclient.owner} / {dclient.owner.id}'))
+                    dstore(dclient_user,f'所有者: {dclient.owner} / {dclient.owner.id}')
         except discord.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
-                dstore(dclient.user,f'>>> {traceback.format_exc()}')
-            print(red(f'[{now_()}] [{dclient.user}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-            dstore(dclient.user,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                dstore(dclient_user,f'>>> {traceback.format_exc()}')
+            print(red(f'[{now_()}] [{dclient_user}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+            dstore(dclient_user,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
         except Exception:
             print(red(traceback.format_exc()))
-            dstore(dclient.user,f'>>> {traceback.format_exc()}')
+            dstore(dclient_user,f'>>> {traceback.format_exc()}')
 
     @dclient.event
     async def on_message(message):
@@ -8944,9 +9366,12 @@ if discord_ready is True:
                 break
         else:
             return
-        if client.isready is False or dclient.isready is False:
+        if data['discord']['enabled'] is True and dclient.isready is False:
+            return
+        if client.isready is False:
             return
         name=client.user.display_name
+        author_id = message.author.id
         loop = asyncio.get_event_loop()
         if message.author.id in blacklist_ and data['discord']['blacklist-ignorecommand'] is True:
             return
@@ -9003,17 +9428,17 @@ if discord_ready is True:
                         flag = True
                 else:
                     flag = True
-        elif isinstance(message, discord.Message) is True:
+        else:
             if dclient.owner is not None:
                 if data['discord']['whitelist-ownercommand'] is True:
-                    if dclient.owner.id != message.author.id and message.author.id not in whitelist_:
+                    if client.owner.id != message.author.id and message.author.id not in whitelist_:
                         flag = True
                 else:
-                    if dclient.owner.id != message.author.id:
+                    if client.owner.id != message.author.id:
                         flag = True
             else:
-                if data['fortnite']['whitelist-ownercommand'] is True:
-                    if message.author.id not in whitelist:
+                if data['discord']['whitelist-ownercommand'] is True:
+                    if message.author.id not in whitelist_:
                         flag = True
                 else:
                     flag = True
@@ -9051,6 +9476,167 @@ if discord_ready is True:
                     dstore(name,f'>>> {traceback.format_exc()}')
                     await reply(message, 'エラー')
                 return
+
+        if data['discord']['enabled'] is True and dclient.isready is True:
+            if args[0] in commands['addblacklist_discord'].split(','):
+                try:
+                    if rawcontent == '' or args[1].isdigit() is False:
+                        await reply(message, f"[{commands['addblacklist_discord']}] [ユーザーID]")
+                        return
+                    user = dclient.get_user(int(args[1]))
+                    if user is None:
+                        user = await dclient.fetch_user(int(args[1]))
+                    if user.id not in blacklist_:
+                        blacklist_.append(user.id)
+                        data["discord"]["blacklist"].append(user.id)
+                        try:
+                            with open("config.json", "r", encoding="utf-8") as f:
+                                data_ = json.load(f)
+                        except json.decoder.JSONDecodeError:
+                            with open("config.json", "r", encoding="utf-8-sig") as f:
+                                data_ = json.load(f)
+                        data_["discord"]["blacklist"] = data["discord"]["blacklist"]
+                        with open("config.json", "w", encoding="utf-8") as f:
+                            json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                        await reply(message, f"ユーザー {user} / {user.id} をブラックリストに追加しました")
+                    else:
+                        await reply(message, f"ユーザー {user} / {user.id} は既にブラックリストに追加されています")
+                except discord.NotFound:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                        dstore(name,f'>>> {traceback.format_exc()}')
+                    await reply(message, 'ユーザーが見つかりません')
+                except discord.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                        dstore(name,f'>>> {traceback.format_exc()}')
+                    print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                    dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+                except Exception:
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                    await reply(message, 'エラー')
+
+            elif args[0] in commands['removeblacklist_discord'].split(','):
+                try:
+                    if rawcontent == '' or args[1].isdigit() is False:
+                        await reply(message, f"[{commands['removeblacklist_discord']}] [ユーザーID]")
+                        return
+                    user = dclient.get_user(int(args[1]))
+                    if user is None:
+                        user = await dclient.fetch_user(int(args[1]))
+                    if user.id in blacklist_:
+                        blacklist_.remove(user.id)
+                        data["discord"]["blacklist"].remove(user.id)
+                        try:
+                            with open("config.json", "r", encoding="utf-8") as f:
+                                data_ = json.load(f)
+                        except json.decoder.JSONDecodeError:
+                            with open("config.json", "r", encoding="utf-8-sig") as f:
+                                data_ = json.load(f)
+                        data_["discord"]["blacklist"] = data["discord"]["blacklist"]
+                        with open("config.json", "w", encoding="utf-8") as f:
+                            json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                        await reply(message, f"ユーザー {user} / {user.id} をブラックリストから削除")
+                    else:
+                        await reply(message, f"ユーザー {user} / {user.id} はブラックリストに含まれていません")
+                except discord.NotFound:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                        dstore(name,f'>>> {traceback.format_exc()}')
+                    await reply(message, 'ユーザーが見つかりません')
+                except discord.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                        dstore(name,f'>>> {traceback.format_exc()}')
+                    print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                    dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+                except Exception:
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                    await reply(message, 'エラー')
+
+            elif args[0] in commands['addwhitelist_discord'].split(','):
+                try:
+                    if rawcontent == '' or args[1].isdigit() is False:
+                        await reply(message, f"[{commands['addwhitelist_discord']}] [ユーザーID]")
+                        return
+                    user = dclient.get_user(int(args[1]))
+                    if user is None:
+                        user = await dclient.fetch_user(int(args[1]))
+                    if user.id not in whitelist_:
+                        whitelist_.append(user.id)
+                        data["discord"]["whitelist"].append(user.id)
+                        try:
+                            with open("config.json", "r", encoding="utf-8") as f:
+                                data_ = json.load(f)
+                        except json.decoder.JSONDecodeError:
+                            with open("config.json", "r", encoding="utf-8-sig") as f:
+                                data_ = json.load(f)
+                        data_["discord"]["whitelist"] = data["discord"]["whitelist"]
+                        with open("config.json", "w", encoding="utf-8") as f:
+                            json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                        await reply(message, f"ユーザー {user} / {user.id} をホワイトリストに追加しました")
+                    else:
+                        await reply(message, f"ユーザー {user} / {user.id} は既にホワイトリストに追加されています")
+                except discord.NotFound:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                        dstore(name,f'>>> {traceback.format_exc()}')
+                    await reply(message, 'ユーザーが見つかりません')
+                except discord.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                        dstore(name,f'>>> {traceback.format_exc()}')
+                    print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                    dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+                except Exception:
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                    await reply(message, 'エラー')
+
+            elif args[0] in commands['removewhitelist_discord'].split(','):
+                try:
+                    if rawcontent == '' or args[1].isdigit() is False:
+                        await reply(message, f"[{commands['removewhitelist_discord']}] [ユーザーID]")
+                        return
+                    user = dclient.get_user(int(args[1]))
+                    if user is None:
+                        user = await dclient.fetch_user(int(args[1]))
+                    if user.id in whitelist_:
+                        whitelist_.remove(user.id)
+                        data["discord"]["whitelist"].remove(user.id)
+                        try:
+                            with open("config.json", "r", encoding="utf-8") as f:
+                                data_ = json.load(f)
+                        except json.decoder.JSONDecodeError:
+                            with open("config.json", "r", encoding="utf-8-sig") as f:
+                                data_ = json.load(f)
+                        data_["discord"]["whitelist"] = data["discord"]["whitelist"]
+                        with open("config.json", "w", encoding="utf-8") as f:
+                            json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                        await reply(message, f"ユーザー {user} / {user.id} をホワイトリストから削除")
+                    else:
+                        await reply(message, f"ユーザー {user} / {user.id} はホワイトリストに含まれていません")
+                except discord.NotFound:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                        dstore(name,f'>>> {traceback.format_exc()}')
+                    await reply(message, 'ユーザーが見つかりません')
+                except discord.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                        dstore(name,f'>>> {traceback.format_exc()}')
+                    print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                    dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+                except Exception:
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                    await reply(message, 'エラー')
 
         if args[0] in commands['eval'].split(','):
             try:
@@ -9193,79 +9779,183 @@ if discord_ready is True:
                 else:
                     await reply(message, 'エラー')
                     return
-                client.owner=None
-                flag = False
-                activity = discord.Game(name=data['discord']['status'])
-                await dclient.change_presence(activity=activity)
                 try:
+                    client.owner=None
                     owner=await client.fetch_profile(data['fortnite']['owner'])
+                    if owner is None:
+                        print(red(f'[{now_()}] [{client.user.display_name}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
+                        dstore(client.user.display_name,'>>> 所有者が見つかりません。正しい名前/IDになっているか確認してください')
+                    else:
+                        add_cache(client, owner)
+                        client.owner=client.get_friend(owner.id)
+                        if client.owner is None:
+                            if data['fortnite']['addfriend'] is True:
+                                try:
+                                    await client.add_friend(owner.id)
+                                except fortnitepy.HTTPException:
+                                    if data['loglevel'] == 'debug':
+                                        print(red(traceback.format_exc()))
+                                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                                    print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
+                                    dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
+                                except Exception:
+                                    print(red(traceback.format_exc()))
+                                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                            print(red(f"[{now_()}] [{client.user.display_name}] 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{commands['reload']}] コマンドで再読み込みしてください。"))
+                            dstore(client.user.display_name,f'>>> 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{commands["reload"]}] コマンドで再読み込みしてください')
+                        else:
+                            if data['loglevel'] == 'normal':
+                                if data['no-logs'] is False:
+                                    print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name}'))
+                                dstore(client.user.display_name,f'所有者: {client.owner.display_name}')
+                            else:
+                                if data['no-logs'] is False:
+                                    print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name} / {client.owner.id}'))
+                                dstore(client.user.display_name,f'所有者: {client.owner.display_name} / {client.owner.id}')
                 except fortnitepy.HTTPException:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
-                        dstore(name,f'>>> {traceback.format_exc()}')
+                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
                     print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                    dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    flag = True
-                if owner is None:
-                    print(red(f'[{now_()}] [{client.user.display_name}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
-                    dstore(name,f'>>> 所有者が見つかりません。正しい名前/IDになっているか確認してください')
-                    flag = True
-                if flag is False:
-                    client.owner=client.get_friend(owner.id)
-                    if client.owner is None:
-                        if data['fortnite']['addfriend'] is True:
-                            try:
-                                await client.add_friend(owner.id)
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                                print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
-                                dstore(name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
-                            except Exception:
-                                print(red(traceback.format_exc()))
-                                dstore(name,f'>>> {traceback.format_exc()}')
-                        print(red(f'[{now_()}] [{client.user.display_name}] 所有者とフレンドではありません。フレンドになってからもう一度起動してください。'))
-                        dstore(name,f'>>> 所有者とフレンドではありません。フレンドになってからもう一度起動してください')
-                    else:
-                        if data['loglevel'] == 'normal':
-                            print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name}'))
-                            dstore(name,f'所有者: {client.owner.display_name}')
-                        else:
-                            print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {client.owner.display_name} / {client.owner.id}'))
-                            dstore(name,f'所有者: {client.owner.display_name} / {client.owner.id}')
+                    dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                except Exception:
+                    print(red(traceback.format_exc()))
+                    dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
-                blacklist = []
                 for blacklistuser in data['fortnite']['blacklist']:
-                    user = await client.fetch_profile(blacklistuser)
-                    if user is None:
-                        print(red(f'[{now_()}] [{client.user.display_name}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
-                        dstore(name,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください')
-                    else:
-                        blacklist.append(user.id)
+                    try:
+                        user = await client.fetch_profile(blacklistuser)
+                        add_cache(client, user)
+                        if user is None:
+                            print(red(f'[{now_()}] [{client.user.display_name}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
+                            dstore(client.user.display_name,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                        else:
+                            blacklist.append(user.id)
+                            if data['loglevel'] == 'debug':
+                                print(yellow(f"{str(user.display_name)} / {user.id}"))
+                            if data['fortnite']['blacklist-autoblock'] is True:
+                                try:
+                                    await user.block()
+                                except Exception:
+                                    if data['loglevel'] == 'debug':
+                                        print(red(traceback.format_exc()))
+                                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                    except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
-                            print(yellow(f"{user.display_name} / {user.id}"))
-                        if data['fortnite']['blacklist-autoblock'] is True:
-                            try:
-                                await user.block()
-                            except Exception:
-                                if data['loglevel'] == 'debug':
-                                    print(red(traceback.format_exc()))
-                                    dstore(name,f'>>> {traceback.format_exc()}')
-                print(yellow(blacklist))
-                whitelist = []
+                            print(red(traceback.format_exc()))
+                            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                        print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                        dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    except Exception:
+                        print(red(traceback.format_exc()))
+                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                if data['loglevel'] == "debug":
+                    print(yellow(blacklist))
                 for whitelistuser in data['fortnite']['whitelist']:
-                    user = await client.fetch_profile(whitelistuser)
-                    if user is None:
-                        print(red(f'[{now_()}] [{client.user.display_name}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
-                        dstore(name,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
-                    else:
-                        whitelist.append(user.id)
+                    try:
+                        user = await client.fetch_profile(whitelistuser)
+                        add_cache(client, user)
+                        if user is None:
+                            print(red(f'[{now_()}] [{client.user.display_name}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
+                            dstore(client.user.display_name,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                        else:
+                            whitelist.append(user.id)
+                            if data['loglevel'] == 'debug':
+                                print(yellow(f"{str(user.display_name)} / {user.id}"))
+                    except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
-                            print(yellow(f"{user.display_name} / {user.id}"))
+                            print(red(traceback.format_exc()))
+                            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                        print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                        dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    except Exception:
+                        print(red(traceback.format_exc()))
+                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
                 if data['loglevel'] == "debug":
                     print(yellow(whitelist))
 
+                for invitelistuser in data['fortnite']['invitelist']:
+                    try:
+                        user = await client.fetch_profile(invitelistuser)
+                        if user is None:
+                            print(red(f'[{now_()}] [{client.user.display_name}] 招待リストのユーザー {invitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
+                            dstore(client.user.display_name,f'>>>招待リストのユーザー {invitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                        else:
+                            friend = client.get_friend(user.id)
+                            if friend is None and user.id != client.user.id:
+                                if data['fortnite']['addfriend'] is True:
+                                    try:
+                                        await client.add_friend(owner.id)
+                                    except fortnitepy.HTTPException:
+                                        if data['loglevel'] == 'debug':
+                                            print(red(traceback.format_exc()))
+                                            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                                        print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
+                                        dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
+                                    except Exception:
+                                        print(red(traceback.format_exc()))
+                                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                                print(red(f"[{now_()}] [{client.user.display_name}] 招待リストのユーザー {invitelistuser} とフレンドではありません。フレンドになってからもう一度起動するか、[{commands['reload']}] コマンドで再読み込みしてください。"))
+                                dstore(client.user.display_name,f'>>> 招待リストのユーザー {invitelistuser} とフレンドではありません。フレンドになってからもう一度起動するか、[{commands["reload"]}] コマンドで再読み込みしてください')
+                            else:
+                                add_cache(client, user)
+                                client.invitelist.append(user.id)
+                                if data['loglevel'] == 'debug':
+                                    print(yellow(f"{str(user.display_name)} / {user.id}"))
+                    except fortnitepy.HTTPException:
+                        if data['loglevel'] == 'debug':
+                            print(red(traceback.format_exc()))
+                            dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                        print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
+                        dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    except Exception:
+                        print(red(traceback.format_exc()))
+                        dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
+                if data['loglevel'] == "debug":
+                    print(yellow(client.invitelist))
+                if data['discord']['enabled'] is True:
+                    dclient_user = str(dclient.user)
+                    activity = discord.Game(name=data['discord']['status'])
+                    await dclient.change_presence(activity=activity)
+
+                    for blacklistuser in data['discord']['blacklist']:
+                        user = dclient.get_user(blacklistuser)
+                        if user is None:
+                            try:
+                                user = await dclient.fetch_user(blacklistuser)
+                            except discord.NotFound:
+                                if data['loglevel'] == "debug":
+                                    print(red(traceback.format_exc()))
+                                    dstore(dclient_user,f'>>> {traceback.format_exc()}')
+                                user = None
+                        if user is None:
+                            print(red(f'[{now_()}] [{dclient_user}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しいIDになっているか確認してください。'))
+                            dstore(dclient_user,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しいIDになっているか確認してください')
+                        else:
+                            blacklist_.append(user.id)
+                            if data['loglevel'] == 'debug':
+                                print(yellow(f"{user} / {user.id}"))
+                    if data['loglevel'] == "debug":
+                        print(yellow(blacklist_))
+                    for whitelistuser in data['discord']['whitelist']:
+                        user = dclient.get_user(whitelistuser)
+                        if user is None:
+                            try:
+                                user = await dclient.fetch_user(whitelistuser)
+                            except discord.NotFound:
+                                if data['loglevel'] == "debug":
+                                    print(red(traceback.format_exc()))
+                                    dstore(dclient_user,f'>>> {traceback.format_exc()}')
+                                user = None
+                        if user is None:
+                            print(red(f'[{now_()}] [{dclient_user}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しいIDになっているか確認してください。'))
+                            dstore(dclient_user,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しいIDになっているか確認してください')
+                        else:
+                            whitelist_.append(user.id)
+                            if data['loglevel'] == 'debug':
+                                print(yellow(f"{user.display_name} / {user.id}"))
+                    if data['loglevel'] == "debug":
+                        print(yellow(whitelist_))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
@@ -9276,11 +9966,11 @@ if discord_ready is True:
                 if rawcontent == '':
                     await reply(message, f"[{commands['addblacklist']}] [ユーザー名/ユーザーID]")
                     return
-                users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id}
+                users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id and user.id not in blacklist}
                 try:
                     user=await client.fetch_profile(rawcontent)
                     if user is not None:
-                        if user.display_name is not None:
+                        if user.display_name is not None and user.id not in blacklist:
                             users[user.display_name] = user
                             add_cache(client, user)
                 except fortnitepy.HTTPException:
@@ -9318,25 +10008,24 @@ if discord_ready is True:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
-                                if user.id not in blacklist:
-                                    blacklist.append(user.id)
-                                    if user.display_name is not None:
-                                        data["fortnite"]["blacklist"].append(user.display_name)
-                                    else:
-                                        data["fortnite"]["blacklist"].append(user.id)
-                                    try:
-                                        with open("config.json", "r", encoding="utf-8") as f:
-                                            data_ = json.load(f)
-                                    except json.decoder.JSONDecodeError:
-                                        with open("config.json", "r", encoding="utf-8-sig") as f:
-                                            data_ = json.load(f)
-                                    data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
-                                    with open("config.json", "w", encoding="utf-8") as f:
-                                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストに追加しました")
-                                else:
-                                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にブラックリストに追加されています")
-                            """ for name, user in users.items()
+            if user.id not in blacklist:
+                blacklist.append(user.id)
+                if user.display_name is not None:
+                    data["fortnite"]["blacklist"].append(user.display_name)
+                else:
+                    data["fortnite"]["blacklist"].append(user.id)
+                try:
+                    with open("config.json", "r", encoding="utf-8") as f:
+                        data_ = json.load(f)
+                except json.decoder.JSONDecodeError:
+                    with open("config.json", "r", encoding="utf-8-sig") as f:
+                        data_ = json.load(f)
+                data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
+                with open("config.json", "w", encoding="utf-8") as f:
+                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストに追加しました")
+            else:
+                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にブラックリストに追加されています")""" for name, user in users.items()
                         ],
                         "variable": [
                             {"user": user} for name, user in users.items()
@@ -9357,11 +10046,11 @@ if discord_ready is True:
                 if rawcontent == '':
                     await reply(message, f"[{commands['removeblacklist']}] [ユーザー名/ユーザーID]")
                     return
-                users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id}
+                users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id and user.id in blacklist}
                 try:
                     user=await client.fetch_profile(rawcontent)
                     if user is not None:
-                        if user.display_name is not None:
+                        if user.display_name is not None and user.id in blacklist:
                             users[user.display_name] = user
                             add_cache(client, user)
                 except fortnitepy.HTTPException:
@@ -9399,25 +10088,24 @@ if discord_ready is True:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
-                                if user.id in blacklist:
-                                    blacklist.remove(user.id)
-                                    try:
-                                        data["fortnite"]["blacklist"].remove(user.display_name)
-                                    except ValueError:
-                                        data["fortnite"]["blacklist"].remove(user.id)
-                                    try:
-                                        with open("config.json", "r", encoding="utf-8") as f:
-                                            data_ = json.load(f)
-                                    except json.decoder.JSONDecodeError:
-                                        with open("config.json", "r", encoding="utf-8-sig") as f:
-                                            data_ = json.load(f)
-                                    data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
-                                    with open("config.json", "w", encoding="utf-8") as f:
-                                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
-                                else:
-                                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")
-                            """ for name, user in users.items()
+            if user.id in blacklist:
+                blacklist.remove(user.id)
+                try:
+                    data["fortnite"]["blacklist"].remove(user.display_name)
+                except ValueError:
+                    data["fortnite"]["blacklist"].remove(user.id)
+                try:
+                    with open("config.json", "r", encoding="utf-8") as f:
+                        data_ = json.load(f)
+                except json.decoder.JSONDecodeError:
+                    with open("config.json", "r", encoding="utf-8-sig") as f:
+                        data_ = json.load(f)
+                data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
+                with open("config.json", "w", encoding="utf-8") as f:
+                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
+            else:
+                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")""" for name, user in users.items()
                         ],
                         "variable": [
                             {"user": user} for name, user in users.items()
@@ -9438,11 +10126,11 @@ if discord_ready is True:
                 if rawcontent == '':
                     await reply(message, f"[{commands['addwhitelist']}] [ユーザー名/ユーザーID]")
                     return
-                users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id}
+                users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id and user.id not in whitelist}
                 try:
                     user=await client.fetch_profile(rawcontent)
                     if user is not None:
-                        if user.display_name is not None:
+                        if user.display_name is not None and user.id not in whitelist:
                             users[user.display_name] = user
                             add_cache(client, user)
                 except fortnitepy.HTTPException:
@@ -9480,25 +10168,24 @@ if discord_ready is True:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
-                                if user.id not in whitelist:
-                                    whitelist.append(user.id)
-                                    if user.display_name is not None:
-                                        data["fortnite"]["whitelist"].append(user.display_name)
-                                    else:
-                                        data["fortnite"]["whitelist"].append(user.id)
-                                    try:
-                                        with open("config.json", "r", encoding="utf-8") as f:
-                                            data_ = json.load(f)
-                                    except json.decoder.JSONDecodeError:
-                                        with open("config.json", "r", encoding="utf-8-sig") as f:
-                                            data_ = json.load(f)
-                                    data_["fortnite"]["whitelist"] = data["fortnite"]["whitelist"]
-                                    with open("config.json", "w", encoding="utf-8") as f:
-                                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストに追加しました")
-                                else:
-                                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にホワイトリストに追加されています")
-                            """ for name, user in users.items()
+            if user.id not in whitelist:
+                whitelist.append(user.id)
+                if user.display_name is not None:
+                    data["fortnite"]["whitelist"].append(user.display_name)
+                else:
+                    data["fortnite"]["whitelist"].append(user.id)
+                try:
+                    with open("config.json", "r", encoding="utf-8") as f:
+                        data_ = json.load(f)
+                except json.decoder.JSONDecodeError:
+                    with open("config.json", "r", encoding="utf-8-sig") as f:
+                        data_ = json.load(f)
+                data_["fortnite"]["whitelist"] = data["fortnite"]["whitelist"]
+                with open("config.json", "w", encoding="utf-8") as f:
+                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストに追加しました")
+            else:
+                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にホワイトリストに追加されています")""" for name, user in users.items()
                         ],
                         "variable": [
                             {"user": user} for name, user in users.items()
@@ -9519,11 +10206,11 @@ if discord_ready is True:
                 if rawcontent == '':
                     await reply(message, f"[{commands['removewhitelist']}] [ユーザー名/ユーザーID]")
                     return
-                users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id}
+                users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id and user.id in whitelist}
                 try:
                     user=await client.fetch_profile(rawcontent)
                     if user is not None:
-                        if user.display_name is not None:
+                        if user.display_name is not None and user.id in whitelist:
                             users[user.display_name] = user
                             add_cache(client, user)
                 except fortnitepy.HTTPException:
@@ -9561,25 +10248,24 @@ if discord_ready is True:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
-                                if user.display_name in data["blacklist"] or user.id in data["blacklist"]:
-                                    blacklist.remove(user.id)
-                                    try:
-                                        data["blacklist"].remove(user.display_name)
-                                    except ValueError:
-                                        data["blacklist"].remove(user.id)
-                                    try:
-                                        with open("config.json", "r", encoding="utf-8") as f:
-                                            data_ = json.load(f)
-                                    except json.decoder.JSONDecodeError:
-                                        with open("config.json", "r", encoding="utf-8-sig") as f:
-                                            data_ = json.load(f)
-                                    data_["blacklist"] = data["blacklist"]
-                                    with open("config.json", "w", encoding="utf-8") as f:
-                                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
-                                else:
-                                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")
-                            """ for name, user in users.items()
+            if user.display_name in data["blacklist"] or user.id in data["blacklist"]:
+                blacklist.remove(user.id)
+                try:
+                    data["blacklist"].remove(user.display_name)
+                except ValueError:
+                    data["blacklist"].remove(user.id)
+                try:
+                    with open("config.json", "r", encoding="utf-8") as f:
+                        data_ = json.load(f)
+                except json.decoder.JSONDecodeError:
+                    with open("config.json", "r", encoding="utf-8-sig") as f:
+                        data_ = json.load(f)
+                data_["blacklist"] = data["blacklist"]
+                with open("config.json", "w", encoding="utf-8") as f:
+                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
+            else:
+                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")""" for name, user in users.items()
                         ],
                         "variable": [
                             {"user": user} for name, user in users.items()
@@ -9590,166 +10276,6 @@ if discord_ready is True:
                         text += f"\n{count+1} {user.display_name} / {user.id}"
                     text += "\n数字を入力することでそのユーザーをホワイトリストから削除します"
                     await reply(message, text)
-            except Exception:
-                print(red(traceback.format_exc()))
-                dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
-
-        elif args[0] in commands['addblacklist_discord'].split(','):
-            try:
-                if rawcontent == '' or args[1].isdigit() is False:
-                    await reply(message, f"[{commands['addblacklist_discord']}] [ユーザーID]")
-                    return
-                user = dclient.get_user(int(args[1]))
-                if user is None:
-                    user = await dclient.fetch_user(int(args[1]))
-                if user.id not in blacklist_:
-                    blacklist_.append(user.id)
-                    data["discord"]["blacklist"].append(user.id)
-                    try:
-                        with open("config.json", "r", encoding="utf-8") as f:
-                            data_ = json.load(f)
-                    except json.decoder.JSONDecodeError:
-                        with open("config.json", "r", encoding="utf-8-sig") as f:
-                            data_ = json.load(f)
-                    data_["discord"]["blacklist"] = data["discord"]["blacklist"]
-                    with open("config.json", "w", encoding="utf-8") as f:
-                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {user} / {user.id} をブラックリストに追加しました")
-                else:
-                    await reply(message, f"ユーザー {user} / {user.id} は既にブラックリストに追加されています")
-            except discord.NotFound:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                    dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザーが見つかりません')
-            except discord.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                    dstore(name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
-            except Exception:
-                print(red(traceback.format_exc()))
-                dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
-
-        elif args[0] in commands['removeblacklist_discord'].split(','):
-            try:
-                if rawcontent == '' or args[1].isdigit() is False:
-                    await reply(message, f"[{commands['removeblacklist_discord']}] [ユーザーID]")
-                    return
-                user = dclient.get_user(int(args[1]))
-                if user is None:
-                    user = await dclient.fetch_user(int(args[1]))
-                if user.id in blacklist_:
-                    blacklist_.remove(user.id)
-                    data["discord"]["blacklist"].remove(user.id)
-                    try:
-                        with open("config.json", "r", encoding="utf-8") as f:
-                            data_ = json.load(f)
-                    except json.decoder.JSONDecodeError:
-                        with open("config.json", "r", encoding="utf-8-sig") as f:
-                            data_ = json.load(f)
-                    data_["discord"]["blacklist"] = data["discord"]["blacklist"]
-                    with open("config.json", "w", encoding="utf-8") as f:
-                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {user} / {user.id} をブラックリストから削除")
-                else:
-                    await reply(message, f"ユーザー {user} / {user.id} はブラックリストに含まれていません")
-            except discord.NotFound:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                    dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザーが見つかりません')
-            except discord.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                    dstore(name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
-            except Exception:
-                print(red(traceback.format_exc()))
-                dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
-
-        elif args[0] in commands['addwhitelist_discord'].split(','):
-            try:
-                if rawcontent == '' or args[1].isdigit() is False:
-                    await reply(message, f"[{commands['addwhitelist_discord']}] [ユーザーID]")
-                    return
-                user = dclient.get_user(int(args[1]))
-                if user is None:
-                    user = await dclient.fetch_user(int(args[1]))
-                if user.id not in whitelist_:
-                    whitelist_.append(user.id)
-                    data["discord"]["whitelist"].append(user.id)
-                    try:
-                        with open("config.json", "r", encoding="utf-8") as f:
-                            data_ = json.load(f)
-                    except json.decoder.JSONDecodeError:
-                        with open("config.json", "r", encoding="utf-8-sig") as f:
-                            data_ = json.load(f)
-                    data_["discord"]["whitelist"] = data["discord"]["whitelist"]
-                    with open("config.json", "w", encoding="utf-8") as f:
-                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {user} / {user.id} をホワイトリストに追加しました")
-                else:
-                    await reply(message, f"ユーザー {user} / {user.id} は既にホワイトリストに追加されています")
-            except discord.NotFound:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                    dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザーが見つかりません')
-            except discord.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                    dstore(name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
-            except Exception:
-                print(red(traceback.format_exc()))
-                dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
-
-        elif args[0] in commands['removewhitelist_discord'].split(','):
-            try:
-                if rawcontent == '' or args[1].isdigit() is False:
-                    await reply(message, f"[{commands['removewhitelist_discord']}] [ユーザーID]")
-                    return
-                user = dclient.get_user(int(args[1]))
-                if user is None:
-                    user = await dclient.fetch_user(int(args[1]))
-                if user.id in whitelist_:
-                    whitelist_.remove(user.id)
-                    data["discord"]["whitelist"].remove(user.id)
-                    try:
-                        with open("config.json", "r", encoding="utf-8") as f:
-                            data_ = json.load(f)
-                    except json.decoder.JSONDecodeError:
-                        with open("config.json", "r", encoding="utf-8-sig") as f:
-                            data_ = json.load(f)
-                    data_["discord"]["whitelist"] = data["discord"]["whitelist"]
-                    with open("config.json", "w", encoding="utf-8") as f:
-                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {user} / {user.id} をホワイトリストから削除")
-                else:
-                    await reply(message, f"ユーザー {user} / {user.id} はホワイトリストに含まれていません")
-            except discord.NotFound:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                    dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザーが見つかりません')
-            except discord.HTTPException:
-                if data['loglevel'] == 'debug':
-                    print(red(traceback.format_exc()))
-                    dstore(name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
@@ -9794,17 +10320,16 @@ if discord_ready is True:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
-                                member=client.user.party.members.get(user.id)
-                                if member is None:
-                                    await reply(message, "ユーザーがパーティーにいません")
-                                    return
-                                if data['no-logs'] is False:
-                                    print(f'''{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}''')
-                                if data['loglevel'] == 'debug':
-                                    print(json.dumps(member.meta.schema, indent=2))
-                                dstore(name,f'''{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}''')
-                                await reply(message, f'''{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}''')
-                            """ for name, user in users.items()
+            member=client.user.party.members.get(user.id)
+            if member is None:
+                await reply(message, "ユーザーがパーティーにいません")
+                return
+            if data['no-logs'] is False:
+                print(f'''{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}''')
+            if data['loglevel'] == 'debug':
+                print(json.dumps(member.meta.schema, indent=2))
+            dstore(name,f'''{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}''')
+            await reply(message, f'''{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}''')""" for name, user in users.items()
                         ],
                         "variable": [
                             {"user": user} for name, user in users.items()
@@ -10224,33 +10749,32 @@ if discord_ready is True:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
-                                try:
-                                    friend=client.get_friend(user.id)
-                                    if friend is None:
-                                        await reply(message, 'ユーザーとフレンドではありません')
-                                    else:
-                                        await friend.join_party()
-                                except fortnitepy.PartyError:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, 'パーティーが満員か、既にパーティーにいるか、ユーザーがオフラインです')
-                                except fortnitepy.NotFound:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, 'パーティーが見つかりません')
-                                except fortnitepy.Forbidden:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, 'パーティーがプライベートです')
-                                except fortnitepy.HTTPException:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, 'パーティーの参加リクエストを処理中にエラーが発生しました')
-                            """ for name, user in users.items()
+            try:
+                friend=client.get_friend(user.id)
+                if friend is None:
+                    await reply(message, 'ユーザーとフレンドではありません')
+                else:
+                    await friend.join_party()
+            except fortnitepy.PartyError:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'パーティーが満員か、既にパーティーにいるか、ユーザーがオフラインです')
+            except fortnitepy.NotFound:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'パーティーが見つかりません')
+            except fortnitepy.Forbidden:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'パーティーがプライベートです')
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'パーティーの参加リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                         ],
                         "variable": [
                             {"user": user} for name, user in users.items()
@@ -10366,27 +10890,26 @@ if discord_ready is True:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
-                                try:
-                                    friend=client.get_friend(user.id)
-                                    if friend is None:
-                                        await reply(message, 'ユーザーとフレンドではありません')
-                                        return
-                                    await friend.invite()
-                                    if data['loglevel'] == 'normal':
-                                        await reply(message, f'{str(friend.display_name)} をパーティーに招待')
-                                    else:
-                                        await reply(message, f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
-                                except fortnitepy.PartyError:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, 'パーティーが満員か、既にパーティーにいます')
-                                except fortnitepy.HTTPException:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, 'パーティー招待の送信リクエストを処理中にエラーが発生しました')
-                            """ for name, user in users.items()
+            try:
+                friend=client.get_friend(user.id)
+                if friend is None:
+                    await reply(message, 'ユーザーとフレンドではありません')
+                    return
+                await friend.invite()
+                if data['loglevel'] == 'normal':
+                    await reply(message, f'{str(friend.display_name)} をパーティーに招待')
+                else:
+                    await reply(message, f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
+            except fortnitepy.PartyError:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'パーティーが満員か、既にパーティーにいます')
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'パーティー招待の送信リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                         ],
                         "variable": [
                             {"user": user} for name, user in users.items()
@@ -10407,6 +10930,32 @@ if discord_ready is True:
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
                 await reply(message, 'パーティー招待の送信リクエストを処理中にエラーが発生しました')
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'エラー')
+
+        elif args[0] in commands['inviteall'].split(','):
+            try:
+                for inviteuser in client.invitelist:
+                    if inviteuser != client.user.id:
+                        try:
+                            await client.user.party.invite(inviteuser)
+                        except fortnitepy.PartyError:
+                            if data['loglevel'] == 'debug':
+                                print(red(traceback.format_exc()))
+                                dstore(name,f'>>> {traceback.format_exc()}')
+                            await reply(message, 'パーティーが満員か、既にパーティーにいます')
+                        except fortnitepy.Forbidden:
+                            if data['loglevel'] == 'debug':
+                                print(red(traceback.format_exc()))
+                                dstore(name,f'>>> {traceback.format_exc()}')
+                            await reply(message, 'ユーザーとフレンドではありません')
+                        except fortnitepy.HTTPException:
+                            if data['loglevel'] == 'debug':
+                                print(red(traceback.format_exc()))
+                                dstore(name,f'>>> {traceback.format_exc()}')
+                            await reply(message, 'パーティー招待の送信リクエストを処理中にエラーが発生しました')
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
@@ -10451,22 +11000,21 @@ if discord_ready is True:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
-                                try:
-                                    friend=client.get_friend(user.id)
-                                    if friend is None:
-                                        await reply(message, 'ユーザーとフレンドではありません')
-                                        return
-                                    await friend.send(send[1])
-                                    if data['loglevel'] == 'normal':
-                                        await reply(message, f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
-                                    else:
-                                        await reply(message, f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
-                                except fortnitepy.HTTPException:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
-                            """ for name, user in users.items()
+            try:
+                friend=client.get_friend(user.id)
+                if friend is None:
+                    await reply(message, 'ユーザーとフレンドではありません')
+                    return
+                await friend.send(send[1])
+                if data['loglevel'] == 'normal':
+                    await reply(message, f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
+                else:
+                    await reply(message, f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                         ],
                         "variable": [
                             {"user": user, "send": send} for name, user in users.items()
@@ -10973,21 +11521,20 @@ if discord_ready is True:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
-                                try:
-                                    if client.has_friend(user.id) is True:
-                                        await reply(message, '既にユーザーとフレンドです')
-                                        return
-                                    await client.add_friend(user.id)
-                                    if data['loglevel'] == 'normal':
-                                        await reply(message, f'{str(user.display_name)} にフレンド申請を送信')
-                                    else:
-                                        await reply(message, f'{str(user.display_name)} / {user.id} にフレンド申請を送信')
-                                except fortnitepy.HTTPException:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, 'フレンド申請の送信リクエストを処理中にエラーが発生しました')
-                            """ for name, user in users.items()
+            try:
+                if client.has_friend(user.id) is True:
+                    await reply(message, '既にユーザーとフレンドです')
+                    return
+                await client.add_friend(user.id)
+                if data['loglevel'] == 'normal':
+                    await reply(message, f'{str(user.display_name)} にフレンド申請を送信')
+                else:
+                    await reply(message, f'{str(user.display_name)} / {user.id} にフレンド申請を送信')
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'フレンド申請の送信リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                         ],
                         "variable": [
                             {"user": user} for name, user in users.items()
@@ -11045,21 +11592,20 @@ if discord_ready is True:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
-                                try:
-                                    if client.has_friend(user.id) is False:
-                                        await reply(message, 'ユーザーとフレンドではありません')
-                                        return
-                                    await client.remove_or_decline_friend(user.id)
-                                    if data['loglevel'] == 'normal':
-                                        await reply(message, f'{str(user.display_name)} をフレンドから削除')
-                                    else:
-                                        await reply(message, f'{str(user.display_name)} / {user.id} をフレンドから削除')
-                                except fortnitepy.HTTPException:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, 'フレンドの削除リクエストを処理中にエラーが発生しました')
-                            """ for name, user in users.items()
+            try:
+                if client.has_friend(user.id) is False:
+                    await reply(message, 'ユーザーとフレンドではありません')
+                    return
+                await client.remove_or_decline_friend(user.id)
+                if data['loglevel'] == 'normal':
+                    await reply(message, f'{str(user.display_name)} をフレンドから削除')
+                else:
+                    await reply(message, f'{str(user.display_name)} / {user.id} をフレンドから削除')
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'フレンドの削除リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                         ],
                         "variable": [
                             {"user": user} for name, user in users.items()
@@ -11117,21 +11663,20 @@ if discord_ready is True:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
-                                try:
-                                    if client.is_pending(user.id) is False:
-                                        await reply(message, 'ユーザーからのフレンド申請がありません')
-                                        return
-                                    await client.accept_friend(user.id)
-                                    if data['loglevel'] == 'normal':
-                                        await reply(message, f'{str(user.display_name)} をフレンドに追加')
-                                    else:
-                                        await reply(message, f'{str(user.display_name)} / {user.id} をフレンドに追加')
-                                except fortnitepy.HTTPException:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, 'フレンドの追加リクエストを処理中にエラーが発生しました')
-                            """ for name, user in users.items()
+            try:
+                if client.is_pending(user.id) is False:
+                    await reply(message, 'ユーザーからのフレンド申請がありません')
+                    return
+                await client.accept_friend(user.id)
+                if data['loglevel'] == 'normal':
+                    await reply(message, f'{str(user.display_name)} をフレンドに追加')
+                else:
+                    await reply(message, f'{str(user.display_name)} / {user.id} をフレンドに追加')
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'フレンドの追加リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                         ],
                         "variable": [
                             {"user": user} for name, user in users.items()
@@ -11189,21 +11734,20 @@ if discord_ready is True:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
-                                try:
-                                    if client.is_pending(user.id) is False:
-                                        await reply(message, 'ユーザーからのフレンド申請がありません')
-                                        return
-                                    await client.remove_or_decline_friend(user.id)
-                                    if data['loglevel'] == 'normal':
-                                        await reply(message, f'{str(user.display_name)} のフレンド申請を拒否')
-                                    else:
-                                        await reply(message, f'{str(user.display_name)} / {user.id} のフレンド申請を拒否')
-                                except fortnitepy.HTTPException:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, 'フレンド申請の拒否リクエストを処理中にエラーが発生しました')
-                            """ for name, user in users.items()
+            try:
+                if client.is_pending(user.id) is False:
+                    await reply(message, 'ユーザーからのフレンド申請がありません')
+                    return
+                await client.remove_or_decline_friend(user.id)
+                if data['loglevel'] == 'normal':
+                    await reply(message, f'{str(user.display_name)} のフレンド申請を拒否')
+                else:
+                    await reply(message, f'{str(user.display_name)} / {user.id} のフレンド申請を拒否')
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'フレンド申請の拒否リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                         ],
                         "variable": [
                             {"user": user} for name, user in users.items()
@@ -11261,21 +11805,20 @@ if discord_ready is True:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
-                                try:
-                                    if client.is_blocked(user.id) is True:
-                                        await reply(message, '既にユーザーをブロックしています')
-                                        return
-                                    await client.block_user(user.id)
-                                    if data['loglevel'] == 'normal':
-                                        await reply(message, f'{str(user.display_name)} をブロック')
-                                    else:
-                                        await reply(message, f'{str(user.display_name)} / {user.id} をブロック')
-                                except fortnitepy.HTTPException:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, 'フレンドのブロックリクエストを処理中にエラーが発生しました')
-                            """ for name, user in users.items()
+            try:
+                if client.is_blocked(user.id) is True:
+                    await reply(message, '既にユーザーをブロックしています')
+                    return
+                await client.block_user(user.id)
+                if data['loglevel'] == 'normal':
+                    await reply(message, f'{str(user.display_name)} をブロック')
+                else:
+                    await reply(message, f'{str(user.display_name)} / {user.id} をブロック')
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'フレンドのブロックリクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                         ],
                         "variable": [
                             {"user": user} for name, user in users.items()
@@ -11333,21 +11876,20 @@ if discord_ready is True:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
-                                try:
-                                    if client.is_blocked(user.id) is False:
-                                        await reply(message, 'ユーザーをブロックしていません')
-                                        return
-                                    await client.unblock_user(user.id)
-                                    if data['loglevel'] == 'normal':
-                                        await reply(message, f'{str(user.display_name)} をブロック解除')
-                                    else:
-                                        await reply(message, f'{str(user.display_name)} / {user.id} をブロック解除')
-                                except fortnitepy.HTTPException:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, 'ブロックしたユーザーのブロック解除リクエストを処理中にエラーが発生しました')
-                            """ for name, user in users.items()
+            try:
+                if client.is_blocked(user.id) is False:
+                    await reply(message, 'ユーザーをブロックしていません')
+                    return
+                await client.unblock_user(user.id)
+                if data['loglevel'] == 'normal':
+                    await reply(message, f'{str(user.display_name)} をブロック解除')
+                else:
+                    await reply(message, f'{str(user.display_name)} / {user.id} をブロック解除')
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'ブロックしたユーザーのブロック解除リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                         ],
                         "variable": [
                             {"user": user} for name, user in users.items()
@@ -11410,35 +11952,34 @@ if discord_ready is True:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
-                                try:
-                                    if client.user.party.members.get(user.id) is None:
-                                        await reply(message, 'ユーザーがパーティーにいません')
-                                        return
-                                    member=client.user.party.members.get(user.id)
-                                    try:
-                                        await member.chatban(reason[1])
-                                    except IndexError:
-                                        await member.chatban()
-                                    if data['loglevel'] == 'normal':
-                                        await reply(message, f'{str(user.display_name)} をバン')
-                                    else:
-                                        await reply(message, f'{str(user.display_name)} / {user.id} をバン')
-                                except fortnitepy.Forbidden:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, 'パーティーリーダーではありません')
-                                except fortnitepy.NotFound:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, 'メンバーが見つかりません')
-                                except ValueError:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, '既にバンされています')
-                            """ for name, user in users.items()
+            try:
+                if client.user.party.members.get(user.id) is None:
+                    await reply(message, 'ユーザーがパーティーにいません')
+                    return
+                member=client.user.party.members.get(user.id)
+                try:
+                    await member.chatban(reason[1])
+                except IndexError:
+                    await member.chatban()
+                if data['loglevel'] == 'normal':
+                    await reply(message, f'{str(user.display_name)} をバン')
+                else:
+                    await reply(message, f'{str(user.display_name)} / {user.id} をバン')
+            except fortnitepy.Forbidden:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'パーティーリーダーではありません')
+            except fortnitepy.NotFound:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'メンバーが見つかりません')
+            except ValueError:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, '既にバンされています')""" for name, user in users.items()
                         ],
                         "variable": [
                             {"user": user, "reason": reason} for name, user in users.items()
@@ -11507,32 +12048,31 @@ if discord_ready is True:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
-                                try:
-                                    if client.user.party.members.get(user.id) is None:
-                                        await reply(message, 'ユーザーがパーティーにいません')
-                                        return
-                                    member=client.user.party.members.get(user.id)
-                                    await member.promote()
-                                    if data['loglevel'] == 'normal':
-                                        await reply(message, f'{str(user.display_name)} に譲渡')
-                                    else:
-                                        await reply(message, f'{str(user.display_name)} / {user.id} に譲渡')
-                                except fortnitepy.Forbidden:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, 'パーティーリーダーではありません')
-                                except fortnitepy.PartyError:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, '既にパーティーリーダーです')
-                                except fortnitepy.HTTPException:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, 'パーティーリーダーの譲渡リクエストを処理中にエラーが発生しました')
-                            """ for name, user in users.items()
+            try:
+                if client.user.party.members.get(user.id) is None:
+                    await reply(message, 'ユーザーがパーティーにいません')
+                    return
+                member=client.user.party.members.get(user.id)
+                await member.promote()
+                if data['loglevel'] == 'normal':
+                    await reply(message, f'{str(user.display_name)} に譲渡')
+                else:
+                    await reply(message, f'{str(user.display_name)} / {user.id} に譲渡')
+            except fortnitepy.Forbidden:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'パーティーリーダーではありません')
+            except fortnitepy.PartyError:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, '既にパーティーリーダーです')
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'パーティーリーダーの譲渡リクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                         ],
                         "variable": [
                             {"user": user} for name, user in users.items()
@@ -11601,32 +12141,31 @@ if discord_ready is True:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
-                                try:
-                                    if client.user.party.members.get(user.id) is None:
-                                        await reply(message, 'ユーザーがパーティーにいません')
-                                        return
-                                    member=client.user.party.members.get(user.id)
-                                    await member.kick()
-                                    if data['loglevel'] == 'normal':
-                                        await reply(message, f'{str(user.display_name)} をキック')
-                                    else:
-                                        await reply(message, f'{str(user.display_name)} / {user.id} をキック')
-                                except fortnitepy.Forbidden:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, 'パーティーリーダーではありません')
-                                except fortnitepy.PartyError:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, '自分をキックすることはできません')
-                                except fortnitepy.HTTPException:
-                                    if data['loglevel'] == 'debug':
-                                        print(red(traceback.format_exc()))
-                                        dstore(name,f'>>> {traceback.format_exc()}')
-                                    await reply(message, 'パーティーメンバーのキックリクエストを処理中にエラーが発生しました')
-                            """ for name, user in users.items()
+            try:
+                if client.user.party.members.get(user.id) is None:
+                    await reply(message, 'ユーザーがパーティーにいません')
+                    return
+                member=client.user.party.members.get(user.id)
+                await member.kick()
+                if data['loglevel'] == 'normal':
+                    await reply(message, f'{str(user.display_name)} をキック')
+                else:
+                    await reply(message, f'{str(user.display_name)} / {user.id} をキック')
+            except fortnitepy.Forbidden:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'パーティーリーダーではありません')
+            except fortnitepy.PartyError:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, '自分をキックすることはできません')
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'パーティーメンバーのキックリクエストを処理中にエラーが発生しました')""" for name, user in users.items()
                         ],
                         "variable": [
                             {"user": user} for name, user in users.items()
@@ -11775,19 +12314,7 @@ if discord_ready is True:
             try:
                 flag = False
                 if client.outfitlock is True:
-                    if client.owner is not None:
-                        if data['fortnite']['whitelist-ignorelock']:
-                            if client.owner.id != message.author.id and message.author.id not in whitelist:
-                                flag = True
-                        else:
-                            if client.owner.id != message.author.id:
-                                flag = True
-                    else:
-                        if data['fortnite']['whitelist-ignorelock']:
-                            if message.author.id not in whitelist:
-                                flag = True
-                        else:
-                            flag = True
+                    flag = lock_check(client, author_id)
                 if flag is True:
                     await reply(message, 'ロックされています')
                     return
@@ -11812,20 +12339,8 @@ if discord_ready is True:
         elif args[0] in commands['allbackpack'].split(','):
             try:
                 flag = False
-                if client.outfitlock is True:
-                    if client.owner is not None:
-                        if data['fortnite']['whitelist-ignorelock']:
-                            if client.owner.id != message.author.id and message.author.id not in whitelist:
-                                flag = True
-                        else:
-                            if client.owner.id != message.author.id:
-                                flag = True
-                    else:
-                        if data['fortnite']['whitelist-ignorelock']:
-                            if message.author.id not in whitelist:
-                                flag = True
-                        else:
-                            flag = True
+                if client.backpacklock is True:
+                    flag = lock_check(client, author_id)
                 if flag is True:
                     await reply(message, 'ロックされています')
                     return
@@ -11847,23 +12362,37 @@ if discord_ready is True:
                 dstore(name,f'>>> {traceback.format_exc()}')
                 await reply(message, 'エラー')
 
+        elif args[0] in commands['allpet'].split(','):
+            try:
+                flag = False
+                if client.backpacklock is True:
+                    flag = lock_check(client, author_id)
+                if flag is True:
+                    await reply(message, 'ロックされています')
+                    return
+                with open('allen.json', 'r', encoding='utf-8') as f:
+                    allskin = json.load(f)
+                for item in allskin['data']:
+                    if client.stopcheck is True:
+                        client.stopcheck=False
+                        break
+                    if item['type'] == 'pet':
+                        if 'banner' not in item['id']:
+                            await client.user.party.me.set_backpack(item['id'])
+                        else:
+                            await client.user.party.me.set_backpack(item['id'],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner'))
+                        await asyncio.sleep(2)
+                await reply(message, '全てのペットを表示し終わりました')
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'エラー')
+
         elif args[0] in commands['allpickaxe'].split(','):
             try:
                 flag = False
-                if client.outfitlock is True:
-                    if client.owner is not None:
-                        if data['fortnite']['whitelist-ignorelock']:
-                            if client.owner.id != message.author.id and message.author.id not in whitelist:
-                                flag = True
-                        else:
-                            if client.owner.id != message.author.id:
-                                flag = True
-                    else:
-                        if data['fortnite']['whitelist-ignorelock']:
-                            if message.author.id not in whitelist:
-                                flag = True
-                        else:
-                            flag = True
+                if client.pickaxelock is True:
+                    flag = lock_check(client, author_id)
                 if flag is True:
                     await reply(message, 'ロックされています')
                     return
@@ -11889,19 +12418,7 @@ if discord_ready is True:
             try:
                 flag = False
                 if client.emotelock is True:
-                    if client.owner is not None:
-                        if data['fortnite']['whitelist-ignorelock']:
-                            if client.owner.id != message.author.id and message.author.id not in whitelist:
-                                flag = True
-                        else:
-                            if client.owner.id != message.author.id:
-                                flag = True
-                    else:
-                        if data['fortnite']['whitelist-ignorelock']:
-                            if message.author.id not in whitelist:
-                                flag = True
-                        else:
-                            flag = True
+                    flag = lock_check(client, author_id)
                 if flag is True:
                     await reply(message, 'ロックされています')
                     return
@@ -11916,6 +12433,78 @@ if discord_ready is True:
                         await asyncio.sleep(5)
                 else:
                     await reply(message, '全てのエモートを表示し終わりました')
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'エラー')
+
+        elif args[0] in commands['allemoji'].split(','):
+            try:
+                flag = False
+                if client.emotelock is True:
+                    flag = lock_check(client, author_id)
+                if flag is True:
+                    await reply(message, 'ロックされています')
+                    return
+                with open('allen.json', 'r', encoding='utf-8') as f:
+                    allemote = json.load(f)
+                for item in allemote['data']:
+                    if client.stopcheck is True:
+                        client.stopcheck=False
+                        break
+                    if item['type'] == 'emoji':
+                        await client.user.party.me.set_emote(item['id'])
+                        await asyncio.sleep(5)
+                else:
+                    await reply(message, '全てのエモートアイコンを表示し終わりました')
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'エラー')
+
+        elif args[0] in commands['alltoy'].split(','):
+            try:
+                flag = False
+                if client.emotelock is True:
+                    flag = lock_check(client, author_id)
+                if flag is True:
+                    await reply(message, 'ロックされています')
+                    return
+                with open('allen.json', 'r', encoding='utf-8') as f:
+                    allemote = json.load(f)
+                for item in allemote['data']:
+                    if client.stopcheck is True:
+                        client.stopcheck=False
+                        break
+                    if item['type'] == 'toy':
+                        await client.user.party.me.set_emote(item['id'])
+                        await asyncio.sleep(5)
+                else:
+                    await reply(message, '全てのおもちゃを表示し終わりました')
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'エラー')
+
+        elif args[0] in commands['allshout'].split(','):
+            try:
+                flag = False
+                if client.emotelock is True:
+                    flag = lock_check(client, author_id)
+                if flag is True:
+                    await reply(message, 'ロックされています')
+                    return
+                with open('allen.json', 'r', encoding='utf-8') as f:
+                    allemote = json.load(f)
+                for item in allemote['data']:
+                    if client.stopcheck is True:
+                        client.stopcheck=False
+                        break
+                    if item['type'] == 'shout':
+                        await client.user.party.me.set_emote(item['id'])
+                        await asyncio.sleep(5)
+                else:
+                    await reply(message, '全てのshoutを表示し終わりました')
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
@@ -12323,6 +12912,7 @@ for count, credential in enumerate(credentials.items()):
     client.prevpickaxevariants=None
     client.prevmessage={}
     client.select={}
+    client.invitelist=[]
     client.whisper=data['fortnite']['whisper']
     client.partychat=data['fortnite']['partychat']
     client.discord=data['discord']['discord']
