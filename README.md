@@ -117,6 +117,8 @@ addblacklist_discord                      : addblacklist_discord [ユーザーID
 removeblacklist_discord                   : removeblacklist_discord [ユーザーID] ユーザーをDiscordのブラックリストから削除する
 addwhitelist_discord                      : addwhitelist_discord [ユーザーID] ユーザーをDiscordのホワイトリストに追加する
 removewhitelist_discord                   : removewhitelist_discord [ユーザーID] ユーザーをDiscordのホワイトリストから削除する
+addinvitelist                             : addinvitelist [ユーザー名/ユーザーID] ユーザーを招待リストに追加する
+removeinvitelist                          : removeinvitelist [ユーザー名/ユーザーID] ユーザーを招待リストから削除する
 get                                       : get [ユーザー名/ユーザーID] ユーザーのアイテム各種の情報を取得する
 friendcount                               : 現在のフレンド数を表示する
 pendingcount                              : 現在のフレンド申請数を表示する(方向関係なし)
