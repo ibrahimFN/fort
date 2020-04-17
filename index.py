@@ -99,7 +99,7 @@ invitelist_flag = True
 discord_flag = True
 kill=False
 configkeys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['privacy']","['fortnite']['whisper']","['fortnite']['partychat']","['fortnite']['disablewhisperperfectly']","['fortnite']['disablepartychatperfectly']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['outfitmimic']","['fortnite']['backpackmimic']","['fortnite']['pickaxemimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['invite-ownerdecline']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['fortnite']['blacklist']","['fortnite']['blacklist-declineinvite']","['fortnite']['blacklist-autoblock']","['fortnite']['blacklist-autokick']","['fortnite']['blacklist-autochatban']","['fortnite']['blacklist-ignorecommand']","['fortnite']['whitelist']","['fortnite']['whitelist-allowinvite']","['fortnite']['whitelist-declineinvite']","['fortnite']['whitelist-ignorelock']","['fortnite']['whitelist-ownercommand']","['fortnite']['invitelist']","['discord']['enabled']","['discord']['token']","['discord']['owner']","['discord']['status']","['discord']['discord']","['discord']['disablediscordperfectly']","['discord']['blacklist']","['discord']['blacklist-ignorecommand']","['discord']['whitelist']","['discord']['whitelist-ignorelock']","['discord']['whitelist-ownercommand']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-token']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
-commandskeys=['ownercommands','true','false','me','prev','eval','exec','restart','relogin','reload','addblacklist','removeblacklist','addwhitelist','removewhitelist','addblacklist_discord','removeblacklist_discord','addwhitelist_discord','removewhitelist_discord','get','friendcount','pendingcount','blockcount','friendlist','pendinglist','blocklist','outfitmimic','backpackmimic','pickaxemimic','emotemimic','whisper','partychat','discord','disablewhisperperfectly','disablepartychatperfectly','disablediscordperfectly','acceptinvite','acceptfriend','joinmessageenable','randommessageenable','wait','join','joinid','leave','invite','inviteall','message','partymessage','status','banner','level','bp','privacy','privacy_public','privacy_friends_allow_friends_of_friends','privacy_friends','privacy_private_allow_friends_of_friends','privacy_private','getuser','getfriend','getpending','getblock','info','info_party','pending','removepending','addfriend','removefriend','acceptpending','declinepending','blockfriend','unblockfriend','chatban','promote','kick','ready','unready','sitout','outfitlock','backpacklock','pickaxelock','emotelock','stop','alloutfit','allbackpack','allpet','allpickaxe','allemote','allemoji','alltoy','allshout','cid','bid','petcarrier','pickaxe_id','eid','emoji_id','toy_id','shout_id','id','outfit','backpack','pet','pickaxe','emote','emoji','toy','shout','item','set','setvariant','addvariant','setstyle','addstyle','setenlightenment','outfitasset','backpackasset','pickaxeasset','emoteasset']
+commandskeys=['ownercommands','true','false','me','prev','eval','exec','restart','relogin','reload','addblacklist','removeblacklist','addwhitelist','removewhitelist','addblacklist_discord','removeblacklist_discord','addwhitelist_discord','removewhitelist_discord','addinvitelist','removeinvitelist','get','friendcount','pendingcount','blockcount','friendlist','pendinglist','blocklist','outfitmimic','backpackmimic','pickaxemimic','emotemimic','whisper','partychat','discord','disablewhisperperfectly','disablepartychatperfectly','disablediscordperfectly','acceptinvite','acceptfriend','joinmessageenable','randommessageenable','wait','join','joinid','leave','invite','inviteall','message','partymessage','status','banner','level','bp','privacy','privacy_public','privacy_friends_allow_friends_of_friends','privacy_friends','privacy_private_allow_friends_of_friends','privacy_private','getuser','getfriend','getpending','getblock','info','info_party','pending','removepending','addfriend','removefriend','acceptpending','declinepending','blockfriend','unblockfriend','chatban','promote','kick','ready','unready','sitout','outfitlock','backpacklock','pickaxelock','emotelock','stop','alloutfit','allbackpack','allpet','allpickaxe','allemote','allemoji','alltoy','allshout','cid','bid','petcarrier','pickaxe_id','eid','emoji_id','toy_id','shout_id','id','outfit','backpack','pet','pickaxe','emote','emoji','toy','shout','item','set','setvariant','addvariant','setstyle','addstyle','setenlightenment','outfitasset','backpackasset','pickaxeasset','emoteasset']
 ignore=['ownercommands','true','false','me', 'privacy_public', 'privacy_friends_allow_friends_of_friends', 'privacy_friends', 'privacy_private_allow_friends_of_friends', 'privacy_private', 'info_party']
 
 def dstore(username, content):
@@ -1007,40 +1007,27 @@ async def aexec(code, variable):
     scode = code.split('\n')
     delete = len(_(scode[0]))
     lines = [i.replace(u"\u0020", "", delete) for i in scode]
-    var = []
-    for line in lines:
-        result = re.match(r" *.+ *=", line)
-        if result is not None and "(" not in result.group(0) and "[" not in result.group(0):
-            text = result.group(0)
-            text = text.replace("=", "").strip()
-            if text not in var:
-                var.append(text)
-    if data['loglevel'] == 'debug':
-        print(var)
-    
-    text = ""
-    for v in var:
-        text += f"\n {v} = var['{v}']"
-    
-    code = '\n'.join(lines)
-    locals_ = {}
-    if data['loglevel'] == 'debug':
-        print(
-            f'var = locals()\nasync def __ex():\n global var'
-            + text
-            + ''.join(f'\n {l}' for l in code.split('\n'))
-        )
-    exec(
-        f'var = locals()\nasync def __ex():\n global var'
-        + text
-        + ''.join(f'\n {l}' for l in code.split('\n')),
-        variable,
-        locals_
+    exc = (
+        f'async def __ex(var):'
+        + '\n for v in var:'
+        + '\n     v = var[v]'
+        + ''.join(f'\n {l}' for l in lines)
+        + '\n for v in locals():'
+        + '\n     var[v] = locals()[v]'
     )
-    result = await locals_["__ex"]()
-    for key in locals_.keys():
-        if key != "__ex":
-            globals()[key] = locals_[key]
+    if data['loglevel'] == 'debug':
+        print(exc)
+    exec(exc)
+    variable_before = variable.copy()
+    result = await locals()['__ex'](variable)
+    variable_after = variable.copy()
+    newvar = {k: v for k,v in variable_after.items() if (k not in variable_before.keys() or v != variable_before.get(k)) and "_" not in k and k not in ("k", "v")}
+    for k in newvar:
+        exc = (
+            f"global {k}"
+            + f"\n{k} = newvar['{k}']"
+        )
+        exec(exc)
     return result
 
 try:
@@ -2589,7 +2576,7 @@ async def event_friend_message(message):
                 return
             await reply(message, 'プログラムを再起動します...')
             os.chdir(os.getcwd())
-            os.execv(os.sys.executable,['python','index.py'])
+            os.execv(os.sys.executable,['python', *sys.argv])
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
@@ -3044,24 +3031,24 @@ async def event_friend_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-        if user.id not in whitelist:
-            whitelist.append(user.id)
-            if user.display_name is not None:
-                data["fortnite"]["whitelist"].append(user.display_name)
+            if user.id not in whitelist:
+                whitelist.append(user.id)
+                if user.display_name is not None:
+                    data["fortnite"]["whitelist"].append(user.display_name)
+                else:
+                    data["fortnite"]["whitelist"].append(user.id)
+                try:
+                    with open("config.json", "r", encoding="utf-8") as f:
+                        data_ = json.load(f)
+                except json.decoder.JSONDecodeError:
+                    with open("config.json", "r", encoding="utf-8-sig") as f:
+                        data_ = json.load(f)
+                data_["fortnite"]["whitelist"] = data["fortnite"]["whitelist"]
+                with open("config.json", "w", encoding="utf-8") as f:
+                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストに追加しました")
             else:
-                data["fortnite"]["whitelist"].append(user.id)
-            try:
-                with open("config.json", "r", encoding="utf-8") as f:
-                    data_ = json.load(f)
-            except json.decoder.JSONDecodeError:
-                with open("config.json", "r", encoding="utf-8-sig") as f:
-                    data_ = json.load(f)
-            data_["fortnite"]["whitelist"] = data["fortnite"]["whitelist"]
-            with open("config.json", "w", encoding="utf-8") as f:
-                json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストに追加しました")
-        else:
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にホワイトリストに追加されています")""" for name, user in users.items()
+                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にホワイトリストに追加されています")""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -3151,6 +3138,166 @@ async def event_friend_message(message):
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {user.display_name} / {user.id}"
                 text += "\n数字を入力することでそのユーザーをホワイトリストから削除します"
+                await reply(message, text)
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'エラー')
+
+    elif args[0] in commands['addinvitelist'].split(','):
+        try:
+            if rawcontent == '':
+                await reply(message, f"[{commands['addinvitelist']}] [ユーザー名/ユーザーID]")
+                return
+            users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id and user.id not in client.invitelist}
+            try:
+                user=await client.fetch_profile(rawcontent)
+                if user is not None:
+                    if user.display_name is not None and user.id not in client.invitelist:
+                        users[user.display_name] = user
+                        add_cache(client, user)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+            if len(users) > 30:
+                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                return
+            if len(users) == 0:
+                await reply(message, 'ユーザーが見つかりません')
+                return
+            if len(users) == 1:
+                user=tuple(users.values())[0]
+                if user.id not in client.invitelist:
+                    client.invitelist.append(user.id)
+                    if user.display_name is not None:
+                        data["fortnite"]["invitelist"].append(user.display_name)
+                    else:
+                        data["fortnite"]["invitelist"].append(user.id)
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                    data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストに追加しました")
+                else:
+                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既に招待リストに追加されています")
+            else:
+                client.select[message.author.id] = {
+                    "exec": [
+                        """\
+        if user.id not in client.invitelist:
+            client.invitelist.append(user.id)
+            if user.display_name is not None:
+                data["fortnite"]["invitelist"].append(user.display_name)
+            else:
+                data["fortnite"]["invitelist"].append(user.id)
+            try:
+                with open("config.json", "r", encoding="utf-8") as f:
+                    data_ = json.load(f)
+            except json.decoder.JSONDecodeError:
+                with open("config.json", "r", encoding="utf-8-sig") as f:
+                    data_ = json.load(f)
+            data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
+            with open("config.json", "w", encoding="utf-8") as f:
+                json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストに追加しました")
+        else:
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既に招待リストに追加されています")""" for name, user in users.items()
+                    ],
+                    "variable": [
+                        {"user": user} for name, user in users.items()
+                    ]
+                }
+                text = str()
+                for count, user in enumerate(users.values()):
+                    text += f"\n{count+1} {user.display_name} / {user.id}"
+                text += "\n数字を入力することでそのユーザーをブラックリストに追加します"
+                await reply(message, text)
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'エラー')
+
+    elif args[0] in commands['removeinvitelist'].split(','):
+        try:
+            if rawcontent == '':
+                await reply(message, f"[{commands['removeinvitelist']}] [ユーザー名/ユーザーID]")
+                return
+            users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id and user.id in client.invitelist}
+            try:
+                user=await client.fetch_profile(rawcontent)
+                if user is not None:
+                    if user.display_name is not None and user.id in client.invitelist:
+                        users[user.display_name] = user
+                        add_cache(client, user)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+            if len(users) > 30:
+                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                return
+            if len(users) == 0:
+                await reply(message, 'ユーザーが見つかりません')
+                return
+            if len(users) == 1:
+                user=tuple(users.values())[0]
+                if user.id in client.invitelist:
+                    client.invitelist.remove(user.id)
+                    try:
+                        data["fortnite"]["invitelist"].remove(user.display_name)
+                    except ValueError:
+                        data["fortnite"]["invitelist"].remove(user.id)
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                    data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストから削除")
+                else:
+                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は招待リストに含まれていません")
+            else:
+                client.select[message.author.id] = {
+                    "exec": [
+                        """\
+        if user.id in client.invitelist:
+            client.invitelist.remove(user.id)
+            try:
+                data["fortnite"]["invitelist"].remove(user.display_name)
+            except ValueError:
+                data["fortnite"]["invitelist"].remove(user.id)
+            try:
+                with open("config.json", "r", encoding="utf-8") as f:
+                    data_ = json.load(f)
+            except json.decoder.JSONDecodeError:
+                with open("config.json", "r", encoding="utf-8-sig") as f:
+                    data_ = json.load(f)
+            data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
+            with open("config.json", "w", encoding="utf-8") as f:
+                json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストから削除")
+        else:
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は招待リストに含まれていません")""" for name, user in users.items()
+                    ],
+                    "variable": [
+                        {"user": user} for name, user in users.items()
+                    ]
+                }
+                text = str()
+                for count, user in enumerate(users.values()):
+                    text += f"\n{count+1} {user.display_name} / {user.id}"
+                text += "\n数字を入力することでそのユーザーをブラックリストから削除します"
                 await reply(message, text)
         except Exception:
             print(red(traceback.format_exc()))
@@ -6106,7 +6253,7 @@ async def event_party_message(message):
                 return
             await reply(message, 'プログラムを再起動します...')
             os.chdir(os.getcwd())
-            os.execv(os.sys.executable,['python','index.py'])
+            os.execv(os.sys.executable,['python', *sys.argv])
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
@@ -6561,24 +6708,24 @@ async def event_party_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-        if user.id not in whitelist:
-            whitelist.append(user.id)
-            if user.display_name is not None:
-                data["fortnite"]["whitelist"].append(user.display_name)
+            if user.id not in whitelist:
+                whitelist.append(user.id)
+                if user.display_name is not None:
+                    data["fortnite"]["whitelist"].append(user.display_name)
+                else:
+                    data["fortnite"]["whitelist"].append(user.id)
+                try:
+                    with open("config.json", "r", encoding="utf-8") as f:
+                        data_ = json.load(f)
+                except json.decoder.JSONDecodeError:
+                    with open("config.json", "r", encoding="utf-8-sig") as f:
+                        data_ = json.load(f)
+                data_["fortnite"]["whitelist"] = data["fortnite"]["whitelist"]
+                with open("config.json", "w", encoding="utf-8") as f:
+                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストに追加しました")
             else:
-                data["fortnite"]["whitelist"].append(user.id)
-            try:
-                with open("config.json", "r", encoding="utf-8") as f:
-                    data_ = json.load(f)
-            except json.decoder.JSONDecodeError:
-                with open("config.json", "r", encoding="utf-8-sig") as f:
-                    data_ = json.load(f)
-            data_["fortnite"]["whitelist"] = data["fortnite"]["whitelist"]
-            with open("config.json", "w", encoding="utf-8") as f:
-                json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストに追加しました")
-        else:
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にホワイトリストに追加されています")""" for name, user in users.items()
+                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にホワイトリストに追加されています")""" for name, user in users.items()
                     ],
                     "variable": [
                         {"user": user} for name, user in users.items()
@@ -6668,6 +6815,166 @@ async def event_party_message(message):
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {user.display_name} / {user.id}"
                 text += "\n数字を入力することでそのユーザーをホワイトリストから削除します"
+                await reply(message, text)
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'エラー')
+
+    elif args[0] in commands['addinvitelist'].split(','):
+        try:
+            if rawcontent == '':
+                await reply(message, f"[{commands['addinvitelist']}] [ユーザー名/ユーザーID]")
+                return
+            users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id and user.id not in client.invitelist}
+            try:
+                user=await client.fetch_profile(rawcontent)
+                if user is not None:
+                    if user.display_name is not None and user.id not in client.invitelist:
+                        users[user.display_name] = user
+                        add_cache(client, user)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+            if len(users) > 30:
+                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                return
+            if len(users) == 0:
+                await reply(message, 'ユーザーが見つかりません')
+                return
+            if len(users) == 1:
+                user=tuple(users.values())[0]
+                if user.id not in client.invitelist:
+                    client.invitelist.append(user.id)
+                    if user.display_name is not None:
+                        data["fortnite"]["invitelist"].append(user.display_name)
+                    else:
+                        data["fortnite"]["invitelist"].append(user.id)
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                    data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストに追加しました")
+                else:
+                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既に招待リストに追加されています")
+            else:
+                client.select[message.author.id] = {
+                    "exec": [
+                        """\
+        if user.id not in client.invitelist:
+            client.invitelist.append(user.id)
+            if user.display_name is not None:
+                data["fortnite"]["invitelist"].append(user.display_name)
+            else:
+                data["fortnite"]["invitelist"].append(user.id)
+            try:
+                with open("config.json", "r", encoding="utf-8") as f:
+                    data_ = json.load(f)
+            except json.decoder.JSONDecodeError:
+                with open("config.json", "r", encoding="utf-8-sig") as f:
+                    data_ = json.load(f)
+            data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
+            with open("config.json", "w", encoding="utf-8") as f:
+                json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストに追加しました")
+        else:
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既に招待リストに追加されています")""" for name, user in users.items()
+                    ],
+                    "variable": [
+                        {"user": user} for name, user in users.items()
+                    ]
+                }
+                text = str()
+                for count, user in enumerate(users.values()):
+                    text += f"\n{count+1} {user.display_name} / {user.id}"
+                text += "\n数字を入力することでそのユーザーをブラックリストに追加します"
+                await reply(message, text)
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, 'エラー')
+
+    elif args[0] in commands['removeinvitelist'].split(','):
+        try:
+            if rawcontent == '':
+                await reply(message, f"[{commands['removeinvitelist']}] [ユーザー名/ユーザーID]")
+                return
+            users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id and user.id in client.invitelist}
+            try:
+                user=await client.fetch_profile(rawcontent)
+                if user is not None:
+                    if user.display_name is not None and user.id in client.invitelist:
+                        users[user.display_name] = user
+                        add_cache(client, user)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+            if len(users) > 30:
+                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                return
+            if len(users) == 0:
+                await reply(message, 'ユーザーが見つかりません')
+                return
+            if len(users) == 1:
+                user=tuple(users.values())[0]
+                if user.id in client.invitelist:
+                    client.invitelist.remove(user.id)
+                    try:
+                        data["fortnite"]["invitelist"].remove(user.display_name)
+                    except ValueError:
+                        data["fortnite"]["invitelist"].remove(user.id)
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                    data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストから削除")
+                else:
+                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は招待リストに含まれていません")
+            else:
+                client.select[message.author.id] = {
+                    "exec": [
+                        """\
+        if user.id in client.invitelist:
+            client.invitelist.remove(user.id)
+            try:
+                data["fortnite"]["invitelist"].remove(user.display_name)
+            except ValueError:
+                data["fortnite"]["invitelist"].remove(user.id)
+            try:
+                with open("config.json", "r", encoding="utf-8") as f:
+                    data_ = json.load(f)
+            except json.decoder.JSONDecodeError:
+                with open("config.json", "r", encoding="utf-8-sig") as f:
+                    data_ = json.load(f)
+            data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
+            with open("config.json", "w", encoding="utf-8") as f:
+                json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストから削除")
+        else:
+            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は招待リストに含まれていません")""" for name, user in users.items()
+                    ],
+                    "variable": [
+                        {"user": user} for name, user in users.items()
+                    ]
+                }
+                text = str()
+                for count, user in enumerate(users.values()):
+                    text += f"\n{count+1} {user.display_name} / {user.id}"
+                text += "\n数字を入力することでそのユーザーをブラックリストから削除します"
                 await reply(message, text)
         except Exception:
             print(red(traceback.format_exc()))
@@ -7331,7 +7638,7 @@ async def event_party_message(message):
     elif args[0] in commands['inviteall'].split(','):
         try:
             for inviteuser in client.invitelist:
-                if inviteuser != client.user.id:
+                if inviteuser != client.user.id and inviteuser not in client.user.party.members:
                     try:
                         await client.user.party.invite(inviteuser)
                     except fortnitepy.PartyError:
@@ -9713,7 +10020,7 @@ if data['discord']['enabled'] is True:
                     return
                 await reply(message, 'プログラムを再起動します...')
                 os.chdir(os.getcwd())
-                os.execv(os.sys.executable,['python','index.py'])
+                os.execv(os.sys.executable,['python', *sys.argv])
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
@@ -10168,24 +10475,24 @@ if data['discord']['enabled'] is True:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
-            if user.id not in whitelist:
-                whitelist.append(user.id)
-                if user.display_name is not None:
-                    data["fortnite"]["whitelist"].append(user.display_name)
+                if user.id not in whitelist:
+                    whitelist.append(user.id)
+                    if user.display_name is not None:
+                        data["fortnite"]["whitelist"].append(user.display_name)
+                    else:
+                        data["fortnite"]["whitelist"].append(user.id)
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                    data_["fortnite"]["whitelist"] = data["fortnite"]["whitelist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストに追加しました")
                 else:
-                    data["fortnite"]["whitelist"].append(user.id)
-                try:
-                    with open("config.json", "r", encoding="utf-8") as f:
-                        data_ = json.load(f)
-                except json.decoder.JSONDecodeError:
-                    with open("config.json", "r", encoding="utf-8-sig") as f:
-                        data_ = json.load(f)
-                data_["fortnite"]["whitelist"] = data["fortnite"]["whitelist"]
-                with open("config.json", "w", encoding="utf-8") as f:
-                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストに追加しました")
-            else:
-                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にホワイトリストに追加されています")""" for name, user in users.items()
+                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にホワイトリストに追加されています")""" for name, user in users.items()
                         ],
                         "variable": [
                             {"user": user} for name, user in users.items()
@@ -10275,6 +10582,166 @@ if data['discord']['enabled'] is True:
                     for count, user in enumerate(users.values()):
                         text += f"\n{count+1} {user.display_name} / {user.id}"
                     text += "\n数字を入力することでそのユーザーをホワイトリストから削除します"
+                    await reply(message, text)
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'エラー')
+
+        elif args[0] in commands['addinvitelist'].split(','):
+            try:
+                if rawcontent == '':
+                    await reply(message, f"[{commands['addinvitelist']}] [ユーザー名/ユーザーID]")
+                    return
+                users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id and user.id not in client.invitelist}
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                    if user is not None:
+                        if user.display_name is not None and user.id not in client.invitelist:
+                            users[user.display_name] = user
+                            add_cache(client, user)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                        dstore(name,f'>>> {traceback.format_exc()}')
+                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                if len(users) > 30:
+                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    return
+                if len(users) == 0:
+                    await reply(message, 'ユーザーが見つかりません')
+                    return
+                if len(users) == 1:
+                    user=tuple(users.values())[0]
+                    if user.id not in client.invitelist:
+                        client.invitelist.append(user.id)
+                        if user.display_name is not None:
+                            data["fortnite"]["invitelist"].append(user.display_name)
+                        else:
+                            data["fortnite"]["invitelist"].append(user.id)
+                        try:
+                            with open("config.json", "r", encoding="utf-8") as f:
+                                data_ = json.load(f)
+                        except json.decoder.JSONDecodeError:
+                            with open("config.json", "r", encoding="utf-8-sig") as f:
+                                data_ = json.load(f)
+                        data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
+                        with open("config.json", "w", encoding="utf-8") as f:
+                            json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                        await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストに追加しました")
+                    else:
+                        await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既に招待リストに追加されています")
+                else:
+                    client.select[message.author.id] = {
+                        "exec": [
+                            """\
+            if user.id not in client.invitelist:
+                client.invitelist.append(user.id)
+                if user.display_name is not None:
+                    data["fortnite"]["invitelist"].append(user.display_name)
+                else:
+                    data["fortnite"]["invitelist"].append(user.id)
+                try:
+                    with open("config.json", "r", encoding="utf-8") as f:
+                        data_ = json.load(f)
+                except json.decoder.JSONDecodeError:
+                    with open("config.json", "r", encoding="utf-8-sig") as f:
+                        data_ = json.load(f)
+                data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
+                with open("config.json", "w", encoding="utf-8") as f:
+                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストに追加しました")
+            else:
+                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既に招待リストに追加されています")""" for name, user in users.items()
+                        ],
+                        "variable": [
+                            {"user": user} for name, user in users.items()
+                        ]
+                    }
+                    text = str()
+                    for count, user in enumerate(users.values()):
+                        text += f"\n{count+1} {user.display_name} / {user.id}"
+                    text += "\n数字を入力することでそのユーザーをブラックリストに追加します"
+                    await reply(message, text)
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, 'エラー')
+
+        elif args[0] in commands['removeinvitelist'].split(','):
+            try:
+                if rawcontent == '':
+                    await reply(message, f"[{commands['removeinvitelist']}] [ユーザー名/ユーザーID]")
+                    return
+                users = {name: user for name, user in cache_users.items() if rawcontent.lower() in name.lower() and user.id != client.user.id and user.id in client.invitelist}
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                    if user is not None:
+                        if user.display_name is not None and user.id in client.invitelist:
+                            users[user.display_name] = user
+                            add_cache(client, user)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                        dstore(name,f'>>> {traceback.format_exc()}')
+                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                if len(users) > 30:
+                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    return
+                if len(users) == 0:
+                    await reply(message, 'ユーザーが見つかりません')
+                    return
+                if len(users) == 1:
+                    user=tuple(users.values())[0]
+                    if user.id in client.invitelist:
+                        client.invitelist.remove(user.id)
+                        try:
+                            data["fortnite"]["invitelist"].remove(user.display_name)
+                        except ValueError:
+                            data["fortnite"]["invitelist"].remove(user.id)
+                        try:
+                            with open("config.json", "r", encoding="utf-8") as f:
+                                data_ = json.load(f)
+                        except json.decoder.JSONDecodeError:
+                            with open("config.json", "r", encoding="utf-8-sig") as f:
+                                data_ = json.load(f)
+                        data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
+                        with open("config.json", "w", encoding="utf-8") as f:
+                            json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                        await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストから削除")
+                    else:
+                        await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は招待リストに含まれていません")
+                else:
+                    client.select[message.author.id] = {
+                        "exec": [
+                            """\
+            if user.id in client.invitelist:
+                client.invitelist.remove(user.id)
+                try:
+                    data["fortnite"]["invitelist"].remove(user.display_name)
+                except ValueError:
+                    data["fortnite"]["invitelist"].remove(user.id)
+                try:
+                    with open("config.json", "r", encoding="utf-8") as f:
+                        data_ = json.load(f)
+                except json.decoder.JSONDecodeError:
+                    with open("config.json", "r", encoding="utf-8-sig") as f:
+                        data_ = json.load(f)
+                data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
+                with open("config.json", "w", encoding="utf-8") as f:
+                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストから削除")
+            else:
+                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は招待リストに含まれていません")""" for name, user in users.items()
+                        ],
+                        "variable": [
+                            {"user": user} for name, user in users.items()
+                        ]
+                    }
+                    text = str()
+                    for count, user in enumerate(users.values()):
+                        text += f"\n{count+1} {user.display_name} / {user.id}"
+                    text += "\n数字を入力することでそのユーザーをブラックリストから削除します"
                     await reply(message, text)
             except Exception:
                 print(red(traceback.format_exc()))
@@ -10938,7 +11405,7 @@ if data['discord']['enabled'] is True:
         elif args[0] in commands['inviteall'].split(','):
             try:
                 for inviteuser in client.invitelist:
-                    if inviteuser != client.user.id:
+                    if inviteuser != client.user.id and inviteuser not in client.user.party.members:
                         try:
                             await client.user.party.invite(inviteuser)
                         except fortnitepy.PartyError:
