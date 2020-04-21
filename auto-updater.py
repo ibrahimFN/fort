@@ -23,7 +23,7 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
                 break
         else:
             extension == ""
-        if extension == ".py" or extension == ".bat" or extension == ".txt" or extension == "":
+        if extension == ".py" or extension == ".bat" or extension == ".txt" or extension == ".md" or extension == "":
             if os.path.isfile(filename):
                 with open(filename, encoding='utf-8') as f:
                     current = f.read()
@@ -115,10 +115,11 @@ if "-dev" in sys.argv:
 else:
     githuburl = "https://raw.githubusercontent.com/gomashio1596/Fortnite-LobbyBot/master/"
 if CheckUpdate("index.py", githuburl) is False and "-all" in sys.argv:
-    CheckUpdate("auto-updater.py", githuburl)
     CheckUpdate("requirements.txt", githuburl)
     CheckUpdate("config.json", githuburl)
     CheckUpdate("commands.json", githuburl)
     CheckUpdate("Check update.bat", githuburl)
     CheckUpdate("INSTALL IFNOTWORK.bat", githuburl)
+CheckUpdate("auto-updater.py", githuburl)
+CheckUpdate("README.md", githuburl)
 print("すべてのアップデートが完了しました")
