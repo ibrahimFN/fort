@@ -3,6 +3,7 @@ Fortnitepyを使用したFortniteのボット
 コマンドを送ることで操作ができる
 
 # 導入
+# PC
 [Python 3.7](https://www.python.org/downloads "Pythonダウンロード")以上が必要  
 Python 3.8はエラーが多く出るのでそれ以外を推奨  
 
@@ -13,6 +14,21 @@ RUN.batを実行する
 exchage_codeの入力を求められた場合、 exchange_codeを
 [公式サイト](https://www.epicgames.com "epicgames.com")でボットのアカウントにログインし、
 [ログイン](https://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fexchange "ログイン")で取得してください。
+# Glitch
+プロジェクトのとこを押してRemix Projectを押してリミックスする  
+プロジェクトのとこを押してMake This Project Privateにチェックを入れてプロジェクトに鍵を掛ける  
+[Uptimerobot](https://uptimerobot.com "Uptimerobot")
+でアカウントを作ってログインしてDashboardを押す  
+\+ Monitorを押してGlitchでShareを押してLive AppのURLをコピーして  
+uptimerobotでMonitor TypeをHTTP(s)にしてURLに貼り付ける  
+Friendly Nameに好きな名前を付けてCreate Monitorを押す  
+configに情報を書き込む  
+commandsに好きなコマンド名を書き込む  
+exchange_codeとかがでたら、左下のToolsを押して、Consoleを押して python3 index.py  
+と書いて実行してください。exchange_codeの奴が出たら、
+exchange_codeを[公式サイト](https://www.epicgames.com "epicgames.com")でボットのアカウントにログインし、
+[ログイン](https://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fexchange "ログイン")で取得してください  
+そしてConsoleに貼り付け(出来ない場合は手動で入力してください。素早くやらないとexchange_codeが失効してしまうのでできるだけ急いでください)
 
 # config
 ```
