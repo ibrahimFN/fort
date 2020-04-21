@@ -114,7 +114,7 @@ if "-dev" in sys.argv:
     githuburl = "https://raw.githubusercontent.com/gomashio1596/Fortnite-LobbyBot/Dev/"
 else:
     githuburl = "https://raw.githubusercontent.com/gomashio1596/Fortnite-LobbyBot/master/"
-if CheckUpdate("index.py", githuburl) is False and "-all" in sys.argv:
+if CheckUpdate("index.py", githuburl) is True and "-all" in sys.argv:
     CheckUpdate("requirements.txt", githuburl)
     CheckUpdate("config.json", githuburl)
     CheckUpdate("commands.json", githuburl)
