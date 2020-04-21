@@ -9,7 +9,7 @@ def AddNewKey(data: dict, new: dict) -> dict:
     result = data.copy()
     for key,value in new.items():
         if type(value) ==  dict:
-            AddNewKey(result.get(key, {}), value)
+            result[key] = AddNewKey(result.get(key, {}), value)
         result.setdefault(key, value)
     return result
 
