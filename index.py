@@ -50,7 +50,7 @@ except ModuleNotFoundError as e:
         pass
     print(e)
     print('標準ライブラリの読み込みに失敗しました。Pythonのバージョンが間違っている可能性があります。Pythonの再インストールなどを試してみてください。問題が修正されない場合はこちらまで連絡をください\nTwitter @gomashioepic\nDiscord gomashio#4335')
-    exit()
+    sys.exit(1)
 
 try:
     from crayons import cyan, green, magenta, red, yellow
@@ -75,7 +75,7 @@ except ModuleNotFoundError as e:
         pass
     print(e)
     print('サードパーティーライブラリの読み込みに失敗しました。INSTALL.bat を実行してください。問題が修正されない場合はこちらまで連絡をください\nTwitter @gomashioepic\nDiscord gomashio#4335')
-    exit()
+    sys.exit(1)
 
 if os.getcwd().startswith('/app'):
     app=Flask(__name__)
@@ -135,7 +135,7 @@ def dprint():
     global kill
     while True:
         if kill is True:
-            exit()
+            sys.exit(0)
         if data['discord-log'] is True:
             if len(storedlog) != 0:
                 for send in storedlog:
@@ -1048,7 +1048,7 @@ try:
         if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
             print(red('APIキーが無効です。正しい値を入力してください。'))
             dstore('ボット',f'>>> APIキーが無効です。正しい値を入力してください')
-            exit()
+            sys.exit(1)
         else:
             print(red('APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください。'))
             dstore('ボット',f'>>> APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください')
@@ -1057,7 +1057,7 @@ try:
             if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
                 print(red('APIキーが無効です。正しい値を入力してください。'))
                 dstore('ボット',f'>>> APIキーが無効です。正しい値を入力してください')
-                exit()
+                sys.exit(1)
             else:
                 print(red('APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください。'))
                 dstore('ボット',f'>>> APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください')
@@ -1065,7 +1065,7 @@ try:
             if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
                 print(red('APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください。'))
                 dstore('ボット',f'>>> APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください')
-                exit()
+                sys.exit(1)
             else:
                 print(red('APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。'))
                 dstore('ボット',f'>>> APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。')
@@ -1085,7 +1085,7 @@ except KeyError as e:
     dstore('ボット',f'>>> {traceback.format_exc()}')
     dstore('ボット',f'>>> config.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。アップデート後の場合は、最新のconfig.jsonファイルを確認してください')
     dstore('ボット',f'>>> {str(e)} がありません')
-    exit()
+    sys.exit(1)
 except json.decoder.JSONDecodeError as e:
     print(red(traceback.format_exc()))
     print(red('config.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
@@ -1093,13 +1093,13 @@ except json.decoder.JSONDecodeError as e:
     dstore('ボット',f'>>> {traceback.format_exc()}')
     dstore('ボット',f'>>> config.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
     dstore('ボット',f'>>> {str(e).replace("Expecting ","不明な",1).replace("Invalid control character at","無効なコントロール文字: ").replace("value","値",1).replace("delimiter","区切り文字",1).replace("line","行:",1).replace("column","文字:").replace("char ","",1)}')
-    exit()
+    sys.exit(1)
 except FileNotFoundError:
     print(red(traceback.format_exc()))
     print(red('config.json ファイルが存在しません。'))
     dstore('ボット',f'>>> {traceback.format_exc()}')
     dstore('ボット',f'>>> config.json ファイルが存在しません')
-    exit()
+    sys.exit(1)
 
 try:
     try:
@@ -1130,7 +1130,7 @@ try:
                 dstore('ボット',f'>>> {traceback.format_exc()}')
                 dstore('ボット',f'>>> 所有者コマンドの設定に失敗しました。キーの名前が間違っていないか確認してください')
                 dstore('ボット',f'>>> {str(e)} がありません')
-                exit()
+                sys.exit(1)
 except KeyError as e:
     print(red(traceback.format_exc()))
     print(red('commands.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。アップデート後の場合は、最新のcommands.jsonファイルを確認してください。'))
@@ -1138,7 +1138,7 @@ except KeyError as e:
     dstore('ボット',f'>>> {traceback.format_exc()}')
     dstore('ボット',f'>>> commands.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。アップデート後の場合は、最新のcommands.jsonファイルを確認してください')
     dstore('ボット',f'>>> {str(e)} がありません')
-    exit()
+    sys.exit(1)
 except json.decoder.JSONDecodeError as e:
     print(red(traceback.format_exc()))
     print(red('commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
@@ -1146,13 +1146,13 @@ except json.decoder.JSONDecodeError as e:
     dstore('ボット',f'>>> {traceback.format_exc()}')
     dstore('ボット',f'>>> commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
     dstore('ボット',f'>>> {str(e).replace("Expecting ","不明な",1).replace("Invalid control character at","無効なコントロール文字: ").replace("value","値",1).replace("delimiter","区切り文字",1).replace("line","行:",1).replace("column","文字:").replace("char ","",1)}')
-    exit()
+    sys.exit(1)
 except FileNotFoundError:
     print(red(traceback.format_exc()))
     print(red('commands.json ファイルが存在しません。'))
     dstore('ボット',f'>>> {traceback.format_exc()}')
     dstore('ボット',f'>>> commands.json ファイルが存在しません')
-    exit()
+    sys.exit(1)
 
 try:
     try:
@@ -1173,13 +1173,13 @@ except json.decoder.JSONDecodeError as e:
     dstore('ボット',f'>>> {traceback.format_exc()}')
     dstore('ボット',f'>>> replies.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
     dstore('ボット',f'>>> {str(e).replace("Expecting ","不明な",1).replace("Invalid control character at","無効なコントロール文字: ").replace("value","値",1).replace("delimiter","区切り文字",1).replace("line","行:",1).replace("column","文字:").replace("char ","",1)}')
-    exit()
+    sys.exit(1)
 except FileNotFoundError:
     print(red(traceback.format_exc()))
     print(red('replies.json ファイルが存在しません。'))
     dstore('ボット',f'>>> {traceback.format_exc()}')
     dstore('ボット',f'>>> replies.json ファイルが存在しません')
-    exit()
+    sys.exit(1)
 
 threading.Thread(target=dprint,args=()).start()
 threading.Thread(target=get_item_info,args=()).start()
@@ -2625,14 +2625,14 @@ async def event_friend_message(message):
             dstore(name,f'>>> {traceback.format_exc()}')
             dstore(name,f'>>> メールアドレスまたはパスワードが間違っています')
             kill=True
-            exit()
+            sys.exit(1)
         except Exception:
             print(red(traceback.format_exc()))
             print(red(f'[{now_()}] [{client.user.display_name}] アカウントの読み込みに失敗しました。もう一度試してみてください。'))
             dstore(name,f'>>> {traceback.format_exc()}')
             dstore(name,f'>>> アカウントの読み込みに失敗しました。もう一度試してみてください')
             kill=True
-            exit()
+            sys.exit(1)
 
     elif args[0] in commands['reload'].split(','):
         result=reload_configs(client)
@@ -6302,14 +6302,14 @@ async def event_party_message(message):
             dstore(name,f'>>> {traceback.format_exc()}')
             dstore(name,f'>>> メールアドレスまたはパスワードが間違っています')
             kill=True
-            exit()
+            sys.exit(1)
         except Exception:
             print(red(traceback.format_exc()))
             print(red(f'[{now_()}] [{client.user.display_name}] アカウントの読み込みに失敗しました。もう一度試してみてください。'))
             dstore(name,f'>>> {traceback.format_exc()}')
             dstore(name,f'>>> アカウントの読み込みに失敗しました。もう一度試してみてください')
             kill=True
-            exit()
+            sys.exit(1)
 
     elif args[0] in commands['reload'].split(','):
         result=reload_configs(client)
@@ -10069,14 +10069,14 @@ if data['discord']['enabled'] is True:
                 dstore(name,f'>>> {traceback.format_exc()}')
                 dstore(name,f'>>> メールアドレスまたはパスワードが間違っています')
                 kill=True
-                exit()
+                sys.exit(1)
             except Exception:
                 print(red(traceback.format_exc()))
                 print(red(f'[{now_()}] [{client.user.display_name}] アカウントの読み込みに失敗しました。もう一度試してみてください。'))
                 dstore(name,f'>>> {traceback.format_exc()}')
                 dstore(name,f'>>> アカウントの読み込みに失敗しました。もう一度試してみてください')
                 kill=True
-                exit()
+                sys.exit(1)
 
         elif args[0] in commands['reload'].split(','):
             result=reload_configs(client)
@@ -13433,14 +13433,14 @@ except fortnitepy.AuthException as e:
         dstore('ボット',f'>>> {traceback.format_exc()}')
         dstore('ボット',f'>>> アカウントにログインできません')
     kill=True
-    exit()
+    sys.exit(1)
 except KeyboardInterrupt:
     kill=True
-    exit()
+    sys.exit(1)
 except Exception:
     print(red(traceback.format_exc()))
     print(red(f'[{now_()}] アカウントの読み込みに失敗しました。もう一度試してみてください。'))
     dstore('ボット',f'>>> {traceback.format_exc()}')
     dstore('ボット',f'>>> アカウントの読み込みに失敗しました。もう一度試してみてください')
     kill=True
-    exit()
+    sys.exit(1)
