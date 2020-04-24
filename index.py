@@ -707,16 +707,11 @@ async def reply(message, content):
     elif isinstance(message, discord.Message) is True:
         await message.channel.send(content)
 
-async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenment = (0, 0)):
+async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenment = ()):
     global blacklist
     global blacklist_
     global whitelist
     global whitelist_
-    if 'banner' in id_:
-        variants = client.user.party.me.create_variants(profile_banner='ProfileBanner')
-        variants += variants_ 
-    else:
-        variants = variants_
     if type_ == "outfit":
         flag = False
         if client.outfitlock is True:
@@ -724,6 +719,11 @@ async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenm
         if flag is True:
             return False
         else:
+            if 'banner' in id_:
+                variants = client.user.party.me.create_variants(item="AthenaCharacter", profile_banner='ProfileBanner')
+                variants += variants_ 
+            else:
+                variants = variants_
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit, asset=id_, variants=variants, enlightenment=enlightenment))
     elif type_ == "backpack":
         flag = False
@@ -732,6 +732,11 @@ async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenm
         if flag is True:
             return False
         else:
+            if 'banner' in id_:
+                variants = client.user.party.me.create_variants(item="AthenaBackpack", profile_banner='ProfileBanner')
+                variants += variants_ 
+            else:
+                variants = variants_
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack, asset=id_, variants=variants))
     elif type_ == "pet":
         flag = False
@@ -740,6 +745,11 @@ async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenm
         if flag is True:
             return False
         else:
+            if 'banner' in id_:
+                variants = client.user.party.me.create_variants(item="AthenaBackpack", profile_banner='ProfileBanner')
+                variants += variants_ 
+            else:
+                variants = variants_
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet, asset=id_, variants=variants))
     elif type_ == "pickaxe":
         flag = False
@@ -748,6 +758,11 @@ async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenm
         if flag is True:
             return False
         else:
+            if 'banner' in id_:
+                variants = client.user.party.me.create_variants(item="AthenaPickaxe", profile_banner='ProfileBanner')
+                variants += variants_ 
+            else:
+                variants = variants_
             await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe, asset=id_, variants=variants))
     elif type_ == "emote":
         flag = False
@@ -2094,8 +2109,7 @@ async def event_party_member_update(member):
                 dstore(client_user_display_name,str(partymember_emote(member)))
         if client.emotemimic is True:
             try:
-                type_ = convert_to_type(partymember_emote(member))
-                await change_asset(client, client.user.id, type_, partymember_emote(member))
+                await change_asset(client, client.user.id, "emote", partymember_emote(member))
             except Exception:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
