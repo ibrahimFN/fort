@@ -1,5 +1,5 @@
 py -3 -m pip install -U fortnitepy
-pt -3 -m pip install -U discord.py
+py -3 -m pip install -U discord.py
 py -3 -m pip install -U requests
 py -3 -m pip install -U crayons
 py -3 -m pip install -U jaconv
