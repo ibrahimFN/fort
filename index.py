@@ -2879,7 +2879,7 @@ async def event_friend_message(message):
             if rawcontent == '':
                 await reply(message, f"[{commands['addblacklist']}] [ユーザー名/ユーザーID]")
                 return
-            users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(name) and user.id != client.user.id and user.id not in blacklist}
+            users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and user.id not in blacklist}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
@@ -6558,7 +6558,7 @@ async def event_party_message(message):
             if rawcontent == '':
                 await reply(message, f"[{commands['addblacklist']}] [ユーザー名/ユーザーID]")
                 return
-            users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(name) and user.id != client.user.id and user.id not in blacklist}
+            users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and user.id not in blacklist}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
@@ -10326,7 +10326,7 @@ if data['discord']['enabled'] is True:
                 if rawcontent == '':
                     await reply(message, f"[{commands['addblacklist']}] [ユーザー名/ユーザーID]")
                     return
-                users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(name) and user.id != client.user.id and user.id not in blacklist}
+                users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and user.id not in blacklist}
                 try:
                     user=await client.fetch_profile(rawcontent)
                     if user is not None:
