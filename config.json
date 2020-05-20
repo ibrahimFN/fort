@@ -76,6 +76,7 @@
 		"whitelist-ignorelock": true,
 		"whitelist-ownercommand": true
 	},
+	"lang": "ja",
 	"no-logs": false,
 	"ingame-error": true,
 	"discord-log": false,
@@ -83,10 +84,8 @@
 	"hide-password": true,
 	"hide-token": true,
 	"hide-webhook": true,
-	"hide-api-key": true,
 	"webhook": "",
 	"caseinsensitive": true,
-	"api-key": "APIキー",
 	"loglevel": "normal",
 	"debug": false
 }
