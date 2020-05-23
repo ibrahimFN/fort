@@ -24,6 +24,7 @@ SOFTWARE.
 """
 
 try:
+    from typing import Optional, Union, Type, Any, List
     from threading import Thread, Timer
     from functools import partial
     import unicodedata
@@ -50,6 +51,7 @@ except ModuleNotFoundError as e:
         pass
     print(e)
     print('標準ライブラリの読み込みに失敗しました。Pythonのバージョンが間違っている可能性があります。Pythonの再インストールなどを試してみてください。問題が修正されない場合はこちらまで連絡をください\nTwitter @gomashioepic\nDiscord gomashio#4335')
+    print('Failed to load basic library. Python version maybe wrong. Try reinstall Python. If the issue is not resolved, please contact me\nTwitter @gomashioepic\nDiscord gomashio#4335')
     sys.exit(1)
 
 try:
@@ -75,6 +77,7 @@ except ModuleNotFoundError as e:
         pass
     print(e)
     print('サードパーティーライブラリの読み込みに失敗しました。INSTALL.bat を実行してください。問題が修正されない場合はこちらまで連絡をください\nTwitter @gomashioepic\nDiscord gomashio#4335')
+    print('Failed to load third party library. Please run INSTALL.bat. If the issue is not resolved, please contact me\nTwitter @gomashioepic\nDiscord gomashio#4335')
     sys.exit(1)
 
 if os.getcwd().startswith('/app'):
@@ -100,11 +103,19 @@ invitelist_flag = True
 otherbotlist_flag = True
 discord_flag = True
 kill=False
-configkeys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['privacy']","['fortnite']['whisper']","['fortnite']['partychat']","['fortnite']['disablewhisperperfectly']","['fortnite']['disablepartychatperfectly']","['fortnite']['ignorebot']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['outfitmimic']","['fortnite']['backpackmimic']","['fortnite']['pickaxemimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['invite-ownerdecline']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['fortnite']['blacklist']","['fortnite']['blacklist-declineinvite']","['fortnite']['blacklist-autoblock']","['fortnite']['blacklist-autokick']","['fortnite']['blacklist-autochatban']","['fortnite']['blacklist-ignorecommand']","['fortnite']['whitelist']","['fortnite']['whitelist-allowinvite']","['fortnite']['whitelist-declineinvite']","['fortnite']['whitelist-ignorelock']","['fortnite']['whitelist-ownercommand']","['fortnite']['invitelist']","['fortnite']['otherbotlist']","['discord']['enabled']","['discord']['token']","['discord']['owner']","['discord']['status']","['discord']['discord']","['discord']['disablediscordperfectly']","['discord']['ignorebot']","['discord']['blacklist']","['discord']['blacklist-ignorecommand']","['discord']['whitelist']","['discord']['whitelist-ignorelock']","['discord']['whitelist-ownercommand']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-token']","['hide-webhook']","['hide-api-key']","['webhook']","['caseinsensitive']","['api-key']","['loglevel']","['debug']"]
-commandskeys=['ownercommands','true','false','me','prev','eval','exec','restart','relogin','reload','addblacklist','removeblacklist','addwhitelist','removewhitelist','addblacklist_discord','removeblacklist_discord','addwhitelist_discord','removewhitelist_discord','addinvitelist','removeinvitelist','get','friendcount','pendingcount','blockcount','friendlist','pendinglist','blocklist','outfitmimic','backpackmimic','pickaxemimic','emotemimic','whisper','partychat','discord','disablewhisperperfectly','disablepartychatperfectly','disablediscordperfectly','acceptinvite','acceptfriend','joinmessageenable','randommessageenable','wait','join','joinid','leave','invite','inviteall','message','partymessage','status','banner','level','bp','privacy','privacy_public','privacy_friends_allow_friends_of_friends','privacy_friends','privacy_private_allow_friends_of_friends','privacy_private','getuser','getfriend','getpending','getblock','info','info_party','pending','removepending','addfriend','removefriend','acceptpending','declinepending','blockfriend','unblockfriend','chatban','promote','kick','ready','unready','sitout','outfitlock','backpacklock','pickaxelock','emotelock','stop','alloutfit','allbackpack','allpet','allpickaxe','allemote','allemoji','alltoy','allshout','cid','bid','petcarrier','pickaxe_id','eid','emoji_id','toy_id','shout_id','id','outfit','backpack','pet','pickaxe','emote','emoji','toy','shout','item','set','setvariant','addvariant','setstyle','addstyle','setenlightenment','outfitasset','backpackasset','pickaxeasset','emoteasset']
+configkeys=["['fortnite']","['fortnite']['email']","['fortnite']['password']","['fortnite']['owner']","['fortnite']['platform']","['fortnite']['cid']","['fortnite']['bid']","['fortnite']['pickaxe_id']","['fortnite']['eid']","['fortnite']['playlist']","['fortnite']['banner']","['fortnite']['banner_color']","['fortnite']['level']","['fortnite']['tier']","['fortnite']['xpboost']","['fortnite']['friendxpboost']","['fortnite']['status']","['fortnite']['privacy']","['fortnite']['whisper']","['fortnite']['partychat']","['fortnite']['disablewhisperperfectly']","['fortnite']['disablepartychatperfectly']","['fortnite']['ignorebot']","['fortnite']['joinmessage']","['fortnite']['randommessage']","['fortnite']['joinmessageenable']","['fortnite']['randommessageenable']","['fortnite']['outfitmimic']","['fortnite']['backpackmimic']","['fortnite']['pickaxemimic']","['fortnite']['emotemimic']","['fortnite']['acceptinvite']","['fortnite']['acceptfriend']","['fortnite']['addfriend']","['fortnite']['invite-ownerdecline']","['fortnite']['inviteinterval']","['fortnite']['interval']","['fortnite']['waitinterval']","['fortnite']['blacklist']","['fortnite']['blacklist-declineinvite']","['fortnite']['blacklist-autoblock']","['fortnite']['blacklist-autokick']","['fortnite']['blacklist-autochatban']","['fortnite']['blacklist-ignorecommand']","['fortnite']['whitelist']","['fortnite']['whitelist-allowinvite']","['fortnite']['whitelist-declineinvite']","['fortnite']['whitelist-ignorelock']","['fortnite']['whitelist-ownercommand']","['fortnite']['invitelist']","['fortnite']['otherbotlist']","['discord']['enabled']","['discord']['token']","['discord']['owner']","['discord']['status']","['discord']['discord']","['discord']['disablediscordperfectly']","['discord']['ignorebot']","['discord']['blacklist']","['discord']['blacklist-ignorecommand']","['discord']['whitelist']","['discord']['whitelist-ignorelock']","['discord']['whitelist-ownercommand']","['lang']","['no-logs']","['ingame-error']","['discord-log']","['hide-email']","['hide-password']","['hide-token']","['hide-webhook']","['webhook']","['caseinsensitive']","['loglevel']","['debug']"]
+localizekeys=['bot','lobbybot','credit','library','loglevel','normal','info','debug','debug_is_on','on','off','booting','login','all_login','relogin','owner','party','userid','name_or_id','partyid','content','number','eval','exec','invite_is_decline','restarting','relogining','success','accepted_invite_from','accepted_invite_from2','declined_invite_from','declined_invite_from2','declined_invite_interval','declined_invite_interval2','declined_invite_interval3','declined_invite_owner','declined_invite_owner2','declined_invite_owner3','declined_invite_whitelist','declined_invite_whitelist2','declined_invite_whitelist3','party_member_joined','party_member_left','party_member_request','party_member_kick','party_member_promote','party_member_update','party_member_disconnect','party_member_chatban','party_member_chatban2','party_update','random_message','click_invite','inviteaccept','inviteinterval','invite_from','invite_from2','friend_request_to','friend_request_from','friend_request_decline','friend_accept','friend_add','friend_remove','this_command_owneronly','failed_ownercommand','error_while_declining_partyrequest','error_while_accepting_friendrequest','error_while_declining_friendrequest','error_while_sending_friendrequest','error_while_removing_friendrequest','error_while_removing_friend','error_while_accepting_invite','error_while_declining_invite','error_while_blocking_user','error_while_unblocking_user','error_while_requesting_userinfo','error_while_joining_to_party','error_while_leaving_party','error_while_sending_partyinvite','error_while_changing_asset','error_while_changing_bpinfo','error_while_promoting_party_leader','error_while_kicking_user','error_while_swapping_user','error_while_setting_client','error_already_member_of_party','error_netcl_does_not_match','error_private_party','login_failed','failed_to_load_account','exchange_code_error','api_downing','api_downing2','not_enough_password','owner_notfound','discord_owner_notfound','blacklist_user_notfound','whitelist_user_notfound','discord_blacklist_user_notfound','discord_whitelist_user_notfound','botlist_user_notfound','invitelist_user_notfound','not_friend_with_owner','not_friend_with_inviteuser','not_friend_with_user','nor_pending_with_user','not_party_leader','load_failed_keyerror','load_failed_json','load_failed_notfound','is_missing','too_many_users','too_many_items','user_notfound','user_not_in_party','party_full_or_already_or_offline','party_full_or_already','party_notfound','party_private','not_available','must_be_int','item_notfound','error','add_to_list','already_list','remove_from_list','not_list','enter_to_add_to_list','enter_to_remove_from_list','blacklist','whitelist','discord_blacklist','discord_whitelist','invitelist','botlist','enter_to_get_userinfo','friendcount','pendingcount','outbound','inbound','blockcount','set_to','mimic','outfit','backpack','pet','pickaxe','emote','emoji','toy','command_from','whisper','partychat','discord','disable_perfect','invite','accept','decline','friend_request','join_','message','randommessage','decline_invite_for','enter_to_join_party','party_leave','user_invited','enter_to_invite_user','user_sent','enter_to_send','party_sent','status','banner','bannerid','color','level','bpinfo','tier','xpboost','friendxpboost','privacy','public','friends_allow_friends_of_friends','friends','private_allow_friends_of_friends','private','lastlogin','member_count','enter_to_show_info','itemname','remove_pending','already_friend','enter_to_send_friendrequest','remove_friend','enter_to_remove_friend','enter_to_accept_pending','enter_to_decline_pending','already_block','block_user','enter_to_block_user','not_block','unblock_user','enter_to_unblock_user','optional','reason','chatban_user','already_chatban','enter_to_chatban_user','promote_user','already_party_leader','enter_to_promote_user','kick_user','cant_kick_yourself','readystate','ready','unready','sitout','matchstate','remaining','remaining_must_be_between_0_and_255','swap_user','enter_to_swap_user','lock','stopped','locked','all_end','enter_to_change_asset','setname','no_stylechange','enter_to_set_style','assetpath','set_playlist','please_enter_valid_number']
+commandskeys=['ownercommands','true','false','me','prev','eval','exec','restart','relogin','reload','addblacklist','removeblacklist','addwhitelist','removewhitelist','addblacklist_discord','removeblacklist_discord','addwhitelist_discord','removewhitelist_discord','addinvitelist','removeinvitelist','get','friendcount','pendingcount','blockcount','friendlist','pendinglist','blocklist','outfitmimic','backpackmimic','pickaxemimic','emotemimic','whisper','partychat','discord','disablewhisperperfectly','disablepartychatperfectly','disablediscordperfectly','acceptinvite','acceptfriend','joinmessageenable','randommessageenable','wait','join','joinid','leave','invite','inviteall','message','partymessage','status','banner','level','bp','privacy','privacy_public','privacy_friends_allow_friends_of_friends','privacy_friends','privacy_private_allow_friends_of_friends','privacy_private','getuser','getfriend','getpending','getblock','info','info_party','pending','removepending','addfriend','removefriend','acceptpending','declinepending','blockfriend','unblockfriend','chatban','promote','kick','ready','unready','sitout','match','unmatch','swap','outfitlock','backpacklock','pickaxelock','emotelock','stop','alloutfit','allbackpack','allpet','allpickaxe','allemote','allemoji','alltoy','cid','bid','petcarrier','pickaxe_id','eid','emoji_id','toy_id','id','outfit','backpack','pet','pickaxe','emote','emoji','toy','item','set','setvariant','addvariant','setstyle','addstyle','setenlightenment','outfitasset','backpackasset','pickaxeasset','emoteasset']
 ignore=['ownercommands','true','false','me', 'privacy_public', 'privacy_friends_allow_friends_of_friends', 'privacy_friends', 'privacy_private_allow_friends_of_friends', 'privacy_private', 'info_party']
 
-def dstore(username, content):
+def l(key: str, *args: Any, **kwargs: Any) -> Optional[str]:
+    text = localize.get(key)
+    if text is not None:
+        return text.format(*args, **kwargs)
+    else:
+        return None
+
+def dstore(username: str, content: str) -> None:
     content=str(content)
     if data['hide-email'] is True:
         for email in data['fortnite']['email'].split(','):
@@ -118,9 +129,6 @@ def dstore(username, content):
     if data['hide-webhook'] is True:
         for webhook in data['webhook'].split(','):
             content=content.replace(webhook,len(webhook)*"X")
-    if data['hide-api-key'] is True:
-        for apikey in data['api-key'].split(','):
-            content=content.replace(apikey,len(apikey)*"X")
     if data['discord-log'] is True:
         if len(storedlog) > 0:
             if list(storedlog[len(storedlog)-1].keys())[0] == username:
@@ -133,7 +141,7 @@ def dstore(username, content):
         else:
             storedlog.append({username: content})
 
-def dprint():
+def dprint() -> None:
     global kill
     while True:
         if kill is True:
@@ -171,7 +179,7 @@ def dprint():
                     except TypeError:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
-                            dstore("ボット", f">>> {traceback.format_exc()}")
+                            dstore('ボット', f">>> {traceback.format_exc()}")
                         try:
                             storedlog.remove(send)
                         except Exception:
@@ -179,28 +187,28 @@ def dprint():
                         continue
                     except Exception:
                         print(red(traceback.format_exc()))
-                        dstore("ボット", f">>> {traceback.format_exc()}")
+                        dstore('ボット', f">>> {traceback.format_exc()}")
                         print(yellow(f'{username}: {content} の送信中にエラーが発生しました'))
-                        dstore("ボット", f"{username}: {content} の送信中にエラーが発生しました")
+                        dstore('ボット', f'{username}: {content} の送信中にエラーが発生しました')
                         continue
                 time.sleep(5)
 
-def get_device_auth_details():
+def get_device_auth_details() -> None:
     if os.path.isfile(filename):
         with open(filename, 'r') as fp:
             return json.load(fp)
     return {}
 
-def store_device_auth_details(email, details):
+def store_device_auth_details(email: str, details: dict) -> None:
     existing = get_device_auth_details()
     existing[email] = details
     with open(filename, 'w') as fp:
         json.dump(existing, fp)
 
-def now_():
+def now_() -> str:
     return datetime.datetime.now().strftime('%H:%M:%S')
 
-def platform_to_str(platform):
+def platform_to_str(platform: fortnitepy.Platform) -> Optional[str]:
     if platform is fortnitepy.Platform.WINDOWS:
         return 'Windows'
     elif platform is fortnitepy.Platform.MAC:
@@ -218,84 +226,78 @@ def platform_to_str(platform):
     else:
         return None
 
-def convert_to_type(text):
-    if True in [text.lower() in commands[key].split(",") for key in ("cid", "outfit", "outfitasset")] or text.lower().startswith("cid_"):
+def convert_to_type(text: str) -> Optional[str]:
+    if True in [text.lower() in commands[key].split(",") for key in ("cid", "outfit", "alloutfit", "outfitasset")] or text.lower().startswith("cid_"):
         return "outfit"
-    elif True in [text.lower() in commands[key].split(",") for key in ("bid", "backpack", "backpackasset")] or text.lower().startswith("bid_"):
+    elif True in [text.lower() in commands[key].split(",") for key in ("bid", "backpack", "allbackpack", "backpackasset")] or text.lower().startswith("bid_"):
         return "backpack"
-    elif True in [text.lower() in commands[key].split(",") for key in ("petcarrier", "pet")] or text.lower().startswith("petcarrier_"):
+    elif True in [text.lower() in commands[key].split(",") for key in ("petcarrier", "pet", "allpet")] or text.lower().startswith("petcarrier_"):
         return "pet"
-    elif True in [text.lower() in commands[key].split(",") for key in ("pickaxe_id", "pickaxe", "pickaxeasset")] or text.lower().startswith("pickaxe_id"):
+    elif True in [text.lower() in commands[key].split(",") for key in ("pickaxe_id", "pickaxe", "allpickaxe", "pickaxeasset")] or text.lower().startswith("pickaxe_id"):
         return "pickaxe"
-    elif True in [text.lower() in commands[key].split(",") for key in ("eid", "emote", "emoteasset")] or text.lower().startswith("eid_"):
+    elif True in [text.lower() in commands[key].split(",") for key in ("eid", "emote", "allemote", "emoteasset")] or text.lower().startswith("eid_"):
         return "emote"
-    elif True in [text.lower() in commands[key].split(",") for key in ("emoji_id", "emoji")] or text.lower().startswith("emoji_"):
+    elif True in [text.lower() in commands[key].split(",") for key in ("emoji_id", "emoji", "allemoji")] or text.lower().startswith("emoji_"):
         return "emoji"
-    elif True in [text.lower() in commands[key].split(",") for key in ("toy_id", "toy")] or text.lower().startswith("toy_"):
+    elif True in [text.lower() in commands[key].split(",") for key in ("toy_id", "toy", "alltoy")] or text.lower().startswith("toy_"):
         return "toy"
-    elif True in [text.lower() in commands[key].split(",") for key in ("shout_id", "shout")] or text.lower().startswith("shout_"):
-        return "shout"
     elif True in [text.lower() in commands[key].split(",") for key in ("id", "item")]:
         return "item"
 
-def convert_to_asset(text):
-    if True in [text.lower() in commands[key].split(",") for key in ("cid", "outfit", "outfitasset")] or text.lower().startswith("cid_"):
+def convert_to_asset(text: str) -> Optional[str]:
+    if True in [text.lower() in commands[key].split(",") for key in ("cid", "outfit", "alloutfit", "outfitasset")] or text.lower().startswith("cid_"):
         return "outfit"
-    elif True in [text.lower() in commands[key].split(",") for key in ("bid", "backpack", "backpackasset")] or text.lower().startswith("bid_"):
+    elif True in [text.lower() in commands[key].split(",") for key in ("bid", "backpack", "allbackpack", "backpackasset")] or text.lower().startswith("bid_"):
         return "backpack"
-    elif True in [text.lower() in commands[key].split(",") for key in ("petcarrier", "pet")] or text.lower().startswith("petcarrier_"):
+    elif True in [text.lower() in commands[key].split(",") for key in ("petcarrier", "pet", "allpet")] or text.lower().startswith("petcarrier_"):
         return "backpack"
-    elif True in [text.lower() in commands[key].split(",") for key in ("pickaxe_id", "pickaxe", "pickaxeasset")] or text.lower().startswith("pickaxe_id"):
+    elif True in [text.lower() in commands[key].split(",") for key in ("pickaxe_id", "pickaxe", "allpickaxe", "pickaxeasset")] or text.lower().startswith("pickaxe_id"):
         return "pickaxe"
-    elif True in [text.lower() in commands[key].split(",") for key in ("eid", "emote", "emoteasset")] or text.lower().startswith("eid_"):
+    elif True in [text.lower() in commands[key].split(",") for key in ("eid", "emote", "allemote", "emoteasset")] or text.lower().startswith("eid_"):
         return "emote"
-    elif True in [text.lower() in commands[key].split(",") for key in ("emoji_id", "emoji")] or text.lower().startswith("emoji_"):
+    elif True in [text.lower() in commands[key].split(",") for key in ("emoji_id", "emoji", "allemoji")] or text.lower().startswith("emoji_"):
         return "emote"
-    elif True in [text.lower() in commands[key].split(",") for key in ("toy_id", "toy")] or text.lower().startswith("toy_"):
-        return "emote"
-    elif True in [text.lower() in commands[key].split(",") for key in ("shout_id", "shout")] or text.lower().startswith("shout_"):
+    elif True in [text.lower() in commands[key].split(",") for key in ("toy_id", "toy", "alltoy")] or text.lower().startswith("toy_"):
         return "emote"
 
-def convert_to_id(text):
-    if True in [text.lower() in commands[key].split(",") for key in ("cid", "outfit", "outfitasset")] or text.lower().startswith("cid_"):
+def convert_to_id(text: str) -> Optional[str]:
+    if True in [text.lower() in commands[key].split(",") for key in ("cid", "outfit", "alloutfit", "outfitasset")] or text.lower().startswith("cid_"):
         return "cid"
-    elif True in [text.lower() in commands[key].split(",") for key in ("bid", "backpack", "backpackasset")] or text.lower().startswith("bid_"):
+    elif True in [text.lower() in commands[key].split(",") for key in ("bid", "backpack", "allbackpack", "backpackasset")] or text.lower().startswith("bid_"):
         return "bid"
-    elif True in [text.lower() in commands[key].split(",") for key in ("petcarrier", "pet")] or text.lower().startswith("petcarrier_"):
+    elif True in [text.lower() in commands[key].split(",") for key in ("petcarrier", "pet", "allpet")] or text.lower().startswith("petcarrier_"):
         return "petcarrier"
-    elif True in [text.lower() in commands[key].split(",") for key in ("pickaxe_id", "pickaxe", "pickaxeasset")] or text.lower().startswith("pickaxe_id"):
+    elif True in [text.lower() in commands[key].split(",") for key in ("pickaxe_id", "pickaxe", "allpickaxe", "pickaxeasset")] or text.lower().startswith("pickaxe_id"):
         return "pickaxe_id"
-    elif True in [text.lower() in commands[key].split(",") for key in ("eid", "emote", "emoteasset")] or text.lower().startswith("eid_"):
+    elif True in [text.lower() in commands[key].split(",") for key in ("eid", "emote", "allemote", "emoteasset")] or text.lower().startswith("eid_"):
         return "eid"
-    elif True in [text.lower() in commands[key].split(",") for key in ("emoji_id", "emoji")] or text.lower().startswith("emoji_"):
+    elif True in [text.lower() in commands[key].split(",") for key in ("emoji_id", "emoji", "allemoji")] or text.lower().startswith("emoji_"):
         return "emoji_id"
-    elif True in [text.lower() in commands[key].split(",") for key in ("toy_id", "toy")] or text.lower().startswith("toy_"):
+    elif True in [text.lower() in commands[key].split(",") for key in ("toy_id", "toy", "alltoy")] or text.lower().startswith("toy_"):
         return "toy_id"
-    elif True in [text.lower() in commands[key].split(",") for key in ("shout_id", "shout")] or text.lower().startswith("shout_"):
-        return "shout_id"
     elif True in [text.lower() in commands[key].split(",") for key in ("id", "item")]:
         return "id"
 
-def convert_variant(type_, variants):
+def convert_variant(type_: str, variants: dict) -> List[dict]:
     result = []
     for variant in variants:
         for option in variant['options']:
             result.append({"name": option['name'], 'variants': [{'item': type_, 'channel': variant['channel'], 'variant': option['tag']}]})
     return result
 
-def inviteaccept(client):
+def inviteaccept(client: fortnitepy.Client) -> None:
     if data['no-logs'] is False:
-        print(f'[{now_()}] [{client.user.display_name}] 招待を承諾に設定')
-    dstore(client.user.display_name, '招待を承諾に設定')
+        print(f'[{now_()}] [{client.user.display_name}] {l("inviteaccept")}')
+    dstore(client.user.display_name, f'{l("inviteaccept")}')
     client.acceptinvite=True
 
-def inviteinterval(client):
+def inviteinterval(client: fortnitepy.Client) -> None:
     if data['no-logs'] is False:
-        print(f'[{now_()}] [{client.user.display_name}] 招待の受付を再開します')
-    dstore(client.user.display_name, '招待の受付を再開します')
+        print(f'[{now_()}] [{client.user.display_name}] {l("inviteinterval")}')
+    dstore(client.user.display_name, f'{l("inviteinterval")}')
     client.acceptinvite_interval=True
 
-def reload_configs(client):
+def reload_configs(client: fortnitepy.Client) -> bool:
     global data
     global commands
     try:
@@ -307,57 +309,132 @@ def reload_configs(client):
                 data = json.load(f)
         if data['loglevel'] == 'debug':
             print(yellow(f'\n{data}\n'))
-            dstore('ボット',f'\n{data}\n')
+            dstore(l("bot"),f'\n```\n{data}\n```\n')
         for key in configkeys:
             exec(f"errorcheck=data{key}")
+        flag = False
         try:
             errorcheck=requests.get('https://fortnite-api.com/cosmetics/br/search?name=API-KEY-CHECK',headers={'x-api-key': data['api-key']}).json()
-        except UnicodeEncodeError:
+        except Exception:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(l("bot"),f'>>> {traceback.format_exc()}')
+            flag = True
+        else:
+            if errorcheck['status'] == 503:
+                flag = True
+        if flag is True:
             if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
-                print(red('APIキーが無効です。正しい値を入力してください。'))
-                dstore('ボット',f'>>> APIキーが無効です。正しい値を入力してください')
-                return None
+                print(red(l("api_downing")))
+                dstore(l("bot"),f'>>> {l("api_downing")}')
+                return False
             else:
-                print(red('APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください。'))
-                dstore('ボット',f'>>> APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください')
-        if errorcheck['status'] == 401:
-            if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
-                print(red('APIキーが無効です。正しい値を入力してください。'))
-                dstore('ボット',f'>>> APIキーが無効です。正しい値を入力してください')
-                return None
-            else:
-                print(red('APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください。'))
-                dstore('ボット',f'>>> APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください')
-        if errorcheck['status'] == 503:
-            if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
-                print(red('APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください。'))
-                dstore('ボット',f'>>> APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください')
-                return None
-            else:
-                print(red('APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。'))
-                dstore('ボット',f'>>> APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。')
+                print(red(l("api_downing2")))
+                dstore(l("bot"),f'>>> {l("api_downing2")}')
+                return False
+        credentials={}
+        try:
+            for count,mail in enumerate(data['fortnite']['email'].split(',')):
+                credentials[mail]=data['fortnite']['password'].split(',')[count]
+        except IndexError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+            print(red(l("not_enough_password")))
+            dstore(l("bot"),f'>>> {l("not_enough_password")}')
     except KeyError as e:
         print(red(traceback.format_exc()))
-        print(red('config.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。'))
-        print(red(f'{str(e)} がありません。'))
-        dstore('ボット',f'>>> {traceback.format_exc()}')
-        dstore('ボット',f'>>> config.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください')
-        dstore('ボット',f'>>> {str(e)} がありません')
-        return None
+        print(red(l("load_failed_keyerror", "config.json")))
+        print(red(l("is_missing", str(e))))
+        dstore(l("bot"),f'>>> {traceback.format_exc()}')
+        dstore(l("bot"),f'>>> {l("load_failed_keyerror", "config.json")}')
+        dstore(l("bot"),f'>>> {l("is_missing", str(e))}')
+        return False
     except json.decoder.JSONDecodeError as e:
         print(red(traceback.format_exc()))
-        print(red('config.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
-        print(red(str(e).replace('Expecting ','不明な',1).replace('Invalid control character at','無効なコントロール文字: ').replace('value','値',1).replace('delimiter','区切り文字',1).replace('line','行:',1).replace('column','文字:').replace('char ','',1)))
-        dstore('ボット',f'>>> {traceback.format_exc()}')
-        dstore('ボット',f'>>> config.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
-        dstore('ボット',f'>>> {str(e).replace("Expecting ","不明な",1).replace("Invalid control character at","無効なコントロール文字: ").replace("value","値",1).replace("delimiter","区切り文字",1).replace("line","行:",1).replace("column","文字:").replace("char ","",1)}')
-        return None
+        print(red(str(e)))
+        print(red(l("load_failed_json", "config.json")))
+        dstore(l("bot"),f'>>> {traceback.format_exc()}')
+        dstore(l("bot"),f'>>> {str(e)}')
+        dstore(l("bot"),f'>>> {l("load_failed_json", "config.json")}')
+        return False
     except FileNotFoundError:
         print(red(traceback.format_exc()))
-        print(red('config.json ファイルが存在しません。'))
-        dstore('ボット',f'>>> {traceback.format_exc()}')
-        dstore('ボット',f'>>> config.json ファイルが存在しません')
-        return None
+        print(red(l("load_failed_notfound", "config.json")))
+        dstore(l("bot"),f'>>> {traceback.format_exc()}')
+        dstore(l("bot"),f'>>> {l("load_failed_notfound", "config.json")}')
+        return False
+
+    if os.path.isfile(f"lang/{data['lang']}.json"):
+        try:
+            try:
+                with open(f'lang/{data["lang"]}.json', 'r', encoding='utf-8') as f:
+                    localize = json.load(f)
+            except json.decoder.JSONDecodeError:
+                with open(f'lang/{data["lang"]}.json', 'r', encoding='utf-8-sig') as f:
+                    localize = json.load(f)
+            if data['loglevel'] == 'debug':
+                print(yellow(f'\n{localize}\n'))
+                dstore(l("bot"),f'\n```\n{localize}\n```\n')
+            for key in localizekeys:
+                exec(f"errorcheck=localize['{key}']")
+        except KeyError as e:
+            print(red(traceback.format_exc()))
+            print(red(l("load_failed_keyerror", f"{data['lang']}.json")))
+            print(red(l("is_missing", str(e))))
+            dstore(l("bot"),f'>>> {traceback.format_exc()}')
+            dstore(l("bot"),f'>>> {l("load_failed_keyerror", f"""{data["lang"]}.json""")}')
+            dstore(l("bot"),f'>>> {l("is_missing", str(e))}')
+            return False
+        except json.decoder.JSONDecodeError as e:
+            print(red(traceback.format_exc()))
+            print(red(str(e)))
+            print(red(l("load_failed_json", f"{data['lang']}.json")))
+            dstore(l("bot"),f'>>> {traceback.format_exc()}')
+            dstore(l("bot"),f'>>> {str(e)}')
+            dstore(l("bot"),f'>>> {l("load_failed_json", f"""{data["lang"]}.json""")}')
+            return False
+        except FileNotFoundError:
+            print(red(traceback.format_exc()))
+            print(red(l("load_failed_notfound", f"{data['lang']}.json")))
+            dstore(l("bot"),f'>>> {traceback.format_exc()}')
+            dstore(l("bot"),f'>>> {l("load_failed_notfound", f"""{data["lang"]}.json""")}')
+            return False
+    else:
+        try:
+            try:
+                with open('lang/en.json', 'r', encoding='utf-8') as f:
+                    localize = json.load(f)
+            except json.decoder.JSONDecodeError:
+                with open('lang/en.json', 'r', encoding='utf-8-sig') as f:
+                    localize = json.load(f)
+            if data['loglevel'] == 'debug':
+                print(yellow(f'\n{localize}\n'))
+                dstore(l("bot"),f'\n```\n{localize}\n```\n')
+            for key in localizekeys:
+                exec(f"errorcheck=localize['{key}']")
+        except KeyError as e:
+            print(red(traceback.format_exc()))
+            print(red(l("load_failed_keyerror", f"en.json")))
+            print(red(l("is_missing", str(e))))
+            dstore(l("bot"),f'>>> {traceback.format_exc()}')
+            dstore(l("bot"),f'>>> {l("load_failed_keyerror", f"""en.json""")}')
+            dstore(l("bot"),f'>>> {l("is_missing", str(e))}')
+            return False
+        except json.decoder.JSONDecodeError as e:
+            print(red(traceback.format_exc()))
+            print(red(str(e)))
+            print(red(l("load_failed_json", f"en.json")))
+            dstore(l("bot"),f'>>> {traceback.format_exc()}')
+            dstore(l("bot"),f'>>> {str(e)}')
+            dstore(l("bot"),f'>>> {l("load_failed_json", f"""en.json""")}')
+            return False
+        except FileNotFoundError:
+            print(red(traceback.format_exc()))
+            print(red(l("load_failed_notfound", f"en.json")))
+            dstore(l("bot"),f'>>> {traceback.format_exc()}')
+            dstore(l("bot"),f'>>> {l("load_failed_notfound", f"""en.json""")}')
+            return False
+
     threading.Thread(target=get_item_info,args=()).start()
     if True:
         if data['fortnite']['whisper'] not in (True, False):
@@ -468,6 +545,9 @@ def reload_configs(client):
         except json.decoder.JSONDecodeError:
             with open('commands.json', 'r', encoding='utf-8-sig') as f:
                 commands=json.load(f)
+        if data['loglevel'] == 'debug':
+            print(yellow(f'\n{commands}\n'))
+            dstore(l("bot"),f'\n```\n{commands}\n```\n')
         for key in commandskeys:
             exec(f"errorcheck=commands['{key}']")
         if data['caseinsensitive'] is True:
@@ -482,37 +562,34 @@ def reload_configs(client):
                     errorcheck=commands[command.lower()]
                 except KeyError as e:
                     print(red(traceback.format_exc()))
-                    print(red('所有者コマンドの設定に失敗しました。キーの名前が間違っていないか確認してください。'))
-                    print(red(f'{str(e)} がありません。'))
-                    dstore('ボット',f'>>> {traceback.format_exc()}')
-                    dstore('ボット',f'>>> 所有者コマンドの設定に失敗しました。キーの名前が間違っていないか確認してください')
-                    dstore('ボット',f'>>> {str(e)} がありません')
-                    return None
-        if data['loglevel'] == 'debug':
-            print(yellow(f'\n{commands}\n'))
-            dstore('ボット',f'\n{commands}\n')
+                    print(red(l("failed_ownercommand")))
+                    print(red(l("is_missing", str(e))))
+                    dstore(l("bot"),f'>>> {traceback.format_exc()}')
+                    dstore(l("bot"),f'>>> {l("failed_ownercommand")}')
+                    dstore(l("bot"),f'>>> {l("is_missing", str(e))}')
+                    return False
     except KeyError as e:
         print(red(traceback.format_exc()))
-        print(red('commands.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。'))
-        print(red(f'{str(e)} がありません。'))
-        dstore('ボット',f'>>> {traceback.format_exc()}')
-        dstore('ボット',f'>>> commands.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください')
-        dstore('ボット',f'>>> {str(e)} がありません')
-        return None
+        print(red(l("load_failed_keyerror", "commands.json")))
+        print(red(l("is_missing", str(e))))
+        dstore(l("bot"),f'>>> {traceback.format_exc()}')
+        dstore(l("bot"),f'>>> {l("load_failed_keyerror", "commands.json")}')
+        dstore(l("bot"),f'>>> {l("is_missing", str(e))}')
+        return False
     except json.decoder.JSONDecodeError as e:
         print(red(traceback.format_exc()))
-        print(red('commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
-        print(red(str(e).replace('Expecting ','不明な',1).replace('Invalid control character at','無効なコントロール文字: ').replace('value','値',1).replace('delimiter','区切り文字',1).replace('line','行:',1).replace('column','文字:').replace('char ','',1)))
-        dstore('ボット',f'>>> {traceback.format_exc()}')
-        dstore('ボット',f'>>> commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
-        dstore('ボット',f'>>> {str(e).replace("Expecting ","不明な",1).replace("Invalid control character at","無効なコントロール文字: ").replace("value","値",1).replace("delimiter","区切り文字",1).replace("line","行:",1).replace("column","文字:").replace("char ","",1)}')
-        return None
+        print(red(str(e)))
+        print(red(l("load_failed_json", "commands.json")))
+        dstore(l("bot"),f'>>> {traceback.format_exc()}')
+        dstore(l("bot"),f'>>> {str(e)}')
+        dstore(l("bot"),f'>>> {l("load_failed_json", "commands.json")}')
+        return False
     except FileNotFoundError:
         print(red(traceback.format_exc()))
-        print(red('commands.json ファイルが存在しません。'))
-        dstore('ボット',f'>>> {traceback.format_exc()}')
-        dstore('ボット',f'>>> commands.json ファイルが存在しません')
-        return None
+        print(red(l("load_failed_notfound", "commands.json")))
+        dstore(l("bot"),f'>>> {traceback.format_exc()}')
+        dstore(l("bot"),f'>>> {l("load_failed_notfound", "commands.json")}')
+        return False
 
     try:
         try:
@@ -523,55 +600,53 @@ def reload_configs(client):
                 replies=json.load(f)
         if data['loglevel'] == 'debug':
             print(yellow(f'\n{replies}\n'))
-            dstore('ボット',f'\n```\n{replies}\n```\n')
+            dstore(l("bot"),f'\n```\n{replies}\n```\n')
         if data['caseinsensitive'] is True:
             replies=dict((jaconv.kata2hira(k.lower()), v) for k,v in replies.items())
     except json.decoder.JSONDecodeError as e:
         print(red(traceback.format_exc()))
-        print(red('replies.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
-        print(red(str(e).replace('Expecting ','不明な',1).replace('Invalid control character at','無効なコントロール文字: ').replace('value','値',1).replace('delimiter','区切り文字',1).replace('line','行:',1).replace('column','文字:').replace('char ','',1)))
-        dstore('ボット',f'>>> {traceback.format_exc()}')
-        dstore('ボット',f'>>> replies.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
-        dstore('ボット',f'>>> {str(e).replace("Expecting ","不明な",1).replace("Invalid control character at","無効なコントロール文字: ").replace("value","値",1).replace("delimiter","区切り文字",1).replace("line","行:",1).replace("column","文字:").replace("char ","",1)}')
-        return None
+        print(red(str(e)))
+        print(red(l("load_failed_json", "replies.json")))
+        dstore(l("bot"),f'>>> {traceback.format_exc()}')
+        dstore(l("bot"),f'>>> {str(e)}')
+        dstore(l("bot"),f'>>> {l("load_failed_json", "replies.json")}')
+        return False
     except FileNotFoundError:
         print(red(traceback.format_exc()))
-        print(red('replies.json ファイルが存在しません。'))
-        dstore('ボット',f'>>> {traceback.format_exc()}')
-        dstore('ボット',f'>>> replies.json ファイルが存在しません')
-        return None
+        print(red(l("load_failed_notfound", "replies.json")))
+        dstore(l("bot"),f'>>> {traceback.format_exc()}')
+        dstore(l("bot"),f'>>> {l("load_failed_notfound", "replies.json")}')
+        return False
 
-    return 'Success'
+    return True
 
-def get_item_info():
-    global headers
+def get_item_info() -> None:
     try:
-        headers={'x-api-key': data['api-key']}
-        req=requests.get('https://fortnite-api.com/cosmetics/br?language=en', headers=headers)
+        req=requests.get('https://fortnite-api.com/v2/cosmetics/br?language=en')
         if data['loglevel'] == 'debug':
             print(yellow(f'\n[{req.status_code}] {req.url}\n{req.text[:100]}'))
-            dstore('ボット',f'```\n[{req.status_code}] {req.url}\n{req.text[:100]}\n```')
+            dstore(l("bot"),f'```\n[{req.status_code}] {req.url}\n{req.text[:100]}\n```')
         allcosmen=req.json()
         if req.status_code == 200:
             with open('allen.json', 'w') as f:
                 json.dump(allcosmen, f)
-        req=requests.get('https://fortnite-api.com/cosmetics/br?language=ja', headers=headers)
+        req=requests.get(f'https://fortnite-api.com/v2/cosmetics/br?language={data["lang"]}')
         if data['loglevel'] == 'debug':
             print(yellow(f'[{req.status_code}] {req.url}\n{req.text[:100]}'))
-            dstore('ボット',f'```\n[{req.status_code}] {req.url}\n{req.text[:100]}\n```')
-        allcosmja=req.json()
+            dstore(l("bot"),f'```\n[{req.status_code}] {req.url}\n{req.text[:100]}\n```')
+        allcosm=req.json()
         if req.status_code == 200:
-            with open('allja.json', 'w') as f:
-                json.dump(allcosmja, f)
+            with open(f'all{data["lang"]}.json', 'w') as f:
+                json.dump(allcosm, f)
     except UnicodeEncodeError:
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
-            dstore('ボット',f'>>> {traceback.format_exc()}')
+            dstore(l("bot"),f'>>> {traceback.format_exc()}')
     except Exception:
         print(red(traceback.format_exc()))
-        dstore('ボット',f'>>> {traceback.format_exc()}')
+        dstore(l("bot"),f'>>> {traceback.format_exc()}')
 
-def add_cache(client, user):
+def add_cache(client: fortnitepy.Client, user: Type[fortnitepy.user.UserBase]) -> None:
     try:
         if isinstance(user, fortnitepy.user.UserBase) and user.id is not None:
             if isinstance(user, fortnitepy.User):
@@ -582,25 +657,23 @@ def add_cache(client, user):
                 if user is not None:
                     if user.display_name is not None:
                         cache_users[user.display_name] = user
-        else:
-            print(f"{type(user)}({user}) is not instance of fortnitepy.user.UserBase")
     except Exception:
         print(red(traceback.format_exc()))
-        dstore('ボット',f'>>> {traceback.format_exc()}')
+        dstore(l("bot"),f'>>> {traceback.format_exc()}')
 
-def partymember_backpack(member):
+def partymember_backpack(member: Type[fortnitepy.party.PartyMemberBase]) -> str:
     asset = member.meta.get_prop("AthenaCosmeticLoadout_j")["AthenaCosmeticLoadout"]["backpackDef"]
     result = re.search(r".*\.([^\'\"]*)", asset.strip("'"))
     if result is not None and result.group(1) != 'None':
         return result.group(1)
 
-def partymember_emote(member):
+def partymember_emote(member: Type[fortnitepy.party.PartyMemberBase]) -> str:
     asset = member.meta.get_prop("FrontendEmote_j")["FrontendEmote"]["emoteItemDef"]
     result = re.search(r".*\.([^\'\"]*)", asset.strip("'"))
     if result is not None and result.group(1) != 'None':
         return result.group(1)
 
-def member_asset(member, asset):
+def member_asset(member: Type[fortnitepy.party.PartyMemberBase], asset: str) -> str:
     if asset in ("backpack", "pet"):
         return partymember_backpack(member)
     elif asset in ("emote", "emoji", "toy"):
@@ -608,7 +681,7 @@ def member_asset(member, asset):
     else:
         return eval(f"member.{asset}")
 
-def lock_check(client, author_id):
+def lock_check(client: fortnitepy.Client, author_id: str) -> bool:
     if client.owner is not None:
         if data['fortnite']['whitelist-ignorelock']:
             if client.owner.id != author_id and author_id not in whitelist:
@@ -624,7 +697,7 @@ def lock_check(client, author_id):
             return True
     return False
 
-def search_item(lang, mode, text, type_ = None):
+def search_item(lang: str, mode: str, text: str, type_: str = None) -> List[dict]:
     ignoretype = [
         "banner",
         "contrail",
@@ -635,87 +708,78 @@ def search_item(lang, mode, text, type_ = None):
         "spray"
     ]
     itemlist = []
-    if lang in ('en', 'ja'):
-        with open(f'all{lang}.json', 'r', encoding='utf-8') as f:
-            data_ = json.load(f)
-    try:
-        for item in data_['data']:
-            if item['type'] in ignoretype:
+    with open(f'all{lang}.json', 'r', encoding='utf-8') as f:
+        data_ = json.load(f)
+    for item in data_['data']:
+        if item['type']['value'] in ignoretype:
+            continue
+        if mode == "name":
+            if data['caseinsensitive'] is True:
+                text=jaconv.hira2kata(text.lower())
+                name=jaconv.hira2kata(item['name'].lower())
+            else:
+                name=item['name']
+            if text in name:
+                if type_ in (None, "item"):
+                    itemlist.append(item)
+                else:
+                    if item['type']['value'] in type_.split(','):
+                        itemlist.append(item)
+        elif mode == "id":
+            if text.lower() in item['id'].lower():
+                if type_ in (None, "item"):
+                    itemlist.append(item)
+                else:
+                    if item['type']['value'] in type_.split(','):
+                        itemlist.append(item)
+        elif mode == "set":
+            if item.get('set') is None:
                 continue
-            if mode == "name":
-                if data['caseinsensitive'] is True:
-                    text=jaconv.hira2kata(text.lower())
-                    name=jaconv.hira2kata(item['name'].lower())
+            if data['caseinsensitive'] is True:
+                text=jaconv.hira2kata(text.lower())
+                name=jaconv.hira2kata(item['set']['value'].lower())
+            else:
+                name=item['set']['value']
+            if text in name:
+                if type_ in (None, "item"):
+                    itemlist.append(item)
                 else:
-                    name=item['name']
-                if text in name:
-                    if type_ in (None, "item"):
+                    if item['type']['value'] in type_.split(','):
                         itemlist.append(item)
-                    else:
-                        if item['type'] in type_.split(','):
-                            itemlist.append(item)
-            elif mode == "id":
-                if text.lower() in item['id'].lower():
-                    if type_ in (None, "item"):
-                        itemlist.append(item)
-                    else:
-                        if item['type'] in type_.split(','):
-                            itemlist.append(item)
-            elif mode == "set":
-                if item.get('set') is None:
-                    continue
-                if data['caseinsensitive'] is True:
-                    text=jaconv.hira2kata(text.lower())
-                    name=jaconv.hira2kata(item['set'].lower())
-                else:
-                    name=item['set']
-                if text in name:
-                    if type_ in (None, "item"):
-                        itemlist.append(item)
-                    else:
-                        if item['type'] in type_.split(','):
-                            itemlist.append(item)
-        if data['loglevel'] == 'debug':
-            print(yellow(f'{lang} {type_}: {text}\n{itemlist}'))
-            dstore('ボット',f'```\n{lang} {type_}: {text}\n{itemlist}\n```')
-        if len(itemlist) == 0:
-            return None
-        else:
-            return itemlist
-    except Exception:
-        print(red(traceback.format_exc()))
-        dstore('ボット',f'>>> {traceback.format_exc()}')
+    if data['loglevel'] == 'debug':
+        print(yellow(f'{lang} {type_}: {text}\n{itemlist}'))
+        dstore(l("bot"),f'```\n{lang} {type_}: {text}\n{itemlist}\n```')
+    if len(itemlist) == 0:
         return None
+    else:
+        return itemlist
 
-def search_style(lang, id_):
-    if lang in ('en', 'ja'):
-        with open(f'all{lang}.json', 'r', encoding='utf-8') as f:
-            data_ = json.load(f)
-    try:
-        for item in data_['data']:
-            if item['id'].lower() == id_.lower():
-                if item['variants'] is not None:
-                    variants = convert_variant(item['backendType'], item['variants'])
-        print(yellow(f'{id_}: {variants}'))
-        if len(variants) == 0:
-            return None
-        else:
-            return variants
-    except Exception:
-        print(red(traceback.format_exc()))
+def search_style(lang: str, id_: str) -> Optional[List[dict]]:
+    with open(f'all{lang}.json', 'r', encoding='utf-8') as f:
+        data_ = json.load(f)
+    for item in data_['data']:
+        if item['id'].lower() == id_.lower():
+            if item['variants'] is not None:
+                variants = convert_variant(item['backendType'], item['variants'])
+    print(yellow(f'{id_}: {variants}'))
+    if len(variants) == 0:
         return None
+    else:
+        return variants
 
-async def reply(message, content):
+async def reply(message: Union[Type[fortnitepy.message.MessageBase], Type[discord.Message]], content: str) -> None:
     if isinstance(message, fortnitepy.message.MessageBase) is True:
         await message.reply(content)
     elif isinstance(message, discord.Message) is True:
         await message.channel.send(content)
 
-async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenment = ()):
+async def change_asset(client: fortnitepy.Client, author_id: str, type_: str, id_: str, variants_: dict = {}, enlightenment: Union[tuple, list] = []) -> None:
     global blacklist
     global blacklist_
     global whitelist
     global whitelist_
+    if not enlightenment:
+        enlightenment = None
     if type_ == "outfit":
         flag = False
         if client.outfitlock is True:
@@ -724,11 +788,11 @@ async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenm
             return False
         else:
             if 'banner' in id_:
-                variants = client.user.party.me.create_variants(item="AthenaCharacter", profile_banner='ProfileBanner')
+                variants = client.party.me.create_variants(item="AthenaCharacter", profile_banner='ProfileBanner')
                 variants += variants_ 
             else:
                 variants = variants_
-            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_outfit, asset=id_, variants=variants, enlightenment=enlightenment))
+            await client.party.me.edit_and_keep(partial(client.party.me.set_outfit, asset=id_, variants=variants, enlightenment=enlightenment))
     elif type_ == "backpack":
         flag = False
         if client.backpacklock is True:
@@ -737,11 +801,11 @@ async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenm
             return False
         else:
             if 'banner' in id_:
-                variants = client.user.party.me.create_variants(item="AthenaBackpack", profile_banner='ProfileBanner')
+                variants = client.party.me.create_variants(item="AthenaBackpack", profile_banner='ProfileBanner')
                 variants += variants_ 
             else:
                 variants = variants_
-            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_backpack, asset=id_, variants=variants))
+            await client.party.me.edit_and_keep(partial(client.party.me.set_backpack, asset=id_, variants=variants, enlightenment=enlightenment))
     elif type_ == "pet":
         flag = False
         if client.backpacklock is True:
@@ -750,11 +814,11 @@ async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenm
             return False
         else:
             if 'banner' in id_:
-                variants = client.user.party.me.create_variants(item="AthenaBackpack", profile_banner='ProfileBanner')
+                variants = client.party.me.create_variants(item="AthenaBackpack", profile_banner='ProfileBanner')
                 variants += variants_ 
             else:
                 variants = variants_
-            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pet, asset=id_, variants=variants))
+            await client.party.me.edit_and_keep(partial(client.party.me.set_pet, asset=id_, variants=variants))
     elif type_ == "pickaxe":
         flag = False
         if client.pickaxelock is True:
@@ -763,11 +827,11 @@ async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenm
             return False
         else:
             if 'banner' in id_:
-                variants = client.user.party.me.create_variants(item="AthenaPickaxe", profile_banner='ProfileBanner')
+                variants = client.party.me.create_variants(item="AthenaPickaxe", profile_banner='ProfileBanner')
                 variants += variants_ 
             else:
                 variants = variants_
-            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_pickaxe, asset=id_, variants=variants))
+            await client.party.me.edit_and_keep(partial(client.party.me.set_pickaxe, asset=id_, variants=variants))
     elif type_ == "emote":
         flag = False
         if client.emotelock is True:
@@ -775,10 +839,10 @@ async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenm
         if flag is True:
             return False
         else:
-            if client.user.party.me.emote is not None:
-                if client.user.party.me.emote.lower() == id_.lower():
-                    await client.user.party.me.clear_emote()
-            await client.user.party.me.set_emote(asset=id_)
+            if client.party.me.emote is not None:
+                if client.party.me.emote.lower() == id_.lower():
+                    await client.party.me.clear_emote()
+            await client.party.me.set_emote(asset=id_)
             client.eid=id_
     elif type_ == "emoji":
         flag = False
@@ -787,11 +851,11 @@ async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenm
         if flag is True:
             return False
         else:
-            if client.user.party.me.emote is not None:
-                if client.user.party.me.emote.lower() == id_.lower():
-                    await client.user.party.me.clear_emote()
+            if client.party.me.emote is not None:
+                if client.party.me.emote.lower() == id_.lower():
+                    await client.party.me.clear_emote()
             id_ = f"/Game/Athena/Items/Cosmetics/Dances/Emoji/{id_}.{id_}"
-            await client.user.party.me.set_emote(asset=id_)
+            await client.party.me.set_emote(asset=id_)
             client.eid=id_
     elif type_ == "toy":
         flag = False
@@ -800,28 +864,15 @@ async def change_asset(client, author_id, type_, id_, variants_ = {}, enlightenm
         if flag is True:
             return False
         else:
-            if client.user.party.me.emote is not None:
-                if client.user.party.me.emote.lower() == id_.lower():
-                    await client.user.party.me.clear_emote()
+            if client.party.me.emote is not None:
+                if client.party.me.emote.lower() == id_.lower():
+                    await client.party.me.clear_emote()
             id_ = f"/Game/Athena/Items/Cosmetics/Toys/{id_}.{id_}"
-            await client.user.party.me.set_emote(asset=id_)
-            client.eid=id_
-    elif type_ == "shout":
-        flag = False
-        if client.emotelock is True:
-            flag = lock_check(client, author_id)
-        if flag is True:
-            return False
-        else:
-            if client.user.party.me.emote is not None:
-                if client.user.party.me.emote.lower() == id_.lower():
-                    await client.user.party.me.clear_emote()
-            id_ = f"/Game/Athena/Items/Cosmetics/Dances/Shouts/{id_}.{id_}"
-            await client.user.party.me.set_emote(asset=id_)
+            await client.party.me.set_emote(asset=id_)
             client.eid=id_
     return True
 
-async def invitation_accept(invitation):
+async def invitation_accept(invitation: fortnitepy.ReceivedPartyInvitation) -> None:
     client=invitation.client
     try:
         await invitation.accept()
@@ -834,194 +885,194 @@ async def invitation_accept(invitation):
         client.timer.start()
         if data['loglevel'] == 'normal':
             if data['no-logs'] is False:
-                print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を承諾')
-            dstore(client.user.display_name, f"{str(invitation.sender.display_name)} からの招待を承諾")
+                print(f'[{now_()}] [{client.user.display_name}] {l("accepted_invite_from", str(invitation.sender.display_name))}')
+            dstore(client.user.display_name,l("accepted_invite_from", str(invitation.sender.display_name)))
         else:
             if data['no-logs'] is False:
-                print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾')
-            dstore(client.user.display_name, f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を承諾")
+                print(f'[{now_()}] [{client.user.display_name}] {l("accepted_invite_from2", f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}]", invitation.party.id)}')
+            dstore(client.user.display_name,l("accepted_invite_from2", f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}]", invitation.party.id))
     except KeyError:
         if data['ingame-error'] is True:
-            await invitation.sender.send('Error')
+            await invitation.sender.send(l("error"))
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
     except fortnitepy.PartyError:
         if data['ingame-error'] is True:
-            await invitation.sender.send('既にパーティーのメンバーです')
+            await invitation.sender.send(l("error_already_member_of_party"))
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-        print(red(f'[{now_()}] [{client.user.display_name}] 既にパーティーのメンバーです。'))
-        dstore(client.user.display_name,f'>>> 既にパーティーのメンバーです')
+        print(red(f'[{now_()}] [{client.user.display_name}] {l("already_member_of_party")}'))
+        dstore(client.user.display_name,f'>>> {l("already_member_of_party")}')
     except fortnitepy.HTTPException:
         if data['ingame-error'] is True:
-            await invitation.sender.send('メンバーが見つかりません。')
+            await invitation.sender.send(l("user_notfound"))
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-        print(red(f'[{now_()}] [{client.user.display_name}] メンバーが見つかりません。'))
-        dstore(client.user.display_name,f'>>> メンバーが見つかりません')
+        print(red(f'[{now_()}] [{client.user.display_name}] {l("user_notfound")}'))
+        dstore(client.user.display_name,f'>>> {l("user_notfound")}')
     except fortnitepy.Forbidden:
         if data['ingame-error'] is True:
-            await invitation.sender.send('以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)')
+            await invitation.sender.send(l("error_private_party"))
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-        print(red(f'[{now_()}] [{client.user.display_name}] 以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)'))
-        dstore(client.user.display_name,f'>>> 以前に参加したプライベートパーティーに参加しようとしています。(Epicサービス側のバグです)')
+        print(red(f'[{now_()}] [{client.user.display_name}] {l("error_private_party")}'))
+        dstore(client.user.display_name,f'>>> {l("error_private_party")}')
     except fortnitepy.HTTPException:
         if data['ingame-error'] is True:
-            await invitation.sender.send('パーティー招待の承諾リクエストを処理中にエラーが発生しました')
+            await invitation.sender.send(l("error_while_accepting_partyinvite"))
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-        print(red(f'[{now_()}] [{client.user.display_name}] パーティー招待の承諾リクエストを処理中にエラーが発生しました。'))
-        dstore(client.user.display_name,f'>>> パーティー招待の承諾リクエストを処理中にエラーが発生しました')
+        print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_accepting_partyinvite")}'))
+        dstore(client.user.display_name,f'>>> {l("error_while_accepting_partyinvite")}')
     except Exception:
         if data['ingame-error'] is True:
-            await invitation.sender.send('エラー')
+            await invitation.sender.send(l("error"))
         print(red(traceback.format_exc()))
         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
-async def invitation_decline(invitation):
+async def invitation_decline(invitation: fortnitepy.ReceivedPartyInvitation) -> None:
     client=invitation.client
     try:
         await invitation.decline()
         if data['loglevel'] == 'normal':
             if data['no-logs'] is False:
-                print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を拒否')
-            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} からの招待を拒否')
+                print(f'[{now_()}] [{client.user.display_name}] {l("declined_invite_from", str(invitation.sender.display_name))}')
+            dstore(client.user.display_name,l("declined_invite_from", str(invitation.sender.display_name)))
         else:
             if data['no-logs'] is False:
-                print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を拒否')
-            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を拒否')
+                print(f'[{now_()}] [{client.user.display_name}] {l("declined_invite_from2", f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}]", invitation.party.id)}')
+            dstore(client.user.display_name,l("declined_invite_from2", f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}]", invitation.party.id))
     except fortnitepy.PartyError:
         if data['ingame-error'] is True:
-            await invitation.sender.send('受信したnet_clとクライアントのnet_clが一致しません')
+            await invitation.sender.send(l("error_netcl_does_not_match"))
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-        print(red(f'[{now_()}] [{client.user.display_name}] 受信したnet_clとクライアントのnet_clが一致しません。'))
-        dstore(client.user.display_name,f'>>> 受信したnet_clとクライアントのnet_clが一致しません')
+        print(red(f'[{now_()}] [{client.user.display_name}] {l("error_netcl_does_not_match")}'))
+        dstore(client.user.display_name,f'>>> {l("error_netcl_does_not_match")}')
     except fortnitepy.HTTPException:
         if data['ingame-error'] is True:
-            await invitation.sender.send('パーティー招待の拒否リクエストを処理中にエラーが発生しました。')
+            await invitation.sender.send(l("error_while_declining_invite"))
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-        print(red(f'[{now_()}] [{client.user.display_name}] パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
-        dstore(client.user.display_name,f'>>> パーティー招待の拒否リクエストを処理中にエラーが発生しました')
+        print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_declining_invite")}'))
+        dstore(client.user.display_name,f'>>> {l("error_while_declining_invite")}')
     except Exception:
         if data['ingame-error'] is True:
-            await invitation.sender.send('エラー')
+            await invitation.sender.send(l("error"))
         print(red(traceback.format_exc()))
         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
-async def invitation_decline_interval(invitation):
+async def invitation_decline_interval(invitation: fortnitepy.ReceivedPartyInvitation) -> None:
     client=invitation.client
     try:
         await invitation.decline()
-        await invitation.sender.send(f"招待を承諾してから{str(data['fortnite']['interval'])}秒間は招待を拒否します")
+        await invitation.sender.send(l("declined_invite_interval3"))
         if data['loglevel'] == 'normal':
             if data['no-logs'] is False:
-                print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を{str(data['fortnite']['interval'])}秒拒否")
-            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} からの招待を{str(data["fortnite"]["interval"])}秒拒否')
+                print(f'[{now_()}] [{client.user.display_name}] {l("declined_invite_interval", str(invitation.sender.display_name), str(data["fortnite"]["interval"]))}')
+            dstore(client.user.display_name,l("declined_invite_interval", str(invitation.sender.display_name), str(data["fortnite"]["interval"])))
         else:
             if data['no-logs'] is False:
-                print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を{str(data['fortnite']['interval'])}秒拒否")
-            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を{str(data["fortnite"]["interval"])}秒拒否')
+                print(f'[{now_()}] [{client.user.display_name}] {l("declined_invite_interval2", f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}]", invitation.party.id, str(data["fortnite"]["interval"]))}')
+            dstore(client.user.display_name,l("declined_invite_interval2", f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}]", invitation.party.id, str(data['fortnite']['interval'])))
     except fortnitepy.PartyError:
         if data['ingame-error'] is True:
-            await invitation.sender.send('受信したnet_clとクライアントのnet_clが一致しません')
+            await invitation.sender.send(l("error_netcl_does_not_match"))
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-        print(red(f'[{now_()}] [{client.user.display_name}] 受信したnet_clとクライアントのnet_clが一致しません。'))
-        dstore(client.user.display_name,f'>>> 受信したnet_clとクライアントのnet_clが一致しません')
+        print(red(f'[{now_()}] [{client.user.display_name}] {l("error_netcl_does_not_match")}'))
+        dstore(client.user.display_name,f'>>> {l("error_netcl_does_not_match")}')
     except fortnitepy.HTTPException:
         if data['ingame-error'] is True:
-            await invitation.sender.send('パーティー招待の拒否リクエストを処理中にエラーが発生しました')
+            await invitation.sender.send(l("error_while_declining_invite"))
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-        print(red(f'[{now_()}] [{client.user.display_name}] パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
-        dstore(client.user.display_name,f'>>> パーティー招待の拒否リクエストを処理中にエラーが発生しました')
+        print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_declining_invite")}'))
+        dstore(client.user.display_name,f'>>> {l("error_while_declining_invite")}')
     except Exception:
         if data['ingame-error'] is True:
-            await invitation.sender.send('エラー')
+            await invitation.sender.send(l("error"))
         print(red(traceback.format_exc()))
         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
-async def invitation_decline_owner(invitation):
+async def invitation_decline_owner(invitation: fortnitepy.ReceivedPartyInvitation) -> None:
     try:
         await invitation.decline()
-        await invitation.sender.send('所有者がパーティーにいるため招待を拒否します')
+        await invitation.sender.send(l("declined_invite_owner3"))
         if data['loglevel'] == 'normal':
             if data['no-logs'] is False:
-                print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待を所有者拒否")
-            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} からの招待を所有者拒否')
+                print(f'[{now_()}] [{client.user.display_name}] {l("declined_invite_owner", str(invitation.sender.display_name))}')
+            dstore(client.user.display_name,l("declined_invite_owner", str(invitation.sender.display_name)))
         else:
             if data['no-logs'] is False:
-                print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を所有者拒否")
-            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待を所有者拒否')
+                print(f'[{now_()}] [{client.user.display_name}] {l("declined_invite_owner2", f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}]", invitation.party.id)}')
+            dstore(client.user.display_name,l("declined_invite_owner2", f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}]", invitation.party.id))
     except fortnitepy.PartyError:
         if data['ingame-error'] is True:
-            await invitation.sender.send('受信したnet_clとクライアントのnet_clが一致しません')
+            await invitation.sender.send(l("error_netch_does_not_match"))
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-        print(red(f'[{now_()}] [{client.user.display_name}] 受信したnet_clとクライアントのnet_clが一致しません。'))
-        dstore(client.user.display_name,f'>>> 受信したnet_clとクライアントのnet_clが一致しません')
+        print(red(f'[{now_()}] [{client.user.display_name}] {l("error_netch_does_not_match")}'))
+        dstore(client.user.display_name,f'>>> {l("error_netch_does_not_match")}')
     except fortnitepy.HTTPException:
         if data['ingame-error'] is True:
-            await invitation.sender.send('パーティー招待の拒否リクエストを処理中にエラーが発生しました')
+            await invitation.sender.send(l("error_while_declining_invite"))
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-        print(red(f'[{now_()}] [{client.user.display_name}] パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
-        dstore(client.user.display_name,f'>>> パーティー招待の拒否リクエストを処理中にエラーが発生しました')
+        print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_declining_invite")}'))
+        dstore(client.user.display_name,f'>>> {l("error_while_declining_invite")}')
     except Exception:
         if data['ingame-error'] is True:
-            await invitation.sender.send('エラー')
+            await invitation.sender.send(l("error"))
         print(red(traceback.format_exc()))
         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
-async def invitation_decline_whitelist(invitation):
+async def invitation_decline_whitelist(invitation: fortnitepy.ReceivedPartyInvitation) -> None:
     try:
         await invitation.decline()
-        await invitation.sender.send('ホワイトリストのユーザーがパーティーにいるため招待を拒否します')
+        await invitation.sender.send(l("declined_invite_whitelist3"))
         if data['loglevel'] == 'normal':
             if data['no-logs'] is False:
-                print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からの招待をホワイトリスト拒否")
-            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} からの招待をホワイトリスト拒否')
+                print(f'[{now_()}] [{client.user.display_name}] {l("declined_invite_whitelist", str(invitation.sender.display_name))}')
+            dstore(client.user.display_name,l("declined_invite_whitelist", str(invitation.sender.display_name)))
         else:
             if data['no-logs'] is False:
-                print(f"[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待をホワイトリスト拒否")
-            dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待をホワイトリスト拒否')
+                print(f'[{now_()}] [{client.user.display_name}] {l("declined_invite_whitelist2", f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}]", invitation.party.id)}')
+            dstore(client.user.display_name,l("declined_invite_whitelist2", f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}]", invitation.party.id))
     except fortnitepy.PartyError:
         if data['ingame-error'] is True:
-            await invitation.sender.send('受信したnet_clとクライアントのnet_clが一致しません')
+            await invitation.sender.send(l("error_netcl_does_not_match"))
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-        print(red(f'[{now_()}] [{client.user.display_name}] 受信したnet_clとクライアントのnet_clが一致しません。'))
-        dstore(client.user.display_name,f'>>> 受信したnet_clとクライアントのnet_clが一致しません')
+        print(red(f'[{now_()}] [{client.user.display_name}] {l("error_netcl_does_not_match")}'))
+        dstore(client.user.display_name,f'>>> {l("error_netcl_does_not_match")}')
     except fortnitepy.HTTPException:
         if data['ingame-error'] is True:
-            await invitation.sender.send('パーティー招待の拒否リクエストを処理中にエラーが発生しました')
+            await invitation.sender.send(l("error_while_declining_invite"))
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-        print(red(f'[{now_()}] [{client.user.display_name}] パーティー招待の拒否リクエストを処理中にエラーが発生しました。'))
-        dstore(client.user.display_name,f'>>> パーティー招待の拒否リクエストを処理中にエラーが発生しました')
+        print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_declining_invite")}'))
+        dstore(client.user.display_name,f'>>> {l("error_while_declining_invite")}')
     except Exception:
         if data['ingame-error'] is True:
-            await invitation.sender.send('エラー')
+            await invitation.sender.send(l("error"))
         print(red(traceback.format_exc()))
         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
-async def aexec(code, variable):
+async def aexec(code: str, variable: dict) -> Any:
     _ = lambda l: re.match(r"(\u0020|\u3000)*", l).end() * u"\u0020"
     scode = code.split('\n')
     delete = len(_(scode[0]))
@@ -1040,7 +1091,7 @@ async def aexec(code, variable):
     variable_before = variable.copy()
     result = await locals()['__ex'](variable)
     variable_after = variable.copy()
-    newvar = {k: v for k,v in variable_after.items() if (k not in variable_before.keys() or v != variable_before.get(k)) and "_" not in k and k not in ("k", "v")}
+    newvar = {k: v for k,v in variable_after.items() if (k not in variable_before.keys() or v != variable_before.get(k)) and "_" not in k and k not in ("k", "v") and isinstance(k, str) is True}
     for k in newvar:
         exc = (
             f"global {k}"
@@ -1048,6 +1099,7 @@ async def aexec(code, variable):
         )
         exec(exc)
     return result
+
 
 try:
     try:
@@ -1061,33 +1113,30 @@ try:
         dstore('ボット',f'\n```\n{data}\n```\n')
     for key in configkeys:
         exec(f"errorcheck=data{key}")
+    flag = False
     try:
-        errorcheck=requests.get('https://fortnite-api.com/cosmetics/br/search?name=API-KEY-CHECK',headers={'x-api-key': data['api-key']}).json()
-    except UnicodeEncodeError:
+        errorcheck=requests.get('https://fortnite-api.com/v2/cosmetics/br/DOWN_CHECK').json()
+    except Exception:
+        if data['loglevel'] == 'debug':
+            print(red(traceback.format_exc()))
+            dstore("Bot",f'>>> {traceback.format_exc()}')
+        flag = True
+    else:
+        if errorcheck['status'] == 503:
+            flag = True
+    if flag is True:
         if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
-            print(red('APIキーが無効です。正しい値を入力してください。'))
-            dstore('ボット',f'>>> APIキーが無効です。正しい値を入力してください')
+            print(red('APIがダウンしています。しばらく待ってからもう一度起動してみてください。'))
+            print(red('API is dawning. Please try again later.'))
+            dstore('ボット',f'>>> APIがダウンしています。しばらく待ってからもう一度起動してみてください。')
+            dstore('Bot',f'>>> API is dawning. Please try again later.')
             sys.exit(1)
         else:
-            print(red('APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください。'))
-            dstore('ボット',f'>>> APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください')
-    else:
-        if errorcheck['status'] == 401:
-            if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
-                print(red('APIキーが無効です。正しい値を入力してください。'))
-                dstore('ボット',f'>>> APIキーが無効です。正しい値を入力してください')
-                sys.exit(1)
-            else:
-                print(red('APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください。'))
-                dstore('ボット',f'>>> APIキーが無効です。最新のアイテムデータをダウンロードできませんでした。正しい値を入力してください')
-        if errorcheck['status'] == 503:
-            if os.path.isfile('allen.json') is False or os.path.isfile('allja.json') is False:
-                print(red('APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください。'))
-                dstore('ボット',f'>>> APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください')
-                sys.exit(1)
-            else:
-                print(red('APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。'))
-                dstore('ボット',f'>>> APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。')
+            print(red('APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください。'))
+            print(red('Failed to download latest item data because API is dawning. Please try again later.'))
+            dstore('ボット',f'>>> APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください。')
+            dstore('Bot',f'>>> Failed to download latest item data because API is dawning. Please try again later.')
+                
     credentials={}
     try:
         for count,mail in enumerate(data['fortnite']['email'].split(',')):
@@ -1095,30 +1144,129 @@ try:
     except IndexError:
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
-        print(red('メールアドレスの数に対しパスワードの数が足りません。読み込めたアカウントのみ起動されます'))
-        dstore('ボット',f'>>> メールアドレスの数に対しパスワードの数が足りません。読み込めたアカウントのみ起動されます')
+        print(red('メールアドレスの数に対しパスワードの数が足りません。読み込めたアカウントのみ起動されます。'))
+        print(red('There are not enough passwords for the number of email addresses. Boot only loaded accounts.'))
+        dstore('ボット',f'>>> メールアドレスの数に対しパスワードの数が足りません。読み込めたアカウントのみ起動されます。')
+        dstore('Bot',f'>>> There are not enough passwords for the number of email addresses. Boot only loaded accounts.')
 except KeyError as e:
     print(red(traceback.format_exc()))
-    print(red('config.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。アップデート後の場合は、最新のconfig.jsonファイ��を確認してください。'))
+    print(red('config.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。アップデート後の場合は、最新のconfig.jsonファイルを確認してください。'))
     print(red(f'{str(e)} がありません。'))
+    print(red('Failed to load config.json file. Make sure key name is correct. If this after update, plase check latest config.json file.'))
+    print(red(f'{str(e)} is missing.'))
     dstore('ボット',f'>>> {traceback.format_exc()}')
-    dstore('ボット',f'>>> config.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。アップデート後の場合は、最新のconfig.jsonファイルを確認してください')
+    dstore('ボット',f'>>> config.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。アップデート後の場合は、最新のconfig.jsonファイルを確認してください。')
     dstore('ボット',f'>>> {str(e)} がありません')
+    dstore('Bot',f'>>> Failed to load config.json file. Make sure key name is correct. If this after update, plase check latest config.json file.')
+    dstore('Bot',f'>>> {str(e)} is missing.')
     sys.exit(1)
 except json.decoder.JSONDecodeError as e:
     print(red(traceback.format_exc()))
+    print(red(str(e)))
     print(red('config.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
-    print(red(str(e).replace('Expecting ','不明な',1).replace('Invalid control character at','無効なコントロール文字: ').replace('value','値',1).replace('delimiter','区切り文字',1).replace('line','行:',1).replace('column','文字:').replace('char ','',1)))
+    print(red('Failed to load config.json file. Make sure you wrote correctly.'))
     dstore('ボット',f'>>> {traceback.format_exc()}')
-    dstore('ボット',f'>>> config.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
-    dstore('ボット',f'>>> {str(e).replace("Expecting ","不明な",1).replace("Invalid control character at","無効なコントロール文字: ").replace("value","値",1).replace("delimiter","区切り文字",1).replace("line","行:",1).replace("column","文字:").replace("char ","",1)}')
+    dstore('ボット',f'>>> {str(e)}')
+    dstore('ボット',f'>>> config.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。')
+    dstore('Bot',f'>>> Failed to load config.json file. Make sure you wrote correctly.')
     sys.exit(1)
 except FileNotFoundError:
     print(red(traceback.format_exc()))
     print(red('config.json ファイルが存在しません。'))
+    print(red('config.json file does not exist.'))
     dstore('ボット',f'>>> {traceback.format_exc()}')
-    dstore('ボット',f'>>> config.json ファイルが存在しません')
+    dstore('ボット',f'>>> config.json ファイルが存在しません。')
+    dstore('Bot',f'>>> config.json file does not exist.')
     sys.exit(1)
+
+if os.path.isfile(f"lang/{data['lang']}.json"):
+    try:
+        try:
+            with open(f'lang/{data["lang"]}.json', 'r', encoding='utf-8') as f:
+                localize = json.load(f)
+        except json.decoder.JSONDecodeError:
+            with open(f'lang/{data["lang"]}.json', 'r', encoding='utf-8-sig') as f:
+                localize = json.load(f)
+        if data['loglevel'] == 'debug':
+            print(yellow(f'\n{localize}\n'))
+            dstore('ボット',f'\n```\n{localize}\n```\n')
+        for key in localizekeys:
+            exec(f"errorcheck=localize['{key}']")
+    except KeyError as e:
+        print(red(traceback.format_exc()))
+        print(red(f'{data["lang"]}.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。'))
+        print(red(f'{str(e)} がありません。'))
+        print(red(f'Failed to load {data["lang"]}.json file. Make sure key name is correct.'))
+        print(red(f'{str(e)} is missing.'))
+        dstore('ボット',f'>>> {traceback.format_exc()}')
+        dstore('ボット',f'>>> {data["lang"]}.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。')
+        dstore('ボット',f'>>> {str(e)} がありません')
+        dstore('Bot',f'>>> Failed to load {data["lang"]}.json file. Make sure key name is correct.')
+        dstore('Bot',f'>>> {str(e)} is missing.')
+        sys.exit(1)
+    except json.decoder.JSONDecodeError as e:
+        print(red(traceback.format_exc()))
+        print(red(f'{data["lang"]}.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
+        print(red(str(e).replace('Expecting ','不明な',1).replace('Invalid control character at','無効なコントロール文字: ').replace('value','値',1).replace('delimiter','区切り文字',1).replace('line','行:',1).replace('column','文字:').replace('char ','',1)))
+        print(red(f'Failed to load {data["lang"]}.json file. Make sure you wrote correctly.'))
+        print(red(str(e)))
+        dstore('ボット',f'>>> {traceback.format_exc()}')
+        dstore('ボット',f'>>> {data["lang"]}.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。')
+        dstore('ボット',f'>>> {str(e).replace("Expecting ","不明な",1).replace("Invalid control character at","無効なコントロール文字: ").replace("value","値",1).replace("delimiter","区切り文字",1).replace("line","行:",1).replace("column","文字:").replace("char ","",1)}')
+        dstore('Bot',f'>>> Failed to load {data["lang"]}.json file. Make sure you wrote correctly.')
+        dstore('Bot',f'>>> {str(e)}')
+        sys.exit(1)
+    except FileNotFoundError:
+        print(red(traceback.format_exc()))
+        print(red(f'{data["lang"]}.json ファイルが存在しません。'))
+        print(red(f'{data["lang"]}.json file does not exist.'))
+        dstore('ボット',f'>>> {traceback.format_exc()}')
+        dstore('ボット',f'>>> {data["lang"]}.json ファイルが存在しません。')
+        dstore('Bot',f'>>> {data["lang"]}.json file does not exist.')
+        sys.exit(1)
+else:
+    try:
+        try:
+            with open('lang/en.json', 'r', encoding='utf-8') as f:
+                localize = json.load(f)
+        except json.decoder.JSONDecodeError:
+            with open('lang/en.json', 'r', encoding='utf-8-sig') as f:
+                localize = json.load(f)
+        if data['loglevel'] == 'debug':
+            print(yellow(f'\n{localize}\n'))
+            dstore('ボット',f'\n```\n{localize}\n```\n')
+        for key in localizekeys:
+            exec(f"errorcheck=localize['{key}']")
+    except KeyError as e:
+        print(red(traceback.format_exc()))
+        print(red(f'en.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。'))
+        print(red(f'{str(e)} がありません。'))
+        print(red(f'Failed to load en.json file. Make sure key name is correct.'))
+        print(red(f'{str(e)} is missing.'))
+        dstore('ボット',f'>>> {traceback.format_exc()}')
+        dstore('ボット',f'>>> en.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。')
+        dstore('ボット',f'>>> {str(e)} がありません')
+        dstore('Bot',f'>>> Failed to load en.json file. Make sure key name is correct.')
+        dstore('Bot',f'>>> {str(e)} is missing.')
+        sys.exit(1)
+    except json.decoder.JSONDecodeError as e:
+        print(red(traceback.format_exc()))
+        print(red(str(e)))
+        print(red(f'en.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
+        print(red(f'Failed to load en.json file. Make sure you wrote correctly.'))
+        dstore('ボット',f'>>> {traceback.format_exc()}')
+        dstore('ボット',f'>>> {str(e)}')
+        dstore('ボット',f'>>> en.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。')
+        dstore('Bot',f'>>> Failed to load en.json file. Make sure you wrote correctly.')
+        sys.exit(1)
+    except FileNotFoundError:
+        print(red(traceback.format_exc()))
+        print(red(f'en.json ファイルが存在しません。'))
+        print(red(f'en.json file does not exist.'))
+        dstore('ボット',f'>>> {traceback.format_exc()}')
+        dstore('ボット',f'>>> en.json ファイルが存在しません。')
+        dstore('Bot',f'>>> en.json file does not exist.')
+        sys.exit(1)
 
 try:
     try:
@@ -1129,7 +1277,7 @@ try:
             commands=json.load(f)
     if data['loglevel'] == 'debug':
         print(yellow(f'\n{commands}\n'))
-        dstore('ボット',f'\n```\n{commands}\n```\n')
+        dstore(l("bot"),f'\n```\n{commands}\n```\n')
     for key in commandskeys:
         exec(f"errorcheck=commands['{key}']")
     if data['caseinsensitive'] is True:
@@ -1144,33 +1292,33 @@ try:
                 errorcheck=commands[command.lower()]
             except KeyError as e:
                 print(red(traceback.format_exc()))
-                print(red('所有者コマンドの設定に失敗しました。キーの名前が間違っていないか確認してください。'))
-                print(red(f'{str(e)} がありません。'))
-                dstore('ボット',f'>>> {traceback.format_exc()}')
-                dstore('ボット',f'>>> 所有者コマンドの設定に失敗しました。キーの名前が間違っていないか確認してください')
-                dstore('ボット',f'>>> {str(e)} がありません')
+                print(red(l("failed_ownercommand")))
+                print(red(l("is_missing", str(e))))
+                dstore(l("bot"),f'>>> {traceback.format_exc()}')
+                dstore(l("bot"),f'>>> {l("failed_ownercommand")}')
+                dstore(l("bot"),f'>>> {l("is_missing", str(e))}')
                 sys.exit(1)
 except KeyError as e:
     print(red(traceback.format_exc()))
-    print(red('commands.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。アップデート後の場合は、最新のcommands.jsonファイルを確認してください。'))
-    print(red(f'{str(e)} がありません。'))
-    dstore('ボット',f'>>> {traceback.format_exc()}')
-    dstore('ボット',f'>>> commands.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。アップデート後の場合は、最新のcommands.jsonファイルを確認してください')
-    dstore('ボット',f'>>> {str(e)} がありません')
+    print(red(l("load_failed_keyerror", "commands.json")))
+    print(red(l("is_missing", str(e))))
+    dstore(l("bot"),f'>>> {traceback.format_exc()}')
+    dstore(l("bot"),f'>>> {l("load_failed_keyerror", "commands.json")}')
+    dstore(l("bot"),f'>>> {l("is_missing", str(e))}')
     sys.exit(1)
 except json.decoder.JSONDecodeError as e:
     print(red(traceback.format_exc()))
-    print(red('commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
-    print(red(str(e).replace('Expecting ','不明な',1).replace('Invalid control character at','無効なコントロール文字: ').replace('value','値',1).replace('delimiter','区切り文字',1).replace('line','行:',1).replace('column','文字:').replace('char ','',1)))
-    dstore('ボット',f'>>> {traceback.format_exc()}')
-    dstore('ボット',f'>>> commands.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
-    dstore('ボット',f'>>> {str(e).replace("Expecting ","不明な",1).replace("Invalid control character at","無効なコントロール文字: ").replace("value","値",1).replace("delimiter","区切り文字",1).replace("line","行:",1).replace("column","文字:").replace("char ","",1)}')
+    print(red(str(e)))
+    print(red(l("load_failed_json", "commands.json")))
+    dstore(l("bot"),f'>>> {traceback.format_exc()}')
+    dstore(l("bot"),f'>>> {str(e)}')
+    dstore(l("bot"),f'>>> {l("load_failed_json", "commands.json")}')
     sys.exit(1)
 except FileNotFoundError:
     print(red(traceback.format_exc()))
-    print(red('commands.json ファイルが存在しません。'))
-    dstore('ボット',f'>>> {traceback.format_exc()}')
-    dstore('ボット',f'>>> commands.json ファイルが存在しません')
+    print(red(l("load_failed_notfound", "commands.json")))
+    dstore(l("bot"),f'>>> {traceback.format_exc()}')
+    dstore(l("bot"),f'>>> {l("load_failed_notfound", "commands.json")}')
     sys.exit(1)
 
 try:
@@ -1182,22 +1330,22 @@ try:
             replies=json.load(f)
     if data['loglevel'] == 'debug':
         print(yellow(f'\n{replies}\n'))
-        dstore('ボット',f'\n```\n{replies}\n```\n')
+        dstore(l("bot"),f'\n```\n{replies}\n```\n')
     if data['caseinsensitive'] is True:
         replies=dict((jaconv.kata2hira(k.lower()), v) for k,v in replies.items())
 except json.decoder.JSONDecodeError as e:
     print(red(traceback.format_exc()))
-    print(red('replies.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください。'))
-    print(red(str(e).replace('Expecting ','不明な',1).replace('Invalid control character at','無効なコントロール文字: ').replace('value','値',1).replace('delimiter','区切り文字',1).replace('line','行:',1).replace('column','文字:').replace('char ','',1)))
-    dstore('ボット',f'>>> {traceback.format_exc()}')
-    dstore('ボット',f'>>> replies.json ファイルの読み込みに失敗しました。正しく書き込めているか確認してください')
-    dstore('ボット',f'>>> {str(e).replace("Expecting ","不明な",1).replace("Invalid control character at","無効なコントロール文字: ").replace("value","値",1).replace("delimiter","区切り文字",1).replace("line","行:",1).replace("column","文字:").replace("char ","",1)}')
+    print(red(str(e)))
+    print(red(l("load_failed_json", "replies.json")))
+    dstore(l("bot"),f'>>> {traceback.format_exc()}')
+    dstore(l("bot"),f'>>> {str(e)}')
+    dstore(l("bot"),f'>>> {l("load_failed_json", "replies.json")}')
     sys.exit(1)
 except FileNotFoundError:
     print(red(traceback.format_exc()))
-    print(red('replies.json ファイルが存在しません。'))
-    dstore('ボット',f'>>> {traceback.format_exc()}')
-    dstore('ボット',f'>>> replies.json ファイルが存在しません')
+    print(red(l("load_failed_notfound", "replies.json")))
+    dstore(l("bot"),f'>>> {traceback.format_exc()}')
+    dstore(l("bot"),f'>>> {l("load_failed_notfound", "replies.json")}')
     sys.exit(1)
 
 threading.Thread(target=dprint,args=()).start()
@@ -1293,8 +1441,6 @@ if True:
         data['hide-password'] = True
     if data['hide-webhook'] not in (True, False):
         data['hide-webhook'] = True
-    if data['hide-api-key'] not in (True, False):
-        data['hide-api-key'] = True
     if data['caseinsensitive'] not in (True, False):
         data['caseinsensitive'] = True
     if data['loglevel'] not in ('normal', 'info', 'debug'):
@@ -1304,38 +1450,38 @@ if True:
 
 data['fortnite']['privacy']=eval(f"fortnitepy.PartyPrivacy.{data['fortnite']['privacy'].upper()}")
 
-print(cyan('ロビーボット: gomashio\nクレジット\nライブラリ: Terbau'))
-dstore('ボット','ロビーボット: gomashio\nクレジット\nライブラリ: Terbau')
+print(cyan(f'{l("lobbybot")}: gomashio\n{l("credit")}\n{l("library")}: Terbau'))
+dstore(l("bot"),f'{l("lobbybot")}: gomashio\n{l("credit")}\n{l("library")}: Terbau')
 if True:
     if data['loglevel'] == 'normal':
-        print(green('\nログレベル: ノーマル'))
-        dstore('ボット','\nログレベル: ノーマル')
+        print(green(f'\n{l("loglevel")}: {l("normal")}'))
+        dstore(l("bot"),f'\n{l("loglevel")}: {l("normal")}')
     elif data['loglevel'] == 'info':
-        print(green('\nログレベル: 詳細'))
-        dstore('ボット','\nログレベル: 詳細')
+        print(green(f'\n{l("loglevel")}: {l("info")}'))
+        dstore(l("bot"),f'\n{l("loglevel")}: {l("info")}')
     elif data['loglevel'] == 'debug':
-        print(green('\nログレベル: デバッグ'))
-        dstore('ボット','\nログレベル: デバッグ')
+        print(green(f'\n{l("loglevel")}: {l("debug")}'))
+        dstore(l("bot"),f'\n{l("loglevel")}: {l("debug")}')
     if data['debug'] is True:
-        print(green('デバッグ: オン'))
-        dstore('ボット','デバッグ: オン')
+        print(green(f'{l("debug")}: {l("on")}'))
+        dstore(l("bot"),f'{l("debug")}: {l("on")}')
     else:
-        print(green('デバッグ: オフ'))
-        dstore('ボット','デバッグ: オフ')
+        print(green(f'{l("debug")}: {l("off")}'))
+        dstore(l("bot"),f'{l("debug")}: {l("off")}')
 print(green(f'\nPython {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}'))
 print(green(f'Fortnitepy {fortnitepy.__version__}'))
 print(green(f'discord.py {discord.__version__}'))
 if data['debug'] is True:
-    print(red(f'[{now_()}] デバッグが有効です!(エラーではありません)'))
-    dstore('ボット','>>> デバッグが有効です!(エラーではありません)')
+    print(red(f'[{now_()}] {l("debug_is_on")}'))
+    dstore(l("bot"),f'>>> {l("debug_is_on")}')
 if data['no-logs'] is False:
-    print('ボットを起動中...')
-dstore('ボット','ボットを起動中...')
+    print(l("booting"))
+dstore(l("bot"),l("booting"))
 
-async def event_device_auth_generate(details, email):
+async def event_device_auth_generate(details: dict, email: str) -> None:
     store_device_auth_details(email, details)
 
-async def event_ready(client):
+async def event_ready(client: fortnitepy.Client) -> None:
     global blacklist_flag
     global blacklist
     global whitelist_flag
@@ -1348,12 +1494,12 @@ async def event_ready(client):
     global loadedclients
     if data['loglevel'] == 'normal':
         if data['no-logs'] is False:
-            print(green(f'[{now_()}] ログイン: {client.user.display_name}'))
-        dstore(client.user.display_name,f'ログイン: {client.user.display_name}')
+            print(green(f'[{now_()}] {l("login")}: {client.user.display_name}'))
+        dstore(client.user.display_name,f'{l("login")}: {client.user.display_name}')
     else:
         if data['no-logs'] is False:
-            print(green(f'[{now_()}] ログイン: {client.user.display_name} / {client.user.id}'))
-        dstore(client.user.display_name,f'ログイン: {client.user.display_name} / {client.user.id}')
+            print(green(f'[{now_()}] {l("login")}: {client.user.display_name} / {client.user.id}'))
+        dstore(client.user.display_name,f'{l("login")}: {client.user.display_name} / {client.user.id}')
     client.isready=True
     loadedclients.append(client)
     client_name[client.user.display_name] = client
@@ -1369,8 +1515,8 @@ async def event_ready(client):
         client.owner=None
         owner=await client.fetch_profile(data['fortnite']['owner'])
         if owner is None:
-            print(red(f'[{now_()}] [{client.user.display_name}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
-            dstore(client.user.display_name,'>>> 所有者が見つかりません。正しい名前/IDになっているか確認してください')
+            print(red(f'[{now_()}] [{client.user.display_name}] {l("owner_notfound")}'))
+            dstore(client.user.display_name,f'>>> {l("owner_notfound")}')
         else:
             add_cache(client, owner)
             client.owner=client.get_friend(owner.id)
@@ -1382,34 +1528,38 @@ async def event_ready(client):
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
                             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                        print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
-                        dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
+                        if data['loglevel'] == 'normal':
+                            print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_sending_friendrequest")}'))
+                            dstore(client.user.display_name,f'>>> {l("error_while_sending_friendrequest")}')
+                        else:
+                            print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_sending_friendrequest")}'))
+                            dstore(client.user.display_name,f'>>> {l("error_while_sending_friendrequest")}')
                     except Exception:
                         print(red(traceback.format_exc()))
                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                print(red(f"[{now_()}] [{client.user.display_name}] 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{commands['reload']}] コマンドで再読み込みしてください。"))
-                dstore(client.user.display_name,f'>>> 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{commands["reload"]}] コマンドで再読み込みしてください')
+                print(red(f'[{now_()}] [{client.user.display_name}] {l("not_friend_with_owner", commands["reload"])}'))
+                dstore(client.user.display_name,f'>>> {l("not_friend_with_owner", commands["reload"])}')
             else:
                 if data['loglevel'] == 'normal':
                     if data['no-logs'] is False:
-                        print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {str(client.owner.display_name)}'))
-                    dstore(client.user.display_name,f'所有者: {str(client.owner.display_name)}')
+                        print(green(f'[{now_()}] [{client.user.display_name}] {l("owner")}: {str(client.owner.display_name)}'))
+                    dstore(client.user.display_name,f'{l("owner")}: {str(client.owner.display_name)}')
                 else:
                     if data['no-logs'] is False:
-                        print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {str(client.owner.display_name)} / {client.owner.id}'))
-                    dstore(client.user.display_name,f'所有者: {str(client.owner.display_name)} / {client.owner.id}')
+                        print(green(f'[{now_()}] [{client.user.display_name}] {l("owner")}: {str(client.owner.display_name)} / {client.owner.id}'))
+                    dstore(client.user.display_name,f'{l("owner")}: {str(client.owner.display_name)} / {client.owner.id}')
     except fortnitepy.HTTPException:
         if data['loglevel'] == 'debug':
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-        print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-        dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+        print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+        dstore(client.user.display_name,f'>>> {l("error_while_requesting_userinfo")}')
     except Exception:
         print(red(traceback.format_exc()))
         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
     
     if client.owner is not None:
-        await client.owner.send('ここをクリックして招待')
+        await client.owner.send(l("click_invite"))
 
     if blacklist_flag is True:
         blacklist_flag = False
@@ -1418,8 +1568,8 @@ async def event_ready(client):
                 user = await client.fetch_profile(blacklistuser)
                 add_cache(client, user)
                 if user is None:
-                    print(red(f'[{now_()}] [{client.user.display_name}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
-                    dstore(client.user.display_name,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                    print(red(f'[{now_()}] [{client.user.display_name}] {l("blacklist_user_notfount", blacklistuser)}'))
+                    dstore(client.user.display_name,f'>>> {l("blacklist_user_notfount", blacklistuser)}')
                 else:
                     blacklist.append(user.id)
                     if data['loglevel'] == 'debug':
@@ -1435,8 +1585,8 @@ async def event_ready(client):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                dstore(client.user.display_name,f'>>> {l("error_while_requesting_userinfo")}')
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -1449,8 +1599,8 @@ async def event_ready(client):
                 user = await client.fetch_profile(whitelistuser)
                 add_cache(client, user)
                 if user is None:
-                    print(red(f'[{now_()}] [{client.user.display_name}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
-                    dstore(client.user.display_name,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                    print(red(f'[{now_()}] [{client.user.display_name}] {l("whitelist_user_notfound", whitelistuser)}'))
+                    dstore(client.user.display_name,f'>>> {l("whitelist_user_notfound", whitelistuser)}')
                 else:
                     whitelist.append(user.id)
                     if data['loglevel'] == 'debug':
@@ -1459,8 +1609,8 @@ async def event_ready(client):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                dstore(client.user.display_name,f'>>> {l("error_while_requesting_userinfo")}')
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -1474,8 +1624,8 @@ async def event_ready(client):
                 user = await client.fetch_profile(otherbotlistuser)
                 add_cache(client, user)
                 if user is None:
-                    print(red(f'[{now_()}] [{client.user.display_name}] ボットリストのユーザー {otherbotlistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
-                    dstore(client.user.display_name,f'>>>ボットリストのユーザー {otherbotlistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                    print(red(f'[{now_()}] [{client.user.display_name}] {l("botlist_user_notfound", otherbotlistuser)}'))
+                    dstore(client.user.display_name,f'>>> {l("botlist_user_notfound", otherbotlistuser)}')
                 else:
                     otherbotlist.append(user.id)
                     if data['loglevel'] == 'debug':
@@ -1484,8 +1634,8 @@ async def event_ready(client):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                dstore(client.user.display_name,f'>>> {l("error_while_requesting_userinfo")}')
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -1496,25 +1646,29 @@ async def event_ready(client):
         try:
             user = await client.fetch_profile(invitelistuser)
             if user is None:
-                print(red(f'[{now_()}] [{client.user.display_name}] 招待リストのユーザー {invitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
-                dstore(client.user.display_name,f'>>>招待リストのユーザー {invitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                print(red(f'[{now_()}] [{client.user.display_name}] {l("invitelist_user_notfound")}'))
+                dstore(client.user.display_name,f'>>> {l("invitelist_user_notfound")}')
             else:
                 friend = client.get_friend(user.id)
                 if friend is None and user.id != client.user.id:
                     if data['fortnite']['addfriend'] is True:
                         try:
-                            await client.add_friend(owner.id)
+                            await client.add_friend(friend.id)
                         except fortnitepy.HTTPException:
                             if data['loglevel'] == 'debug':
                                 print(red(traceback.format_exc()))
                                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                            print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
-                            dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
+                            if data['loglevel'] == 'normal':
+                                print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_sending_friendrequest")}'))
+                                dstore(client.user.display_name,f'>>> {l("error_while_sending_friendrequest")}')
+                            else:
+                                print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_sending_friendrequest")}'))
+                            dstore(client.user.display_name,f'>>> {l("error_while_sending_friendrequest")}')
                         except Exception:
                             print(red(traceback.format_exc()))
                             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    print(red(f"[{now_()}] [{client.user.display_name}] 招待リストのユーザー {invitelistuser} とフレンドではありません。フレンドになってからもう一度起動するか、[{commands['reload']}] コマンドで再読み込みしてください。"))
-                    dstore(client.user.display_name,f'>>> 招待リストのユーザー {invitelistuser} とフレンドではありません。フレンドになってからもう一度起動するか、[{commands["reload"]}] コマンドで再読み込みしてください')
+                    print(red(f'[{now_()}] [{client.user.display_name}] {l("not_friend_with_inviteuser", invitelistuser, commands["reload"])}'))
+                    dstore(client.user.display_name,f'>>> {l("not_friend_with_inviteuser", invitelistuser, commands["reload"])}')
                 else:
                     add_cache(client, user)
                     client.invitelist.append(user.id)
@@ -1524,8 +1678,8 @@ async def event_ready(client):
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-            print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-            dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+            print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+            dstore(client.user.display_name,f'>>> {l("error_while_requesting_userinfo")}')
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -1573,12 +1727,12 @@ async def event_ready(client):
         discord_flag = False
         await dclient.start(data['discord']['token'])
 
-async def event_restart():
+async def event_restart() -> None:
     if data['no-logs'] is False:
-        print(green(f'[{now_()}] 正常に再ログインが完了しました'))
-    dstore('ボット',f'>>> 正常に再ログインが完了しました')
+        print(green(f'[{now_()}] {l("relogin")}'))
+    dstore(l("bot"),f'>>> {l("relogin")}')
 
-async def event_party_invite(invitation):
+async def event_party_invite(invitation: fortnitepy.ReceivedPartyInvitation) -> None:
     global blacklist
     global whitelist
     if invitation is None:
@@ -1609,18 +1763,18 @@ async def event_party_invite(invitation):
             return
     if data['loglevel'] == 'normal':
         if data['no-logs'] is False:
-            print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} からのパーティー招待')
-        dstore(client.user.display_name,f'{str(invitation.sender.display_name)} からのパーティー招待')
+            print(f'[{now_()}] [{client.user.display_name}] {l("invite_from", str(invitation.sender.display_name))}')
+        dstore(client.user.display_name,l("invite_from", str(invitation.sender.display_name)))
     else:
         if data['no-logs'] is False:
-            print(f'[{now_()}] [{client.user.display_name}] {str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待')
-        dstore(client.user.display_name,f'{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}] からパーティー {invitation.party.id} への招待')
+            print(f'[{now_()}] [{client.user.display_name}] {l("invite_from2", f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}]", invitation.party.id)}')
+        dstore(client.user.display_name,l("invite_from2", f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}]", invitation.party.id))
 
     if client.owner is not None:
-        if client.owner.id in client.user.party.members.keys() and data['fortnite']['invite-ownerdecline'] is True:
+        if client.owner.id in client.party.members.keys() and data['fortnite']['invite-ownerdecline'] is True:
             await invitation_decline_owner(invitation)
             return
-    if True in [memberid in whitelist for memberid in client.user.party.members.keys()] and data['fortnite']['whitelist-declineinvite'] is True:
+    if True in [memberid in whitelist for memberid in client.party.members.keys()] and data['fortnite']['whitelist-declineinvite'] is True:
         await invitation_decline_whitelist(invitation)
     elif client.acceptinvite is False:
         await invitation_decline(invitation)
@@ -1629,7 +1783,7 @@ async def event_party_invite(invitation):
     else:
         await invitation_accept(invitation)
 
-async def event_friend_request(request):
+async def event_friend_request(request: fortnitepy.PendingFriend) -> None:
     if request is None:
         return
     client=request.client
@@ -1639,21 +1793,21 @@ async def event_friend_request(request):
     if request.direction == 'OUTBOUND':
         if data['loglevel'] == 'normal':
             if data['no-logs'] is False:
-                print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} にフレンド申請を送信')
-            dstore(client.user.display_name,f'{str(request.display_name)} にフレンド申請を送信')
+                print(f'[{now_()}] [{client.user.display_name}] {l("friend_request_to", str(request.display_name))}')
+            dstore(client.user.display_name,l("friend_request_to", str(request.display_name)))
         else:
             if data['no-logs'] is False:
-                print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} / {request.id} にフレンド申請を送信')
-            dstore(client.user.display_name,f'{str(request.display_name)} / {request.id} にフレンド申請を送信')
+                print(f'[{now_()}] [{client.user.display_name}] {l("friend_request_to", f"{str(request.display_name)} / {request.id}")}')
+            dstore(client.user.display_name,l("friend_request_to", f"{str(request.display_name)} / {request.id}"))
         return
     if data['loglevel'] == 'normal':
         if data['no-logs'] is False:
-            print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} からのフレンド申請')
-        dstore(client.user.display_name,f'{str(request.display_name)} からのフレンド申請')
+            print(f'[{now_()}] [{client.user.display_name}] {l("friend_request_from", str(request.display_name))}')
+        dstore(client.user.display_name,l("friend_request_from", str(request.display_name)))
     else:
         if data['no-logs'] is False:
-            print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} / {request.id} からのフレンド申請')
-        dstore(client.user.display_name,f'{str(request.display_name)} / {request.id} からのフレンド申請')
+            print(f'[{now_()}] [{client.user.display_name}] {l("friend_request_from", f"{str(request.display_name)} / {request.id}")}')
+        dstore(client.user.display_name,l("friend_request_from", f"{str(request.display_name)} / {request.id}"))
     if client.acceptfriend is True:
         try:
             await request.accept()
@@ -1661,8 +1815,12 @@ async def event_friend_request(request):
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-            print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の承諾リクエストを処理中にエラーが発生しました。'))
-            dstore(client.user.display_name,f'>>> フレンド申請の承諾リクエストを処理中にエラーが発生しました')
+            if data['loglevel'] == 'normal':
+                print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_accepting_friendrequest")}'))
+                dstore(client.user.display_name,f'>>> {l("error_while_accepting_friendrequest")}')
+            else:
+                print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_accepting_friendrequest")}'))
+                dstore(client.user.display_name,f'>>> {l("error_while_accepting_friendrequest")}')
         except Exception:
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -1671,22 +1829,26 @@ async def event_friend_request(request):
             await request.decline()
             if data['loglevel'] == 'normal':
                 if data['no-logs'] is False:
-                    print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} からのフレンド申請を拒否')
-                dstore(client.user.display_name,f'{str(request.display_name)} からのフレンド申請を拒否')
+                    print(f'[{now_()}] [{client.user.display_name}] {l("friend_request_decline", str(request.display_name))}')
+                dstore(client.user.display_name,l("friend_request_decline", str(request.display_name)))
             else:
                 if data['no-logs'] is False:
-                    print(f'[{now_()}] [{client.user.display_name}] {str(request.display_name)} / {request.id} からのフレンド申請を拒否')
-                dstore(client.user.display_name,f'{str(request.display_name)} / {request.id} からのフレンド申請を拒否')
+                    print(f'[{now_()}] [{client.user.display_name}] {l("friend_request_decline", f"{str(request.display_name)} / {request.id}")}')
+                dstore(client.user.display_name,l("friend_request_decline", f"{str(request.display_name)} / {request.id}"))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-            print(f'[{now_()}] [{client.user.display_name}] フレンド申請の拒否リクエストを処理中にエラーが発生しました。')
-            dstore(client.user.display_name,f'>>> フレンド申請の拒否リクエストを処理中にエラーが発生しました')
+            if data['loglevel'] == 'normal':
+                print(f'[{now_()}] [{client.user.display_name}] {l("error_while_declining_friendrequest")}')
+                dstore(client.user.display_name,f'>>> {l("error_while_declining_friendrequest")}')
+            else:
+                print(f'[{now_()}] [{client.user.display_name}] {l("error_while_declining_friendrequest")}')
+                dstore(client.user.display_name,f'>>> {l("error_while_declining_friendrequest")}')
         except Exception:
             print(red(traceback.format_exc()))
 
-async def event_friend_add(friend):
+async def event_friend_add(friend: fortnitepy.Friend) -> None:
     if friend is None:
         return
     client=friend.client
@@ -1696,23 +1858,23 @@ async def event_friend_add(friend):
     if friend.direction == 'OUTBOUND':
         if data['loglevel'] == 'normal':
             if data['no-logs'] is False:
-                print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} がフレンド申請を承諾')
-            dstore(client.user.display_name,f'{str(friend.display_name)} がフレンド申請を承諾')
+                print(f'[{now_()}] [{client.user.display_name}] {l("friend_accept", str(friend.display_name))}')
+            dstore(client.user.display_name,l("friend_accept", str(friend.display_name)))
         else:
             if data['no-logs'] is False:
-                print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} / {friend.id} がフレンド申請を承諾')
-            dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id} がフレンド申請を承諾')
+                print(f'[{now_()}] [{client.user.display_name}] {l("friend_accept", f"{str(friend.display_name)} / {friend.id}")}')
+            dstore(client.user.display_name,l("friend_accept", f"{str(friend.display_name)} / {friend.id}"))
     else:
         if data['loglevel'] == 'normal':
             if data['no-logs'] is False:
-                print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} をフレンドに追加')
-            dstore(client.user.display_name,f'{str(friend.display_name)} をフレンドに追加')
+                print(f'[{now_()}] [{client.user.display_name}] {l("friend_add", str(friend.display_name))}')
+            dstore(client.user.display_name,l("friend_add", str(friend.display_name)))
         else:
             if data['no-logs'] is False:
-                print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} / {friend.id} をフレンドに追加')
-            dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id} をフレンドに追加')
+                print(f'[{now_()}] [{client.user.display_name}] {l("friend_add", f"{str(friend.display_name)} / {friend.id}")}')
+            dstore(client.user.display_name,l("friend_add", f"{str(friend.display_name)} / {friend.id}"))
 
-async def event_friend_remove(friend):
+async def event_friend_remove(friend: fortnitepy.Friend) -> None:
     if friend is None:
         return
     client=friend.client
@@ -1721,14 +1883,14 @@ async def event_friend_remove(friend):
     add_cache(client, friend)
     if data['loglevel'] == 'normal':
         if data['no-logs'] is False:
-            print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} がフレンドから削除')
-        dstore(client.user.display_name,f'{str(friend.display_name)} がフレンドから削除')
+            print(f'[{now_()}] [{client.user.display_name}] {l("friend_remove", str(friend.display_name))}')
+        dstore(client.user.display_name,l("friend_remove", str(friend.display_name)))
     else:
         if data['no-logs'] is False:
-            print(f'[{now_()}] [{client.user.display_name}] {str(friend.display_name)} / {friend.id} [{platform_to_str(friend.platform)}] がフレンドから削除')
-        dstore(client.user.display_name,f'{str(friend.display_name)} / {friend.id} [{platform_to_str(friend.platform)}] がフレンドから削除')
+            print(f'[{now_()}] [{client.user.display_name}] {l("friend_remove", f"{str(friend.display_name)} / {friend.id} [{platform_to_str(friend.platform)}]")}')
+        dstore(client.user.display_name,l("friend_remove", f"{str(friend.display_name)} / {friend.id} [{platform_to_str(friend.platform)}]"))
 
-async def event_party_member_join(member):
+async def event_party_member_join(member: fortnitepy.PartyMember) -> None:
     global blacklist
     if member is None:
         return
@@ -1738,7 +1900,7 @@ async def event_party_member_join(member):
     add_cache(client, member)
     client_user_display_name=str(client.user.display_name)
     member_joined_at_most=[]
-    for member_ in client.user.party.members.values():
+    for member_ in client.party.members.values():
         add_cache(client, member_)
         try:
             if member_joined_at_most != []:
@@ -1748,7 +1910,7 @@ async def event_party_member_join(member):
                     if member_.joined_at < member_joined_at_most[1]:
                         member_joined_at_most=[member_.id, member_.joined_at]
             else:
-                member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+                member_joined_at_most=[client.user.id, client.party.me.joined_at]
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -1758,14 +1920,14 @@ async def event_party_member_join(member):
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] == 'normal':
             if data['no-logs'] is False:
-                print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.display_name)} がパーティーに参加\n人数: {member.party.member_count}'))
-            dstore(client_user_display_name,f'[パーティー] {str(member.display_name)} がパーティーに参加\n人数: {member.party.member_count}')
+                print(magenta(f'[{now_()}] [{l("party")}] [{client_user_display_name}] {l("party_member_joined", str(member.display_name), member.party.member_count)}'))
+            dstore(client_user_display_name,f'[{l("party")}] {l("party_member_joined", str(member.display_name), member.party.member_count)}')
         else:
             if data['no-logs'] is False:
-                print(magenta(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーに参加\n人数: {member.party.member_count}'))
-            dstore(client_user_display_name,f'[パーティー/{client.user.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーに参加\n人数: {member.party.member_count}')
+                print(magenta(f'[{now_()}] [{l("party")}/{client.party.id}] [{client_user_display_name}] {l("party_member_joined", f"{str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}]", member.party.member_count)}'))
+            dstore(client_user_display_name,f'[{l("party")}/{client.party.id}] {l("party_member_joined", f"{str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}]", member.party.member_count)}')
     
-    if member.id in blacklist and client.user.party.me.leader is True:
+    if member.id in blacklist and client.party.me.leader is True:
         if data['fortnite']['blacklist-autokick'] is True:
             try:
                 await member.kick()
@@ -1800,7 +1962,7 @@ async def event_party_member_join(member):
 
     if client.joinmessageenable is True:
         try:
-            await client.user.party.send(data['fortnite']['joinmessage'])
+            await client.party.send(data['fortnite']['joinmessage'])
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -1809,9 +1971,9 @@ async def event_party_member_join(member):
         try:
             randommessage=random.choice(data['fortnite']['randommessage'].split(','))
             if data['no-logs'] is False:
-                print(f'[{now_()}] [{client.user.display_name}] ランダムメッセージ: {randommessage}')
-            dstore(client.user.display_name,f'ランダムメッセージ: {randommessage}')
-            await client.user.party.send(randommessage)
+                print(f'[{now_()}] [{client.user.display_name}] {l("random_message")}: {randommessage}')
+            dstore(client.user.display_name,f'{l("random_message")}: {randommessage}')
+            await client.party.send(randommessage)
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -1825,16 +1987,16 @@ async def event_party_member_join(member):
             print(red(traceback.format_exc()))
             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
-    if client.user.party.leader.id == client.user.id:
+    if client.party.leader.id == client.user.id:
         try:
-            await client.user.party.set_playlist(data['fortnite']['playlist'])
-            await client.user.party.set_privacy(data['fortnite']['privacy'])
+            await client.party.set_playlist(data['fortnite']['playlist'])
+            await client.party.set_privacy(data['fortnite']['privacy'])
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
-async def event_party_member_leave(member):
+async def event_party_member_leave(member: fortnitepy.PartyMember) -> None:
     if member is None:
         return
     client=member.client
@@ -1843,7 +2005,7 @@ async def event_party_member_leave(member):
     add_cache(client, member)
     client_user_display_name=str(client.user.display_name)
     member_joined_at_most=[]
-    for member_ in client.user.party.members.values():
+    for member_ in client.party.members.values():
         add_cache(client, member_)
         try:
             if member_joined_at_most != []:
@@ -1853,7 +2015,7 @@ async def event_party_member_leave(member):
                     if member_.joined_at < member_joined_at_most[1]:
                         member_joined_at_most=[member_.id, member_.joined_at]
             else:
-                member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+                member_joined_at_most=[client.user.id, client.party.me.joined_at]
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -1863,12 +2025,12 @@ async def event_party_member_leave(member):
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] == 'normal':
             if data['no-logs'] is False:
-                print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.display_name)} がパーティーを離脱\n人数: {member.party.member_count}'))
-            dstore(client_user_display_name,f'[パーティー] {str(member.display_name)} がパーティーを離脱\n人数: {member.party.member_count}')
+                print(magenta(f'[{now_()}] [{l("party")}] [{client_user_display_name}] {l("party_member_left", str(member.display_name), member.party.member_count)}'))
+            dstore(client_user_display_name,f'[{l("party")}] {l("party_member_left", str(member.display_name), member.party.member_count)}')
         else:
             if data['no-logs'] is False:
-                print(magenta(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーを離脱\n人数: {member.party.member_count}'))
-            dstore(client_user_display_name,f'[パーティー/{client.user.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーを離脱\n人数: {member.party.member_count}')
+                print(magenta(f'[{now_()}] [{l("party")}/{client.party.id}] [{client_user_display_name}] {l("party_member_left", f"{str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}]", member.party.member_count)}'))
+            dstore(client_user_display_name,f'[{l("party")}/{client.party.id}] {l("party_member_left", f"{str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}]", member.party.member_count)}')
 
     if data['fortnite']['addfriend'] is True:
         for member in member.party.members.keys():
@@ -1884,7 +2046,7 @@ async def event_party_member_leave(member):
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
-async def event_party_member_confirm(confirmation):
+async def event_party_member_confirm(confirmation: fortnitepy.PartyJoinConfirmation) -> None:
     global blacklist
     if confirmation is None:
         return
@@ -1894,8 +2056,8 @@ async def event_party_member_confirm(confirmation):
     add_cache(client, confirmation.user)
     if data['loglevel'] != 'normal':
         if data['no-logs'] is False:
-            print(magenta(f'[{now_()}] [パーティー/{client.user.party.id}] [{client.user.display_name}] {str(confirmation.user.display_name)} / {confirmation.user.id} からのパーティー参加リクエスト'))
-        dstore(client.user.display_name,f'[パーティー/{client.user.party.id}] {str(confirmation.user.display_name)} / {confirmation.user.id} からのパーティー参加リクエスト')
+            print(magenta(f'[{now_()}] [{l("party")}/{client.party.id}] [{client.user.display_name}] {l("party_member_request", f"{str(confirmation.user.display_name)} / {confirmation.user.id}")}'))
+        dstore(client.user.display_name,f'[{l("party")}/{client.party.id}] {l("party_member_request", f"{str(confirmation.user.display_name)} / {confirmation.user.id}")}')
             
     if data['fortnite']['blacklist-autokick'] is True and confirmation.user.id in blacklist:
         try:
@@ -1904,7 +2066,7 @@ async def event_party_member_confirm(confirmation):
             if data['loglevel'] == "debug":
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-            print(red("パーティーへの参加リクエストの拒否リクエストを処理中にエラーが発生しました"))
+            print(red(l("error_while_declining_partyrequest")))
     else:
         try:
             await confirmation.confirm()
@@ -1912,9 +2074,9 @@ async def event_party_member_confirm(confirmation):
             if data['loglevel'] == "debug":
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-            print(red("パーティーへの参加リクエストの承認リクエストを処理中にエラーが発生しました"))
+            print(red(l("error_while_declining_partyrequest")))
 
-async def event_party_member_kick(member):
+async def event_party_member_kick(member: fortnitepy.PartyMember) -> None:
     if member is None:
         return
     client=member.client
@@ -1923,7 +2085,7 @@ async def event_party_member_kick(member):
     add_cache(client, member)
     client_user_display_name=str(client.user.display_name)
     member_joined_at_most=[]
-    for member_ in client.user.party.members.values():
+    for member_ in client.party.members.values():
         add_cache(client, member_)
         try:
             if member_joined_at_most != []:
@@ -1933,7 +2095,7 @@ async def event_party_member_kick(member):
                     if member_.joined_at < member_joined_at_most[1]:
                         member_joined_at_most=[member_.id, member_.joined_at]
             else:
-                member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+                member_joined_at_most=[client.user.id, client.party.me.joined_at]
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -1943,14 +2105,14 @@ async def event_party_member_kick(member):
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] == 'normal':
             if data['no-logs'] is False:
-                print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.party.leader.display_name)} が {str(member.display_name)} をパーティーからキック\n人数: {member.party.member_count}'))
-            dstore(client_user_display_name,f'[パーティー] {str(member.party.leader.display_name)} が {str(member.display_name)} をパーティーからキック\n人数: {member.party.member_count}')
+                print(magenta(f'[{now_()}] [{l("party")}] [{client_user_display_name}] {l("party_member_kick", str(member.party.leader.display_name), str(member.display_name), member.party.member_count)}'))
+            dstore(client_user_display_name,f'[{l("party")}] {l("party_member_kick", str(member.party.leader.display_name), str(member.display_name), member.party.member_count)}')
         else:
             if data['no-logs'] is False:
-                print(magenta(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーからキック\n人数: {member.party.member_count}'))
-            dstore(client_user_display_name,f'[パーティー/{client.user.party.id}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] がパーティーからキック\n人数: {member.party.member_count}')
+                print(magenta(f'[{now_()}] [{l("party")}/{client.party.id}] [{client_user_display_name}] {l("party_member_kick", f"{str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.input}]", f"{str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}]", member.party.member_count)}'))
+            dstore(client_user_display_name,f'[{l("party")}/{client.party.id}] {l("party_member_kick", f"{str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.input}]", f"{str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}]", member.party.member_count)}')
 
-async def event_party_member_promote(old_leader,new_leader):
+async def event_party_member_promote(old_leader: fortnitepy.PartyMember, new_leader: fortnitepy.PartyMember) -> None:
     global blacklist
     if old_leader is None or new_leader is None:
         return
@@ -1959,7 +2121,7 @@ async def event_party_member_promote(old_leader,new_leader):
         return
     client_user_display_name=str(client.user.display_name)
     member_joined_at_most=[]
-    for member_ in client.user.party.members.values():
+    for member_ in client.party.members.values():
         add_cache(client, member_)
         try:
             if member_joined_at_most != []:
@@ -1969,7 +2131,7 @@ async def event_party_member_promote(old_leader,new_leader):
                     if member_.joined_at < member_joined_at_most[1]:
                         member_joined_at_most=[member_.id, member_.joined_at]
             else:
-                member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+                member_joined_at_most=[client.user.id, client.party.me.joined_at]
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -1979,18 +2141,19 @@ async def event_party_member_promote(old_leader,new_leader):
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] == 'normal':
             if data['no-logs'] is False:
-                print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(old_leader.display_name)} から {str(new_leader.display_name)} にリーダーが譲渡'))
-            dstore(client_user_display_name,f'[パーティー] {str(old_leader.display_name)} から {str(new_leader.display_name)} にリーダーが譲渡')
+                print(magenta(f'[{now_()}] [{l("party")}] [{client_user_display_name}] {l("party_member_promote", str(old_leader.display_name), str(new_leader.display_name))}'))
+            dstore(client_user_display_name,f'[{l("party")}] {l("party_member_promote", str(old_leader.display_name), str(new_leader.display_name))}')
         else:
             if data['no-logs'] is False:
-                print(magenta(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] {str(old_leader.display_name)} / {old_leader.id} [{platform_to_str(old_leader.platform)}/{old_leader.input}] から {str(new_leader.display_name)} / {new_leader.id} [{platform_to_str(new_leader.platform)}/{new_leader.input}] にリーダーが譲渡'))
-            dstore(client_user_display_name,f'[パーティー/{client.user.party.id}] {str(old_leader.display_name)} / {old_leader.id} [{platform_to_str(old_leader.platform)}/{old_leader.input}] から {str(new_leader.display_name)} / {new_leader.id} [{platform_to_str(new_leader.platform)}/{new_leader.input}] にリーダーが譲渡')
+
+                print(magenta(f'[{now_()}] [{l("party")}/{client.party.id}] [{client_user_display_name}] {l("party_member_promote", f"{str(old_leader.display_name)} / {old_leader.id} [{platform_to_str(old_leader.platform)}/{old_leader.input}]", f"{str(new_leader.display_name)} / {new_leader.id} [{platform_to_str(new_leader.platform)}/{new_leader.input}]")}'))
+            dstore(client_user_display_name,f'[{l("party")}/{client.party.id}] {l("party_member_promote", f"{str(old_leader.display_name)} / {old_leader.id} [{platform_to_str(old_leader.platform)}/{old_leader.input}]", f"{str(new_leader.display_name)} / {new_leader.id} [{platform_to_str(new_leader.platform)}/{new_leader.input}]")}')
     
     if new_leader.id == client.user.id:
         try:
-            await client.user.party.set_playlist(data['fortnite']['playlist'])
-            await client.user.party.set_privacy(data['fortnite']['privacy'])
-            for member in client.user.party.members.values():
+            await client.party.set_playlist(data['fortnite']['playlist'])
+            await client.party.set_privacy(data['fortnite']['privacy'])
+            for member in client.party.members.values():
                 if member.id in blacklist:
                     if data['fortnite']['blacklist-autokick'] is True:
                         try:
@@ -2011,7 +2174,7 @@ async def event_party_member_promote(old_leader,new_leader):
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
-async def event_party_member_update(member):
+async def event_party_member_update(member: fortnitepy.PartyMember) -> None:
     global blacklist
     if member is None:
         return
@@ -2020,7 +2183,7 @@ async def event_party_member_update(member):
         return
     client_user_display_name=str(client.user.display_name)
     member_joined_at_most=[]
-    for member_ in client.user.party.members.values():
+    for member_ in client.party.members.values():
         add_cache(client, member_)
         try:
             if member_joined_at_most != []:
@@ -2030,7 +2193,7 @@ async def event_party_member_update(member):
                     if member_.joined_at < member_joined_at_most[1]:
                         member_joined_at_most=[member_.id, member_.joined_at]
             else:
-                member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+                member_joined_at_most=[client.user.id, client.party.me.joined_at]
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2040,12 +2203,12 @@ async def event_party_member_update(member):
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] != 'normal':
             if data['no-logs'] is False:
-                print(magenta(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] パーティーメンバー更新'))
-            dstore(client_user_display_name,f'[パーティー/{client.user.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] パーティーメンバー更新')
+                print(magenta(f'[{now_()}] [{l("party")}/{client.party.id}] [{client_user_display_name}] {l("party_member_update", f"{str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}]")}'))
+            dstore(client_user_display_name,f'[{l("party")}/{client.party.id}] {l("party_member_update", f"{str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}]")}')
     
     if member.id == client.user.id:
         return
-    if member.id in blacklist and client.user.party.me.leader is True:
+    if member.id in blacklist and client.party.me.leader is True:
         if data['fortnite']['blacklist-autokick'] is True:
             try:
                 await member.kick()
@@ -2148,7 +2311,7 @@ async def event_party_member_update(member):
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
-async def event_party_member_disconnect(member):
+async def event_party_member_disconnect(member: fortnitepy.PartyMember) -> None:
     if member is None:
         return
     client=member.client
@@ -2157,7 +2320,7 @@ async def event_party_member_disconnect(member):
     add_cache(client, member)
     client_user_display_name=str(client.user.display_name)
     member_joined_at_most=[]
-    for member_ in client.user.party.members.values():
+    for member_ in client.party.members.values():
         add_cache(client, member_)
         try:
             if member_joined_at_most != []:
@@ -2167,7 +2330,7 @@ async def event_party_member_disconnect(member):
                     if member_.joined_at < member_joined_at_most[1]:
                         member_joined_at_most=[member_.id, member_.joined_at]
             else:
-                member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+                member_joined_at_most=[client.user.id, client.party.me.joined_at]
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2177,14 +2340,14 @@ async def event_party_member_disconnect(member):
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] == 'normal':
             if data['no-logs'] is False:
-                print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.display_name)} の接続が切断'))
-            dstore(client_user_display_name,f'[パーティー] {str(member.display_name)} の接続が切断')
+                print(magenta(f'[{now_()}] [{l("party")}] [{client_user_display_name}] {l("party_member_disconnect", str(member.display_name))}'))
+            dstore(client_user_display_name,f'[{l("party")}] {l("party_member_disconnect", str(member.display_name))}')
         else:
             if data['no-logs'] is False:
-                print(magenta(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] の接続が切断'))
-            dstore(client_user_display_name,f'[パーティー/{client.user.party.id}] {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] の接続が切断')
+                print(magenta(f'[{now_()}] [{l("party")}/{client.party.id}] [{client_user_display_name}] {l("party_member_disconnect", f"{str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}]")}'))
+            dstore(client_user_display_name,f'[{l("party")}/{client.party.id}] {l("party_member_disconnect", f"{str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}]")}')
     
-    if client.user.party.me.leader is True:
+    if client.party.me.leader is True:
         try:
             await member.kick()
         except Exception:
@@ -2192,7 +2355,7 @@ async def event_party_member_disconnect(member):
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
 
-async def event_party_member_chatban(member, reason):
+async def event_party_member_chatban(member: fortnitepy.PartyMember, reason: str) -> None:
     if member is None:
         return
     client=member.client
@@ -2200,7 +2363,7 @@ async def event_party_member_chatban(member, reason):
         return
     client_user_display_name=str(client.user.display_name)
     member_joined_at_most=[]
-    for member_ in client.user.party.members.values():
+    for member_ in client.party.members.values():
         add_cache(client, member_)
         try:
             if member_joined_at_most != []:
@@ -2210,7 +2373,7 @@ async def event_party_member_chatban(member, reason):
                     if member_.joined_at < member_joined_at_most[1]:
                         member_joined_at_most=[member_.id, member_.joined_at]
             else:
-                member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+                member_joined_at_most=[client.user.id, client.party.me.joined_at]
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2221,23 +2384,23 @@ async def event_party_member_chatban(member, reason):
         if data['loglevel'] == 'normal':
             if reason is None:
                 if data['no-logs'] is False:
-                    print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.party.leader.display_name)} が {str(member.display_name)} をチャットバン'))
-                dstore(client_user_display_name,f'[パーティー] {str(member.party.leader.display_name)} が {str(member.display_name)} をチャットバン')
+                    print(magenta(f'[{now_()}] [{l("party")}] [{client_user_display_name}] {l("party_member_chatban", str(member.party.leader.display_name), str(member.display_name))}'))
+                dstore(client_user_display_name,f'[{l("party")}] {l("party_member_chatban", str(member.party.leader.display_name), str(member.display_name))}')
             else:
                 if data['no-logs'] is False:
-                    print(magenta(f'[{now_()}] [パーティー] [{client_user_display_name}] {str(member.party.leader.display_name)} が {str(member.display_name)} をチャットバン | 理由: {reason}'))
-                dstore(client_user_display_name,f'[パーティー] {str(member.party.leader.display_name)} が {str(member.display_name)} をチャットバン | 理由: {reason}')
+                    print(magenta(f'[{now_()}] [{l("party")}] [{client_user_display_name}] {l("party_member_chatban2", str(member.party.leader.display_name), str(member.display_name), reason)}'))
+                dstore(client_user_display_name,f'[{l("party")}] {l("party_member_chatban2", str(member.party.leader.display_name), str(member.display_name), reason)}')
         else:
             if reason is None:
                 if data['no-logs'] is False:
-                    print(magenta(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン'))
-                dstore(client_user_display_name,f'[パーティー/{client.user.party.id}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン')
+                    print(magenta(f'[{now_()}] [{l("party")}/{client.party.id}] [{client_user_display_name}] {l("party_member_chatban", f"{str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}]", f"{str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}]")}'))
+                dstore(client_user_display_name,f'[{l("party")}/{client.party.id}] {l("party_member_chatban", f"{str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}]", f"{str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}]")}')
             else:
                 if data['no-logs'] is False:
-                    print(magenta(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン | 理由: {reason}'))
-                dstore(client_user_display_name,f'[パーティー/{client.user.party.id}] {str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}] が {str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}] をチャットバン | 理由: {reason}')
+                    print(magenta(f'[{now_()}] [{l("party")}/{client.party.id}] [{client_user_display_name}] {l("party_member_chatban2", f"{str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}]", f"{str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}]", reason)}'))
+                dstore(client_user_display_name,f'[{l("party")}/{client.party.id}] {l("party_member_chatban2", f"{str(member.party.leader.display_name)} / {member.party.leader.id} [{platform_to_str(member.party.leader.platform)}/{member.party.leader.input}]", f"{str(member.display_name)} / {member.id} [{platform_to_str(member.platform)}/{member.input}]", reason)}')
 
-async def event_party_update(party):
+async def event_party_update(party: fortnitepy.Party) -> None:
     if party is None:
         return
     client=party.client
@@ -2245,7 +2408,7 @@ async def event_party_update(party):
         return
     client_user_display_name=str(client.user.display_name)
     member_joined_at_most=[]
-    for member_ in client.user.party.members.values():
+    for member_ in client.party.members.values():
         add_cache(client, member_)
         try:
             if member_joined_at_most != []:
@@ -2255,7 +2418,7 @@ async def event_party_update(party):
                     if member_.joined_at < member_joined_at_most[1]:
                         member_joined_at_most=[member_.id, member_.joined_at]
             else:
-                member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+                member_joined_at_most=[client.user.id, client.party.me.joined_at]
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -2265,8 +2428,8 @@ async def event_party_update(party):
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] != 'normal':
             if data['no-logs'] is False:
-                print(magenta(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] パーティー更新'))
-            dstore(client_user_display_name,f'[パーティー/{client.user.party.id}] パーティー更新')
+                print(magenta(f'[{now_()}] [{l("party")}/{client.party.id}] [{client_user_display_name}] {l("party_update")}'))
+            dstore(client_user_display_name,f'[{l("party")}/{client.party.id}] {l("party_update")}')
 
 #========================================================================================================================
 #========================================================================================================================
@@ -2274,7 +2437,7 @@ async def event_party_update(party):
 #========================================================================================================================
 #========================================================================================================================
 
-async def event_friend_message(message):
+async def event_friend_message(message: fortnitepy.FriendMessage) -> None:
     global blacklist
     global whitelist
     global otherbotlist
@@ -2363,7 +2526,7 @@ async def event_friend_message(message):
                 break
             for command in commands['ownercommands'].split(','):
                 if args[0] in commands[command.lower()].split(','):
-                    await reply(message, 'このコマンドは管理者しか使用できません')
+                    await reply(message, l("this_command_owneronly"))
                     return
 
     if args[0] in commands['prev'].split(','):
@@ -2387,14 +2550,14 @@ async def event_friend_message(message):
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
             return
 
     if data['discord']['enabled'] is True and dclient.isready is True:
         if args[0] in commands['addblacklist_discord'].split(','):
             try:
                 if rawcontent == '' or args[1].isdigit() is False:
-                    await reply(message, f"[{commands['addblacklist_discord']}] [ユーザーID]")
+                    await reply(message, f"[{commands['addblacklist_discord']}] [{l('userid')}]")
                     return
                 user = dclient.get_user(int(args[1]))
                 if user is None:
@@ -2411,30 +2574,30 @@ async def event_friend_message(message):
                     data_["discord"]["blacklist"] = data["discord"]["blacklist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {str(user)} / {user.id} をブラックリストに追加しました")
+                    await reply(message, l('add_to_list', f'{str(user)} / {str(user.id)}', l('discord_blacklist')))
                 else:
-                    await reply(message, f"ユーザー {str(user)} / {user.id} は既にブラックリストに追加されています")
+                    await reply(message, l('already_list', f'{str(user)} / {user.id}', l('discord_blacklist')))
             except discord.NotFound:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
             except discord.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+                print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                dstore(name,f'>>> {l("error_while_requesting_userinfo")}')
+                await reply(message, l("error_while_requesting_userinfo"))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['removeblacklist_discord'].split(','):
             try:
                 if rawcontent == '' or args[1].isdigit() is False:
-                    await reply(message, f"[{commands['removeblacklist_discord']}] [ユーザーID]")
+                    await reply(message, f"[{commands['removeblacklist_discord']}] [{l('userid')}]")
                     return
                 user = dclient.get_user(int(args[1]))
                 if user is None:
@@ -2451,30 +2614,30 @@ async def event_friend_message(message):
                     data_["discord"]["blacklist"] = data["discord"]["blacklist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {str(user)} / {user.id} をブラックリストから削除")
+                    await reply(message, l('remove_from_list', f'{str(user)} / {user.id}', l('discord_blacklist')))
                 else:
-                    await reply(message, f"ユーザー {str(user)} / {user.id} はブラックリストに含まれていません")
+                    await reply(message, l('not_list', f'{str(user)} / {user.id}', l('discord_blacklist')))
             except discord.NotFound:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
             except discord.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+                print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                dstore(name,f'>>> {l("error_while_requesting_userinfo")}')
+                await reply(message, l("error_while_requesting_userinfo"))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['addwhitelist_discord'].split(','):
             try:
                 if rawcontent == '' or args[1].isdigit() is False:
-                    await reply(message, f"[{commands['addwhitelist_discord']}] [ユーザーID]")
+                    await reply(message, f"[{commands['addwhitelist_discord']}] [{l('userid')}]")
                     return
                 user = dclient.get_user(int(args[1]))
                 if user is None:
@@ -2491,30 +2654,30 @@ async def event_friend_message(message):
                     data_["discord"]["whitelist"] = data["discord"]["whitelist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {str(user)} / {user.id} をホワイトリストに追加しました")
+                    await reply(message, l('add_from_list', f'{str(user)} / {user.id}', l('discord_whitelist')))
                 else:
-                    await reply(message, f"ユーザー {str(user)} / {user.id} は既にホワイトリストに追加されています")
+                    await reply(message, l('already_list', f'{str(user)} / {user.id}', l('discord_whitelist')))
             except discord.NotFound:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
             except discord.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+                print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                dstore(name,f'>>> {l("error_while_requesting_userinfo")}')
+                await reply(message, l("error_while_requesting_userinfo"))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['removewhitelist_discord'].split(','):
             try:
                 if rawcontent == '' or args[1].isdigit() is False:
-                    await reply(message, f"[{commands['removewhitelist_discord']}] [ユーザーID]")
+                    await reply(message, f"[{commands['removewhitelist_discord']}] [{l('userid')}]")
                     return
                 user = dclient.get_user(int(args[1]))
                 if user is None:
@@ -2531,30 +2694,30 @@ async def event_friend_message(message):
                     data_["discord"]["whitelist"] = data["discord"]["whitelist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {str(user)} / {user.id} をホワイトリストから削除")
+                    await reply(message, l('remove_list', f'{str(user)} / {user.id}', l('discord_whitelist')))
                 else:
-                    await reply(message, f"ユーザー {str(user)} / {user.id} はホワイトリストに含まれていません")
+                    await reply(message, l('not_list', f'{str(user)} / {user.id}', l('discord_whitelist')))
             except discord.NotFound:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
             except discord.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+                print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                dstore(name,f'>>> {l("error_while_requesting_userinfo")}')
+                await reply(message, l("error_while_requesting_userinfo"))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
     if args[0] in commands['eval'].split(','):
         try:
             if rawcontent == "":
-                await reply(message, f"[{commands['eval']}] [式]")
+                await reply(message, f"[{commands['eval']}] [{l('eval')}]")
                 return
             variable=globals()
             variable.update(locals())
@@ -2571,12 +2734,12 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, f"{l('error')}\n{traceback.format_exc()}")
 
     elif args[0] in commands['exec'].split(','):
         try:
             if rawcontent == "":
-                await reply(message, f"[{commands['exec']}] [文]")
+                await reply(message, f"[{commands['exec']}] [{l('exec')}]")
                 return
             variable=globals()
             variable.update(locals())
@@ -2584,10 +2747,10 @@ async def event_friend_message(message):
             content_=" ".join(args_[1:])
             result = await aexec(content_, variable)
             await reply(message, str(result))
-        except Exception:
+        except Exception as e:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, f"{l('error')}\n{traceback.format_exc()}")
 
     elif args[0] in commands['restart'].split(','):
         try:
@@ -2622,15 +2785,15 @@ async def event_friend_message(message):
                         else:
                             flag = True
             if flag is True:
-                await reply(message, '招待が拒否に設定されているので実行できません')
+                await reply(message, l('invite_is_decline'))
                 return
-            await reply(message, 'プログラムを再起動します...')
+            await reply(message, l('restaring'))
             os.chdir(os.getcwd())
             os.execv(os.sys.executable,['python', *sys.argv])
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['relogin'].split(','):
         try:
@@ -2665,39 +2828,29 @@ async def event_friend_message(message):
                         else:
                             flag = True
             if flag is True:
-                await reply(message, '招待が拒否に設定されているので実行できません')
+                await reply(message, l('invite_is_decline'))
                 return
-            await reply(message, 'アカウントに再ログインします...')
+            await reply(message, l('relogining'))
             await client.restart()
-        except fortnitepy.AuthException:
-            print(red(traceback.format_exc()))
-            print(red(f'[{now_()}] [{client.user.display_name}] メールアドレスまたはパスワードが間違っています。'))
-            dstore(name,f'>>> {traceback.format_exc()}')
-            dstore(name,f'>>> メールアドレスまたはパスワードが間違っています')
-            kill=True
-            sys.exit(1)
         except Exception:
             print(red(traceback.format_exc()))
-            print(red(f'[{now_()}] [{client.user.display_name}] アカウントの読み込みに失敗しました。もう一度試してみてください。'))
             dstore(name,f'>>> {traceback.format_exc()}')
-            dstore(name,f'>>> アカウントの読み込みに失敗しました。もう一度試してみてください')
-            kill=True
-            sys.exit(1)
+            await reply(message, l('error'))
 
     elif args[0] in commands['reload'].split(','):
-        result=reload_configs(client)
+        success=reload_configs(client)
         try:
-            if result == 'Success':
-                await reply(message, '正常に読み込みが完了しました')
+            if success:
+                await reply(message, l('success'))
             else:
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
                 return
             try:
                 client.owner=None
                 owner=await client.fetch_profile(data['fortnite']['owner'])
                 if owner is None:
-                    print(red(f'[{now_()}] [{client.user.display_name}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
-                    dstore(client.user.display_name,'>>> 所有者が見つかりません。正しい名前/IDになっているか確認してください')
+                    print(red(f'[{now_()}] [{client.user.display_name}] {l("owner_notfound")}'))
+                    dstore(client.user.display_name,f'>>> {l("owner_notfound")}')
                 else:
                     add_cache(client, owner)
                     client.owner=client.get_friend(owner.id)
@@ -2709,28 +2862,32 @@ async def event_friend_message(message):
                                 if data['loglevel'] == 'debug':
                                     print(red(traceback.format_exc()))
                                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                                print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
-                                dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
+                                if data['loglevel'] == 'normal':
+                                    print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_sending_friendrequest")}'))
+                                    dstore(client.user.display_name,f'>>> {l("error_while_sending_friendrequest")}')
+                                else:
+                                    print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_sending_friendrequest")}'))
+                                dstore(client.user.display_name,f'>>> {l("error_while_sending_friendrequest")}')
                             except Exception:
                                 print(red(traceback.format_exc()))
                                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                        print(red(f"[{now_()}] [{client.user.display_name}] 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{commands['reload']}] コマンドで再読み込みしてください。"))
-                        dstore(client.user.display_name,f'>>> 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{commands["reload"]}] コマンドで再読み込みしてください')
+                        print(red(f'[{now_()}] [{client.user.display_name}] {l("not_friend_with_owner", commands["reload"])}'))
+                        dstore(client.user.display_name,f'>>> {l("not_friend_with_owner", commands["reload"])}')
                     else:
                         if data['loglevel'] == 'normal':
                             if data['no-logs'] is False:
-                                print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {str(client.owner.display_name)}'))
-                            dstore(client.user.display_name,f'所有者: {str(client.owner.display_name)}')
+                                print(green(f'[{now_()}] [{client.user.display_name}] {l("owner")}: {str(client.owner.display_name)}'))
+                            dstore(client.user.display_name,f'{l("owner")}: {str(client.owner.display_name)}')
                         else:
                             if data['no-logs'] is False:
-                                print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {str(client.owner.display_name)} / {client.owner.id}'))
-                            dstore(client.user.display_name,f'所有者: {str(client.owner.display_name)} / {client.owner.id}')
+                                print(green(f'[{now_()}] [{client.user.display_name}] {l("owner")}: {str(client.owner.display_name)} / {client.owner.id}'))
+                            dstore(client.user.display_name,f'{l("owner")}: {str(client.owner.display_name)} / {client.owner.id}')
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                dstore(client.user.display_name,f'>>> {l("error_while_requesting_userinfo")}')
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -2740,8 +2897,8 @@ async def event_friend_message(message):
                     user = await client.fetch_profile(blacklistuser)
                     add_cache(client, user)
                     if user is None:
-                        print(red(f'[{now_()}] [{client.user.display_name}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
-                        dstore(client.user.display_name,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                        print(red(f'[{now_()}] [{client.user.display_name}] {l("blacklist_user_notfound", blacklistuser)}'))
+                        dstore(client.user.display_name,f'>>> {l("blacklist_user_notfound", blacklistuser)}')
                     else:
                         blacklist.append(user.id)
                         if data['loglevel'] == 'debug':
@@ -2757,8 +2914,8 @@ async def event_friend_message(message):
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                    dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                    dstore(client.user.display_name,f'>>> {l("error_while_requesting_userinfo")}')
                 except Exception:
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -2769,8 +2926,8 @@ async def event_friend_message(message):
                     user = await client.fetch_profile(whitelistuser)
                     add_cache(client, user)
                     if user is None:
-                        print(red(f'[{now_()}] [{client.user.display_name}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
-                        dstore(client.user.display_name,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                        print(red(f'[{now_()}] [{client.user.display_name}] {l("whitelist_user_notfound", whitelistuser)}'))
+                        dstore(client.user.display_name,f'>>> {l("whitelist_user_notfound", whitelistuser)}')
                     else:
                         whitelist.append(user.id)
                         if data['loglevel'] == 'debug':
@@ -2779,8 +2936,8 @@ async def event_friend_message(message):
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                    dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                    dstore(client.user.display_name,f'>>> {l("error_while_requesting_userinfo")}')
                 except Exception:
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -2791,25 +2948,29 @@ async def event_friend_message(message):
                 try:
                     user = await client.fetch_profile(invitelistuser)
                     if user is None:
-                        print(red(f'[{now_()}] [{client.user.display_name}] 招待リストのユーザー {invitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
-                        dstore(client.user.display_name,f'>>>招待リストのユーザー {invitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                        print(red(f'[{now_()}] [{client.user.display_name}] {l("invitelist_user_notfound", invitelistuser)}'))
+                        dstore(client.user.display_name,f'>>> {l("invitelist_user_notfound", invitelistuser)}')
                     else:
                         friend = client.get_friend(user.id)
                         if friend is None and user.id != client.user.id:
                             if data['fortnite']['addfriend'] is True:
                                 try:
-                                    await client.add_friend(owner.id)
+                                    await client.add_friend(friend.id)
                                 except fortnitepy.HTTPException:
                                     if data['loglevel'] == 'debug':
                                         print(red(traceback.format_exc()))
                                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                                    print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
-                                    dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
+                                    if data['loglevel'] == 'normal':
+                                        print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_sending_friendrequest")}'))
+                                        dstore(client.user.display_name,f'>>> {l("error_while_sending_friendrequest")}')
+                                    else:
+                                        print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_sending_friendrequest")}'))
+                                        dstore(client.user.display_name,f'>>> {l("error_while_sending_friendrequest")}')
                                 except Exception:
                                     print(red(traceback.format_exc()))
                                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                            print(red(f"[{now_()}] [{client.user.display_name}] 招待リストのユーザー {invitelistuser} とフレンドではありません。フレンドになってからもう一度起動するか、[{commands['reload']}] コマンドで再読み込みしてください。"))
-                            dstore(client.user.display_name,f'>>> 招待リストのユーザー {invitelistuser} とフレンドではありません。フレンドになってからもう一度起動するか、[{commands["reload"]}] コマンドで再読み込みしてください')
+                            print(red(f'[{now_()}] [{client.user.display_name}] {l("not_friend_with_inviteuser", invitelistuser)}'))
+                            dstore(client.user.display_name,f'>>> {l("not_friend_with_inviteuser", invitelistuser)}')
                         else:
                             add_cache(client, user)
                             client.invitelist.append(user.id)
@@ -2819,8 +2980,8 @@ async def event_friend_message(message):
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                    dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                    dstore(client.user.display_name,f'>>> {l("error_while_requesting_userinfo")}')
                 except Exception:
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -2842,8 +3003,8 @@ async def event_friend_message(message):
                                 dstore(dclient_user,f'>>> {traceback.format_exc()}')
                             user = None
                     if user is None:
-                        print(red(f'[{now_()}] [{dclient_user}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しいIDになっているか確認してください。'))
-                        dstore(dclient_user,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しいIDになっているか確認してください')
+                        print(red(f'[{now_()}] [{dclient_user}] {l("discord_blacklist_user_notfound", blacklistuser)}'))
+                        dstore(dclient_user,f'>>> {l("discord_blacklist_user_notfound", blacklistuser)}')
                     else:
                         blacklist_.append(user.id)
                         if data['loglevel'] == 'debug':
@@ -2861,8 +3022,8 @@ async def event_friend_message(message):
                                 dstore(dclient_user,f'>>> {traceback.format_exc()}')
                             user = None
                     if user is None:
-                        print(red(f'[{now_()}] [{dclient_user}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しいIDになっているか確認してください。'))
-                        dstore(dclient_user,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しいIDになっているか確認してください')
+                        print(red(f'[{now_()}] [{dclient_user}] {l("discord_whitelist_user_notfound", whitelistuser)}'))
+                        dstore(dclient_user,f'>>> {l("discord_whitelist_user_notfound", whitelistuser)}')
                     else:
                         whitelist_.append(user.id)
                         if data['loglevel'] == 'debug':
@@ -2872,14 +3033,14 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['addblacklist'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['addblacklist']}] [ユーザー名/ユーザーID]")
+                await reply(message, f"[{commands['addblacklist']}] [{l('name_or_id')}]")
                 return
-            users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and user.id not in blacklist}
+            users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(name) and user.id != client.user.id and user.id not in blacklist}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
@@ -2890,12 +3051,12 @@ async def event_friend_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザー数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
@@ -2914,31 +3075,31 @@ async def event_friend_message(message):
                     data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストに追加しました")
+                    await reply(message, l('add_to_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))
                 else:
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にブラックリストに追加されています")
+                    await reply(message, l('already_in_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-        if user.id not in blacklist:
-            blacklist.append(user.id)
-            if user.display_name is not None:
-                data["fortnite"]["blacklist"].append(str(user.display_name))
+            if user.id not in blacklist:
+                blacklist.append(user.id)
+                if user.display_name is not None:
+                    data["fortnite"]["blacklist"].append(str(user.display_name))
+                else:
+                    data["fortnite"]["blacklist"].append(user.id)
+                try:
+                    with open("config.json", "r", encoding="utf-8") as f:
+                        data_ = json.load(f)
+                except json.decoder.JSONDecodeError:
+                    with open("config.json", "r", encoding="utf-8-sig") as f:
+                        data_ = json.load(f)
+                data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
+                with open("config.json", "w", encoding="utf-8") as f:
+                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                await reply(message, l('add_to_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))
             else:
-                data["fortnite"]["blacklist"].append(user.id)
-            try:
-                with open("config.json", "r", encoding="utf-8") as f:
-                    data_ = json.load(f)
-            except json.decoder.JSONDecodeError:
-                with open("config.json", "r", encoding="utf-8-sig") as f:
-                    data_ = json.load(f)
-            data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
-            with open("config.json", "w", encoding="utf-8") as f:
-                json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストに追加しました")
-        else:
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にブラックリストに追加されています")""" for user in users.values()
+                await reply(message, l('already_in_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -2947,17 +3108,17 @@ async def event_friend_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーをブラックリストに追加します"
+                text += f"\n{l('enter_to_add_to_list', l('blacklist'))}"
                 await reply(message, text)
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['removeblacklist'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['removeblacklist']}] [ユーザー名/ユーザーID]")
+                await reply(message, f"[{commands['removeblacklist']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and user.id in blacklist}
             try:
@@ -2970,12 +3131,12 @@ async def event_friend_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
@@ -2994,9 +3155,9 @@ async def event_friend_message(message):
                     data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
+                    await reply(message, l('remove_from_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))
                 else:
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")
+                    await reply(message, l('not_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))
             else:
                 client.select[message.author.id] = {
                     "exec": [
@@ -3016,9 +3177,9 @@ async def event_friend_message(message):
             data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
             with open("config.json", "w", encoding="utf-8") as f:
                 json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
+            await reply(message, l('remove_from_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))
         else:
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")""" for user in users.values()
+            await reply(message, l('not_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -3027,17 +3188,17 @@ async def event_friend_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーをブラックリストから削除します"
+                text += f"\n{l('enter_to_remove_from_list', l('blacklist'))}"
                 await reply(message, text)
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['addwhitelist'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['addwhitelist']}] [ユーザー名/ユーザーID]")
+                await reply(message, f"[{commands['addwhitelist']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and user.id not in whitelist}
             try:
@@ -3050,12 +3211,12 @@ async def event_friend_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
@@ -3074,9 +3235,9 @@ async def event_friend_message(message):
                     data_["fortnite"]["whitelist"] = data["fortnite"]["whitelist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストに追加しました")
+                    await reply(message, l("add_to_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))
                 else:
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にホワイトリストに追加されています")
+                    await reply(message, l("already_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))
             else:
                 client.select[message.author.id] = {
                     "exec": [
@@ -3096,9 +3257,9 @@ async def event_friend_message(message):
                 data_["fortnite"]["whitelist"] = data["fortnite"]["whitelist"]
                 with open("config.json", "w", encoding="utf-8") as f:
                     json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストに追加しました")
+                await reply(message, l("add_to_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))
             else:
-                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にホワイトリストに追加されています")""" for user in users.values()
+                await reply(message, l("already_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -3107,17 +3268,17 @@ async def event_friend_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーをホワイトリストに追加します"
+                text += f"\n{l('enter_to_add_to_list', l('whitelist'))}"
                 await reply(message, text)
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['removewhitelist'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['removewhitelist']}] [ユーザー名/ユーザーID]")
+                await reply(message, f"[{commands['removewhitelist']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and user.id in whitelist}
             try:
@@ -3130,12 +3291,12 @@ async def event_friend_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l("too_many_users", str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
@@ -3154,31 +3315,31 @@ async def event_friend_message(message):
                     data_["whitelist"] = data["whitelist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストから削除")
+                    await reply(message, l("remove_from_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))
                 else:
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はホワイトリストに含まれていません")
+                    await reply(message, l("not_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-        if str(user.display_name) in data["blacklist"] or user.id in data["blacklist"]:
-            blacklist.remove(user.id)
+        if user.id in whitelist:
+            whitelist.remove(user.id)
             try:
-                data["blacklist"].remove(str(user.display_name))
+                data["whitelist"].remove(str(user.display_name))
             except ValueError:
-                data["blacklist"].remove(user.id)
+                data["whitelist"].remove(user.id)
             try:
                 with open("config.json", "r", encoding="utf-8") as f:
                     data_ = json.load(f)
             except json.decoder.JSONDecodeError:
                 with open("config.json", "r", encoding="utf-8-sig") as f:
                     data_ = json.load(f)
-            data_["blacklist"] = data["blacklist"]
+            data_["whitelist"] = data["whitelist"]
             with open("config.json", "w", encoding="utf-8") as f:
                 json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
+            await reply(message, l("remove_from_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))
         else:
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")""" for user in users.values()
+            await reply(message, l("not_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -3187,17 +3348,17 @@ async def event_friend_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーをホワイトリストから削除します"
+                text += f"\n{l('enter_to_remove_from_list', l('whitelist'))}"
                 await reply(message, text)
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['addinvitelist'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['addinvitelist']}] [ユーザー名/ユーザーID]")
+                await reply(message, f"[{commands['addinvitelist']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and user.id not in client.invitelist}
             try:
@@ -3210,12 +3371,12 @@ async def event_friend_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l("too_many_users", str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
@@ -3234,9 +3395,9 @@ async def event_friend_message(message):
                     data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストに追加しました")
+                    await reply(message, l("add_to_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))
                 else:
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既に招待リストに追加されています")
+                    await reply(message, l("already_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))
             else:
                 client.select[message.author.id] = {
                     "exec": [
@@ -3256,9 +3417,9 @@ async def event_friend_message(message):
             data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
             with open("config.json", "w", encoding="utf-8") as f:
                 json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストに追加しました")
+            await reply(message, l("add_to_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))
         else:
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既に招待リストに追加されています")""" for user in users.values()
+            await reply(message, l("already_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -3267,17 +3428,17 @@ async def event_friend_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーをブラックリストに追加します"
+                text += f"\n{l('enter_to_add_to_list', l('invitelist'))}"
                 await reply(message, text)
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['removeinvitelist'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['removeinvitelist']}] [ユーザー名/ユーザーID]")
+                await reply(message, f"[{commands['removeinvitelist']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and user.id in client.invitelist}
             try:
@@ -3290,12 +3451,12 @@ async def event_friend_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l("too_many_users", str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
@@ -3314,9 +3475,9 @@ async def event_friend_message(message):
                     data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストから削除")
+                    await reply(message, l("remove_from_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))
                 else:
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は招待リストに含まれていません")
+                    await reply(message, l("not_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))
             else:
                 client.select[message.author.id] = {
                     "exec": [
@@ -3336,9 +3497,9 @@ async def event_friend_message(message):
             data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
             with open("config.json", "w", encoding="utf-8") as f:
                 json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストから削除")
+            await reply(message, l("remove_from_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))
         else:
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は招待リストに含まれていません")""" for user in users.values()
+            await reply(message, l("not_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -3347,41 +3508,41 @@ async def event_friend_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーをブラックリストから削除します"
+                text += f"\n{l('enter_to_remove_from_list', l('invitelist'))}"
                 await reply(message, text)
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['get'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['get']}] [ユーザー名/ユーザーID]")
+                await reply(message, f"[{commands['get']}] [{l('name_or_id')}]")
                 return
-            users = {str(member.display_name): member for member in client.user.party.members.values() if rawcontent in str(member.display_name)}
+            users = {str(member.display_name): member for member in client.party.members.values() if rawcontent in str(member.display_name)}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
-                    if client.user.party.members.get(user.id) is not None:
+                    if client.party.members.get(user.id) is not None:
                         users[str(user.display_name)] = user
                         add_cache(client, user)
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l("too_many_users", str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
-                member=client.user.party.members.get(user.id)
+                member=client.party.members.get(user.id)
                 if member is None:
-                    await reply(message, "ユーザーがパーティーにいません")
+                    await reply(message, l("user_not_in_party"))
                     return
                 if data['no-logs'] is False:
                     print(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}')
@@ -3393,9 +3554,9 @@ async def event_friend_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-        member=client.user.party.members.get(user.id)
+        member=client.party.members.get(user.id)
         if member is None:
-            await reply(message, "ユーザーがパーティーにいません")
+            await reply(message, l("user_not_in_party"))
             return
         if data['no-logs'] is False:
             print(f'''{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}''')
@@ -3411,23 +3572,23 @@ async def event_friend_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーの情報を取得します"
+                text += f"\n{l('enter_to_get_userinfo')}"
                 await reply(message, text)
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['friendcount'].split(','):
         try:
             if data['no-logs'] is False:
-                print(f'フレンド数: {len(client.friends)}')
-            dstore(name,f'フレンド数: {len(client.friends)}')
-            await reply(message, f'フレンド数: {len(client.friends)}')
+                print(f"{l('friendcount')}: {len(client.friends)}")
+            dstore(name,f"{l('friendcount')}: {len(client.friends)}")
+            await reply(message, f"{l('friendcount')}: {len(client.friends)}")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['pendingcount'].split(','):
         try:
@@ -3439,24 +3600,24 @@ async def event_friend_message(message):
                 elif pending.direction == 'INBOUND':
                     inbound.append(pending)
             if data['no-logs'] is False:
-                print(f'保留数: {len(client.pending_friends)}\n送信: {len(outbound)}\n受信: {len(inbound)}')
-            dstore(name,f'保留数: {len(client.pending_friends)}\n送信: {len(outbound)}\n受信: {len(inbound)}')
-            await reply(message, f'保留数: {len(client.pending_friends)}\n送信: {len(outbound)}\n受信: {len(inbound)}')
+                print(f"{l('pendingcount')}: {len(client.pending_friends)}\n{l('outbound')}: {len(outbound)}\n{l('inbound')}: {len(inbound)}")
+            dstore(name,f"{l('pendingcount')}: {len(client.pending_friends)}\n{l('outbound')}: {len(outbound)}\n{l('inbound')}: {len(inbound)}")
+            await reply(message, f"{l('pendingcount')}: {len(client.pending_friends)}\n{l('outbound')}: {len(outbound)}\n{l('inbound')}: {len(inbound)}")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['blockcount'].split(','):
         try:
             if data['no-logs'] is False:
-                print(f'ブロック数: {len(client.blocked_users)}')
-            dstore(name,f'ブロック数: {len(client.blocked_users)}')
-            await reply(message, f'ブロック数: {len(client.blocked_users)}')
+                print(f"{l('blockcount')}: {len(client.blocked_users)}")
+            dstore(name,f"{l('blockcount')}: {len(client.blocked_users)}")
+            await reply(message, f"{l('blockcount')}: {len(client.blocked_users)}")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['friendlist'].split(','):
         try:
@@ -3471,7 +3632,7 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['pendinglist'].split(','):
         try:
@@ -3484,13 +3645,13 @@ async def event_friend_message(message):
                 elif pending.direction == 'INBOUND':
                     inbound+=f'\n{str(pending.display_name)}'
             if data['no-logs'] is False:
-                print(f'送信: {outbound}\n受信: {inbound}')
-            dstore(name,f'送信: {outbound}\n受信: {inbound}')
-            await reply(message, f'送信: {outbound}\n受信: {inbound}')
+                print(f"{l('outbound')}: {outbound}\n{l('inbound')}: {inbound}")
+            dstore(name,f"{l('outbound')}: {outbound}\n{l('inbound')}: {inbound}")
+            await reply(message, f"{l('outbound')}: {outbound}\n{l('inbound')}: {inbound}")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['blocklist'].split(','):
         try:
@@ -3505,16 +3666,16 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['outfitmimic'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.outfitmimic=True
-                await reply(message, 'コスチュームミミックをオンに設定')
+                await reply(message, l('set_to', l('mimic', l('outfit')), l('on')))
             elif args[1] in commands['false'].split(','):
                 client.outfitmimic=False
-                await reply(message, 'コスチュームミミックをオフに設定')
+                await reply(message, l('set_to', l('mimic', l('outfit')), l('off')))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -3523,16 +3684,16 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['backpackmimic'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.backpackmimic=True
-                await reply(message, 'バックアクセサリーミミックをオンに設定')
+                await reply(message, l('mimic_set', l('set_to', l('mimic', l('backpack')), l('on'))))
             elif args[1] in commands['false'].split(','):
                 client.backpackmimic=False
-                await reply(message, 'バックアクセサリーミミックをオフに設定')
+                await reply(message, l('mimic_set', l('set_to', l('mimic', l('backpack')), l('off'))))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -3541,16 +3702,16 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['pickaxemimic'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.pickaxemimic=True
-                await reply(message, '収集ツールミミックをオンに設定')
+                await reply(message, l('mimic_set', l('set_to', l('mimic', l('pickaxe')), l('on'))))
             elif args[1] in commands['false'].split(','):
                 client.pickaxemimic=False
-                await reply(message, '収集ツールミミックをオフに設定')
+                await reply(message, l('mimic_set', l('set_to', l('mimic', l('pickaxe')), l('off'))))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -3559,16 +3720,16 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['emotemimic'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.emotemimic=True
-                await reply(message, 'エモートミミックをオンに設定')
+                await reply(message, l('mimic_set', l('set_to', l('mimic', l('emote')), l('on'))))
             elif args[1] in commands['false'].split(','):
                 client.emotemimic=False
-                await reply(message, 'エモートミミックをオフに設定')
+                await reply(message, l('mimic_set', l('set_to', l('mimic', l('emote')), l('off'))))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -3577,16 +3738,16 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['whisper'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.whisper=True
-                await reply(message, '囁きからのコマンド受付をオンに設定')
+                await reply(message, l('set_to', l('command_from', l('whisper'), l('on'))))
             elif args[1] in commands['false'].split(','):
                 client.whisper=False
-                await reply(message, '囁きからのコマンド受付をオフに設定')
+                await reply(message, l('set_to', l('command_from', l('whisper'), l('off'))))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -3595,16 +3756,16 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['partychat'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.partychat=True
-                await reply(message, 'パーティーチャットからのコマンド受付をオンに設定')
+                await reply(message, l('set_to', l('command_from', l('partychat'), l('on'))))
             elif args[1] in commands['false'].split(','):
                 client.partychat=False
-                await reply(message, 'パーティーチャットからのコマンド受付をオフに設定')
+                await reply(message, l('set_to', l('command_from', l('partychat'), l('off'))))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -3613,16 +3774,16 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['discord'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.discord=True
-                await reply(message, 'Discordからのコマンド受付をオンに設定')
+                await reply(message, l('set_to', l('command_from', l('discord'), l('on'))))
             elif args[1] in commands['false'].split(','):
                 client.discord=False
-                await reply(message, 'Discordからのコマンド受付をオフに設定')
+                await reply(message, l('set_to', l('command_from', l('discord'), l('off'))))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -3631,16 +3792,16 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['disablewhisperperfectly'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.whisperperfect=True
-                await reply(message, '囁きの完全無効をオンに設定')
+                await reply(message, l('set_to', l('disable_perfect', l('whisper'), l('on'))))
             elif args[1] in commands['false'].split(','):
                 client.whisperperfect=False
-                await reply(message, '囁きの完全無効をオフに設定')
+                await reply(message, l('set_to', l('disable_perfect', l('whisper'), l('off'))))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -3649,16 +3810,16 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['disablepartychatperfectly'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.partychatperfect=True
-                await reply(message, 'パーティーチャットの完全無効をオンに設定')
+                await reply(message, l('set_to', l('disable_perfect', l('partychat'), l('on'))))
             elif args[1] in commands['false'].split(','):
                 client.partychatperfect=False
-                await reply(message, 'パーティーチャットの完全無効をオフに設定')
+                await reply(message, l('set_to', l('disable_perfect', l('partychat'), l('on'))))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -3667,16 +3828,16 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['disablediscordperfectly'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.discordperfect=True
-                await reply(message, 'Discordの完全無効をオンに設定')
+                await reply(message, l('set_to', l('disable_perfect', l('discord'), l('on'))))
             elif args[1] in commands['false'].split(','):
                 client.discordperfect=False
-                await reply(message, 'Discordの完全無効をオフに設定')
+                await reply(message, l('set_to', l('disable_perfect', l('discord'), l('on'))))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -3685,16 +3846,16 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['acceptinvite'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.acceptinvite=True
-                await reply(message, '招待を承諾に設定')
+                await reply(message, l('set_to', l('invite'), l('accept')))
             elif args[1] in commands['false'].split(','):
                 client.acceptinvite=False
-                await reply(message, '招待を拒否に設定')
+                await reply(message, l('set_to', l('invite'), l('decline')))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -3703,16 +3864,16 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['acceptfriend'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.acceptfriend=True
-                await reply(message, 'フレンド申請を承諾に設定')
+                await reply(message, l('set_to', l('friendrequest'), l('accept')))
             elif args[1] in commands['false'].split(','):
                 client.acceptfriend=False
-                await reply(message, 'フレンド申請を拒否に設定')
+                await reply(message, l('set_to', l('friendrequest'), l('decline')))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -3721,16 +3882,16 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['joinmessageenable'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.joinmessageenable=True
-                await reply(message, 'パーティー参加時のメッセージをオンに設定')
+                await reply(message, l('set_to', l('join_', l('message')), l('on')))
             elif args[1] in commands['false'].split(','):
                 client.joinmessageenable=False
-                await reply(message, 'パーティー参加時のメッセージをオフに設定')
+                await reply(message, l('set_to', l('join_', l('message')), l('off')))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -3739,16 +3900,16 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['randommessageenable'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.randommessageenable=True
-                await reply(message, 'パーティー参加時のランダムメッセージをオンに設定')
+                await reply(message, l('set_to', l('join_', l('randommessage')), l('on')))
             elif args[1] in commands['false'].split(','):
                 client.randommessageenable=False
-                await reply(message, 'パーティー参加時のランダムメッセージをオフに設定')
+                await reply(message, l('set_to', l('join_', l('randommessage')), l('off')))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -3757,7 +3918,7 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['wait'].split(','):
         try:
@@ -3769,10 +3930,10 @@ async def event_friend_message(message):
                     pass
                 client.timer_=Timer(data['fortnite']['waitinterval'], inviteaccept, [client])
                 client.timer_.start()
-                await reply(message, f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")
+                await reply(message, l('decline_invite_for', str(data['fortnite']['waitinterval'])))
             else:
-                if client.owner.id in client.user.party.members.keys() and message.author.id != client.owner.id:
-                    await reply(message, '現在利用できません')
+                if client.owner.id in client.party.members.keys() and message.author.id != client.owner.id:
+                    await reply(message, l('not_available'))
                     return
                 client.acceptinvite=False
                 try:
@@ -3781,17 +3942,17 @@ async def event_friend_message(message):
                     pass
                 client.timer_=Timer(data['fortnite']['waitinterval'], inviteaccept, [client])
                 client.timer_.start()
-                await reply(message, f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")             
+                await reply(message, l('decline_invite_for', str(data['fortnite']['waitinterval'])))
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['join'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['join']}] [ユーザー名/ユーザーID]")
+                await reply(message, f"[{commands['join']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is True}
             try:
@@ -3804,18 +3965,18 @@ async def event_friend_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
                 friend=client.get_friend(user.id)
                 if friend is None:
-                    await reply(message, 'ユーザーとフレンドではありません')
+                    await reply(message, l('not_friend_with_user'))
                 else:
                     await friend.join_party()
             else:
@@ -3825,29 +3986,29 @@ async def event_friend_message(message):
         try:
             friend=client.get_friend(user.id)
             if friend is None:
-                await reply(message, 'ユーザーとフレンドではありません')
+                await reply(message, l('not_friend_with_user'))
             else:
                 await friend.join_party()
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーが満員か、既にパーティーにいるか、ユーザーがオフラインです')
+            await reply(message, l('party_full_or_already_or_offline'))
         except fortnitepy.NotFound:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーが見つかりません')
+            await reply(message, l('party_notfound'))
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーがプライベートです')
+            await reply(message, l('party_private'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーの参加リクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l('error_while_joining_to_party'))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -3856,32 +4017,32 @@ async def event_friend_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーのパーティーに参加します"
+                text += f"{l('enter_join_party')}"
                 await reply(message, text)
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーが満員か、既にパーティーにいるか、ユーザーがオフラインです')
+            await reply(message, l('party_full_or_already_or_offline'))
         except fortnitepy.NotFound:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーが見つかりません')
+            await reply(message, l('party_notfound'))
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーがプライベートです')
+            await reply(message, l('party_private'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーの参加リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_joining_to_party'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['joinid'].split(','):
         try:
@@ -3890,45 +4051,45 @@ async def event_friend_message(message):
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, '既にこのパーティーのメンバーです')
+            await reply(message, l('party_full_or_already'))
         except fortnitepy.NotFound:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーが見つかりません')
+            await reply(message, l('party_notfound'))
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーがプライベートです')
+            await reply(message, l('party_private'))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, f"[{commands['join']}] [パーティーID]")
+            await reply(message, f"[{commands['join']}] [{l('party_id')}]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['leave'].split(','):
         try:
-            await client.user.party.me.leave()
-            await reply(message, 'パーティーを離脱')
+            await client.party.me.leave()
+            await reply(message, l('party_leave', client.user.party.id))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティー離脱のリクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_leaving_party'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['invite'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['invite']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['invite']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is True}
             try:
@@ -3941,24 +4102,21 @@ async def event_friend_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
                 friend=client.get_friend(user.id)
                 if friend is None:
-                    await reply(message, 'ユーザーとフレンドではありません')
+                    await reply(message, l('not_friend_with_user'))
                     return
                 await friend.invite()
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(friend.display_name)} をパーティーに招待')
-                else:
-                    await reply(message, f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
+                await reply(message, l('user_invited', f'{str(friend.display_name)} / {friend.id}', client.party.id))
             else:
                 client.select[message.author.id] = {
                     "exec": [
@@ -3966,23 +4124,20 @@ async def event_friend_message(message):
         try:
             friend=client.get_friend(user.id)
             if friend is None:
-                await reply(message, 'ユーザーとフレンドではありません')
+                await reply(message, l('not_friend_with_user'))
                 return
             await friend.invite()
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(friend.display_name)} をパーティーに招待')
-            else:
-                await reply(message, f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
+            await reply(message, l('user_invited', f'{str(friend.display_name)} / {friend.id}', client.party.id))
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーが満員か、既にパーティーにいます')
+            await reply(message, l('party_full_or_already'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティー招待の送信リクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l('error_while_sending_partyinvite'))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -3991,55 +4146,52 @@ async def event_friend_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーを招待します"
+                text += f"\n{l('enter_to_invite_user')}"
                 await reply(message, text)
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーが満員か、既にパーティーにいます')
+            await reply(message, l('party_full_or_already'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティー招待の送信リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_sending_partyinvite'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['inviteall'].split(','):
         try:
             for inviteuser in client.invitelist:
-                if inviteuser != client.user.id and inviteuser not in client.user.party.members:
+                if inviteuser != client.user.id and inviteuser not in client.party.members:
                     try:
-                        await client.user.party.invite(inviteuser)
+                        await client.party.invite(inviteuser)
                     except fortnitepy.PartyError:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
                             dstore(name,f'>>> {traceback.format_exc()}')
-                        await reply(message, 'パーティーが満員か、既にパーティーにいます')
+                        await reply(message, l('party_full_or_already'))
                     except fortnitepy.Forbidden:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
                             dstore(name,f'>>> {traceback.format_exc()}')
-                        await reply(message, 'ユーザーとフレンドではありません')
+                        await reply(message, l('not_friend_with_user'))
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
                             dstore(name,f'>>> {traceback.format_exc()}')
-                        await reply(message, 'パーティー招待の送信リクエストを処理中にエラーが発生しました')
+                        await reply(message, l('error_while_sending_partyinvite'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['message'].split(','):
         try:
             send=rawcontent.split(' : ')
-            if len(send) < 2:
-                await reply(message, f"[{commands['message']}] [ユーザー名 / ユーザーID] : [内容]")
-                return
             users = {str(user.display_name): user for user in cache_users.values() if send[0] in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is True}
             try:
                 user=await client.fetch_profile(send[0])
@@ -4051,24 +4203,21 @@ async def event_friend_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
                 friend=client.get_friend(user.id)
                 if friend is None:
-                    await reply(message, 'ユーザーとフレンドではありません')
+                    await reply(message, l('not_friend_with_user'))
                     return
                 await friend.send(send[1])
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
-                else:
-                    await reply(message, f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
+                await reply(message, l('user_sent', f'{str(friend.display_name)} / {friend.id}', send[1]))
             else:
                 client.select[message.author.id] = {
                     "exec": [
@@ -4076,18 +4225,15 @@ async def event_friend_message(message):
         try:
             friend=client.get_friend(user.id)
             if friend is None:
-                await reply(message, 'ユーザーとフレンドではありません')
+                await reply(message, l('not_friend_with_user'))
                 return
             await friend.send(send[1])
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
-            else:
-                await reply(message, f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
+            await reply(message, l('user_sent', f'{str(friend.display_name)} / {friend.id}', send[1]))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l("error_while_requesting_userinfo"))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user, "send": send} for user in users.values()
@@ -4096,136 +4242,133 @@ async def event_friend_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーにメッセージを送信します"
+                text += f"\n{l('enter_to_send')}"
                 await reply(message, text)
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+            await reply(message, l("error_while_requesting_userinfo"))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, f"[{commands['message']}] [ユーザー名 / ユーザーID] : [内容]")
+            await reply(message, f"[{commands['message']}] [{l('name_or_id')}] : [{l('content')}]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['partymessage'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['partymessage']}] [内容]")
+                await reply(message, f"[{commands['partymessage']}] [{l('content')}]")
                 return
-            await client.user.party.send(rawcontent)
-            if data['loglevel'] == 'normal':
-                await reply(message, f'パーティーにメッセージ {rawcontent} を送信')
-            else:
-                await reply(message, f'パーティー {client.user.party.id} にメッセージ {rawcontent} を送信')
+            await client.party.send(rawcontent)
+            await reply(message, l('party_sent', client.party.id, rawcontent))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['status'].split(','):
         try:
             await client.set_status(rawcontent)
-            await reply(message, f'ステータスを {rawcontent} に設定')
+            await reply(message, l('set_to', l('status'), rawcontent))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, f"[{commands['status']}] [内容]")
+            await reply(message, f"[{commands['status']}] [{l('content')}]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['banner'].split(','):
         try:
-            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_banner,args[1],args[2],client.user.party.me.banner[2]))
-            await reply(message, f'バナーを {args[1]}, {args[2]}に設定')
+            await client.party.me.edit_and_keep(partial(client.party.me.set_banner,args[1],args[2],client.party.me.banner[2]))
+            await reply(message, l('set_to', l('banner'), f"{args[1]}, {args[2]}"))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'バナー情報の設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_asset'))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, f"[{commands['banner']}] [バナーID] [バナーの色]")
+            await reply(message, f"[{commands['banner']}] [{l('bannerid')}] [{l('color')}]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['level'].split(','):
         try:
-            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_banner,client.user.party.me.banner[0],client.user.party.me.banner[1],int(args[1])))
-            await reply(message, f'レベルを {args[1]} に設定')
+            await client.party.me.edit_and_keep(partial(client.party.me.set_banner,client.party.me.banner[0],client.party.me.banner[1],int(args[1])))
+            await reply(message, l('level', args[1]))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'レベルの設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_asset'))
         except ValueError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, '数字を入力してください')
+            await reply(message, l('must_be_int'))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, f"[{commands['level']}] [レベル]")
+            await reply(message, f"[{commands['level']}] [{l('level')}]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['bp'].split(','):
         try:
-            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_battlepass_info,True,args[1],args[2],args[3]))
-            await reply(message, f'バトルパス情報を ティア: {args[1]} XPブースト: {args[2]} フレンドXPブースト: {args[3]} に設定')
+            await client.party.me.edit_and_keep(partial(client.party.me.set_battlepass_info,True,args[1],args[2],args[3]))
+            await reply(message, l('set_to', l('bpinfo'), f"{l('tier')}: {args[1]}, {l('xpboost')}: {args[2]}, {l('friendxpboost')}: {args[3]}"))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'バトルパス情報の設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_bpinfo'))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, f"[{commands['bp']}] [ティア] [XPブースト] [フレンドXPブースト]")
+            await reply(message, f"[{commands['bp']}] [{l('tier')}] [{l('xpboost')}] [{l('friendxpboost')}]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['privacy'].split(','):
         try:
             if args[1] in commands['privacy_public'].split(','):
-                await client.user.party.set_privacy(fortnitepy.PartyPrivacy.PUBLIC)
-                await reply(message, 'プライバシーを パブリック に設定')
+                await client.party.set_privacy(fortnitepy.PartyPrivacy.PUBLIC)
+                await reply(message, l('set_to', l('privacy'), l('public')))
             elif args[1] in commands['privacy_friends_allow_friends_of_friends'].split(','):
-                await client.user.party.set_privacy(fortnitepy.PartyPrivacy.FRIENDS_ALLOW_FRIENDS_OF_FRIENDS)
-                await reply(message, 'プライバシーを フレンド(フレンドのフレンドを許可) に設定')
+                await client.party.set_privacy(fortnitepy.PartyPrivacy.FRIENDS_ALLOW_FRIENDS_OF_FRIENDS)
+                await reply(message, l('set_to', l('privacy'), l('friends_allow_friends_of_friends')))
             elif args[1] in commands['privacy_friends'].split(','):
-                await client.user.party.set_privacy(fortnitepy.PartyPrivacy.FRIENDS)
-                await reply(message, 'プライバシーを フレンド に設定')
+                await client.party.set_privacy(fortnitepy.PartyPrivacy.FRIENDS)
+                await reply(message, l('set_to', l('privacy'), l('friends')))
             elif args[1] in commands['privacy_private_allow_friends_of_friends'].split(','):
-                await client.user.party.set_privacy(fortnitepy.PartyPrivacy.PRIVATE_ALLOW_FRIENDS_OF_FRIENDS)
-                await reply(message, 'プライバシーを プライベート(フレンドのフレンドを許可) に設定')
+                await client.party.set_privacy(fortnitepy.PartyPrivacy.PRIVATE_ALLOW_FRIENDS_OF_FRIENDS)
+                await reply(message, l('set_to', l('privacy'), l('private_allow_friends_of_friends')))
             elif args[1] in commands['privacy_private'].split(','):
-                await client.user.party.set_privacy(fortnitepy.PartyPrivacy.PRIVATE)
-                await reply(message, 'プライバシーを プライベート に設定')
+                await client.party.set_privacy(fortnitepy.PartyPrivacy.PRIVATE)
+                await reply(message, l('set_to', l('privacy'), l('private')))
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーリーダーではありません')
+            await reply(message, l('not_party_leader'))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4234,12 +4377,12 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー') 
+            await reply(message, l('error')) 
 
     elif args[0] in commands['getuser'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['getuser']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['getuser']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id}
             try:
@@ -4251,12 +4394,12 @@ async def event_friend_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             text = str()
             for user in users.values():
@@ -4268,12 +4411,12 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['getfriend'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['getfriend']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['getfriend']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is True}
             try:
@@ -4286,12 +4429,12 @@ async def event_friend_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             text = str()
             for user in users.values():
@@ -4303,7 +4446,7 @@ async def event_friend_message(message):
                 else:
                     text += f'\n{friend.nickname}({str(friend.display_name)}) / {friend.id}'
                 if friend.last_logout is not None:
-                    text += '\n最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout)
+                    text += "\n{1}: {0.year}/{0.month}/{0.day} {0.hour}:{0.minute}:{0.second}".format(friend.last_logout, l('lastlogin'))
             if data['no-logs'] is False:
                 print(text)
             dstore(name,text)
@@ -4311,12 +4454,12 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['getpending'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['getpending']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['getpending']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_pending(user.id) is True}
             try:
@@ -4329,12 +4472,12 @@ async def event_friend_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             text = str()
             for user in users.values():
@@ -4349,12 +4492,12 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['getblock'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['getblock']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['getblock']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_blocked(user.id) is True}
             try:
@@ -4367,12 +4510,12 @@ async def event_friend_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             text = str()
             for user in users.values():
@@ -4387,14 +4530,14 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['info'].split(','):
         try:
             if args[1] in commands['info_party'].split(','):
                 text = str()
-                text += f'{client.user.party.id}\n人数: {client.user.party.member_count}'
-                for member in client.user.party.members.values():
+                text += f"{client.party.id}\n{l('member_count')}: {client.party.member_count}"
+                for member in client.party.members.values():
                     add_cache(client, member)
                     if data['loglevel'] == 'normal':
                         text += f'\n{str(member.display_name)}'
@@ -4404,55 +4547,55 @@ async def event_friend_message(message):
                 dstore(None, text)
                 await reply(message, text)
                 if data['loglevel'] == 'debug':
-                    print(json.dumps(client.user.party.meta.schema, indent=2))
+                    print(json.dumps(client.party.meta.schema, indent=2))
             
-            elif True in [args[1] in commands[key].split(',') for key in ("cid", "bid", "petcarrier", "pickaxe_id", "eid", "emoji_id", "toy_id", "shout_id", "id")]:
+            elif True in [args[1] in commands[key].split(',') for key in ("cid", "bid", "petcarrier", "pickaxe_id", "eid", "emoji_id", "toy_id", "id")]:
                 type_ = convert_to_type(args[1])
                 if rawcontent2 == '':
                     await reply(message, f"[{commands[type_]}] [ID]")
                     return
-                result = await loop.run_in_executor(None, search_item, "ja", "id", rawcontent2, type_)
+                result = await loop.run_in_executor(None, search_item, data["lang"], "id", rawcontent2, type_)
                 if result is None:
                     result = await loop.run_in_executor(None, search_item, "en", "id", rawcontent2, type_)
                 if result is None:
-                    await reply(message, "見つかりません")
+                    await reply(message, l('item_notfound'))
                 else:
                     if len(result) > 30:
-                        await reply(message, f"見つかったアイテム数 {len(result)} は多すぎます")
+                        await reply(message, l('too_many_items', str(len(result))))
                         return
                     if len(result) == 1:
-                        await reply(message, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}\n説明: {result[0]['description']}\nレア度: {result[0]['displayRarity']}\n{result[0]['set']}")
+                        await reply(message, f"{result[0]['type']['displayValue']}: {result[0]['name']} | {result[0]['id']}\n{result[0]['description']}\{result[0]['rarity']['displayValue']}\n{result[0]['set']['value']}")
                     else:
                         text = str()
                         for count, item in enumerate(result):
-                            text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
-                        text += "\n数字を入力することでそのアイテムに設定します"
+                            text += f"\n{count+1} {item['type']['displayValue']}: {item['name']} | {item['id']}"
+                        text += f"\n{l('enter_to_show_info')}"
                         await reply(message, text)
-                        client.select[message.author.id] = {"exec": [f"await reply(message, f'''{item['shortDescription']}: {item['name']} | {item['id']}\n{item['description']}\n{item['displayRarity']}\n{item['set']}''')" for item in result]}
+                        client.select[message.author.id] = {"exec": [f"await reply(message, f'''{item['type']['displayValue']}: {item['name']} | {item['id']}\n{item['description']}\n{item['rarity']['displayValue']}\n{item['set']['value']}''')" for item in result]}
 
-            elif True in  [args[1] in commands[key].split(',') for key in ("outfit", "backpack", "pet", "pickaxe", "emote", "emoji", "toy", "shout", "item")]:
+            elif True in  [args[1] in commands[key].split(',') for key in ("outfit", "backpack", "pet", "pickaxe", "emote", "emoji", "toy", "item")]:
                 type_ = convert_to_type(args[1])
                 if rawcontent2 == '':
-                    await reply(message, f"[{commands[type_]}] [アイテム名]")
+                    await reply(message, f"[{commands[type_]}] [{l('itemname')}]")
                     return
-                result = await loop.run_in_executor(None, search_item, "ja", "name", rawcontent2, type_)
+                result = await loop.run_in_executor(None, search_item, data["lang"], "name", rawcontent2, type_)
                 if result is None:
                     result = await loop.run_in_executor(None, search_item, "en", "name", rawcontent2, type_)
                 if result is None:
-                    await reply(message, "見つかりません")
+                    await reply(message, l('item_notfound'))
                 else:
                     if len(result) > 30:
-                        await reply(message, f"見つかったアイテム数 {len(result)} は多すぎます")
+                        await reply(message, l('too_many_items', str(len(result))))
                         return
                     if len(result) == 1:
-                        await reply(message, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}\n{result[0]['description']}\n{result[0]['displayRarity']}\n{result[0]['set']}")
+                        await reply(message, f"{result[0]['type']['displayValue']}: {result[0]['name']} | {result[0]['id']}\n{result[0]['description']}\n{result[0]['rarity']['displayValue']}\n{result[0]['set']['value']}")
                     else:
                         text = str()
                         for count, item in enumerate(result):
-                            text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
-                        text += "\n数字を入力することでそのアイテムに設定します"
+                            text += f"\n{count+1} {item['type']['displayValue']}: {item['name']} | {item['id']}"
+                        text += f"\n{l('enter_to_show_info')}"
                         await reply(message, text)
-                        client.select[message.author.id] = {"exec": [f"await reply(message, f'''{item['shortDescription']}: {item['name']} | {item['id']}\n{item['description']}\n{item['displayRarity']}\n{item['set']}''')" for item in result]}
+                        client.select[message.author.id] = {"exec": [f"await reply(message, f'''{item['type']['displayValue']}: {item['name']} | {item['id']}\n{item['description']}\n{item['rarity']['displayValue']}\n{item['set']['value']}''')" for item in result]}
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -4461,7 +4604,7 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['pending'].split(','):
         try:
@@ -4474,44 +4617,32 @@ async def event_friend_message(message):
                 for pending in pendings:
                     try:
                         await pending.accept()
-                        if data['loglevel'] == 'normal':
-                            await reply(message, f'{str(pending.display_name)} をフレンドに追加')
-                        else:
-                            await reply(message, f'{str(pending.display_name)} / {pending.id} をフレンドに追加')
+                        await reply(message, l('add_friend', f'{str(pending.display_name)} / {pending.id}'))
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
-                        if data['loglevel'] == 'normal':
-                            await reply(message, f'{str(pending.display_name)} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
-                        else:
-                            await reply(message, f'{str(pending.display_name)} / {pending.id} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
+                        await reply(message, l('error_while_sending_friendrequest'))
                         continue
                     except Exception:
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                        await reply(message, 'エラー')
+                        await reply(message, l('error'))
                         continue
             elif args[1] in commands['false'].split(','):
                 for pending in pendings:
                     try:
                         await pending.decline()
-                        if data['loglevel'] == 'normal':
-                            await reply(message, f'{str(pending.display_name)} のフレンド申請を拒否')
-                        else:
-                            await reply(message, f'{str(pending.display_name)} / {pending.id} のフレンド申請を拒否')
+                        await reply(message, l('friend_request_decline', f'{str(pending.display_name)} / {pending.id}'))
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
                             dstore(name,f'>>> {traceback.format_exc()}')
-                        if data['loglevel'] == 'normal':
-                            await reply(message, f'{str(pending.display_name)} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
-                        else:
-                            await reply(message, f'{str(pending.display_name)} / {pending.id} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
+                        await reply(message, l('error_while_declining_friendrequest'))
                         continue
                     except Exception:
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                        await reply(message, 'エラー')
+                        await reply(message, l('error'))
                         continue
         except IndexError:
             if data['loglevel'] == 'debug':
@@ -4521,7 +4652,7 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['removepending'].split(','):
         try:
@@ -4533,35 +4664,29 @@ async def event_friend_message(message):
             for pending in pendings:
                 try:
                     await pending.decline()
-                    if data['loglevel'] == 'normal':
-                        await reply(message, f'{str(pending.display_name)} へのフレンド申請を解除')
-                    else:
-                        await reply(message, f'{str(pending.display_name)} / {pending.id} へのフレンド申請を解除')
+                    await reply(message, l('remove_pending', f'{str(pending.display_name)} / {pending.id}'))
                 except fortnitepy.HTTPException:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    if data['loglevel'] == 'normal':
-                        await reply(message, f'{str(pending.display_name)} へのフレンド申請を解除リクエストを処理中にエラーが発生しました')
-                    else:
-                        await reply(message, f'{str(pending.display_name)} / {pending.id} へのフレンド申請を解除リクエストを処理中にエラーが発生しました')
+                    await reply(message, l('error_while_removing_friendrequest'))
                     continue
                 except Exception:
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'エラー')
+                    await reply(message, l('error'))
                     continue
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['addfriend'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['addfriend']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['addfriend']}] [{l('name_or_id')}]")
                 return
-            users = {str(user.display_name): user for name, user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is False}
+            users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is False}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
@@ -4572,41 +4697,35 @@ async def event_friend_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
                 if client.has_friend(user.id) is True:
-                    await reply(message, '既にユーザーとフレンドです')
+                    await reply(message, l('already_friend'))
                     return
                 await client.add_friend(user.id)
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} にフレンド申請を送信')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} にフレンド申請を送信')
+                await reply(message, l('friend_request_to', f'{str(user.display_name)} / {user.id}'))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
         try:
             if client.has_friend(user.id) is True:
-                await reply(message, '既にユーザーとフレンドです')
+                await reply(message, l('already_friend'))
                 return
             await client.add_friend(user.id)
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(user.display_name)} にフレンド申請を送信')
-            else:
-                await reply(message, f'{str(user.display_name)} / {user.id} にフレンド申請を送信')
+            await reply(message, l('friend_request_to', f'{str(user.display_name)} / {user.id}'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'フレンド申請の送信リクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l('error_while_sending_friendrequest'))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -4615,24 +4734,24 @@ async def event_friend_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーにフレンド申請を送信します"
+                text += f"\n{l('enter_to_send_friendrequest')}"
                 await reply(message, text)
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'フレンド申請の送信リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_sending_friendrequest'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['removefriend'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['removefriend']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['removefriend']}] [{l('name_or_id')}]")
                 return
-            users = {str(user.display_name): user for name, user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is True}
+            users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is True}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
@@ -4643,41 +4762,35 @@ async def event_friend_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
                 if client.has_friend(user.id) is False:
-                    await reply(message, 'ユーザーとフレンドではありません')
+                    await reply(message, l('not_friend_with_user'))
                     return
                 await client.remove_or_decline_friend(user.id)
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} をフレンドから削除')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} をフレンドから削除')
+                await reply(message, l('remove_friend', f'{str(user.display_name)} / {user.id}'))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
         try:
             if client.has_friend(user.id) is False:
-                await reply(message, 'ユーザーとフレンドではありません')
+                await reply(message, l('not_friend_with_user'))
                 return
             await client.remove_or_decline_friend(user.id)
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(user.display_name)} をフレンドから削除')
-            else:
-                await reply(message, f'{str(user.display_name)} / {user.id} をフレンドから削除')
+            await reply(message, l('remove_friend', f'{str(user.display_name)} / {user.id}'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'フレンドの削除リクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l('error_while_removing_friend')""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -4686,22 +4799,22 @@ async def event_friend_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーをフレンドから削除します"
+                text += f"\n{l('enter_to_remove_friend')}"
                 await reply(message, text)
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'フレンドの削除リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_removing_friend'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['acceptpending'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['acceptpending']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['acceptpending']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_pending(user.id) is True}
             try:
@@ -4714,41 +4827,35 @@ async def event_friend_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
                 if client.is_pending(user.id) is False:
-                    await reply(message, 'ユーザーからのフレンド申請がありません')
+                    await reply(message, l('not_pending_with_user'))
                     return
                 await client.accept_friend(user.id)
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} をフレンドに追加')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} をフレンドに追加')
+                await reply(message, l('friend_add', f'{str(user.display_name)} / {user.id}'))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
         try:
             if client.is_pending(user.id) is False:
-                await reply(message, 'ユーザーからのフレンド申請がありません')
+                await reply(message, l('not_pending_with_user'))
                 return
             await client.accept_friend(user.id)
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(user.display_name)} をフレンドに追加')
-            else:
-                await reply(message, f'{str(user.display_name)} / {user.id} をフレンドに追加')
+            await reply(message, l('friend_add', f'{str(user.display_name)} / {user.id}'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'フレンドの追加リクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l('error_while_accepting_friendrequest'))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -4757,22 +4864,22 @@ async def event_friend_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーからのフレンド申請を承諾します"
+                text += f"\n{l('enter_to_accept_pending')}"
                 await reply(message, text)
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'フレンドの追加リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_accepting_friendrequest'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['declinepending'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['declinepending']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['declinepending']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_pending(user.id) is True}
             try:
@@ -4785,41 +4892,35 @@ async def event_friend_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
                 if client.is_pending(user.id) is False:
-                    await reply(message, 'ユーザーからのフレンド申請がありません')
+                    await reply(message, l('nor_pending_with_user'))
                     return
                 await client.remove_or_decline_friend(user.id)
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} のフレンド申請を拒否')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} のフレンド申請を拒否')
+                await reply(message, l('friend_request_decline', f'{str(user.display_name)} / {user.id}'))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
         try:
             if client.is_pending(user.id) is False:
-                await reply(message, 'ユーザーからのフレンド申請がありません')
+                await reply(message, l('nor_pending_with_user'))
                 return
             await client.remove_or_decline_friend(user.id)
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(user.display_name)} のフレンド申請を拒否')
-            else:
-                await reply(message, f'{str(user.display_name)} / {user.id} のフレンド申請を拒否')
+            await reply(message, l('friend_request_decline', f'{str(user.display_name)} / {user.id}'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'フレンド申請の拒否リクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l('error_while_declining_friendrequest'))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -4828,24 +4929,24 @@ async def event_friend_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーからのフレンド申請を拒否します"
+                text += f"\n{l('enter_to_decline_pending')}"
                 await reply(message, text)
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'フレンド申請の拒否リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_declining_friendrequest'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['blockfriend'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['blockfriend']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['blockfriend']}] [{l('name_or_id')}]")
                 return
-            users = {user.display_name: user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_blocked(user.id) is False}
+            users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_blocked(user.id) is False}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
@@ -4856,41 +4957,35 @@ async def event_friend_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
                 if client.is_blocked(user.id) is True:
-                    await reply(message, '既にユーザーをブロックしています')
+                    await reply(message, l('already_block'))
                     return
                 await client.block_user(user.id)
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} をブロック')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} をブロック')
+                await reply(message, l('block_user', f'{str(user.display_name)} / {user.id}'))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
         try:
             if client.is_blocked(user.id) is True:
-                await reply(message, '既にユーザーをブロックしています')
+                await reply(message, l('already_block'))
                 return
             await client.block_user(user.id)
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(user.display_name)} をブロック')
-            else:
-                await reply(message, f'{str(user.display_name)} / {user.id} をブロック')
+            await reply(message, l('block_user', f'{str(user.display_name)} / {user.id}'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'フレンドのブロックリクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l('error_while_blocking_user'))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -4899,24 +4994,24 @@ async def event_friend_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーをブロックします"
+                text += f"\n{l('enter_to_block_user')}"
                 await reply(message, text)
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'フレンドのブロックリクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_blocking_user'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['unblockfriend'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['unblockfriend']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['unblockfriend']}] [{l('name_or_id')}]")
                 return
-            users = {user.display_name: user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_blocked(user.id) is True}
+            users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_blocked(user.id) is True}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
@@ -4927,41 +5022,35 @@ async def event_friend_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
                 if client.is_blocked(user.id) is False:
-                    await reply(message, 'ユーザーをブロックしていません')
+                    await reply(message, l('not_block'))
                     return
                 await client.unblock_user(user.id)
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} をブロック解除')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} をブロック解除')
+                await reply(message, l('unblock_user', f'{str(user.display_name)} / {user.id}'))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
         try:
             if client.is_blocked(user.id) is False:
-                await reply(message, 'ユーザーをブロックしていません')
+                await reply(message, l('not_block'))
                 return
             await client.unblock_user(user.id)
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(user.display_name)} をブロック解除')
-            else:
-                await reply(message, f'{str(user.display_name)} / {user.id} をブロック解除')
+            await reply(message, l('unblock_user', f'{str(user.display_name)} / {user.id}'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'ブロックしたユーザーのブロック解除リクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l('error_while_unblocking_user'))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -4970,88 +5059,82 @@ async def event_friend_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーをブロック解除します"
+                text += f"\n{l('enter_to_unblock_user')}"
                 await reply(message, text)
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'ブロックしたユーザーのブロック解除リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_unblocking_user'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['chatban'].split(','):
         try:
             reason=rawcontent.split(' : ')
             if rawcontent == '':
-                await reply(message, f"[{commands['chatban']}] [ユーザー名 / ユーザーID] : [理由(任意)]")
+                await reply(message, f"[{commands['chatban']}] [{l('name_or_id')}] : [{l('reason')}({l('optional')})]")
                 return
-            users = {str(member.display_name): member for member in client.user.party.members.values() if rawcontent in str(member.display_name)}
+            users = {str(member.display_name): member for member in client.party.members.values() if rawcontent in str(member.display_name)}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
-                    if client.user.party.members.get(user.id) is not None:
+                    if client.party.members.get(user.id) is not None:
                         users[str(user.display_name)] = user
                         add_cache(client, user)
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
-                if client.user.party.members.get(user.id) is None:
-                    await reply(message, 'ユーザーがパーティーにいません')
+                if client.party.members.get(user.id) is None:
+                    await reply(message, l('user_not_in_party'))
                     return
-                member=client.user.party.members.get(user.id)
+                member=client.party.members.get(user.id)
                 try:
                     await member.chatban(reason[1])
                 except IndexError:
                     await member.chatban()
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} をバン')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} をバン')
+                await reply(message, l('chatban_user', f'{str(user.display_name)} / {user.id}'))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
         try:
-            if client.user.party.members.get(user.id) is None:
-                await reply(message, 'ユーザーがパーティーにいません')
+            if client.party.members.get(user.id) is None:
+                await reply(message, l('user_not_in_party'))
                 return
-            member=client.user.party.members.get(user.id)
+            member=client.party.members.get(user.id)
             try:
                 await member.chatban(reason[1])
             except IndexError:
                 await member.chatban()
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(user.display_name)} をバン')
-            else:
-                await reply(message, f'{str(user.display_name)} / {user.id} をバン')
+            await reply(message, l('chatban_user', f'{str(user.display_name)} / {user.id}'))
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーリーダーではありません')
+            await reply(message, l('nor_party_leader'))
         except fortnitepy.NotFound:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'メンバーが見つかりません')
+            await reply(message, l('user_notfound'))
         except ValueError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, '既にバンされています')""" for user in users.values()
+            await reply(message, l('already_chatban'))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user, "reason": reason} for user in users.values()
@@ -5060,91 +5143,85 @@ async def event_friend_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーをバンします"
+                text += f"\n{l('enter_to_chatban')}"
                 await reply(message, text)
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーリーダーではありません')
+            await reply(message, l('nor_party_leader'))
         except fortnitepy.NotFound:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'メンバーが見つかりません')
+            await reply(message, l('user_notfound'))
         except ValueError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, '既にバンされています')
+            await reply(message, l('already_chatban'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['promote'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['promote']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['promote']}] [{l('name_or_id')}]")
                 return
-            users = {str(member.display_name): member for member in client.user.party.members.values() if rawcontent in str(member.display_name)}
+            users = {str(member.display_name): member for member in client.party.members.values() if rawcontent in str(member.display_name)}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
-                    if client.user.party.members.get(user.id) is not None:
+                    if client.party.members.get(user.id) is not None:
                         users[str(user.display_name)] = user
                         add_cache(client, user)
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
-                if client.user.party.members.get(user.id) is None:
-                    await reply(message, 'ユーザーがパーティーにいません')
+                if client.party.members.get(user.id) is None:
+                    await reply(message, l('user_not_in_party'))
                     return
-                member=client.user.party.members.get(user.id)
+                member=client.party.members.get(user.id)
                 await member.promote()
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} に譲渡')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} に譲渡')
+                await reply(message, l('promote_user', f'{str(user.display_name)} / {user.id}'))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
         try:
-            if client.user.party.members.get(user.id) is None:
-                await reply(message, 'ユーザーがパーティーにいません')
+            if client.party.members.get(user.id) is None:
+                await reply(message, l('user_not_in_party'))
                 return
-            member=client.user.party.members.get(user.id)
+            member=client.party.members.get(user.id)
             await member.promote()
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(user.display_name)} に譲渡')
-            else:
-                await reply(message, f'{str(user.display_name)} / {user.id} に譲渡')
+            await reply(message, l('promote_user', f'{str(user.display_name)} / {user.id}'))
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーリーダーではありません')
+            await reply(message, l('not_party_leader'))
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, '既にパーティーリーダーです')
+            await reply(message, l('already_party_leader'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーリーダーの譲渡リクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l('error_while_promoting_party_leader'))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -5153,91 +5230,85 @@ async def event_friend_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーに譲渡します"
+                text += f"\n{l('enter_to_promote_user')}"
                 await reply(message, text)
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーリーダーではありません')
+            await reply(message, l('not_party_leader'))
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, '既にパーティーリーダーです')
+            await reply(message, l('already_party_leader'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーリーダーの譲渡リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_promoting_party_leader'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['kick'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['kick']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['kick']}] [{l('name_or_id')}]")
                 return
-            users = {str(member.display_name): member for member in client.user.party.members.values() if rawcontent in str(member.display_name)}
+            users = {str(member.display_name): member for member in client.party.members.values() if rawcontent in str(member.display_name)}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
-                    if client.user.party.members.get(user.id) is not None:
+                    if client.party.members.get(user.id) is not None:
                         users[str(user.display_name)] = user
                         add_cache(client, user)
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
-                if client.user.party.members.get(user.id) is None:
-                    await reply(message, 'ユーザーがパーティーにいません')
+                if client.party.members.get(user.id) is None:
+                    await reply(message, l('user_not_in_party'))
                     return
-                member=client.user.party.members.get(user.id)
+                member=client.party.members.get(user.id)
                 await member.kick()
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} をキック')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} をキック')
+                await reply(message, l('kick_user', f'{str(user.display_name)} / {user.id}'))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
         try:
-            if client.user.party.members.get(user.id) is None:
-                await reply(message, 'ユーザーがパーティーにいません')
+            if client.party.members.get(user.id) is None:
+                await reply(message, l('user_not_in_party'))
                 return
-            member=client.user.party.members.get(user.id)
+            member=client.party.members.get(user.id)
             await member.kick()
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(user.display_name)} をキック')
-            else:
-                await reply(message, f'{str(user.display_name)} / {user.id} をキック')
+            await reply(message, l('kick_user', f'{str(user.display_name)} / {user.id}'))
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーリーダーではありません')
+            await reply(message, l('not_party_leader'))
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, '自分をキックすることはできません')
+            await reply(message, l('cant_kick_yourself'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーメンバーのキックリクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l('error_while_kicking_user'))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -5251,44 +5322,44 @@ async def event_friend_message(message):
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーリーダーではありません')
+            await reply(message, l('not_party_leader'))
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, '自分をキックすることはできません')
+            await reply(message, l('cant_kick_yourself'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーメンバーのキックリクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_kicking_user'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['ready'].split(','):
         try:
-            await client.user.party.me.set_ready(fortnitepy.ReadyState.READY)
-            await reply(message, '準備状態を 準備OK に設定')
+            await client.party.me.set_ready(fortnitepy.ReadyState.READY)
+            await reply(message, l('set_to', l('readystate'), l('ready')))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['unready'].split(','):
         try:
-            await client.user.party.me.set_ready(fortnitepy.ReadyState.NOT_READY)
-            await reply(message, '準備状態を 準備中 に設定')
+            await client.party.me.set_ready(fortnitepy.ReadyState.NOT_READY)
+            await reply(message, l('set_to', l('readystate'), l('unready')))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['sitout'].split(','):
         try:
-            await client.user.party.me.set_ready(fortnitepy.ReadyState.SITTING_OUT)
-            await reply(message, '準備状態を 欠場中 に設定')
+            await client.party.me.set_ready(fortnitepy.ReadyState.SITTING_OUT)
+            await reply(message, l('set_to', l('readystate'), l('sitout')))
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -5296,16 +5367,105 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
+
+    elif args[0] in commands['match'].split(','):
+        try:
+            await client.party.me.set_in_match(players_left=int(args[1]) if args[1:2] else 100)
+            await reply(message, l('set_to', l('matchstate'), l('remaining', args[1] if args[1:2] else "100")))
+        except ValueError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, l('remaining_must_be_between_0_and_255'))
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, l('error'))
+
+    elif args[0] in commands['unmatch'].split(','):
+        try:
+            await client.party.me.clear_in_match()
+            await reply(message, l('set_to', l('matchstate'), l('off')))
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, l('error'))
+
+    elif args[0] in commands['swap'].split(','):
+        try:
+            if rawcontent == '':
+                await reply(message, f"[{commands['kick']}] [{l('name_or_id')}]")
+                return
+            users = {str(member.display_name): member for member in client.party.members.values() if rawcontent in str(member.display_name)}
+            try:
+                user=await client.fetch_profile(rawcontent)
+                if user is not None:
+                    if client.party.members.get(user.id) is not None:
+                        users[str(user.display_name)] = user
+                        add_cache(client, user)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, l("error_while_requesting_userinfo"))
+            if len(users) > 30:
+                await reply(message, l('too_many_users', str(len(users))))
+                return
+            if len(users) == 0:
+                await reply(message, l('user_notfound'))
+                return
+            if len(users) == 1:
+                user=tuple(users.values())[0]
+                if client.party.members.get(user.id) is None:
+                    await reply(message, l('user_not_in_party'))
+                    return
+                member=client.party.members.get(user.id)
+                await member.swap_position()
+                await reply(message, l('swap_user', f'{str(user.display_name)} / {user.id}'))
+            else:
+                client.select[message.author.id] = {
+                    "exec": [
+                        """\
+        try:
+            if client.party.members.get(user.id) is None:
+                await reply(message, l('user_not_in_party'))
+                return
+            member=client.party.members.get(user.id)
+            await member.swap_position()
+            await reply(message, l('swap_user', f'{str(user.display_name)} / {user.id}'))
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, l('error_while_swapping_user'))""" for user in users.values()
+                    ],
+                    "variable": [
+                        {"user": user} for user in users.values()
+                    ]
+                }
+                text = str()
+                for count, user in enumerate(users.values()):
+                    text += f"\n{count+1} {str(user.display_name)} / {user.id}"
+                text += f"\n{l('enter_to_swap_user')}"
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, l('error_while_swapping_user'))
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, l('error'))
 
     elif args[0] in commands['outfitlock'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.outfitlock=True
-                await reply(message, 'コスチュームロックをオンに設定')
+                await reply(message, l('set_to', l('lock', l('outfit')), l('on')))
             elif args[1] in commands['false'].split(','):
                 client.outfitlock=False
-                await reply(message, 'コスチュームロックをオフに設定')
+                await reply(message, l('set_to', l('lock', l('outfit')), l('off')))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -5314,16 +5474,16 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['backpacklock'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.backpacklock=True
-                await reply(message, 'バックアクセサリーロックをオンに設定')
+                await reply(message, l('set_to', l('lock', l('backpack')), l('on')))
             elif args[1] in commands['false'].split(','):
                 client.backpacklock=False
-                await reply(message, 'バックアクセサリーロックをオフに設定')
+                await reply(message, l('set_to', l('lock', l('backpack')), l('off')))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -5332,16 +5492,16 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['pickaxelock'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.pickaxelock=True
-                await reply(message, '収集ツールロックをオンに設定')
+                await reply(message, l('set_to', l('lock', l('pickaxe')), l('on')))
             elif args[1] in commands['false'].split(','):
                 client.pickaxelock=False
-                await reply(message, '収集ツールロックをオフに設定')
+                await reply(message, l('set_to', l('lock', l('pickaxe')), l('off')))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -5350,16 +5510,16 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['emotelock'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.emotelock=True
-                await reply(message, 'エモートロックをオンに設定')
+                await reply(message, l('set_to', l('lock', l('emote')), l('on')))
             elif args[1] in commands['false'].split(','):
                 client.emotelock=False
-                await reply(message, 'エモートロックをオフに設定')
+                await reply(message, l('set_to', l('lock', l('emote')), l('off')))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -5368,19 +5528,19 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['stop'].split(','):
         try:
             client.stopcheck=True
             if await change_asset(client, message.author.id, "emote", "") is True:
-                await reply(message, '停止しました')
+                await reply(message, l('stopped'))
             else:
-                await reply(message, 'ロックされています')
+                await reply(message, l('locked'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['alloutfit'].split(','):
         try:
@@ -5388,7 +5548,7 @@ async def event_friend_message(message):
             if client.outfitlock is True:
                 flag = lock_check(client, author_id)
             if flag is True:
-                await reply(message, 'ロックされています')
+                await reply(message, l('locked'))
                 return
             with open('allen.json', 'r', encoding='utf-8') as f:
                 allskin = json.load(f)
@@ -5396,17 +5556,18 @@ async def event_friend_message(message):
                 if client.stopcheck is True:
                     client.stopcheck=False
                     break
-                if item['type'] == 'outfit':
+                if item['type']['value'] == 'outfit':
                     if 'banner' not in item['id']:
-                        await client.user.party.me.set_outfit(item['id'])
+                        await client.party.me.set_outfit(item['id'])
                     else:
-                        await client.user.party.me.set_outfit(item['id'],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner'))
+                        await client.party.me.set_outfit(item['id'],variants=client.party.me.create_variants(profile_banner='ProfileBanner'))
                     await asyncio.sleep(2)
-            await reply(message, '全てのコスチュームを表示し終わりました')
+            else:
+                await reply(message, l('all_end', l('outfit')))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['allbackpack'].split(','):
         try:
@@ -5414,7 +5575,7 @@ async def event_friend_message(message):
             if client.backpacklock is True:
                 flag = lock_check(client, author_id)
             if flag is True:
-                await reply(message, 'ロックされています')
+                await reply(message, l('locked'))
                 return
             with open('allen.json', 'r', encoding='utf-8') as f:
                 allskin = json.load(f)
@@ -5422,17 +5583,18 @@ async def event_friend_message(message):
                 if client.stopcheck is True:
                     client.stopcheck=False
                     break
-                if item['type'] == 'backpack':
+                if item['type']['value'] == 'backpack':
                     if 'banner' not in item['id']:
-                        await client.user.party.me.set_backpack(item['id'])
+                        await client.party.me.set_backpack(item['id'])
                     else:
-                        await client.user.party.me.set_backpack(item['id'],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner'))
+                        await client.party.me.set_backpack(item['id'],variants=client.party.me.create_variants(profile_banner='ProfileBanner'))
                     await asyncio.sleep(2)
-            await reply(message, '全てのバックアクセサリーを表示し終わりました')
+            else:
+                await reply(message, l('all_end', l('backpack')))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['allpet'].split(','):
         try:
@@ -5440,7 +5602,7 @@ async def event_friend_message(message):
             if client.backpacklock is True:
                 flag = lock_check(client, author_id)
             if flag is True:
-                await reply(message, 'ロックされています')
+                await reply(message, l('locked'))
                 return
             with open('allen.json', 'r', encoding='utf-8') as f:
                 allskin = json.load(f)
@@ -5448,17 +5610,18 @@ async def event_friend_message(message):
                 if client.stopcheck is True:
                     client.stopcheck=False
                     break
-                if item['type'] == 'pet':
+                if item['type']['value'] == 'pet':
                     if 'banner' not in item['id']:
-                        await client.user.party.me.set_backpack(item['id'])
+                        await client.party.me.set_backpack(item['id'])
                     else:
-                        await client.user.party.me.set_backpack(item['id'],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner'))
+                        await client.party.me.set_backpack(item['id'],variants=client.party.me.create_variants(profile_banner='ProfileBanner'))
                     await asyncio.sleep(2)
-            await reply(message, '全てのペットを表示し終わりました')
+            else:
+                await reply(message, l('all_end', l('pet')))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['allpickaxe'].split(','):
         try:
@@ -5466,7 +5629,7 @@ async def event_friend_message(message):
             if client.pickaxelock is True:
                 flag = lock_check(client, author_id)
             if flag is True:
-                await reply(message, 'ロックされています')
+                await reply(message, l('locked'))
                 return
             with open('allen.json', 'r', encoding='utf-8') as f:
                 allskin = json.load(f)
@@ -5474,17 +5637,18 @@ async def event_friend_message(message):
                 if client.stopcheck is True:
                     client.stopcheck=False
                     break
-                if item['type'] == 'pickaxe':
+                if item['type']['value'] == 'pickaxe':
                     if 'banner' not in item['id']:
-                        await client.user.party.me.set_pickaxe(item['id'])
+                        await client.party.me.set_pickaxe(item['id'])
                     else:
-                        await client.user.party.me.set_pickaxe(item['id'],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner'))
+                        await client.party.me.set_pickaxe(item['id'],variants=client.party.me.create_variants(profile_banner='ProfileBanner'))
                     await asyncio.sleep(2)
-            await reply(message, '全ての収集ツールを表示し終わりました')
+            else:
+                await reply(message, l('all_end', l('pickaxe')))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['allemote'].split(','):
         try:
@@ -5492,7 +5656,7 @@ async def event_friend_message(message):
             if client.emotelock is True:
                 flag = lock_check(client, author_id)
             if flag is True:
-                await reply(message, 'ロックされています')
+                await reply(message, l('locked'))
                 return
             with open('allen.json', 'r', encoding='utf-8') as f:
                 allemote = json.load(f)
@@ -5500,15 +5664,15 @@ async def event_friend_message(message):
                 if client.stopcheck is True:
                     client.stopcheck=False
                     break
-                if item['type'] == 'emote':
-                    await client.user.party.me.set_emote(item['id'])
+                if item['type']['value'] == 'emote':
+                    await client.party.me.set_emote(item['id'])
                     await asyncio.sleep(5)
             else:
-                await reply(message, '全てのエモートを表示し終わりました')
+                await reply(message, l('all_end', l('emote')))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['allemoji'].split(','):
         try:
@@ -5516,7 +5680,7 @@ async def event_friend_message(message):
             if client.emotelock is True:
                 flag = lock_check(client, author_id)
             if flag is True:
-                await reply(message, 'ロックされています')
+                await reply(message, l('locked'))
                 return
             with open('allen.json', 'r', encoding='utf-8') as f:
                 allemote = json.load(f)
@@ -5524,15 +5688,15 @@ async def event_friend_message(message):
                 if client.stopcheck is True:
                     client.stopcheck=False
                     break
-                if item['type'] == 'emoji':
-                    await client.user.party.me.set_emote(item['id'])
+                if item['type']['value'] == 'emoji':
+                    await client.party.me.set_emote(item['id'])
                     await asyncio.sleep(5)
             else:
-                await reply(message, '全てのエモートアイコンを表示し終わりました')
+                await reply(message, l('all_end', l('emoji')))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['alltoy'].split(','):
         try:
@@ -5540,7 +5704,7 @@ async def event_friend_message(message):
             if client.emotelock is True:
                 flag = lock_check(client, author_id)
             if flag is True:
-                await reply(message, 'ロックされています')
+                await reply(message, l('locked'))
                 return
             with open('allen.json', 'r', encoding='utf-8') as f:
                 allemote = json.load(f)
@@ -5548,170 +5712,146 @@ async def event_friend_message(message):
                 if client.stopcheck is True:
                     client.stopcheck=False
                     break
-                if item['type'] == 'toy':
-                    await client.user.party.me.set_emote(item['id'])
+                if item['type']['value'] == 'toy':
+                    await client.party.me.set_emote(item['id'])
                     await asyncio.sleep(5)
             else:
-                await reply(message, '全てのおもちゃを表示し終わりました')
+                await reply(message, l('all_end', l('toy')))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
-
-    elif args[0] in commands['allshout'].split(','):
-        try:
-            flag = False
-            if client.emotelock is True:
-                flag = lock_check(client, author_id)
-            if flag is True:
-                await reply(message, 'ロックされています')
-                return
-            with open('allen.json', 'r', encoding='utf-8') as f:
-                allemote = json.load(f)
-            for item in allemote['data']:
-                if client.stopcheck is True:
-                    client.stopcheck=False
-                    break
-                if item['type'] == 'shout':
-                    await client.user.party.me.set_emote(item['id'])
-                    await asyncio.sleep(5)
-            else:
-                await reply(message, '全てのshoutを表示し終わりました')
-        except Exception:
-            print(red(traceback.format_exc()))
-            dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['setenlightenment'].split(','):
         try:
-            if await change_asset(client, message.author.id, "outfit", client.user.party.me.outfit, client.user.party.me.outfit_variants,(args[1],args[2])) is True:
-                await reply(message, f'{args[1]}, {args[2]} に設定')
+            if await change_asset(client, message.author.id, "outfit", client.party.me.outfit, client.party.me.outfit_variants,(args[1],args[2])) is True:
+                await reply(message, l('set_to', 'enlightenment', f'{args[1]}, {args[2]}'))
             else:
-                await reply(message, 'ロックされています')
+                await reply(message, l('locked'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_asset'))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, f"[{commands['setenlightenment']}] [数値] [数値]")
+            await reply(message, f"[{commands['setenlightenment']}] [{l('number')}] [{l('number')}]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
-    elif True in [args[0] in commands[key].split(',') for key in ("cid", "bid", "petcarrier", "pickaxe_id", "eid", "emoji_id", "toy_id", "shout_id", "id")]:
+    elif True in [args[0] in commands[key].split(',') for key in ("cid", "bid", "petcarrier", "pickaxe_id", "eid", "emoji_id", "toy_id", "id")]:
         type_ = convert_to_type(args[0])
         if rawcontent == '':
             await reply(message, f"[{commands[type_]}] [ID]")
             return
         try:
-            result = await loop.run_in_executor(None, search_item, "ja", "id", rawcontent, type_)
+            result = await loop.run_in_executor(None, search_item, data["lang"], "id", rawcontent, type_)
             if result is None:
                 result = await loop.run_in_executor(None, search_item, "en", "id", rawcontent, type_)
             if result is None:
-                await reply(message, "見つかりません")
+                await reply(message, l('item_notfound'))
             else:
                 if len(result) > 30:
-                    await reply(message, f"見つかったアイテム数 {len(result)} は多すぎます")
+                    await reply(message, l('too_many_items', str(len(result))))
                     return
                 if len(result) == 1:
-                    if await change_asset(client, message.author.id, result[0]["type"], result[0]['id']) is True:
-                        await reply(message, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}")
+                    if await change_asset(client, message.author.id, result[0]["type"]["value"], result[0]['id']) is True:
+                        await reply(message, f"{result[0]['type']['displayValue']}: {result[0]['name']} | {result[0]['id']}")
                     else:
-                        await reply(message, "ロックされています")
+                        await reply(message, l('locked'))
                 else:
                     text = str()
                     for count, item in enumerate(result):
-                        text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
-                    text += "\n数字を入力することでそのアイテムに設定します"
+                        text += f"\n{count+1} {item['type']['displayValue']}: {item['name']} | {item['id']}"
+                    text += f"\n{l('enter_to_change_asset')}"
                     await reply(message, text)
-                    client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']}', '{item['id']}')" for item in result]}
+                    client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']['value']}', '{item['id']}')" for item in result]}
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_asset'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
-    elif True in  [args[0] in commands[key].split(',') for key in ("outfit", "backpack", "pet", "pickaxe", "emote", "emoji", "toy", "shout", "item")]:
+    elif True in  [args[0] in commands[key].split(',') for key in ("outfit", "backpack", "pet", "pickaxe", "emote", "emoji", "toy", "item")]:
         type_ = convert_to_type(args[0])
         if rawcontent == '':
-            await reply(message, f"[{commands[type_]}] [アイテム名]")
+            await reply(message, f"[{commands[type_]}] [{l('itemname')}]")
             return
         try:
-            result = await loop.run_in_executor(None, search_item, "ja", "name", rawcontent, type_)
+            result = await loop.run_in_executor(None, search_item, data["lang"], "name", rawcontent, type_)
             if result is None:
                 result = await loop.run_in_executor(None, search_item, "en", "name", rawcontent, type_)
             if result is None:
-                await reply(message, "見つかりません")
+                await reply(message, l('item_notfound'))
             else:
                 if len(result) > 30:
-                    await reply(message, f"見つかったアイテム数 {len(result)} は多すぎます")
+                    await reply(message, l('too_many_items', str(len(result))))
                     return
                 if len(result) == 1:
-                    if await change_asset(client, message.author.id, result[0]["type"], result[0]['id']) is True:
-                        await reply(message, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}")
+                    if await change_asset(client, message.author.id, result[0]["type"]["value"], result[0]['id']) is True:
+                        await reply(message, f"{result[0]['type']['displayValue']}: {result[0]['name']} | {result[0]['id']}")
                     else:
-                        await reply(message, "ロックされています")
+                        await reply(message, l('locked'))
                 else:
                     text = str()
                     for count, item in enumerate(result):
-                        text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
-                    text += "\n数字を入力することでそのアイテムに設定します"
+                        text += f"\n{count+1} {item['type']['displayValue']}: {item['name']} | {item['id']}"
+                    text += f"\n{l('enter_to_change_asset')}"
                     await reply(message, text)
-                    client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']}', '{item['id']}')" for item in result]}
+                    client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']['value']}', '{item['id']}')" for item in result]}
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_asset'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['set'].split(','):
         if rawcontent == '':
-            await reply(message, f"[{commands['set']}] [セット名]]")
+            await reply(message, f"[{commands['set']}] [{l('setname')}]")
             return
         try:
-            result = await loop.run_in_executor(None, search_item, "ja", "set", rawcontent)
+            result = await loop.run_in_executor(None, search_item, data["lang"], "set", rawcontent)
             if result is None:
                 result = await loop.run_in_executor(None, search_item, "en", "set", rawcontent)
             if result is None:
-                await reply(message, "見つかりません")
+                await reply(message, l('item_notfound'))
             else:
                 if len(result) > 30:
-                    await reply(message, f"見つかったアイテム数 {len(result)} は多すぎます")
+                    await reply(message, l('too_many_items', str(len(result))))
                     return
                 if len(result) == 1:
-                    if await change_asset(client, message.author.id, result[0]["type"], result[0]['id']) is True:
-                        await reply(message, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}({result[0]['set']})")
+                    if await change_asset(client, message.author.id, result[0]["type"]["value"], result[0]['id']) is True:
+                        await reply(message, f"{result[0]['type']['displayValue']}: {result[0]['name']} | {result[0]['id']}({result[0]['set']['value']})")
                     else:
-                        await reply(message, "ロックされています")
+                        await reply(message, l('locked'))
                 else:
                     text = str()
                     for count, item in enumerate(result):
-                        text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}({result[0]['set']})"
-                    text += "\n数字を入力することでそのアイテムに設定します"
+                        text += f"\n{count+1} {item['type']['displayValue']}: {item['name']} | {item['id']}({result[0]['set']['value']})"
+                    text += f"\n{l('enter_to_change_asset')}"
                     await reply(message, text)
-                    client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']}', '{item['id']}')" for item in result]}
+                    client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']['value']}', '{item['id']}')" for item in result]}
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_asset'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['setstyle'].split(','):
         try:
@@ -5719,15 +5859,15 @@ async def event_friend_message(message):
                 await reply(message, f"[{commands['setstyle']}] [[{commands['outfit']}] / [{commands['backpack']}] / [{commands['pet']}] / [{commands['pickaxe']}]]")
                 return
             type_ = convert_to_type(args[1])
-            id_ = member_asset(client.user.party.me, convert_to_asset(args[1]))
-            result = search_style("ja", id_)
+            id_ = member_asset(client.party.me, convert_to_asset(args[1]))
+            result = search_style(data["lang"], id_)
             if result is None:
-                await reply(message, "スタイル変更はありません")
+                await reply(message, l('no_stylechange'))
             else:
                 text = str()
                 for count, item in enumerate(result):
                     text += f"\n{count+1} {item['name']}"
-                text += "\n数字を入力することでそのアイテムに設定します"
+                text += f"\n{l('enter_to_set_style')}"
                 await reply(message, text)
                 client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{type_}', '{id_}', {variants['variants']})" for variants in result]}
         except IndexError:
@@ -5738,7 +5878,7 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['addstyle'].split(','):
         try:
@@ -5746,16 +5886,16 @@ async def event_friend_message(message):
                 await reply(message, f"[{commands['addstyle']}] [[{commands['outfit']}] / [{commands['backpack']}] / [{commands['pet']}] / [{commands['pickaxe']}]]")
                 return
             type_ = convert_to_type(args[1])
-            id_ = member_asset(client.user.party.me, convert_to_asset(args[1]))
-            variants_ = eval(f"client.user.party.me.{convert_to_asset(args[1])}_variants")
-            result = search_style("ja", id_)
+            id_ = member_asset(client.party.me, convert_to_asset(args[1]))
+            variants_ = eval(f"client.party.me.{convert_to_asset(args[1])}_variants")
+            result = search_style(data["lang"], id_)
             if result is None:
-                await reply(message, "スタイル変更はありません")
+                await reply(message, l('no_stylechange'))
             else:
                 text = str()
                 for count, item in enumerate(result):
                     text += f"\n{count+1} {item['name']}"
-                text += "\n数字を入力することでそのアイテムに設定します"
+                text += f"\n{l('enter_to_set_style')}"
                 await reply(message, text)
                 client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{type_}', '{id_}', {variants_} + {variants['variants']})" for variants in result]}
         except IndexError:
@@ -5766,7 +5906,7 @@ async def event_friend_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['setvariant'].split(','):
         try:
@@ -5782,25 +5922,26 @@ async def event_friend_message(message):
                 except IndexError:
                     break
             type_ = convert_to_type(args[1])
-            id_ = member_asset(client.user.party.me, convert_to_asset(args[1]))
-            variants = client.user.party.me.create_variants(item='AthenaCharacter',**variantdict)
-            if await change_asset(client, message.author.id, type_, id_, variants, client.user.party.me.enlightenment) is False:
-                await reply(message, "ロックされています")
+            id_ = member_asset(client.party.me, convert_to_asset(args[1]))
+            variants = client.party.me.create_variants(item='AthenaCharacter',**variantdict)
+            print(variants)
+            if await change_asset(client, message.author.id, type_, id_, variants, client.party.me.enlightenments) is False:
+                await reply(message, l('locked'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_asset'))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, f"[{commands['setvariant']}] [ID] [variant] [数値]\nvariantと数値は無限に設定可能")
+            await reply(message, f"[{commands['setvariant']}] [ID] [variant] [{l('number')}]")
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['addvariant'].split(','):
         try:
@@ -5816,74 +5957,74 @@ async def event_friend_message(message):
                 except IndexError:
                     break
             type_ = convert_to_type(args[1])
-            id_ = member_asset(client.user.party.me, convert_to_asset(args[1]))
-            variants = client.user.party.me.create_variants(item='AthenaCharacter',**variantdict)
-            variants += eval(f"client.user.party.me.{convert_to_asset(args[1])}_variants")
-            if await change_asset(client, message.author.id, type_, id_, variants, client.user.party.me.enlightenment) is False:
-                await reply(message, "ロックされています")
+            id_ = member_asset(client.party.me, convert_to_asset(args[1]))
+            variants = client.party.me.create_variants(item='AthenaCharacter',**variantdict)
+            variants += eval(f"client.party.me.{convert_to_asset(args[1])}_variants")
+            if await change_asset(client, message.author.id, type_, id_, variants, client.party.me.enlightenments) is False:
+                await reply(message, l('locked'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_asset'))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, f"[{commands['addvariant']}] [ID] [variant] [数値]\nvariantと数値は無限に設定可能")
+            await reply(message, f"[{commands['addvariant']}] [ID] [variant] [{l('number')}]")
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif True in [args[0] in commands[key].split(',') for key in ("outfitasset", "backpackasset", "pickaxeasset", "emoteasset")]:
         type_ = convert_to_type(args[0])
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands[f'{type_}asset']}] [アセットパス]")
+                await reply(message, f"[{commands[f'{type_}asset']}] [{l('assetpath')}]")
                 return
             if await change_asset(client, message.author.id, type_, rawcontent) is False:
-                await reply(message, "ロックされています")
+                await reply(message, l('locked'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_asset'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
-    elif True in [args[0].lower().startswith(id_) for id_ in ("cid_", "bid_", "petcarrier_", "pickaxe_id_", "eid_", "emoji_", "toy_", "shout_")]:
+    elif True in [args[0].lower().startswith(id_) for id_ in ("cid_", "bid_", "petcarrier_", "pickaxe_id_", "eid_", "emoji_", "toy_")]:
         try:
             type_ = convert_to_type("_".join(args[0].split('_')[:-1]) + "_")
             if await change_asset(client, message.author.id, type_, args[0]) is False:
-                await reply(message, "ロックされています")
+                await reply(message, l('locked'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_asset'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0].lower().startswith('playlist_'):
         try:
-            await client.user.party.set_playlist(args[0])
-            await reply(message, f'プレイリストを {args[0]} に設定')
+            await client.party.set_playlist(args[0])
+            await reply(message, l('set_playlist', args[0]))
             data['fortnite']['playlist']=args[0]
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーリーダーではありません')
+            await reply(message, l('not_party_leader'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     else:
         if ': ' in message.content:
@@ -5891,7 +6032,7 @@ async def event_friend_message(message):
         if args[0].isdigit() and client.select.get(message.author.id) is not None:
             try:
                 if int(args[0]) == 0:
-                    await reply(message, '有効な数字を入力してください')
+                    await reply(message, l('please_enter_valid_number'))
                     return
                 exec_ = client.select[message.author.id]["exec"][int(args[0])-1]
                 variable=globals()
@@ -5903,31 +6044,31 @@ async def event_friend_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, '有効な数字を入力してください')
+                await reply(message, l('please_enter_valid_number'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
         else:
-            result = await loop.run_in_executor(None, search_item, "ja", "name", content, "item")
+            result = await loop.run_in_executor(None, search_item, data["lang"], "name", content, "item")
             if result is None:
                 result = await loop.run_in_executor(None, search_item, "en", "name", content, "item")
             if result is not None:
                 if len(result) > 30:
-                    await reply(message, f"見つかったアイテム数 {len(result)} は多すぎます")
+                    await reply(message, l('too_many_items', str(len(result))))
                     return
                 if len(result) == 1:
-                    if await change_asset(client, message.author.id, result[0]["type"], result[0]['id']) is True:
-                        await reply(message, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}")
+                    if await change_asset(client, message.author.id, result[0]["type"]["value"], result[0]['id']) is True:
+                        await reply(message, f"{result[0]['type']['displayValue']}: {result[0]['name']} | {result[0]['id']}")
                     else:
-                        await reply(message, "ロックされています")
+                        await reply(message, l('locked'))
                 else:
                     text = str()
                     for count, item in enumerate(result):
-                        text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
-                    text += "\n数字を入力することでそのアイテムに設定します"
+                        text += f"\n{count+1} {item['type']['displayValue']}: {item['name']} | {item['id']}"
+                    text += f"\n{l('enter_to_change_asset')}"
                     await reply(message, text)
-                    client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']}', '{item['id']}')" for item in result]}
+                    client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']['value']}', '{item['id']}')" for item in result]}
 
 #========================================================================================================================
 #========================================================================================================================
@@ -5935,7 +6076,7 @@ async def event_friend_message(message):
 #========================================================================================================================
 #========================================================================================================================
 
-async def event_party_message(message):
+async def event_party_message(message: fortnitepy.PartyMessage) -> None:
     global blacklist
     global whitelist
     global otherbotlist
@@ -5978,8 +6119,8 @@ async def event_party_message(message):
     if rawcontent in commands['me'].split(','):
         rawcontent=str(message.author.display_name)
     client_user_display_name=name
-    member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
-    for member_ in client.user.party.members.values():
+    member_joined_at_most=[client.user.id, client.party.me.joined_at]
+    for member_ in client.party.members.values():
         add_cache(client, member_)
         try:
             if member_joined_at_most != []:
@@ -5989,7 +6130,7 @@ async def event_party_message(message):
                     if member_.joined_at < member_joined_at_most[1]:
                         member_joined_at_most=[member_.id, member_.joined_at]
             else:
-                member_joined_at_most=[client.user.id, client.user.party.me.joined_at]
+                member_joined_at_most=[client.user.id, client.party.me.joined_at]
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -5997,12 +6138,12 @@ async def event_party_message(message):
     if client.user.id == member_joined_at_most[0]:
         if data['loglevel'] == 'normal':
             if data['no-logs'] is False:
-                print(f'[{now_()}] [パーティー] [{client_user_display_name}] {message.author.display_name} | {content}')
-            dstore(message.author.display_name,f'[{client_user_display_name}] [パーティー] {content}')
+                print(f'[{now_()}] [{l("party")}] [{client_user_display_name}] {message.author.display_name} | {content}')
+            dstore(message.author.display_name,f'[{client_user_display_name}] [{l("party")}] {content}')
         else:
             if data['no-logs'] is False:
-                print(f'[{now_()}] [パーティー/{client.user.party.id}] [{client_user_display_name}] {message.author.display_name} / {message.author.id} [{platform_to_str(message.author.platform)}/{message.author.input}] | {content}')
-            dstore(f'{message.author.display_name} / {message.author.id} [{platform_to_str(message.author.platform)}/{message.author.input}]',f'[{client_user_display_name}] [パーティー/{client.user.party.id}] {content}')
+                print(f'[{now_()}] [{l("party")}/{client.party.id}] [{client_user_display_name}] {message.author.display_name} / {message.author.id} [{platform_to_str(message.author.platform)}/{message.author.input}] | {content}')
+            dstore(f'{message.author.display_name} / {message.author.id} [{platform_to_str(message.author.platform)}/{message.author.input}]',f'[{client_user_display_name}] [{l("party")}/{client.party.id}] {content}')
 
     flag = False
     if isinstance(message, fortnitepy.message.MessageBase) is True:
@@ -6035,14 +6176,13 @@ async def event_party_message(message):
                 flag = True
     if flag is True:
         for checks in commands.items():
-            ignore=['ownercommands','true','false','me', 'privacy_public', 'privacy_friends_allow_friends_of_friends', 'privacy_friends', 'privacy_private_allow_friends_of_friends', 'privacy_private', 'info_party', 'info_item']
             if checks[0] in ignore:
                 continue
             if commands['ownercommands'] == '':
                 break
             for command in commands['ownercommands'].split(','):
                 if args[0] in commands[command.lower()].split(','):
-                    await reply(message, 'このコマンドは管理者しか使用できません')
+                    await reply(message, l("this_command_owneronly"))
                     return
 
     if args[0] in commands['prev'].split(','):
@@ -6066,14 +6206,14 @@ async def event_party_message(message):
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
             return
 
     if data['discord']['enabled'] is True and dclient.isready is True:
         if args[0] in commands['addblacklist_discord'].split(','):
             try:
                 if rawcontent == '' or args[1].isdigit() is False:
-                    await reply(message, f"[{commands['addblacklist_discord']}] [ユーザーID]")
+                    await reply(message, f"[{commands['addblacklist_discord']}] [{l('userid')}]")
                     return
                 user = dclient.get_user(int(args[1]))
                 if user is None:
@@ -6090,30 +6230,30 @@ async def event_party_message(message):
                     data_["discord"]["blacklist"] = data["discord"]["blacklist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {str(user)} / {user.id} をブラックリストに追加しました")
+                    await reply(message, l('add_to_list', f'{str(user)} / {str(user.id)}', l('discord_blacklist')))
                 else:
-                    await reply(message, f"ユーザー {str(user)} / {user.id} は既にブラックリストに追加されています")
+                    await reply(message, l('already_list', f'{str(user)} / {user.id}', l('discord_blacklist')))
             except discord.NotFound:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
             except discord.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+                print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                dstore(name,f'>>> {l("error_while_requesting_userinfo")}')
+                await reply(message, l("error_while_requesting_userinfo"))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['removeblacklist_discord'].split(','):
             try:
                 if rawcontent == '' or args[1].isdigit() is False:
-                    await reply(message, f"[{commands['removeblacklist_discord']}] [ユーザーID]")
+                    await reply(message, f"[{commands['removeblacklist_discord']}] [{l('userid')}]")
                     return
                 user = dclient.get_user(int(args[1]))
                 if user is None:
@@ -6130,30 +6270,30 @@ async def event_party_message(message):
                     data_["discord"]["blacklist"] = data["discord"]["blacklist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {str(user)} / {user.id} をブラックリストから削除")
+                    await reply(message, l('remove_from_list', f'{str(user)} / {user.id}', l('discord_blacklist')))
                 else:
-                    await reply(message, f"ユーザー {str(user)} / {user.id} はブラックリストに含まれていません")
+                    await reply(message, l('not_list', f'{str(user)} / {user.id}', l('discord_blacklist')))
             except discord.NotFound:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
             except discord.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+                print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                dstore(name,f'>>> {l("error_while_requesting_userinfo")}')
+                await reply(message, l("error_while_requesting_userinfo"))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['addwhitelist_discord'].split(','):
             try:
                 if rawcontent == '' or args[1].isdigit() is False:
-                    await reply(message, f"[{commands['addwhitelist_discord']}] [ユーザーID]")
+                    await reply(message, f"[{commands['addwhitelist_discord']}] [{l('userid')}]")
                     return
                 user = dclient.get_user(int(args[1]))
                 if user is None:
@@ -6170,30 +6310,30 @@ async def event_party_message(message):
                     data_["discord"]["whitelist"] = data["discord"]["whitelist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {str(user)} / {user.id} をホワイトリストに追加しました")
+                    await reply(message, l('add_from_list', f'{str(user)} / {user.id}', l('discord_whitelist')))
                 else:
-                    await reply(message, f"ユーザー {str(user)} / {user.id} は既にホワイトリストに追加されています")
+                    await reply(message, l('already_list', f'{str(user)} / {user.id}', l('discord_whitelist')))
             except discord.NotFound:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
             except discord.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+                print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                dstore(name,f'>>> {l("error_while_requesting_userinfo")}')
+                await reply(message, l("error_while_requesting_userinfo"))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['removewhitelist_discord'].split(','):
             try:
                 if rawcontent == '' or args[1].isdigit() is False:
-                    await reply(message, f"[{commands['removewhitelist_discord']}] [ユーザーID]")
+                    await reply(message, f"[{commands['removewhitelist_discord']}] [{l('userid')}]")
                     return
                 user = dclient.get_user(int(args[1]))
                 if user is None:
@@ -6210,30 +6350,30 @@ async def event_party_message(message):
                     data_["discord"]["whitelist"] = data["discord"]["whitelist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {str(user)} / {user.id} をホワイトリストから削除")
+                    await reply(message, l('remove_list', f'{str(user)} / {user.id}', l('discord_whitelist')))
                 else:
-                    await reply(message, f"ユーザー {str(user)} / {user.id} はホワイトリストに含まれていません")
+                    await reply(message, l('not_list', f'{str(user)} / {user.id}', l('discord_whitelist')))
             except discord.NotFound:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
             except discord.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+                print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                dstore(name,f'>>> {l("error_while_requesting_userinfo")}')
+                await reply(message, l("error_while_requesting_userinfo"))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
     if args[0] in commands['eval'].split(','):
         try:
             if rawcontent == "":
-                await reply(message, f"[{commands['eval']}] [式]")
+                await reply(message, f"[{commands['eval']}] [{l('eval')}]")
                 return
             variable=globals()
             variable.update(locals())
@@ -6250,12 +6390,12 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, f"{l('error')}\n{traceback.format_exc()}")
 
     elif args[0] in commands['exec'].split(','):
         try:
             if rawcontent == "":
-                await reply(message, f"[{commands['exec']}] [文]")
+                await reply(message, f"[{commands['exec']}] [{l('exec')}]")
                 return
             variable=globals()
             variable.update(locals())
@@ -6263,10 +6403,10 @@ async def event_party_message(message):
             content_=" ".join(args_[1:])
             result = await aexec(content_, variable)
             await reply(message, str(result))
-        except Exception:
+        except Exception as e:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, f"{l('error')}\n{traceback.format_exc()}")
 
     elif args[0] in commands['restart'].split(','):
         try:
@@ -6301,15 +6441,15 @@ async def event_party_message(message):
                         else:
                             flag = True
             if flag is True:
-                await reply(message, '招待が拒否に設定されているので実行できません')
+                await reply(message, l('invite_is_decline'))
                 return
-            await reply(message, 'プログラムを再起動します...')
+            await reply(message, l('restaring'))
             os.chdir(os.getcwd())
             os.execv(os.sys.executable,['python', *sys.argv])
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['relogin'].split(','):
         try:
@@ -6344,39 +6484,29 @@ async def event_party_message(message):
                         else:
                             flag = True
             if flag is True:
-                await reply(message, '招待が拒否に設定されているので実行できません')
+                await reply(message, l('invite_is_decline'))
                 return
-            await reply(message, 'アカウントに再ログインします...')
+            await reply(message, l('relogining'))
             await client.restart()
-        except fortnitepy.AuthException:
-            print(red(traceback.format_exc()))
-            print(red(f'[{now_()}] [{client.user.display_name}] メールアドレスまたはパスワードが間違っています。'))
-            dstore(name,f'>>> {traceback.format_exc()}')
-            dstore(name,f'>>> メールアドレスまたはパスワードが間違っています')
-            kill=True
-            sys.exit(1)
         except Exception:
             print(red(traceback.format_exc()))
-            print(red(f'[{now_()}] [{client.user.display_name}] アカウントの読み込みに失敗しました。もう一度試してみてください。'))
             dstore(name,f'>>> {traceback.format_exc()}')
-            dstore(name,f'>>> アカウントの読み込みに失敗しました。もう一度試してみてください')
-            kill=True
-            sys.exit(1)
+            await reply(message, l('error'))
 
     elif args[0] in commands['reload'].split(','):
-        result=reload_configs(client)
+        success=reload_configs(client)
         try:
-            if result == 'Success':
-                await reply(message, '正常に読み込みが完了しました')
+            if success:
+                await reply(message, l('success'))
             else:
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
                 return
             try:
                 client.owner=None
                 owner=await client.fetch_profile(data['fortnite']['owner'])
                 if owner is None:
-                    print(red(f'[{now_()}] [{client.user.display_name}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
-                    dstore(client.user.display_name,'>>> 所有者が見つかりません。正しい名前/IDになっているか確認してください')
+                    print(red(f'[{now_()}] [{client.user.display_name}] {l("owner_notfound")}'))
+                    dstore(client.user.display_name,f'>>> {l("owner_notfound")}')
                 else:
                     add_cache(client, owner)
                     client.owner=client.get_friend(owner.id)
@@ -6388,28 +6518,32 @@ async def event_party_message(message):
                                 if data['loglevel'] == 'debug':
                                     print(red(traceback.format_exc()))
                                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                                print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
-                                dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
+                                if data['loglevel'] == 'normal':
+                                    print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_sending_friendrequest")}'))
+                                    dstore(client.user.display_name,f'>>> {l("error_while_sending_friendrequest")}')
+                                else:
+                                    print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_sending_friendrequest")}'))
+                                dstore(client.user.display_name,f'>>> {l("error_while_sending_friendrequest")}')
                             except Exception:
                                 print(red(traceback.format_exc()))
                                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                        print(red(f"[{now_()}] [{client.user.display_name}] 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{commands['reload']}] コマンドで再読み込みしてください。"))
-                        dstore(client.user.display_name,f'>>> 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{commands["reload"]}] コマンドで再読み込みしてください')
+                        print(red(f'[{now_()}] [{client.user.display_name}] {l("not_friend_with_owner", commands["reload"])}'))
+                        dstore(client.user.display_name,f'>>> {l("not_friend_with_owner", commands["reload"])}')
                     else:
                         if data['loglevel'] == 'normal':
                             if data['no-logs'] is False:
-                                print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {str(client.owner.display_name)}'))
-                            dstore(client.user.display_name,f'所有者: {str(client.owner.display_name)}')
+                                print(green(f'[{now_()}] [{client.user.display_name}] {l("owner")}: {str(client.owner.display_name)}'))
+                            dstore(client.user.display_name,f'{l("owner")}: {str(client.owner.display_name)}')
                         else:
                             if data['no-logs'] is False:
-                                print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {str(client.owner.display_name)} / {client.owner.id}'))
-                            dstore(client.user.display_name,f'所有者: {str(client.owner.display_name)} / {client.owner.id}')
+                                print(green(f'[{now_()}] [{client.user.display_name}] {l("owner")}: {str(client.owner.display_name)} / {client.owner.id}'))
+                            dstore(client.user.display_name,f'{l("owner")}: {str(client.owner.display_name)} / {client.owner.id}')
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                dstore(client.user.display_name,f'>>> {l("error_while_requesting_userinfo")}')
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -6419,8 +6553,8 @@ async def event_party_message(message):
                     user = await client.fetch_profile(blacklistuser)
                     add_cache(client, user)
                     if user is None:
-                        print(red(f'[{now_()}] [{client.user.display_name}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
-                        dstore(client.user.display_name,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                        print(red(f'[{now_()}] [{client.user.display_name}] {l("blacklist_user_notfound", blacklistuser)}'))
+                        dstore(client.user.display_name,f'>>> {l("blacklist_user_notfound", blacklistuser)}')
                     else:
                         blacklist.append(user.id)
                         if data['loglevel'] == 'debug':
@@ -6436,8 +6570,8 @@ async def event_party_message(message):
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                    dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                    dstore(client.user.display_name,f'>>> {l("error_while_requesting_userinfo")}')
                 except Exception:
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -6448,8 +6582,8 @@ async def event_party_message(message):
                     user = await client.fetch_profile(whitelistuser)
                     add_cache(client, user)
                     if user is None:
-                        print(red(f'[{now_()}] [{client.user.display_name}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
-                        dstore(client.user.display_name,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                        print(red(f'[{now_()}] [{client.user.display_name}] {l("whitelist_user_notfound", whitelistuser)}'))
+                        dstore(client.user.display_name,f'>>> {l("whitelist_user_notfound", whitelistuser)}')
                     else:
                         whitelist.append(user.id)
                         if data['loglevel'] == 'debug':
@@ -6458,8 +6592,8 @@ async def event_party_message(message):
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                    dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                    dstore(client.user.display_name,f'>>> {l("error_while_requesting_userinfo")}')
                 except Exception:
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -6470,25 +6604,29 @@ async def event_party_message(message):
                 try:
                     user = await client.fetch_profile(invitelistuser)
                     if user is None:
-                        print(red(f'[{now_()}] [{client.user.display_name}] 招待リストのユーザー {invitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
-                        dstore(client.user.display_name,f'>>>招待リストのユーザー {invitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                        print(red(f'[{now_()}] [{client.user.display_name}] {l("invitelist_user_notfound", invitelistuser)}'))
+                        dstore(client.user.display_name,f'>>> {l("invitelist_user_notfound", invitelistuser)}')
                     else:
                         friend = client.get_friend(user.id)
                         if friend is None and user.id != client.user.id:
                             if data['fortnite']['addfriend'] is True:
                                 try:
-                                    await client.add_friend(owner.id)
+                                    await client.add_friend(friend.id)
                                 except fortnitepy.HTTPException:
                                     if data['loglevel'] == 'debug':
                                         print(red(traceback.format_exc()))
                                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                                    print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
-                                    dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
+                                    if data['loglevel'] == 'normal':
+                                        print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_sending_friendrequest")}'))
+                                        dstore(client.user.display_name,f'>>> {l("error_while_sending_friendrequest")}')
+                                    else:
+                                        print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_sending_friendrequest")}'))
+                                        dstore(client.user.display_name,f'>>> {l("error_while_sending_friendrequest")}')
                                 except Exception:
                                     print(red(traceback.format_exc()))
                                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                            print(red(f"[{now_()}] [{client.user.display_name}] 招待リストのユーザー {invitelistuser} とフレンドではありません。フレンドになってからもう一度起動するか、[{commands['reload']}] コマンドで再読み込みしてください。"))
-                            dstore(client.user.display_name,f'>>> 招待リストのユーザー {invitelistuser} とフレンドではありません。フレンドになってからもう一度起動するか、[{commands["reload"]}] コマンドで再読み込みしてください')
+                            print(red(f'[{now_()}] [{client.user.display_name}] {l("not_friend_with_inviteuser", invitelistuser)}'))
+                            dstore(client.user.display_name,f'>>> {l("not_friend_with_inviteuser", invitelistuser)}')
                         else:
                             add_cache(client, user)
                             client.invitelist.append(user.id)
@@ -6498,8 +6636,8 @@ async def event_party_message(message):
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                    dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                    dstore(client.user.display_name,f'>>> {l("error_while_requesting_userinfo")}')
                 except Exception:
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -6521,8 +6659,8 @@ async def event_party_message(message):
                                 dstore(dclient_user,f'>>> {traceback.format_exc()}')
                             user = None
                     if user is None:
-                        print(red(f'[{now_()}] [{dclient_user}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しいIDになっているか確認してください。'))
-                        dstore(dclient_user,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しいIDになっているか確認してください')
+                        print(red(f'[{now_()}] [{dclient_user}] {l("discord_blacklist_user_notfound", blacklistuser)}'))
+                        dstore(dclient_user,f'>>> {l("discord_blacklist_user_notfound", blacklistuser)}')
                     else:
                         blacklist_.append(user.id)
                         if data['loglevel'] == 'debug':
@@ -6540,8 +6678,8 @@ async def event_party_message(message):
                                 dstore(dclient_user,f'>>> {traceback.format_exc()}')
                             user = None
                     if user is None:
-                        print(red(f'[{now_()}] [{dclient_user}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しいIDになっているか確認してください。'))
-                        dstore(dclient_user,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しいIDになっているか確認してください')
+                        print(red(f'[{now_()}] [{dclient_user}] {l("discord_whitelist_user_notfound", whitelistuser)}'))
+                        dstore(dclient_user,f'>>> {l("discord_whitelist_user_notfound", whitelistuser)}')
                     else:
                         whitelist_.append(user.id)
                         if data['loglevel'] == 'debug':
@@ -6551,14 +6689,14 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['addblacklist'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['addblacklist']}] [ユーザー名/ユーザーID]")
+                await reply(message, f"[{commands['addblacklist']}] [{l('name_or_id')}]")
                 return
-            users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and user.id not in blacklist}
+            users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(name) and user.id != client.user.id and user.id not in blacklist}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
@@ -6569,12 +6707,12 @@ async def event_party_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザー数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
@@ -6593,31 +6731,31 @@ async def event_party_message(message):
                     data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストに追加しました")
+                    await reply(message, l('add_to_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))
                 else:
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にブラックリストに追加されています")
+                    await reply(message, l('already_in_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-        if user.id not in blacklist:
-            blacklist.append(user.id)
-            if user.display_name is not None:
-                data["fortnite"]["blacklist"].append(str(user.display_name))
+            if user.id not in blacklist:
+                blacklist.append(user.id)
+                if user.display_name is not None:
+                    data["fortnite"]["blacklist"].append(str(user.display_name))
+                else:
+                    data["fortnite"]["blacklist"].append(user.id)
+                try:
+                    with open("config.json", "r", encoding="utf-8") as f:
+                        data_ = json.load(f)
+                except json.decoder.JSONDecodeError:
+                    with open("config.json", "r", encoding="utf-8-sig") as f:
+                        data_ = json.load(f)
+                data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
+                with open("config.json", "w", encoding="utf-8") as f:
+                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                await reply(message, l('add_to_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))
             else:
-                data["fortnite"]["blacklist"].append(user.id)
-            try:
-                with open("config.json", "r", encoding="utf-8") as f:
-                    data_ = json.load(f)
-            except json.decoder.JSONDecodeError:
-                with open("config.json", "r", encoding="utf-8-sig") as f:
-                    data_ = json.load(f)
-            data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
-            with open("config.json", "w", encoding="utf-8") as f:
-                json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストに追加しました")
-        else:
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にブラックリストに追加されています")""" for user in users.values()
+                await reply(message, l('already_in_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -6626,17 +6764,17 @@ async def event_party_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーをブラックリストに追加します"
+                text += f"\n{l('enter_to_add_to_list', l('blacklist'))}"
                 await reply(message, text)
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['removeblacklist'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['removeblacklist']}] [ユーザー名/ユーザーID]")
+                await reply(message, f"[{commands['removeblacklist']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and user.id in blacklist}
             try:
@@ -6649,12 +6787,12 @@ async def event_party_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
@@ -6673,9 +6811,9 @@ async def event_party_message(message):
                     data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
+                    await reply(message, l('remove_from_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))
                 else:
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")
+                    await reply(message, l('not_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))
             else:
                 client.select[message.author.id] = {
                     "exec": [
@@ -6695,9 +6833,9 @@ async def event_party_message(message):
             data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
             with open("config.json", "w", encoding="utf-8") as f:
                 json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
+            await reply(message, l('remove_from_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))
         else:
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")""" for user in users.values()
+            await reply(message, l('not_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -6706,17 +6844,17 @@ async def event_party_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーをブラックリストから削除します"
+                text += f"\n{l('enter_to_remove_from_list', l('blacklist'))}"
                 await reply(message, text)
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['addwhitelist'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['addwhitelist']}] [ユーザー名/ユーザーID]")
+                await reply(message, f"[{commands['addwhitelist']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and user.id not in whitelist}
             try:
@@ -6729,12 +6867,12 @@ async def event_party_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
@@ -6753,9 +6891,9 @@ async def event_party_message(message):
                     data_["fortnite"]["whitelist"] = data["fortnite"]["whitelist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストに追加しました")
+                    await reply(message, l("add_to_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))
                 else:
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にホワイトリストに追加されています")
+                    await reply(message, l("already_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))
             else:
                 client.select[message.author.id] = {
                     "exec": [
@@ -6775,9 +6913,9 @@ async def event_party_message(message):
                 data_["fortnite"]["whitelist"] = data["fortnite"]["whitelist"]
                 with open("config.json", "w", encoding="utf-8") as f:
                     json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストに追加しました")
+                await reply(message, l("add_to_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))
             else:
-                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にホワイトリストに追加されています")""" for user in users.values()
+                await reply(message, l("already_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -6786,17 +6924,17 @@ async def event_party_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーをホワイトリストに追加します"
+                text += f"\n{l('enter_to_add_to_list', l('whitelist'))}"
                 await reply(message, text)
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['removewhitelist'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['removewhitelist']}] [ユーザー名/ユーザーID]")
+                await reply(message, f"[{commands['removewhitelist']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and user.id in whitelist}
             try:
@@ -6809,12 +6947,12 @@ async def event_party_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l("too_many_users", str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
@@ -6833,31 +6971,31 @@ async def event_party_message(message):
                     data_["whitelist"] = data["whitelist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストから削除")
+                    await reply(message, l("remove_from_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))
                 else:
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はホワイトリストに含まれていません")
+                    await reply(message, l("not_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-        if str(user.display_name) in data["blacklist"] or user.id in data["blacklist"]:
-            blacklist.remove(user.id)
+        if user.id in whitelist:
+            whitelist.remove(user.id)
             try:
-                data["blacklist"].remove(str(user.display_name))
+                data["whitelist"].remove(str(user.display_name))
             except ValueError:
-                data["blacklist"].remove(user.id)
+                data["whitelist"].remove(user.id)
             try:
                 with open("config.json", "r", encoding="utf-8") as f:
                     data_ = json.load(f)
             except json.decoder.JSONDecodeError:
                 with open("config.json", "r", encoding="utf-8-sig") as f:
                     data_ = json.load(f)
-            data_["blacklist"] = data["blacklist"]
+            data_["whitelist"] = data["whitelist"]
             with open("config.json", "w", encoding="utf-8") as f:
                 json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
+            await reply(message, l("remove_from_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))
         else:
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")""" for user in users.values()
+            await reply(message, l("not_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -6866,17 +7004,17 @@ async def event_party_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーをホワイトリストから削除します"
+                text += f"\n{l('enter_to_remove_from_list', l('whitelist'))}"
                 await reply(message, text)
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['addinvitelist'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['addinvitelist']}] [ユーザー名/ユーザーID]")
+                await reply(message, f"[{commands['addinvitelist']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and user.id not in client.invitelist}
             try:
@@ -6889,12 +7027,12 @@ async def event_party_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l("too_many_users", str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
@@ -6913,9 +7051,9 @@ async def event_party_message(message):
                     data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストに追加しました")
+                    await reply(message, l("add_to_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))
                 else:
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既に招待リストに追加されています")
+                    await reply(message, l("already_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))
             else:
                 client.select[message.author.id] = {
                     "exec": [
@@ -6935,9 +7073,9 @@ async def event_party_message(message):
             data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
             with open("config.json", "w", encoding="utf-8") as f:
                 json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストに追加しました")
+            await reply(message, l("add_to_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))
         else:
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既に招待リストに追加されています")""" for user in users.values()
+            await reply(message, l("already_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -6946,17 +7084,17 @@ async def event_party_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーをブラックリストに追加します"
+                text += f"\n{l('enter_to_add_to_list', l('invitelist'))}"
                 await reply(message, text)
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['removeinvitelist'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['removeinvitelist']}] [ユーザー名/ユーザーID]")
+                await reply(message, f"[{commands['removeinvitelist']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and user.id in client.invitelist}
             try:
@@ -6969,12 +7107,12 @@ async def event_party_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l("too_many_users", str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
@@ -6993,9 +7131,9 @@ async def event_party_message(message):
                     data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストから削除")
+                    await reply(message, l("remove_from_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))
                 else:
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は招待リストに含まれていません")
+                    await reply(message, l("not_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))
             else:
                 client.select[message.author.id] = {
                     "exec": [
@@ -7015,9 +7153,9 @@ async def event_party_message(message):
             data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
             with open("config.json", "w", encoding="utf-8") as f:
                 json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストから削除")
+            await reply(message, l("remove_from_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))
         else:
-            await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は招待リストに含まれていません")""" for user in users.values()
+            await reply(message, l("not_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -7026,41 +7164,41 @@ async def event_party_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーをブラックリストから削除します"
+                text += f"\n{l('enter_to_remove_from_list', l('invitelist'))}"
                 await reply(message, text)
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['get'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['get']}] [ユーザー名/ユーザーID]")
+                await reply(message, f"[{commands['get']}] [{l('name_or_id')}]")
                 return
-            users = {str(member.display_name): member for member in client.user.party.members.values() if rawcontent in str(member.display_name)}
+            users = {str(member.display_name): member for member in client.party.members.values() if rawcontent in str(member.display_name)}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
-                    if client.user.party.members.get(user.id) is not None:
+                    if client.party.members.get(user.id) is not None:
                         users[str(user.display_name)] = user
                         add_cache(client, user)
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l("too_many_users", str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
-                member=client.user.party.members.get(user.id)
+                member=client.party.members.get(user.id)
                 if member is None:
-                    await reply(message, "ユーザーがパーティーにいません")
+                    await reply(message, l("user_not_in_party"))
                     return
                 if data['no-logs'] is False:
                     print(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}')
@@ -7072,9 +7210,9 @@ async def event_party_message(message):
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-        member=client.user.party.members.get(user.id)
+        member=client.party.members.get(user.id)
         if member is None:
-            await reply(message, "ユーザーがパーティーにいません")
+            await reply(message, l("user_not_in_party"))
             return
         if data['no-logs'] is False:
             print(f'''{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}''')
@@ -7090,23 +7228,23 @@ async def event_party_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーの情報を取得します"
+                text += f"\n{l('enter_to_get_userinfo')}"
                 await reply(message, text)
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['friendcount'].split(','):
         try:
             if data['no-logs'] is False:
-                print(f'フレンド数: {len(client.friends)}')
-            dstore(name,f'フレンド数: {len(client.friends)}')
-            await reply(message, f'フレンド数: {len(client.friends)}')
+                print(f"{l('friendcount')}: {len(client.friends)}")
+            dstore(name,f"{l('friendcount')}: {len(client.friends)}")
+            await reply(message, f"{l('friendcount')}: {len(client.friends)}")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['pendingcount'].split(','):
         try:
@@ -7118,24 +7256,24 @@ async def event_party_message(message):
                 elif pending.direction == 'INBOUND':
                     inbound.append(pending)
             if data['no-logs'] is False:
-                print(f'保留数: {len(client.pending_friends)}\n送信: {len(outbound)}\n受信: {len(inbound)}')
-            dstore(name,f'保留数: {len(client.pending_friends)}\n送信: {len(outbound)}\n受信: {len(inbound)}')
-            await reply(message, f'保留数: {len(client.pending_friends)}\n送信: {len(outbound)}\n受信: {len(inbound)}')
+                print(f"{l('pendingcount')}: {len(client.pending_friends)}\n{l('outbound')}: {len(outbound)}\n{l('inbound')}: {len(inbound)}")
+            dstore(name,f"{l('pendingcount')}: {len(client.pending_friends)}\n{l('outbound')}: {len(outbound)}\n{l('inbound')}: {len(inbound)}")
+            await reply(message, f"{l('pendingcount')}: {len(client.pending_friends)}\n{l('outbound')}: {len(outbound)}\n{l('inbound')}: {len(inbound)}")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['blockcount'].split(','):
         try:
             if data['no-logs'] is False:
-                print(f'ブロック数: {len(client.blocked_users)}')
-            dstore(name,f'ブロック数: {len(client.blocked_users)}')
-            await reply(message, f'ブロック数: {len(client.blocked_users)}')
+                print(f"{l('blockcount')}: {len(client.blocked_users)}")
+            dstore(name,f"{l('blockcount')}: {len(client.blocked_users)}")
+            await reply(message, f"{l('blockcount')}: {len(client.blocked_users)}")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['friendlist'].split(','):
         try:
@@ -7150,7 +7288,7 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['pendinglist'].split(','):
         try:
@@ -7163,13 +7301,13 @@ async def event_party_message(message):
                 elif pending.direction == 'INBOUND':
                     inbound+=f'\n{str(pending.display_name)}'
             if data['no-logs'] is False:
-                print(f'送信: {outbound}\n受信: {inbound}')
-            dstore(name,f'送信: {outbound}\n受信: {inbound}')
-            await reply(message, f'送信: {outbound}\n受信: {inbound}')
+                print(f"{l('outbound')}: {outbound}\n{l('inbound')}: {inbound}")
+            dstore(name,f"{l('outbound')}: {outbound}\n{l('inbound')}: {inbound}")
+            await reply(message, f"{l('outbound')}: {outbound}\n{l('inbound')}: {inbound}")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['blocklist'].split(','):
         try:
@@ -7184,16 +7322,16 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['outfitmimic'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.outfitmimic=True
-                await reply(message, 'コスチュームミミックをオンに設定')
+                await reply(message, l('set_to', l('mimic', l('outfit')), l('on')))
             elif args[1] in commands['false'].split(','):
                 client.outfitmimic=False
-                await reply(message, 'コスチュームミミックをオフに設定')
+                await reply(message, l('set_to', l('mimic', l('outfit')), l('off')))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -7202,16 +7340,16 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['backpackmimic'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.backpackmimic=True
-                await reply(message, 'バックアクセサリーミミックをオンに設定')
+                await reply(message, l('mimic_set', l('set_to', l('mimic', l('backpack')), l('on'))))
             elif args[1] in commands['false'].split(','):
                 client.backpackmimic=False
-                await reply(message, 'バックアクセサリーミミックをオフに設定')
+                await reply(message, l('mimic_set', l('set_to', l('mimic', l('backpack')), l('off'))))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -7220,16 +7358,16 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['pickaxemimic'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.pickaxemimic=True
-                await reply(message, '収集ツールミミックをオンに設定')
+                await reply(message, l('mimic_set', l('set_to', l('mimic', l('pickaxe')), l('on'))))
             elif args[1] in commands['false'].split(','):
                 client.pickaxemimic=False
-                await reply(message, '収集ツールミミックをオフに設定')
+                await reply(message, l('mimic_set', l('set_to', l('mimic', l('pickaxe')), l('off'))))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -7238,16 +7376,16 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['emotemimic'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.emotemimic=True
-                await reply(message, 'エモートミミックをオンに設定')
+                await reply(message, l('mimic_set', l('set_to', l('mimic', l('emote')), l('on'))))
             elif args[1] in commands['false'].split(','):
                 client.emotemimic=False
-                await reply(message, 'エモートミミックをオフに設定')
+                await reply(message, l('mimic_set', l('set_to', l('mimic', l('emote')), l('off'))))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -7256,16 +7394,16 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['whisper'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.whisper=True
-                await reply(message, '囁きからのコマンド受付をオンに設定')
+                await reply(message, l('set_to', l('command_from', l('whisper'), l('on'))))
             elif args[1] in commands['false'].split(','):
                 client.whisper=False
-                await reply(message, '囁きからのコマンド受付をオフに設定')
+                await reply(message, l('set_to', l('command_from', l('whisper'), l('off'))))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -7274,16 +7412,16 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['partychat'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.partychat=True
-                await reply(message, 'パーティーチャットからのコマンド受付をオンに設定')
+                await reply(message, l('set_to', l('command_from', l('partychat'), l('on'))))
             elif args[1] in commands['false'].split(','):
                 client.partychat=False
-                await reply(message, 'パーティーチャットからのコマンド受付をオフに設定')
+                await reply(message, l('set_to', l('command_from', l('partychat'), l('off'))))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -7292,16 +7430,16 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['discord'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.discord=True
-                await reply(message, 'Discordからのコマンド受付をオンに設定')
+                await reply(message, l('set_to', l('command_from', l('discord'), l('on'))))
             elif args[1] in commands['false'].split(','):
                 client.discord=False
-                await reply(message, 'Discordからのコマンド受付をオフに設定')
+                await reply(message, l('set_to', l('command_from', l('discord'), l('off'))))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -7310,16 +7448,16 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['disablewhisperperfectly'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.whisperperfect=True
-                await reply(message, '囁きの完全無効をオンに設定')
+                await reply(message, l('set_to', l('disable_perfect', l('whisper'), l('on'))))
             elif args[1] in commands['false'].split(','):
                 client.whisperperfect=False
-                await reply(message, '囁きの完全無効をオフに設定')
+                await reply(message, l('set_to', l('disable_perfect', l('whisper'), l('off'))))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -7328,16 +7466,16 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['disablepartychatperfectly'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.partychatperfect=True
-                await reply(message, 'パーティーチャットの完全無効をオンに設定')
+                await reply(message, l('set_to', l('disable_perfect', l('partychat'), l('on'))))
             elif args[1] in commands['false'].split(','):
                 client.partychatperfect=False
-                await reply(message, 'パーティーチャットの完全無効をオフに設定')
+                await reply(message, l('set_to', l('disable_perfect', l('partychat'), l('on'))))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -7346,16 +7484,16 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['disablediscordperfectly'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.discordperfect=True
-                await reply(message, 'Discordの完全無効をオンに設定')
+                await reply(message, l('set_to', l('disable_perfect', l('discord'), l('on'))))
             elif args[1] in commands['false'].split(','):
                 client.discordperfect=False
-                await reply(message, 'Discordの完全無効をオフに設定')
+                await reply(message, l('set_to', l('disable_perfect', l('discord'), l('on'))))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -7364,16 +7502,16 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['acceptinvite'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.acceptinvite=True
-                await reply(message, '招待を承諾に設定')
+                await reply(message, l('set_to', l('invite'), l('accept')))
             elif args[1] in commands['false'].split(','):
                 client.acceptinvite=False
-                await reply(message, '招待を拒否に設定')
+                await reply(message, l('set_to', l('invite'), l('decline')))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -7382,16 +7520,16 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['acceptfriend'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.acceptfriend=True
-                await reply(message, 'フレンド申請を承諾に設定')
+                await reply(message, l('set_to', l('friendrequest'), l('accept')))
             elif args[1] in commands['false'].split(','):
                 client.acceptfriend=False
-                await reply(message, 'フレンド申請を拒否に設定')
+                await reply(message, l('set_to', l('friendrequest'), l('decline')))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -7400,16 +7538,16 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['joinmessageenable'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.joinmessageenable=True
-                await reply(message, 'パーティー参加時のメッセージをオンに設定')
+                await reply(message, l('set_to', l('join_', l('message')), l('on')))
             elif args[1] in commands['false'].split(','):
                 client.joinmessageenable=False
-                await reply(message, 'パーティー参加時のメッセージをオフに設定')
+                await reply(message, l('set_to', l('join_', l('message')), l('off')))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -7418,16 +7556,16 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['randommessageenable'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.randommessageenable=True
-                await reply(message, 'パーティー参加時のランダムメッセージをオンに設定')
+                await reply(message, l('set_to', l('join_', l('randommessage')), l('on')))
             elif args[1] in commands['false'].split(','):
                 client.randommessageenable=False
-                await reply(message, 'パーティー参加時のランダムメッセージをオフに設定')
+                await reply(message, l('set_to', l('join_', l('randommessage')), l('off')))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -7436,7 +7574,7 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['wait'].split(','):
         try:
@@ -7448,10 +7586,10 @@ async def event_party_message(message):
                     pass
                 client.timer_=Timer(data['fortnite']['waitinterval'], inviteaccept, [client])
                 client.timer_.start()
-                await reply(message, f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")
+                await reply(message, l('decline_invite_for', str(data['fortnite']['waitinterval'])))
             else:
-                if client.owner.id in client.user.party.members.keys() and message.author.id != client.owner.id:
-                    await reply(message, '現在利用できません')
+                if client.owner.id in client.party.members.keys() and message.author.id != client.owner.id:
+                    await reply(message, l('not_available'))
                     return
                 client.acceptinvite=False
                 try:
@@ -7460,17 +7598,17 @@ async def event_party_message(message):
                     pass
                 client.timer_=Timer(data['fortnite']['waitinterval'], inviteaccept, [client])
                 client.timer_.start()
-                await reply(message, f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")             
+                await reply(message, l('decline_invite_for', str(data['fortnite']['waitinterval'])))
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['join'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['join']}] [ユーザー名/ユーザーID]")
+                await reply(message, f"[{commands['join']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is True}
             try:
@@ -7483,18 +7621,18 @@ async def event_party_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
                 friend=client.get_friend(user.id)
                 if friend is None:
-                    await reply(message, 'ユーザーとフレンドではありません')
+                    await reply(message, l('not_friend_with_user'))
                 else:
                     await friend.join_party()
             else:
@@ -7504,29 +7642,29 @@ async def event_party_message(message):
         try:
             friend=client.get_friend(user.id)
             if friend is None:
-                await reply(message, 'ユーザーとフレンドではありません')
+                await reply(message, l('not_friend_with_user'))
             else:
                 await friend.join_party()
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーが満員か、既にパーティーにいるか、ユーザーがオフラインです')
+            await reply(message, l('party_full_or_already_or_offline'))
         except fortnitepy.NotFound:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーが見つかりません')
+            await reply(message, l('party_notfound'))
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーがプライベートです')
+            await reply(message, l('party_private'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーの参加リクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l('error_while_joining_to_party'))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -7535,32 +7673,32 @@ async def event_party_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーのパーティーに参加します"
+                text += f"{l('enter_join_party')}"
                 await reply(message, text)
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーが満員か、既にパーティーにいるか、ユーザーがオフラインです')
+            await reply(message, l('party_full_or_already_or_offline'))
         except fortnitepy.NotFound:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーが見つかりません')
+            await reply(message, l('party_notfound'))
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーがプライベートです')
+            await reply(message, l('party_private'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーの参加リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_joining_to_party'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['joinid'].split(','):
         try:
@@ -7569,45 +7707,45 @@ async def event_party_message(message):
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, '既にこのパーティーのメンバーです')
+            await reply(message, l('party_full_or_already'))
         except fortnitepy.NotFound:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーが見つかりません')
+            await reply(message, l('party_notfound'))
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーがプライベートです')
+            await reply(message, l('party_private'))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, f"[{commands['join']}] [パーティーID]")
+            await reply(message, f"[{commands['join']}] [{l('party_id')}]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['leave'].split(','):
         try:
-            await client.user.party.me.leave()
-            await reply(message, 'パーティーを離脱')
+            await client.party.me.leave()
+            await reply(message, l('party_leave', client.user.party.id))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティー離脱のリクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_leaving_party'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['invite'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['invite']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['invite']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is True}
             try:
@@ -7620,24 +7758,21 @@ async def event_party_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
                 friend=client.get_friend(user.id)
                 if friend is None:
-                    await reply(message, 'ユーザーとフレンドではありません')
+                    await reply(message, l('not_friend_with_user'))
                     return
                 await friend.invite()
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(friend.display_name)} をパーティーに招待')
-                else:
-                    await reply(message, f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
+                await reply(message, l('user_invited', f'{str(friend.display_name)} / {friend.id}', client.party.id))
             else:
                 client.select[message.author.id] = {
                     "exec": [
@@ -7645,23 +7780,20 @@ async def event_party_message(message):
         try:
             friend=client.get_friend(user.id)
             if friend is None:
-                await reply(message, 'ユーザーとフレンドではありません')
+                await reply(message, l('not_friend_with_user'))
                 return
             await friend.invite()
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(friend.display_name)} をパーティーに招待')
-            else:
-                await reply(message, f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
+            await reply(message, l('user_invited', f'{str(friend.display_name)} / {friend.id}', client.party.id))
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーが満員か、既にパーティーにいます')
+            await reply(message, l('party_full_or_already'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティー招待の送信リクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l('error_while_sending_partyinvite'))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -7670,55 +7802,52 @@ async def event_party_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーを招待します"
+                text += f"\n{l('enter_to_invite_user')}"
                 await reply(message, text)
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーが満員か、既にパーティーにいます')
+            await reply(message, l('party_full_or_already'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティー招待の送信リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_sending_partyinvite'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['inviteall'].split(','):
         try:
             for inviteuser in client.invitelist:
-                if inviteuser != client.user.id and inviteuser not in client.user.party.members:
+                if inviteuser != client.user.id and inviteuser not in client.party.members:
                     try:
-                        await client.user.party.invite(inviteuser)
+                        await client.party.invite(inviteuser)
                     except fortnitepy.PartyError:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
                             dstore(name,f'>>> {traceback.format_exc()}')
-                        await reply(message, 'パーティーが満員か、既にパーティーにいます')
+                        await reply(message, l('party_full_or_already'))
                     except fortnitepy.Forbidden:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
                             dstore(name,f'>>> {traceback.format_exc()}')
-                        await reply(message, 'ユーザーとフレンドではありません')
+                        await reply(message, l('not_friend_with_user'))
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
                             dstore(name,f'>>> {traceback.format_exc()}')
-                        await reply(message, 'パーティー招待の送信リクエストを処理中にエラーが発生しました')
+                        await reply(message, l('error_while_sending_partyinvite'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['message'].split(','):
         try:
             send=rawcontent.split(' : ')
-            if len(send) < 2:
-                await reply(message, f"[{commands['message']}] [ユーザー名 / ユーザーID] : [内容]")
-                return
             users = {str(user.display_name): user for user in cache_users.values() if send[0] in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is True}
             try:
                 user=await client.fetch_profile(send[0])
@@ -7730,24 +7859,21 @@ async def event_party_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
                 friend=client.get_friend(user.id)
                 if friend is None:
-                    await reply(message, 'ユーザーとフレンドではありません')
+                    await reply(message, l('not_friend_with_user'))
                     return
                 await friend.send(send[1])
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
-                else:
-                    await reply(message, f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
+                await reply(message, l('user_sent', f'{str(friend.display_name)} / {friend.id}', send[1]))
             else:
                 client.select[message.author.id] = {
                     "exec": [
@@ -7755,18 +7881,15 @@ async def event_party_message(message):
         try:
             friend=client.get_friend(user.id)
             if friend is None:
-                await reply(message, 'ユーザーとフレンドではありません')
+                await reply(message, l('not_friend_with_user'))
                 return
             await friend.send(send[1])
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
-            else:
-                await reply(message, f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
+            await reply(message, l('user_sent', f'{str(friend.display_name)} / {friend.id}', send[1]))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l("error_while_requesting_userinfo"))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user, "send": send} for user in users.values()
@@ -7775,136 +7898,133 @@ async def event_party_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーにメッセージを送信します"
+                text += f"\n{l('enter_to_send')}"
                 await reply(message, text)
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+            await reply(message, l("error_while_requesting_userinfo"))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, f"[{commands['message']}] [ユーザー名 / ユーザーID] : [内容]")
+            await reply(message, f"[{commands['message']}] [{l('name_or_id')}] : [{l('content')}]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['partymessage'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['partymessage']}] [内容]")
+                await reply(message, f"[{commands['partymessage']}] [{l('content')}]")
                 return
-            await client.user.party.send(rawcontent)
-            if data['loglevel'] == 'normal':
-                await reply(message, f'パーティーにメッセージ {rawcontent} を送信')
-            else:
-                await reply(message, f'パーティー {client.user.party.id} にメッセージ {rawcontent} を送信')
+            await client.party.send(rawcontent)
+            await reply(message, l('party_sent', client.party.id, rawcontent))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['status'].split(','):
         try:
             await client.set_status(rawcontent)
-            await reply(message, f'ステータスを {rawcontent} に設定')
+            await reply(message, l('set_to', l('status'), rawcontent))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, f"[{commands['status']}] [内容]")
+            await reply(message, f"[{commands['status']}] [{l('content')}]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['banner'].split(','):
         try:
-            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_banner,args[1],args[2],client.user.party.me.banner[2]))
-            await reply(message, f'バナーを {args[1]}, {args[2]}に設定')
+            await client.party.me.edit_and_keep(partial(client.party.me.set_banner,args[1],args[2],client.party.me.banner[2]))
+            await reply(message, l('set_to', l('banner'), f"{args[1]}, {args[2]}"))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'バナー情報の設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_asset'))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, f"[{commands['banner']}] [バナーID] [バナーの色]")
+            await reply(message, f"[{commands['banner']}] [{l('bannerid')}] [{l('color')}]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['level'].split(','):
         try:
-            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_banner,client.user.party.me.banner[0],client.user.party.me.banner[1],int(args[1])))
-            await reply(message, f'レベルを {args[1]} に設定')
+            await client.party.me.edit_and_keep(partial(client.party.me.set_banner,client.party.me.banner[0],client.party.me.banner[1],int(args[1])))
+            await reply(message, l('level', args[1]))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'レベルの設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_asset'))
         except ValueError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, '数字を入力してください')
+            await reply(message, l('must_be_int'))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, f"[{commands['level']}] [レベル]")
+            await reply(message, f"[{commands['level']}] [{l('level')}]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['bp'].split(','):
         try:
-            await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_battlepass_info,True,args[1],args[2],args[3]))
-            await reply(message, f'バトルパス情報を ティア: {args[1]} XPブースト: {args[2]} フレンドXPブースト: {args[3]} に設定')
+            await client.party.me.edit_and_keep(partial(client.party.me.set_battlepass_info,True,args[1],args[2],args[3]))
+            await reply(message, l('set_to', l('bpinfo'), f"{l('tier')}: {args[1]}, {l('xpboost')}: {args[2]}, {l('friendxpboost')}: {args[3]}"))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'バトルパス情報の設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_bpinfo'))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, f"[{commands['bp']}] [ティア] [XPブースト] [フレンドXPブースト]")
+            await reply(message, f"[{commands['bp']}] [{l('tier')}] [{l('xpboost')}] [{l('friendxpboost')}]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['privacy'].split(','):
         try:
             if args[1] in commands['privacy_public'].split(','):
-                await client.user.party.set_privacy(fortnitepy.PartyPrivacy.PUBLIC)
-                await reply(message, 'プライバシーを パブリック に設定')
+                await client.party.set_privacy(fortnitepy.PartyPrivacy.PUBLIC)
+                await reply(message, l('set_to', l('privacy'), l('public')))
             elif args[1] in commands['privacy_friends_allow_friends_of_friends'].split(','):
-                await client.user.party.set_privacy(fortnitepy.PartyPrivacy.FRIENDS_ALLOW_FRIENDS_OF_FRIENDS)
-                await reply(message, 'プライバシーを フレンド(フレンドのフレンドを許可) に設定')
+                await client.party.set_privacy(fortnitepy.PartyPrivacy.FRIENDS_ALLOW_FRIENDS_OF_FRIENDS)
+                await reply(message, l('set_to', l('privacy'), l('friends_allow_friends_of_friends')))
             elif args[1] in commands['privacy_friends'].split(','):
-                await client.user.party.set_privacy(fortnitepy.PartyPrivacy.FRIENDS)
-                await reply(message, 'プライバシーを フレンド に設定')
+                await client.party.set_privacy(fortnitepy.PartyPrivacy.FRIENDS)
+                await reply(message, l('set_to', l('privacy'), l('friends')))
             elif args[1] in commands['privacy_private_allow_friends_of_friends'].split(','):
-                await client.user.party.set_privacy(fortnitepy.PartyPrivacy.PRIVATE_ALLOW_FRIENDS_OF_FRIENDS)
-                await reply(message, 'プライバシーを プライベート(フレンドのフレンドを許可) に設定')
+                await client.party.set_privacy(fortnitepy.PartyPrivacy.PRIVATE_ALLOW_FRIENDS_OF_FRIENDS)
+                await reply(message, l('set_to', l('privacy'), l('private_allow_friends_of_friends')))
             elif args[1] in commands['privacy_private'].split(','):
-                await client.user.party.set_privacy(fortnitepy.PartyPrivacy.PRIVATE)
-                await reply(message, 'プライバシーを プライベート に設定')
+                await client.party.set_privacy(fortnitepy.PartyPrivacy.PRIVATE)
+                await reply(message, l('set_to', l('privacy'), l('private')))
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーリーダーではありません')
+            await reply(message, l('not_party_leader'))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -7913,12 +8033,12 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー') 
+            await reply(message, l('error')) 
 
     elif args[0] in commands['getuser'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['getuser']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['getuser']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id}
             try:
@@ -7930,12 +8050,12 @@ async def event_party_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             text = str()
             for user in users.values():
@@ -7947,12 +8067,12 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['getfriend'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['getfriend']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['getfriend']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is True}
             try:
@@ -7965,12 +8085,12 @@ async def event_party_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             text = str()
             for user in users.values():
@@ -7982,7 +8102,7 @@ async def event_party_message(message):
                 else:
                     text += f'\n{friend.nickname}({str(friend.display_name)}) / {friend.id}'
                 if friend.last_logout is not None:
-                    text += '\n最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout)
+                    text += "\n{1}: {0.year}/{0.month}/{0.day} {0.hour}:{0.minute}:{0.second}".format(friend.last_logout, l('lastlogin'))
             if data['no-logs'] is False:
                 print(text)
             dstore(name,text)
@@ -7990,12 +8110,12 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['getpending'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['getpending']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['getpending']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_pending(user.id) is True}
             try:
@@ -8008,12 +8128,12 @@ async def event_party_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             text = str()
             for user in users.values():
@@ -8028,12 +8148,12 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['getblock'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['getblock']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['getblock']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_blocked(user.id) is True}
             try:
@@ -8046,12 +8166,12 @@ async def event_party_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             text = str()
             for user in users.values():
@@ -8066,14 +8186,14 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['info'].split(','):
         try:
             if args[1] in commands['info_party'].split(','):
                 text = str()
-                text += f'{client.user.party.id}\n人数: {client.user.party.member_count}'
-                for member in client.user.party.members.values():
+                text += f"{client.party.id}\n{l('member_count')}: {client.party.member_count}"
+                for member in client.party.members.values():
                     add_cache(client, member)
                     if data['loglevel'] == 'normal':
                         text += f'\n{str(member.display_name)}'
@@ -8083,55 +8203,55 @@ async def event_party_message(message):
                 dstore(None, text)
                 await reply(message, text)
                 if data['loglevel'] == 'debug':
-                    print(json.dumps(client.user.party.meta.schema, indent=2))
+                    print(json.dumps(client.party.meta.schema, indent=2))
             
-            elif True in [args[1] in commands[key].split(',') for key in ("cid", "bid", "petcarrier", "pickaxe_id", "eid", "emoji_id", "toy_id", "shout_id", "id")]:
+            elif True in [args[1] in commands[key].split(',') for key in ("cid", "bid", "petcarrier", "pickaxe_id", "eid", "emoji_id", "toy_id", "id")]:
                 type_ = convert_to_type(args[1])
                 if rawcontent2 == '':
                     await reply(message, f"[{commands[type_]}] [ID]")
                     return
-                result = await loop.run_in_executor(None, search_item, "ja", "id", rawcontent2, type_)
+                result = await loop.run_in_executor(None, search_item, data["lang"], "id", rawcontent2, type_)
                 if result is None:
                     result = await loop.run_in_executor(None, search_item, "en", "id", rawcontent2, type_)
                 if result is None:
-                    await reply(message, "見つかりません")
+                    await reply(message, l('item_notfound'))
                 else:
                     if len(result) > 30:
-                        await reply(message, f"見つかったアイテム数 {len(result)} は多すぎます")
+                        await reply(message, l('too_many_items', str(len(result))))
                         return
                     if len(result) == 1:
-                        await reply(message, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}\n説明: {result[0]['description']}\nレア度: {result[0]['displayRarity']}\n{result[0]['set']}")
+                        await reply(message, f"{result[0]['type']['displayValue']}: {result[0]['name']} | {result[0]['id']}\n{result[0]['description']}\{result[0]['rarity']['displayValue']}\n{result[0]['set']['value']}")
                     else:
                         text = str()
                         for count, item in enumerate(result):
-                            text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
-                        text += "\n数字を入力することでそのアイテムに設定します"
+                            text += f"\n{count+1} {item['type']['displayValue']}: {item['name']} | {item['id']}"
+                        text += f"\n{l('enter_to_show_info')}"
                         await reply(message, text)
-                        client.select[message.author.id] = {"exec": [f"await reply(message, f'''{item['shortDescription']}: {item['name']} | {item['id']}\n{item['description']}\n{item['displayRarity']}\n{item['set']}''')" for item in result]}
+                        client.select[message.author.id] = {"exec": [f"await reply(message, f'''{item['type']['displayValue']}: {item['name']} | {item['id']}\n{item['description']}\n{item['rarity']['displayValue']}\n{item['set']['value']}''')" for item in result]}
 
-            elif True in  [args[1] in commands[key].split(',') for key in ("outfit", "backpack", "pet", "pickaxe", "emote", "emoji", "toy", "shout", "item")]:
+            elif True in  [args[1] in commands[key].split(',') for key in ("outfit", "backpack", "pet", "pickaxe", "emote", "emoji", "toy", "item")]:
                 type_ = convert_to_type(args[1])
                 if rawcontent2 == '':
-                    await reply(message, f"[{commands[type_]}] [アイテム名]")
+                    await reply(message, f"[{commands[type_]}] [{l('itemname')}]")
                     return
-                result = await loop.run_in_executor(None, search_item, "ja", "name", rawcontent2, type_)
+                result = await loop.run_in_executor(None, search_item, data["lang"], "name", rawcontent2, type_)
                 if result is None:
                     result = await loop.run_in_executor(None, search_item, "en", "name", rawcontent2, type_)
                 if result is None:
-                    await reply(message, "見つかりません")
+                    await reply(message, l('item_notfound'))
                 else:
                     if len(result) > 30:
-                        await reply(message, f"見つかったアイテム数 {len(result)} は多すぎます")
+                        await reply(message, l('too_many_items', str(len(result))))
                         return
                     if len(result) == 1:
-                        await reply(message, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}\n{result[0]['description']}\n{result[0]['displayRarity']}\n{result[0]['set']}")
+                        await reply(message, f"{result[0]['type']['displayValue']}: {result[0]['name']} | {result[0]['id']}\n{result[0]['description']}\n{result[0]['rarity']['displayValue']}\n{result[0]['set']['value']}")
                     else:
                         text = str()
                         for count, item in enumerate(result):
-                            text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
-                        text += "\n数字を入力することでそのアイテムに設定します"
+                            text += f"\n{count+1} {item['type']['displayValue']}: {item['name']} | {item['id']}"
+                        text += f"\n{l('enter_to_show_info')}"
                         await reply(message, text)
-                        client.select[message.author.id] = {"exec": [f"await reply(message, f'''{item['shortDescription']}: {item['name']} | {item['id']}\n{item['description']}\n{item['displayRarity']}\n{item['set']}''')" for item in result]}
+                        client.select[message.author.id] = {"exec": [f"await reply(message, f'''{item['type']['displayValue']}: {item['name']} | {item['id']}\n{item['description']}\n{item['rarity']['displayValue']}\n{item['set']['value']}''')" for item in result]}
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -8140,7 +8260,7 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['pending'].split(','):
         try:
@@ -8153,44 +8273,32 @@ async def event_party_message(message):
                 for pending in pendings:
                     try:
                         await pending.accept()
-                        if data['loglevel'] == 'normal':
-                            await reply(message, f'{str(pending.display_name)} をフレンドに追加')
-                        else:
-                            await reply(message, f'{str(pending.display_name)} / {pending.id} をフレンドに追加')
+                        await reply(message, l('add_friend', f'{str(pending.display_name)} / {pending.id}'))
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
-                        if data['loglevel'] == 'normal':
-                            await reply(message, f'{str(pending.display_name)} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
-                        else:
-                            await reply(message, f'{str(pending.display_name)} / {pending.id} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
+                        await reply(message, l('error_while_sending_friendrequest'))
                         continue
                     except Exception:
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                        await reply(message, 'エラー')
+                        await reply(message, l('error'))
                         continue
             elif args[1] in commands['false'].split(','):
                 for pending in pendings:
                     try:
                         await pending.decline()
-                        if data['loglevel'] == 'normal':
-                            await reply(message, f'{str(pending.display_name)} のフレンド申請を拒否')
-                        else:
-                            await reply(message, f'{str(pending.display_name)} / {pending.id} のフレンド申請を拒否')
+                        await reply(message, l('friend_request_decline', f'{str(pending.display_name)} / {pending.id}'))
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
                             dstore(name,f'>>> {traceback.format_exc()}')
-                        if data['loglevel'] == 'normal':
-                            await reply(message, f'{str(pending.display_name)} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
-                        else:
-                            await reply(message, f'{str(pending.display_name)} / {pending.id} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
+                        await reply(message, l('error_while_declining_friendrequest'))
                         continue
                     except Exception:
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                        await reply(message, 'エラー')
+                        await reply(message, l('error'))
                         continue
         except IndexError:
             if data['loglevel'] == 'debug':
@@ -8200,7 +8308,7 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['removepending'].split(','):
         try:
@@ -8212,35 +8320,29 @@ async def event_party_message(message):
             for pending in pendings:
                 try:
                     await pending.decline()
-                    if data['loglevel'] == 'normal':
-                        await reply(message, f'{str(pending.display_name)} へのフレンド申請を解除')
-                    else:
-                        await reply(message, f'{str(pending.display_name)} / {pending.id} へのフレンド申請を解除')
+                    await reply(message, l('remove_pending', f'{str(pending.display_name)} / {pending.id}'))
                 except fortnitepy.HTTPException:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    if data['loglevel'] == 'normal':
-                        await reply(message, f'{str(pending.display_name)} へのフレンド申請を解除リクエストを処理中にエラーが発生しました')
-                    else:
-                        await reply(message, f'{str(pending.display_name)} / {pending.id} へのフレンド申請を解除リクエストを処理中にエラーが発生しました')
+                    await reply(message, l('error_while_removing_friendrequest'))
                     continue
                 except Exception:
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'エラー')
+                    await reply(message, l('error'))
                     continue
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['addfriend'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['addfriend']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['addfriend']}] [{l('name_or_id')}]")
                 return
-            users = {str(user.display_name): user for name, user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is False}
+            users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is False}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
@@ -8251,41 +8353,35 @@ async def event_party_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
                 if client.has_friend(user.id) is True:
-                    await reply(message, '既にユーザーとフレンドです')
+                    await reply(message, l('already_friend'))
                     return
                 await client.add_friend(user.id)
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} にフレンド申請を送信')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} にフレンド申請を送信')
+                await reply(message, l('friend_request_to', f'{str(user.display_name)} / {user.id}'))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
         try:
             if client.has_friend(user.id) is True:
-                await reply(message, '既にユーザーとフレンドです')
+                await reply(message, l('already_friend'))
                 return
             await client.add_friend(user.id)
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(user.display_name)} にフレンド申請を送信')
-            else:
-                await reply(message, f'{str(user.display_name)} / {user.id} にフレンド申請を送信')
+            await reply(message, l('friend_request_to', f'{str(user.display_name)} / {user.id}'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'フレンド申請の送信リクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l('error_while_sending_friendrequest'))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -8294,24 +8390,24 @@ async def event_party_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーにフレンド申請を送信します"
+                text += f"\n{l('enter_to_send_friendrequest')}"
                 await reply(message, text)
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'フレンド申請の送信リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_sending_friendrequest'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['removefriend'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['removefriend']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['removefriend']}] [{l('name_or_id')}]")
                 return
-            users = {str(user.display_name): user for name, user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is True}
+            users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is True}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
@@ -8322,41 +8418,35 @@ async def event_party_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
                 if client.has_friend(user.id) is False:
-                    await reply(message, 'ユーザーとフレンドではありません')
+                    await reply(message, l('not_friend_with_user'))
                     return
                 await client.remove_or_decline_friend(user.id)
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} をフレンドから削除')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} をフレンドから削除')
+                await reply(message, l('remove_friend', f'{str(user.display_name)} / {user.id}'))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
         try:
             if client.has_friend(user.id) is False:
-                await reply(message, 'ユーザーとフレンドではありません')
+                await reply(message, l('not_friend_with_user'))
                 return
             await client.remove_or_decline_friend(user.id)
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(user.display_name)} をフレンドから削除')
-            else:
-                await reply(message, f'{str(user.display_name)} / {user.id} をフレンドから削除')
+            await reply(message, l('remove_friend', f'{str(user.display_name)} / {user.id}'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'フレンドの削除リクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l('error_while_removing_friend')""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -8365,22 +8455,22 @@ async def event_party_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーをフレンドから削除します"
+                text += f"\n{l('enter_to_remove_friend')}"
                 await reply(message, text)
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'フレンドの削除リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_removing_friend'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['acceptpending'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['acceptpending']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['acceptpending']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_pending(user.id) is True}
             try:
@@ -8393,41 +8483,35 @@ async def event_party_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
                 if client.is_pending(user.id) is False:
-                    await reply(message, 'ユーザーからのフレンド申請がありません')
+                    await reply(message, l('not_pending_with_user'))
                     return
                 await client.accept_friend(user.id)
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} をフレンドに追加')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} をフレンドに追加')
+                await reply(message, l('friend_add', f'{str(user.display_name)} / {user.id}'))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
         try:
             if client.is_pending(user.id) is False:
-                await reply(message, 'ユーザーからのフレンド申請がありません')
+                await reply(message, l('not_pending_with_user'))
                 return
             await client.accept_friend(user.id)
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(user.display_name)} をフレンドに追加')
-            else:
-                await reply(message, f'{str(user.display_name)} / {user.id} をフレンドに追加')
+            await reply(message, l('friend_add', f'{str(user.display_name)} / {user.id}'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'フレンドの追加リクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l('error_while_accepting_friendrequest'))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -8436,22 +8520,22 @@ async def event_party_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーからのフレンド申請を承諾します"
+                text += f"\n{l('enter_to_accept_pending')}"
                 await reply(message, text)
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'フレンドの追加リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_accepting_friendrequest'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['declinepending'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['declinepending']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['declinepending']}] [{l('name_or_id')}]")
                 return
             users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_pending(user.id) is True}
             try:
@@ -8464,41 +8548,35 @@ async def event_party_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
                 if client.is_pending(user.id) is False:
-                    await reply(message, 'ユーザーからのフレンド申請がありません')
+                    await reply(message, l('nor_pending_with_user'))
                     return
                 await client.remove_or_decline_friend(user.id)
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} のフレンド申請を拒否')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} のフレンド申請を拒否')
+                await reply(message, l('friend_request_decline', f'{str(user.display_name)} / {user.id}'))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
         try:
             if client.is_pending(user.id) is False:
-                await reply(message, 'ユーザーからのフレンド申請がありません')
+                await reply(message, l('nor_pending_with_user'))
                 return
             await client.remove_or_decline_friend(user.id)
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(user.display_name)} のフレンド申請を拒否')
-            else:
-                await reply(message, f'{str(user.display_name)} / {user.id} のフレンド申請を拒否')
+            await reply(message, l('friend_request_decline', f'{str(user.display_name)} / {user.id}'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'フレンド申請の拒否リクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l('error_while_declining_friendrequest'))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -8507,24 +8585,24 @@ async def event_party_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーからのフレンド申請を拒否します"
+                text += f"\n{l('enter_to_decline_pending')}"
                 await reply(message, text)
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'フレンド申請の拒否リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_declining_friendrequest'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['blockfriend'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['blockfriend']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['blockfriend']}] [{l('name_or_id')}]")
                 return
-            users = {user.display_name: user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_blocked(user.id) is False}
+            users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_blocked(user.id) is False}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
@@ -8535,41 +8613,35 @@ async def event_party_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
                 if client.is_blocked(user.id) is True:
-                    await reply(message, '既にユーザーをブロックしています')
+                    await reply(message, l('already_block'))
                     return
                 await client.block_user(user.id)
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} をブロック')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} をブロック')
+                await reply(message, l('block_user', f'{str(user.display_name)} / {user.id}'))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
         try:
             if client.is_blocked(user.id) is True:
-                await reply(message, '既にユーザーをブロックしています')
+                await reply(message, l('already_block'))
                 return
             await client.block_user(user.id)
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(user.display_name)} をブロック')
-            else:
-                await reply(message, f'{str(user.display_name)} / {user.id} をブロック')
+            await reply(message, l('block_user', f'{str(user.display_name)} / {user.id}'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'フレンドのブロックリクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l('error_while_blocking_user'))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -8578,24 +8650,24 @@ async def event_party_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーをブロックします"
+                text += f"\n{l('enter_to_block_user')}"
                 await reply(message, text)
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'フレンドのブロックリクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_blocking_user'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['unblockfriend'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['unblockfriend']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['unblockfriend']}] [{l('name_or_id')}]")
                 return
-            users = {user.display_name: user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_blocked(user.id) is True}
+            users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_blocked(user.id) is True}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
@@ -8606,41 +8678,35 @@ async def event_party_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
                 if client.is_blocked(user.id) is False:
-                    await reply(message, 'ユーザーをブロックしていません')
+                    await reply(message, l('not_block'))
                     return
                 await client.unblock_user(user.id)
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} をブロック解除')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} をブロック解除')
+                await reply(message, l('unblock_user', f'{str(user.display_name)} / {user.id}'))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
         try:
             if client.is_blocked(user.id) is False:
-                await reply(message, 'ユーザーをブロックしていません')
+                await reply(message, l('not_block'))
                 return
             await client.unblock_user(user.id)
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(user.display_name)} をブロック解除')
-            else:
-                await reply(message, f'{str(user.display_name)} / {user.id} をブロック解除')
+            await reply(message, l('unblock_user', f'{str(user.display_name)} / {user.id}'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'ブロックしたユーザーのブロック解除リクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l('error_while_unblocking_user'))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -8649,88 +8715,82 @@ async def event_party_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーをブロック解除します"
+                text += f"\n{l('enter_to_unblock_user')}"
                 await reply(message, text)
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'ブロックしたユーザーのブロック解除リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_unblocking_user'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['chatban'].split(','):
         try:
             reason=rawcontent.split(' : ')
             if rawcontent == '':
-                await reply(message, f"[{commands['chatban']}] [ユーザー名 / ユーザーID] : [理由(任意)]")
+                await reply(message, f"[{commands['chatban']}] [{l('name_or_id')}] : [{l('reason')}({l('optional')})]")
                 return
-            users = {str(member.display_name): member for member in client.user.party.members.values() if rawcontent in str(member.display_name)}
+            users = {str(member.display_name): member for member in client.party.members.values() if rawcontent in str(member.display_name)}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
-                    if client.user.party.members.get(user.id) is not None:
+                    if client.party.members.get(user.id) is not None:
                         users[str(user.display_name)] = user
                         add_cache(client, user)
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
-                if client.user.party.members.get(user.id) is None:
-                    await reply(message, 'ユーザーがパーティーにいません')
+                if client.party.members.get(user.id) is None:
+                    await reply(message, l('user_not_in_party'))
                     return
-                member=client.user.party.members.get(user.id)
+                member=client.party.members.get(user.id)
                 try:
                     await member.chatban(reason[1])
                 except IndexError:
                     await member.chatban()
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} をバン')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} をバン')
+                await reply(message, l('chatban_user', f'{str(user.display_name)} / {user.id}'))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
         try:
-            if client.user.party.members.get(user.id) is None:
-                await reply(message, 'ユーザーがパーティーにいません')
+            if client.party.members.get(user.id) is None:
+                await reply(message, l('user_not_in_party'))
                 return
-            member=client.user.party.members.get(user.id)
+            member=client.party.members.get(user.id)
             try:
                 await member.chatban(reason[1])
             except IndexError:
                 await member.chatban()
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(user.display_name)} をバン')
-            else:
-                await reply(message, f'{str(user.display_name)} / {user.id} をバン')
+            await reply(message, l('chatban_user', f'{str(user.display_name)} / {user.id}'))
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーリーダーではありません')
+            await reply(message, l('nor_party_leader'))
         except fortnitepy.NotFound:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'メンバーが見つかりません')
+            await reply(message, l('user_notfound'))
         except ValueError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, '既にバンされています')""" for user in users.values()
+            await reply(message, l('already_chatban'))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user, "reason": reason} for user in users.values()
@@ -8739,91 +8799,85 @@ async def event_party_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーをバンします"
+                text += f"\n{l('enter_to_chatban')}"
                 await reply(message, text)
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーリーダーではありません')
+            await reply(message, l('nor_party_leader'))
         except fortnitepy.NotFound:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'メンバーが見つかりません')
+            await reply(message, l('user_notfound'))
         except ValueError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, '既にバンされています')
+            await reply(message, l('already_chatban'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['promote'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['promote']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['promote']}] [{l('name_or_id')}]")
                 return
-            users = {str(member.display_name): member for member in client.user.party.members.values() if rawcontent in str(member.display_name)}
+            users = {str(member.display_name): member for member in client.party.members.values() if rawcontent in str(member.display_name)}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
-                    if client.user.party.members.get(user.id) is not None:
+                    if client.party.members.get(user.id) is not None:
                         users[str(user.display_name)] = user
                         add_cache(client, user)
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
-                if client.user.party.members.get(user.id) is None:
-                    await reply(message, 'ユーザーがパーティーにいません')
+                if client.party.members.get(user.id) is None:
+                    await reply(message, l('user_not_in_party'))
                     return
-                member=client.user.party.members.get(user.id)
+                member=client.party.members.get(user.id)
                 await member.promote()
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} に譲渡')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} に譲渡')
+                await reply(message, l('promote_user', f'{str(user.display_name)} / {user.id}'))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
         try:
-            if client.user.party.members.get(user.id) is None:
-                await reply(message, 'ユーザーがパーティーにいません')
+            if client.party.members.get(user.id) is None:
+                await reply(message, l('user_not_in_party'))
                 return
-            member=client.user.party.members.get(user.id)
+            member=client.party.members.get(user.id)
             await member.promote()
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(user.display_name)} に譲渡')
-            else:
-                await reply(message, f'{str(user.display_name)} / {user.id} に譲渡')
+            await reply(message, l('promote_user', f'{str(user.display_name)} / {user.id}'))
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーリーダーではありません')
+            await reply(message, l('not_party_leader'))
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, '既にパーティーリーダーです')
+            await reply(message, l('already_party_leader'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーリーダーの譲渡リクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l('error_while_promoting_party_leader'))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -8832,91 +8886,85 @@ async def event_party_message(message):
                 text = str()
                 for count, user in enumerate(users.values()):
                     text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                text += "\n数字を入力することでそのユーザーに譲渡します"
+                text += f"\n{l('enter_to_promote_user')}"
                 await reply(message, text)
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーリーダーではありません')
+            await reply(message, l('not_party_leader'))
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, '既にパーティーリーダーです')
+            await reply(message, l('already_party_leader'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーリーダーの譲渡リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_promoting_party_leader'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['kick'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands['kick']}] [ユーザー名 / ユーザーID]")
+                await reply(message, f"[{commands['kick']}] [{l('name_or_id')}]")
                 return
-            users = {str(member.display_name): member for member in client.user.party.members.values() if rawcontent in str(member.display_name)}
+            users = {str(member.display_name): member for member in client.party.members.values() if rawcontent in str(member.display_name)}
             try:
                 user=await client.fetch_profile(rawcontent)
                 if user is not None:
-                    if client.user.party.members.get(user.id) is not None:
+                    if client.party.members.get(user.id) is not None:
                         users[str(user.display_name)] = user
                         add_cache(client, user)
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             if len(users) > 30:
-                await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                await reply(message, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
-                await reply(message, 'ユーザーが見つかりません')
+                await reply(message, l('user_notfound'))
                 return
             if len(users) == 1:
                 user=tuple(users.values())[0]
-                if client.user.party.members.get(user.id) is None:
-                    await reply(message, 'ユーザーがパーティーにいません')
+                if client.party.members.get(user.id) is None:
+                    await reply(message, l('user_not_in_party'))
                     return
-                member=client.user.party.members.get(user.id)
+                member=client.party.members.get(user.id)
                 await member.kick()
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} をキック')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} をキック')
+                await reply(message, l('kick_user', f'{str(user.display_name)} / {user.id}'))
             else:
                 client.select[message.author.id] = {
                     "exec": [
                         """\
         try:
-            if client.user.party.members.get(user.id) is None:
-                await reply(message, 'ユーザーがパーティーにいません')
+            if client.party.members.get(user.id) is None:
+                await reply(message, l('user_not_in_party'))
                 return
-            member=client.user.party.members.get(user.id)
+            member=client.party.members.get(user.id)
             await member.kick()
-            if data['loglevel'] == 'normal':
-                await reply(message, f'{str(user.display_name)} をキック')
-            else:
-                await reply(message, f'{str(user.display_name)} / {user.id} をキック')
+            await reply(message, l('kick_user', f'{str(user.display_name)} / {user.id}'))
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーリーダーではありません')
+            await reply(message, l('not_party_leader'))
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, '自分をキックすることはできません')
+            await reply(message, l('cant_kick_yourself'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーメンバーのキックリクエストを処理中にエラーが発生しました')""" for user in users.values()
+            await reply(message, l('error_while_kicking_user'))""" for user in users.values()
                     ],
                     "variable": [
                         {"user": user} for user in users.values()
@@ -8930,44 +8978,44 @@ async def event_party_message(message):
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーリーダーではありません')
+            await reply(message, l('not_party_leader'))
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, '自分をキックすることはできません')
+            await reply(message, l('cant_kick_yourself'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーメンバーのキックリクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_kicking_user'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['ready'].split(','):
         try:
-            await client.user.party.me.set_ready(fortnitepy.ReadyState.READY)
-            await reply(message, '準備状態を 準備OK に設定')
+            await client.party.me.set_ready(fortnitepy.ReadyState.READY)
+            await reply(message, l('set_to', l('readystate'), l('ready')))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['unready'].split(','):
         try:
-            await client.user.party.me.set_ready(fortnitepy.ReadyState.NOT_READY)
-            await reply(message, '準備状態を 準備中 に設定')
+            await client.party.me.set_ready(fortnitepy.ReadyState.NOT_READY)
+            await reply(message, l('set_to', l('readystate'), l('unready')))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['sitout'].split(','):
         try:
-            await client.user.party.me.set_ready(fortnitepy.ReadyState.SITTING_OUT)
-            await reply(message, '準備状態を 欠場中 に設定')
+            await client.party.me.set_ready(fortnitepy.ReadyState.SITTING_OUT)
+            await reply(message, l('set_to', l('readystate'), l('sitout')))
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -8975,16 +9023,105 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
+
+    elif args[0] in commands['match'].split(','):
+        try:
+            await client.party.me.set_in_match(players_left=int(args[1]) if args[1:2] else 100)
+            await reply(message, l('set_to', l('matchstate'), l('remaining', args[1] if args[1:2] else "100")))
+        except ValueError:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, l('remaining_must_be_between_0_and_255'))
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, l('error'))
+
+    elif args[0] in commands['unmatch'].split(','):
+        try:
+            await client.party.me.clear_in_match()
+            await reply(message, l('set_to', l('matchstate'), l('off')))
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, l('error'))
+
+    elif args[0] in commands['swap'].split(','):
+        try:
+            if rawcontent == '':
+                await reply(message, f"[{commands['kick']}] [{l('name_or_id')}]")
+                return
+            users = {str(member.display_name): member for member in client.party.members.values() if rawcontent in str(member.display_name)}
+            try:
+                user=await client.fetch_profile(rawcontent)
+                if user is not None:
+                    if client.party.members.get(user.id) is not None:
+                        users[str(user.display_name)] = user
+                        add_cache(client, user)
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, l("error_while_requesting_userinfo"))
+            if len(users) > 30:
+                await reply(message, l('too_many_users', str(len(users))))
+                return
+            if len(users) == 0:
+                await reply(message, l('user_notfound'))
+                return
+            if len(users) == 1:
+                user=tuple(users.values())[0]
+                if client.party.members.get(user.id) is None:
+                    await reply(message, l('user_not_in_party'))
+                    return
+                member=client.party.members.get(user.id)
+                await member.swap_position()
+                await reply(message, l('swap_user', f'{str(user.display_name)} / {user.id}'))
+            else:
+                client.select[message.author.id] = {
+                    "exec": [
+                        """\
+        try:
+            if client.party.members.get(user.id) is None:
+                await reply(message, l('user_not_in_party'))
+                return
+            member=client.party.members.get(user.id)
+            await member.swap_position()
+            await reply(message, l('swap_user', f'{str(user.display_name)} / {user.id}'))
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, l('error_while_swapping_user'))""" for user in users.values()
+                    ],
+                    "variable": [
+                        {"user": user} for user in users.values()
+                    ]
+                }
+                text = str()
+                for count, user in enumerate(users.values()):
+                    text += f"\n{count+1} {str(user.display_name)} / {user.id}"
+                text += f"\n{l('enter_to_swap_user')}"
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, l('error_while_swapping_user'))
+        except Exception:
+            print(red(traceback.format_exc()))
+            dstore(name,f'>>> {traceback.format_exc()}')
+            await reply(message, l('error'))
 
     elif args[0] in commands['outfitlock'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.outfitlock=True
-                await reply(message, 'コスチュームロックをオンに設定')
+                await reply(message, l('set_to', l('lock', l('outfit')), l('on')))
             elif args[1] in commands['false'].split(','):
                 client.outfitlock=False
-                await reply(message, 'コスチュームロックをオフに設定')
+                await reply(message, l('set_to', l('lock', l('outfit')), l('off')))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -8993,16 +9130,16 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['backpacklock'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.backpacklock=True
-                await reply(message, 'バックアクセサリーロックをオンに設定')
+                await reply(message, l('set_to', l('lock', l('backpack')), l('on')))
             elif args[1] in commands['false'].split(','):
                 client.backpacklock=False
-                await reply(message, 'バックアクセサリーロックをオフに設定')
+                await reply(message, l('set_to', l('lock', l('backpack')), l('off')))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -9011,16 +9148,16 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['pickaxelock'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.pickaxelock=True
-                await reply(message, '収集ツールロックをオンに設定')
+                await reply(message, l('set_to', l('lock', l('pickaxe')), l('on')))
             elif args[1] in commands['false'].split(','):
                 client.pickaxelock=False
-                await reply(message, '収集ツールロックをオフに設定')
+                await reply(message, l('set_to', l('lock', l('pickaxe')), l('off')))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -9029,16 +9166,16 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['emotelock'].split(','):
         try:
             if args[1] in commands['true'].split(','):
                 client.emotelock=True
-                await reply(message, 'エモートロックをオンに設定')
+                await reply(message, l('set_to', l('lock', l('emote')), l('on')))
             elif args[1] in commands['false'].split(','):
                 client.emotelock=False
-                await reply(message, 'エモートロックをオフに設定')
+                await reply(message, l('set_to', l('lock', l('emote')), l('off')))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -9047,19 +9184,19 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['stop'].split(','):
         try:
             client.stopcheck=True
             if await change_asset(client, message.author.id, "emote", "") is True:
-                await reply(message, '停止しました')
+                await reply(message, l('stopped'))
             else:
-                await reply(message, 'ロックされています')
+                await reply(message, l('locked'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['alloutfit'].split(','):
         try:
@@ -9067,7 +9204,7 @@ async def event_party_message(message):
             if client.outfitlock is True:
                 flag = lock_check(client, author_id)
             if flag is True:
-                await reply(message, 'ロックされています')
+                await reply(message, l('locked'))
                 return
             with open('allen.json', 'r', encoding='utf-8') as f:
                 allskin = json.load(f)
@@ -9075,17 +9212,18 @@ async def event_party_message(message):
                 if client.stopcheck is True:
                     client.stopcheck=False
                     break
-                if item['type'] == 'outfit':
+                if item['type']['value'] == 'outfit':
                     if 'banner' not in item['id']:
-                        await client.user.party.me.set_outfit(item['id'])
+                        await client.party.me.set_outfit(item['id'])
                     else:
-                        await client.user.party.me.set_outfit(item['id'],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner'))
+                        await client.party.me.set_outfit(item['id'],variants=client.party.me.create_variants(profile_banner='ProfileBanner'))
                     await asyncio.sleep(2)
-            await reply(message, '全てのコスチュームを表示し終わりました')
+            else:
+                await reply(message, l('all_end', l('outfit')))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['allbackpack'].split(','):
         try:
@@ -9093,7 +9231,7 @@ async def event_party_message(message):
             if client.backpacklock is True:
                 flag = lock_check(client, author_id)
             if flag is True:
-                await reply(message, 'ロックされています')
+                await reply(message, l('locked'))
                 return
             with open('allen.json', 'r', encoding='utf-8') as f:
                 allskin = json.load(f)
@@ -9101,17 +9239,18 @@ async def event_party_message(message):
                 if client.stopcheck is True:
                     client.stopcheck=False
                     break
-                if item['type'] == 'backpack':
+                if item['type']['value'] == 'backpack':
                     if 'banner' not in item['id']:
-                        await client.user.party.me.set_backpack(item['id'])
+                        await client.party.me.set_backpack(item['id'])
                     else:
-                        await client.user.party.me.set_backpack(item['id'],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner'))
+                        await client.party.me.set_backpack(item['id'],variants=client.party.me.create_variants(profile_banner='ProfileBanner'))
                     await asyncio.sleep(2)
-            await reply(message, '全てのバックアクセサリーを表示し終わりました')
+            else:
+                await reply(message, l('all_end', l('backpack')))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['allpet'].split(','):
         try:
@@ -9119,7 +9258,7 @@ async def event_party_message(message):
             if client.backpacklock is True:
                 flag = lock_check(client, author_id)
             if flag is True:
-                await reply(message, 'ロックされています')
+                await reply(message, l('locked'))
                 return
             with open('allen.json', 'r', encoding='utf-8') as f:
                 allskin = json.load(f)
@@ -9127,17 +9266,18 @@ async def event_party_message(message):
                 if client.stopcheck is True:
                     client.stopcheck=False
                     break
-                if item['type'] == 'pet':
+                if item['type']['value'] == 'pet':
                     if 'banner' not in item['id']:
-                        await client.user.party.me.set_backpack(item['id'])
+                        await client.party.me.set_backpack(item['id'])
                     else:
-                        await client.user.party.me.set_backpack(item['id'],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner'))
+                        await client.party.me.set_backpack(item['id'],variants=client.party.me.create_variants(profile_banner='ProfileBanner'))
                     await asyncio.sleep(2)
-            await reply(message, '全てのペットを表示し終わりました')
+            else:
+                await reply(message, l('all_end', l('pet')))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['allpickaxe'].split(','):
         try:
@@ -9145,7 +9285,7 @@ async def event_party_message(message):
             if client.pickaxelock is True:
                 flag = lock_check(client, author_id)
             if flag is True:
-                await reply(message, 'ロックされています')
+                await reply(message, l('locked'))
                 return
             with open('allen.json', 'r', encoding='utf-8') as f:
                 allskin = json.load(f)
@@ -9153,17 +9293,18 @@ async def event_party_message(message):
                 if client.stopcheck is True:
                     client.stopcheck=False
                     break
-                if item['type'] == 'pickaxe':
+                if item['type']['value'] == 'pickaxe':
                     if 'banner' not in item['id']:
-                        await client.user.party.me.set_pickaxe(item['id'])
+                        await client.party.me.set_pickaxe(item['id'])
                     else:
-                        await client.user.party.me.set_pickaxe(item['id'],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner'))
+                        await client.party.me.set_pickaxe(item['id'],variants=client.party.me.create_variants(profile_banner='ProfileBanner'))
                     await asyncio.sleep(2)
-            await reply(message, '全ての収集ツールを表示し終わりました')
+            else:
+                await reply(message, l('all_end', l('pickaxe')))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['allemote'].split(','):
         try:
@@ -9171,7 +9312,7 @@ async def event_party_message(message):
             if client.emotelock is True:
                 flag = lock_check(client, author_id)
             if flag is True:
-                await reply(message, 'ロックされています')
+                await reply(message, l('locked'))
                 return
             with open('allen.json', 'r', encoding='utf-8') as f:
                 allemote = json.load(f)
@@ -9179,15 +9320,15 @@ async def event_party_message(message):
                 if client.stopcheck is True:
                     client.stopcheck=False
                     break
-                if item['type'] == 'emote':
-                    await client.user.party.me.set_emote(item['id'])
+                if item['type']['value'] == 'emote':
+                    await client.party.me.set_emote(item['id'])
                     await asyncio.sleep(5)
             else:
-                await reply(message, '全てのエモートを表示し終わりました')
+                await reply(message, l('all_end', l('emote')))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['allemoji'].split(','):
         try:
@@ -9195,7 +9336,7 @@ async def event_party_message(message):
             if client.emotelock is True:
                 flag = lock_check(client, author_id)
             if flag is True:
-                await reply(message, 'ロックされています')
+                await reply(message, l('locked'))
                 return
             with open('allen.json', 'r', encoding='utf-8') as f:
                 allemote = json.load(f)
@@ -9203,15 +9344,15 @@ async def event_party_message(message):
                 if client.stopcheck is True:
                     client.stopcheck=False
                     break
-                if item['type'] == 'emoji':
-                    await client.user.party.me.set_emote(item['id'])
+                if item['type']['value'] == 'emoji':
+                    await client.party.me.set_emote(item['id'])
                     await asyncio.sleep(5)
             else:
-                await reply(message, '全てのエモートアイコンを表示し終わりました')
+                await reply(message, l('all_end', l('emoji')))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['alltoy'].split(','):
         try:
@@ -9219,7 +9360,7 @@ async def event_party_message(message):
             if client.emotelock is True:
                 flag = lock_check(client, author_id)
             if flag is True:
-                await reply(message, 'ロックされています')
+                await reply(message, l('locked'))
                 return
             with open('allen.json', 'r', encoding='utf-8') as f:
                 allemote = json.load(f)
@@ -9227,170 +9368,146 @@ async def event_party_message(message):
                 if client.stopcheck is True:
                     client.stopcheck=False
                     break
-                if item['type'] == 'toy':
-                    await client.user.party.me.set_emote(item['id'])
+                if item['type']['value'] == 'toy':
+                    await client.party.me.set_emote(item['id'])
                     await asyncio.sleep(5)
             else:
-                await reply(message, '全てのおもちゃを表示し終わりました')
+                await reply(message, l('all_end', l('toy')))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
-
-    elif args[0] in commands['allshout'].split(','):
-        try:
-            flag = False
-            if client.emotelock is True:
-                flag = lock_check(client, author_id)
-            if flag is True:
-                await reply(message, 'ロックされています')
-                return
-            with open('allen.json', 'r', encoding='utf-8') as f:
-                allemote = json.load(f)
-            for item in allemote['data']:
-                if client.stopcheck is True:
-                    client.stopcheck=False
-                    break
-                if item['type'] == 'shout':
-                    await client.user.party.me.set_emote(item['id'])
-                    await asyncio.sleep(5)
-            else:
-                await reply(message, '全てのshoutを表示し終わりました')
-        except Exception:
-            print(red(traceback.format_exc()))
-            dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['setenlightenment'].split(','):
         try:
-            if await change_asset(client, message.author.id, "outfit", client.user.party.me.outfit, client.user.party.me.outfit_variants,(args[1],args[2])) is True:
-                await reply(message, f'{args[1]}, {args[2]} に設定')
+            if await change_asset(client, message.author.id, "outfit", client.party.me.outfit, client.party.me.outfit_variants,(args[1],args[2])) is True:
+                await reply(message, l('set_to', 'enlightenment', f'{args[1]}, {args[2]}'))
             else:
-                await reply(message, 'ロックされています')
+                await reply(message, l('locked'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_asset'))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, f"[{commands['setenlightenment']}] [数値] [数値]")
+            await reply(message, f"[{commands['setenlightenment']}] [{l('number')}] [{l('number')}]")
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
-    elif True in [args[0] in commands[key].split(',') for key in ("cid", "bid", "petcarrier", "pickaxe_id", "eid", "emoji_id", "toy_id", "shout_id", "id")]:
+    elif True in [args[0] in commands[key].split(',') for key in ("cid", "bid", "petcarrier", "pickaxe_id", "eid", "emoji_id", "toy_id", "id")]:
         type_ = convert_to_type(args[0])
         if rawcontent == '':
             await reply(message, f"[{commands[type_]}] [ID]")
             return
         try:
-            result = await loop.run_in_executor(None, search_item, "ja", "id", rawcontent, type_)
+            result = await loop.run_in_executor(None, search_item, data["lang"], "id", rawcontent, type_)
             if result is None:
                 result = await loop.run_in_executor(None, search_item, "en", "id", rawcontent, type_)
             if result is None:
-                await reply(message, "見つかりません")
+                await reply(message, l('item_notfound'))
             else:
                 if len(result) > 30:
-                    await reply(message, f"見つかったアイテム数 {len(result)} は多すぎます")
+                    await reply(message, l('too_many_items', str(len(result))))
                     return
                 if len(result) == 1:
-                    if await change_asset(client, message.author.id, result[0]["type"], result[0]['id']) is True:
-                        await reply(message, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}")
+                    if await change_asset(client, message.author.id, result[0]["type"]["value"], result[0]['id']) is True:
+                        await reply(message, f"{result[0]['type']['displayValue']}: {result[0]['name']} | {result[0]['id']}")
                     else:
-                        await reply(message, "ロックされています")
+                        await reply(message, l('locked'))
                 else:
                     text = str()
                     for count, item in enumerate(result):
-                        text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
-                    text += "\n数字を入力することでそのアイテムに設定します"
+                        text += f"\n{count+1} {item['type']['displayValue']}: {item['name']} | {item['id']}"
+                    text += f"\n{l('enter_to_change_asset')}"
                     await reply(message, text)
-                    client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']}', '{item['id']}')" for item in result]}
+                    client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']['value']}', '{item['id']}')" for item in result]}
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_asset'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
-    elif True in  [args[0] in commands[key].split(',') for key in ("outfit", "backpack", "pet", "pickaxe", "emote", "emoji", "toy", "shout", "item")]:
+    elif True in  [args[0] in commands[key].split(',') for key in ("outfit", "backpack", "pet", "pickaxe", "emote", "emoji", "toy", "item")]:
         type_ = convert_to_type(args[0])
         if rawcontent == '':
-            await reply(message, f"[{commands[type_]}] [アイテム名]")
+            await reply(message, f"[{commands[type_]}] [{l('itemname')}]")
             return
         try:
-            result = await loop.run_in_executor(None, search_item, "ja", "name", rawcontent, type_)
+            result = await loop.run_in_executor(None, search_item, data["lang"], "name", rawcontent, type_)
             if result is None:
                 result = await loop.run_in_executor(None, search_item, "en", "name", rawcontent, type_)
             if result is None:
-                await reply(message, "見つかりません")
+                await reply(message, l('item_notfound'))
             else:
                 if len(result) > 30:
-                    await reply(message, f"見つかったアイテム数 {len(result)} は多すぎます")
+                    await reply(message, l('too_many_items', str(len(result))))
                     return
                 if len(result) == 1:
-                    if await change_asset(client, message.author.id, result[0]["type"], result[0]['id']) is True:
-                        await reply(message, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}")
+                    if await change_asset(client, message.author.id, result[0]["type"]["value"], result[0]['id']) is True:
+                        await reply(message, f"{result[0]['type']['displayValue']}: {result[0]['name']} | {result[0]['id']}")
                     else:
-                        await reply(message, "ロックされています")
+                        await reply(message, l('locked'))
                 else:
                     text = str()
                     for count, item in enumerate(result):
-                        text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
-                    text += "\n数字を入力することでそのアイテムに設定します"
+                        text += f"\n{count+1} {item['type']['displayValue']}: {item['name']} | {item['id']}"
+                    text += f"\n{l('enter_to_change_asset')}"
                     await reply(message, text)
-                    client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']}', '{item['id']}')" for item in result]}
+                    client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']['value']}', '{item['id']}')" for item in result]}
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_asset'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['set'].split(','):
         if rawcontent == '':
-            await reply(message, f"[{commands['set']}] [セット名]]")
+            await reply(message, f"[{commands['set']}] [{l('setname')}]")
             return
         try:
-            result = await loop.run_in_executor(None, search_item, "ja", "set", rawcontent)
+            result = await loop.run_in_executor(None, search_item, data["lang"], "set", rawcontent)
             if result is None:
                 result = await loop.run_in_executor(None, search_item, "en", "set", rawcontent)
             if result is None:
-                await reply(message, "見つかりません")
+                await reply(message, l('item_notfound'))
             else:
                 if len(result) > 30:
-                    await reply(message, f"見つかったアイテム数 {len(result)} は多すぎます")
+                    await reply(message, l('too_many_items', str(len(result))))
                     return
                 if len(result) == 1:
-                    if await change_asset(client, message.author.id, result[0]["type"], result[0]['id']) is True:
-                        await reply(message, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}({result[0]['set']})")
+                    if await change_asset(client, message.author.id, result[0]["type"]["value"], result[0]['id']) is True:
+                        await reply(message, f"{result[0]['type']['displayValue']}: {result[0]['name']} | {result[0]['id']}({result[0]['set']['value']})")
                     else:
-                        await reply(message, "ロックされています")
+                        await reply(message, l('locked'))
                 else:
                     text = str()
                     for count, item in enumerate(result):
-                        text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}({result[0]['set']})"
-                    text += "\n数字を入力することでそのアイテムに設定します"
+                        text += f"\n{count+1} {item['type']['displayValue']}: {item['name']} | {item['id']}({result[0]['set']['value']})"
+                    text += f"\n{l('enter_to_change_asset')}"
                     await reply(message, text)
-                    client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']}', '{item['id']}')" for item in result]}
+                    client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']['value']}', '{item['id']}')" for item in result]}
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_asset'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['setstyle'].split(','):
         try:
@@ -9398,15 +9515,15 @@ async def event_party_message(message):
                 await reply(message, f"[{commands['setstyle']}] [[{commands['outfit']}] / [{commands['backpack']}] / [{commands['pet']}] / [{commands['pickaxe']}]]")
                 return
             type_ = convert_to_type(args[1])
-            id_ = member_asset(client.user.party.me, convert_to_asset(args[1]))
-            result = search_style("ja", id_)
+            id_ = member_asset(client.party.me, convert_to_asset(args[1]))
+            result = search_style(data["lang"], id_)
             if result is None:
-                await reply(message, "スタイル変更はありません")
+                await reply(message, l('no_stylechange'))
             else:
                 text = str()
                 for count, item in enumerate(result):
                     text += f"\n{count+1} {item['name']}"
-                text += "\n数字を入力することでそのアイテムに設定します"
+                text += f"\n{l('enter_to_set_style')}"
                 await reply(message, text)
                 client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{type_}', '{id_}', {variants['variants']})" for variants in result]}
         except IndexError:
@@ -9417,7 +9534,7 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['addstyle'].split(','):
         try:
@@ -9425,16 +9542,16 @@ async def event_party_message(message):
                 await reply(message, f"[{commands['addstyle']}] [[{commands['outfit']}] / [{commands['backpack']}] / [{commands['pet']}] / [{commands['pickaxe']}]]")
                 return
             type_ = convert_to_type(args[1])
-            id_ = member_asset(client.user.party.me, convert_to_asset(args[1]))
-            variants_ = eval(f"client.user.party.me.{convert_to_asset(args[1])}_variants")
-            result = search_style("ja", id_)
+            id_ = member_asset(client.party.me, convert_to_asset(args[1]))
+            variants_ = eval(f"client.party.me.{convert_to_asset(args[1])}_variants")
+            result = search_style(data["lang"], id_)
             if result is None:
-                await reply(message, "スタイル変更はありません")
+                await reply(message, l('no_stylechange'))
             else:
                 text = str()
                 for count, item in enumerate(result):
                     text += f"\n{count+1} {item['name']}"
-                text += "\n数字を入力することでそのアイテムに設定します"
+                text += f"\n{l('enter_to_set_style')}"
                 await reply(message, text)
                 client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{type_}', '{id_}', {variants_} + {variants['variants']})" for variants in result]}
         except IndexError:
@@ -9445,7 +9562,7 @@ async def event_party_message(message):
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['setvariant'].split(','):
         try:
@@ -9461,25 +9578,26 @@ async def event_party_message(message):
                 except IndexError:
                     break
             type_ = convert_to_type(args[1])
-            id_ = member_asset(client.user.party.me, convert_to_asset(args[1]))
-            variants = client.user.party.me.create_variants(item='AthenaCharacter',**variantdict)
-            if await change_asset(client, message.author.id, type_, id_, variants, client.user.party.me.enlightenment) is False:
-                await reply(message, "ロックされています")
+            id_ = member_asset(client.party.me, convert_to_asset(args[1]))
+            variants = client.party.me.create_variants(item='AthenaCharacter',**variantdict)
+            print(variants)
+            if await change_asset(client, message.author.id, type_, id_, variants, client.party.me.enlightenments) is False:
+                await reply(message, l('locked'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_asset'))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, f"[{commands['setvariant']}] [ID] [variant] [数値]\nvariantと数値は無限に設定可能")
+            await reply(message, f"[{commands['setvariant']}] [ID] [variant] [{l('number')}]")
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0] in commands['addvariant'].split(','):
         try:
@@ -9495,74 +9613,74 @@ async def event_party_message(message):
                 except IndexError:
                     break
             type_ = convert_to_type(args[1])
-            id_ = member_asset(client.user.party.me, convert_to_asset(args[1]))
-            variants = client.user.party.me.create_variants(item='AthenaCharacter',**variantdict)
-            variants += eval(f"client.user.party.me.{convert_to_asset(args[1])}_variants")
-            if await change_asset(client, message.author.id, type_, id_, variants, client.user.party.me.enlightenment) is False:
-                await reply(message, "ロックされています")
+            id_ = member_asset(client.party.me, convert_to_asset(args[1]))
+            variants = client.party.me.create_variants(item='AthenaCharacter',**variantdict)
+            variants += eval(f"client.party.me.{convert_to_asset(args[1])}_variants")
+            if await change_asset(client, message.author.id, type_, id_, variants, client.party.me.enlightenments) is False:
+                await reply(message, l('locked'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_asset'))
         except IndexError:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, f"[{commands['addvariant']}] [ID] [variant] [数値]\nvariantと数値は無限に設定可能")
+            await reply(message, f"[{commands['addvariant']}] [ID] [variant] [{l('number')}]")
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif True in [args[0] in commands[key].split(',') for key in ("outfitasset", "backpackasset", "pickaxeasset", "emoteasset")]:
         type_ = convert_to_type(args[0])
         try:
             if rawcontent == '':
-                await reply(message, f"[{commands[f'{type_}asset']}] [アセットパス]")
+                await reply(message, f"[{commands[f'{type_}asset']}] [{l('assetpath')}]")
                 return
             if await change_asset(client, message.author.id, type_, rawcontent) is False:
-                await reply(message, "ロックされています")
+                await reply(message, l('locked'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_asset'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
-    elif True in [args[0].lower().startswith(id_) for id_ in ("cid_", "bid_", "petcarrier_", "pickaxe_id_", "eid_", "emoji_", "toy_", "shout_")]:
+    elif True in [args[0].lower().startswith(id_) for id_ in ("cid_", "bid_", "petcarrier_", "pickaxe_id_", "eid_", "emoji_", "toy_")]:
         try:
             type_ = convert_to_type("_".join(args[0].split('_')[:-1]) + "_")
             if await change_asset(client, message.author.id, type_, args[0]) is False:
-                await reply(message, "ロックされています")
+                await reply(message, l('locked'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+            await reply(message, l('error_while_changing_asset'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     elif args[0].lower().startswith('playlist_'):
         try:
-            await client.user.party.set_playlist(args[0])
-            await reply(message, f'プレイリストを {args[0]} に設定')
+            await client.party.set_playlist(args[0])
+            await reply(message, l('set_playlist', args[0]))
             data['fortnite']['playlist']=args[0]
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'パーティーリーダーではありません')
+            await reply(message, l('not_party_leader'))
         except Exception:
             print(red(traceback.format_exc()))
             dstore(name,f'>>> {traceback.format_exc()}')
-            await reply(message, 'エラー')
+            await reply(message, l('error'))
 
     else:
         if ': ' in message.content:
@@ -9570,7 +9688,7 @@ async def event_party_message(message):
         if args[0].isdigit() and client.select.get(message.author.id) is not None:
             try:
                 if int(args[0]) == 0:
-                    await reply(message, '有効な数字を入力してください')
+                    await reply(message, l('please_enter_valid_number'))
                     return
                 exec_ = client.select[message.author.id]["exec"][int(args[0])-1]
                 variable=globals()
@@ -9582,31 +9700,31 @@ async def event_party_message(message):
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, '有効な数字を入力してください')
+                await reply(message, l('please_enter_valid_number'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
         else:
-            result = await loop.run_in_executor(None, search_item, "ja", "name", content, "item")
+            result = await loop.run_in_executor(None, search_item, data["lang"], "name", content, "item")
             if result is None:
                 result = await loop.run_in_executor(None, search_item, "en", "name", content, "item")
             if result is not None:
                 if len(result) > 30:
-                    await reply(message, f"見つかったアイテム数 {len(result)} は多すぎます")
+                    await reply(message, l('too_many_items', str(len(result))))
                     return
                 if len(result) == 1:
-                    if await change_asset(client, message.author.id, result[0]["type"], result[0]['id']) is True:
-                        await reply(message, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}")
+                    if await change_asset(client, message.author.id, result[0]["type"]["value"], result[0]['id']) is True:
+                        await reply(message, f"{result[0]['type']['displayValue']}: {result[0]['name']} | {result[0]['id']}")
                     else:
-                        await reply(message, "ロックされています")
+                        await reply(message, l('locked'))
                 else:
                     text = str()
                     for count, item in enumerate(result):
-                        text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
-                    text += "\n数字を入力することでそのアイテムに設定します"
+                        text += f"\n{count+1} {item['type']['displayValue']}: {item['name']} | {item['id']}"
+                    text += f"\n{l('enter_to_change_asset')}"
                     await reply(message, text)
-                    client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']}', '{item['id']}')" for item in result]}
+                    client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']['value']}', '{item['id']}')" for item in result]}
 
 #========================================================================================================================
 #========================================================================================================================
@@ -9619,18 +9737,18 @@ dclient.isready=False
 dclient.owner=None
 if data['discord']['enabled'] is True:
     @dclient.event
-    async def on_ready():
+    async def on_ready() -> None:
         global blacklist_
         global whitelist_
         dclient_user = str(dclient.user)
         if data['loglevel'] == 'normal':
             if data['no-logs'] is False:
-                print(green(f'[{now_()}] ログイン: {dclient_user}'))
-            dstore(dclient_user,f'ログイン: {dclient_user}')
+                print(green(f"[{now_()}] {l('login')}: {dclient_user}"))
+            dstore(dclient_user,f"{l('login')}: {dclient_user}")
         else:
             if data['no-logs'] is False:
-                print(green(f'[{now_()}] ログイン: {dclient_user} / {dclient.user.id}'))
-            dstore(dclient_user,f'ログイン: {dclient_user} / {dclient.user.id}')
+                print(green(f"[{now_()}] {l('login')}: {dclient_user} / {dclient.user.id}"))
+            dstore(dclient_user,f"{l('login')}: {dclient_user} / {dclient.user.id}")
         dclient.isready = True
         activity = discord.Game(name=data['discord']['status'])
         await dclient.change_presence(activity=activity)
@@ -9646,8 +9764,8 @@ if data['discord']['enabled'] is True:
                         dstore(dclient_user,f'>>> {traceback.format_exc()}')
                     user = None
             if user is None:
-                print(red(f'[{now_()}] [{dclient_user}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しいIDになっているか確認してください。'))
-                dstore(dclient_user,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しいIDになっているか確認してください')
+                print(red(f"[{now_()}] [{dclient_user}] {l('discord_blacklist_user_notfound', blacklistuser)}"))
+                dstore(dclient_user,f">>> {l('discord_blacklist_user_notfound', blacklistuser)}")
             else:
                 blacklist_.append(user.id)
                 if data['loglevel'] == 'debug':
@@ -9665,8 +9783,8 @@ if data['discord']['enabled'] is True:
                         dstore(dclient_user,f'>>> {traceback.format_exc()}')
                     user = None
             if user is None:
-                print(red(f'[{now_()}] [{dclient_user}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しいIDになっているか確認してください。'))
-                dstore(dclient_user,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しいIDになっているか確認してください')
+                print(red(f"[{now_()}] [{dclient_user}] {l('discord_whitelist_user_notfound', whitelistuser)}"))
+                dstore(dclient_user,f">>> {l('discord_whitelist_user_notfound', whitelistuser)}")
             else:
                 whitelist_.append(user.id)
                 if data['loglevel'] == 'debug':
@@ -9686,30 +9804,30 @@ if data['discord']['enabled'] is True:
                         dstore(dclient_user,f'>>> {traceback.format_exc()}')
                     owner = None
             if owner is None:
-                print(red(f'[{now_()}] [{dclient_user}] 所有者が見つかりません。正しいIDになっているか確認してください。'))
-                dstore(dclient_user,'>>> 所有者が見つかりません。正しいIDになっているか確認してください')
+                print(red(f"[{now_()}] [{dclient_user}] {l('discord_owner_notfound')}"))
+                dstore(dclient_user,">>> {l('discord_owner_notfound')}")
             else:
                 dclient.owner=owner
                 if data['loglevel'] == 'normal':
                     if data['no-logs'] is False:
-                        print(green(f'[{now_()}] [{dclient_user}] 所有者: {dclient.owner}'))
-                    dstore(dclient_user,f'所有者: {dclient.owner}')
+                        print(green(f"[{now_()}] [{dclient_user}] {l('owner')}: {dclient.owner}"))
+                    dstore(dclient_user,f"{l('owner')}: {dclient.owner}")
                 else:
                     if data['no-logs'] is False:
-                        print(green(f'[{now_()}] [{dclient_user}] 所有者: {dclient.owner} / {dclient.owner.id}'))
-                    dstore(dclient_user,f'所有者: {dclient.owner} / {dclient.owner.id}')
+                        print(green(f"[{now_()}] [{dclient_user}] {l('owner')}: {dclient.owner} / {dclient.owner.id}"))
+                    dstore(dclient_user,f"{l('owner')}: {dclient.owner} / {dclient.owner.id}")
         except discord.HTTPException:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
-                dstore(dclient_user,f'>>> {traceback.format_exc()}')
-            print(red(f'[{now_()}] [{dclient_user}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-            dstore(dclient_user,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                dstore(dclient_user,f">>> {traceback.format_exc()}")
+            print(red(f"[{now_()}] [{dclient_user}] {l('error_while_requesting_userinfo')}"))
+            dstore(dclient_user,f">>> {l('error_while_requesting_userinfo')}")
         except Exception:
             print(red(traceback.format_exc()))
-            dstore(dclient_user,f'>>> {traceback.format_exc()}')
+            dstore(dclient_user,f">>> {traceback.format_exc()}")
 
     @dclient.event
-    async def on_message(message):
+    async def on_message(message: discord.Message) -> None:
         global blacklist
         global whitelist
         global blacklist_
@@ -9789,7 +9907,7 @@ if data['discord']['enabled'] is True:
                 else:
                     flag = True
         else:
-            if dclient.owner is not None:
+            if client.owner is not None:
                 if data['discord']['whitelist-ownercommand'] is True:
                     if client.owner.id != message.author.id and message.author.id not in whitelist_:
                         flag = True
@@ -9810,7 +9928,7 @@ if data['discord']['enabled'] is True:
                     break
                 for command in commands['ownercommands'].split(','):
                     if args[0] in commands[command.lower()].split(','):
-                        await reply(message, 'このコマンドは管理者しか使用できません')
+                        await reply(message, l("this_command_owneronly"))
                         return
 
         if args[0] in commands['prev'].split(','):
@@ -9834,14 +9952,14 @@ if data['discord']['enabled'] is True:
                 except Exception:
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'エラー')
+                    await reply(message, l('error'))
                 return
 
         if data['discord']['enabled'] is True and dclient.isready is True:
             if args[0] in commands['addblacklist_discord'].split(','):
                 try:
                     if rawcontent == '' or args[1].isdigit() is False:
-                        await reply(message, f"[{commands['addblacklist_discord']}] [ユーザーID]")
+                        await reply(message, f"[{commands['addblacklist_discord']}] [{l('userid')}]")
                         return
                     user = dclient.get_user(int(args[1]))
                     if user is None:
@@ -9858,30 +9976,30 @@ if data['discord']['enabled'] is True:
                         data_["discord"]["blacklist"] = data["discord"]["blacklist"]
                         with open("config.json", "w", encoding="utf-8") as f:
                             json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                        await reply(message, f"ユーザー {str(user)} / {user.id} をブラックリストに追加しました")
+                        await reply(message, l('add_to_list', f'{str(user)} / {str(user.id)}', l('discord_blacklist')))
                     else:
-                        await reply(message, f"ユーザー {str(user)} / {user.id} は既にブラックリストに追加されています")
+                        await reply(message, l('already_list', f'{str(user)} / {user.id}', l('discord_blacklist')))
                 except discord.NotFound:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                 except discord.HTTPException:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                    dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+                    print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                    dstore(name,f'>>> {l("error_while_requesting_userinfo")}')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 except Exception:
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'エラー')
+                    await reply(message, l('error'))
 
             elif args[0] in commands['removeblacklist_discord'].split(','):
                 try:
                     if rawcontent == '' or args[1].isdigit() is False:
-                        await reply(message, f"[{commands['removeblacklist_discord']}] [ユーザーID]")
+                        await reply(message, f"[{commands['removeblacklist_discord']}] [{l('userid')}]")
                         return
                     user = dclient.get_user(int(args[1]))
                     if user is None:
@@ -9898,30 +10016,30 @@ if data['discord']['enabled'] is True:
                         data_["discord"]["blacklist"] = data["discord"]["blacklist"]
                         with open("config.json", "w", encoding="utf-8") as f:
                             json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                        await reply(message, f"ユーザー {str(user)} / {user.id} をブラックリストから削除")
+                        await reply(message, l('remove_from_list', f'{str(user)} / {user.id}', l('discord_blacklist')))
                     else:
-                        await reply(message, f"ユーザー {str(user)} / {user.id} はブラックリストに含まれていません")
+                        await reply(message, l('not_list', f'{str(user)} / {user.id}', l('discord_blacklist')))
                 except discord.NotFound:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                 except discord.HTTPException:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                    dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+                    print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                    dstore(name,f'>>> {l("error_while_requesting_userinfo")}')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 except Exception:
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'エラー')
+                    await reply(message, l('error'))
 
             elif args[0] in commands['addwhitelist_discord'].split(','):
                 try:
                     if rawcontent == '' or args[1].isdigit() is False:
-                        await reply(message, f"[{commands['addwhitelist_discord']}] [ユーザーID]")
+                        await reply(message, f"[{commands['addwhitelist_discord']}] [{l('userid')}]")
                         return
                     user = dclient.get_user(int(args[1]))
                     if user is None:
@@ -9938,30 +10056,30 @@ if data['discord']['enabled'] is True:
                         data_["discord"]["whitelist"] = data["discord"]["whitelist"]
                         with open("config.json", "w", encoding="utf-8") as f:
                             json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                        await reply(message, f"ユーザー {str(user)} / {user.id} をホワイトリストに追加しました")
+                        await reply(message, l('add_from_list', f'{str(user)} / {user.id}', l('discord_whitelist')))
                     else:
-                        await reply(message, f"ユーザー {str(user)} / {user.id} は既にホワイトリストに追加されています")
+                        await reply(message, l('already_list', f'{str(user)} / {user.id}', l('discord_whitelist')))
                 except discord.NotFound:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                 except discord.HTTPException:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                    dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+                    print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                    dstore(name,f'>>> {l("error_while_requesting_userinfo")}')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 except Exception:
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'エラー')
+                    await reply(message, l('error'))
 
             elif args[0] in commands['removewhitelist_discord'].split(','):
                 try:
                     if rawcontent == '' or args[1].isdigit() is False:
-                        await reply(message, f"[{commands['removewhitelist_discord']}] [ユーザーID]")
+                        await reply(message, f"[{commands['removewhitelist_discord']}] [{l('userid')}]")
                         return
                     user = dclient.get_user(int(args[1]))
                     if user is None:
@@ -9978,30 +10096,30 @@ if data['discord']['enabled'] is True:
                         data_["discord"]["whitelist"] = data["discord"]["whitelist"]
                         with open("config.json", "w", encoding="utf-8") as f:
                             json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                        await reply(message, f"ユーザー {str(user)} / {user.id} をホワイトリストから削除")
+                        await reply(message, l('remove_list', f'{str(user)} / {user.id}', l('discord_whitelist')))
                     else:
-                        await reply(message, f"ユーザー {str(user)} / {user.id} はホワイトリストに含まれていません")
+                        await reply(message, l('not_list', f'{str(user)} / {user.id}', l('discord_whitelist')))
                 except discord.NotFound:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                 except discord.HTTPException:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                    dstore(name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました。')
+                    print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                    dstore(name,f'>>> {l("error_while_requesting_userinfo")}')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 except Exception:
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'エラー')
+                    await reply(message, l('error'))
 
         if args[0] in commands['eval'].split(','):
             try:
                 if rawcontent == "":
-                    await reply(message, f"[{commands['eval']}] [式]")
+                    await reply(message, f"[{commands['eval']}] [{l('eval')}]")
                     return
                 variable=globals()
                 variable.update(locals())
@@ -10018,12 +10136,12 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, f"{l('error')}\n{traceback.format_exc()}")
 
         elif args[0] in commands['exec'].split(','):
             try:
                 if rawcontent == "":
-                    await reply(message, f"[{commands['exec']}] [文]")
+                    await reply(message, f"[{commands['exec']}] [{l('exec')}]")
                     return
                 variable=globals()
                 variable.update(locals())
@@ -10031,10 +10149,10 @@ if data['discord']['enabled'] is True:
                 content_=" ".join(args_[1:])
                 result = await aexec(content_, variable)
                 await reply(message, str(result))
-            except Exception:
+            except Exception as e:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, f"{l('error')}\n{traceback.format_exc()}")
 
         elif args[0] in commands['restart'].split(','):
             try:
@@ -10069,15 +10187,15 @@ if data['discord']['enabled'] is True:
                             else:
                                 flag = True
                 if flag is True:
-                    await reply(message, '招待が拒否に設定されているので実行できません')
+                    await reply(message, l('invite_is_decline'))
                     return
-                await reply(message, 'プログラムを再起動します...')
+                await reply(message, l('restaring'))
                 os.chdir(os.getcwd())
                 os.execv(os.sys.executable,['python', *sys.argv])
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['relogin'].split(','):
             try:
@@ -10112,39 +10230,29 @@ if data['discord']['enabled'] is True:
                             else:
                                 flag = True
                 if flag is True:
-                    await reply(message, '招待が拒否に設定されているので実行できません')
+                    await reply(message, l('invite_is_decline'))
                     return
-                await reply(message, 'アカウントに再ログインします...')
+                await reply(message, l('relogining'))
                 await client.restart()
-            except fortnitepy.AuthException:
-                print(red(traceback.format_exc()))
-                print(red(f'[{now_()}] [{client.user.display_name}] メールアドレスまたはパスワードが間違っています。'))
-                dstore(name,f'>>> {traceback.format_exc()}')
-                dstore(name,f'>>> メールアドレスまたはパスワードが間違っています')
-                kill=True
-                sys.exit(1)
             except Exception:
                 print(red(traceback.format_exc()))
-                print(red(f'[{now_()}] [{client.user.display_name}] アカウントの読み込みに失敗しました。もう一度試してみてください。'))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                dstore(name,f'>>> アカウントの読み込みに失敗しました。もう一度試してみてください')
-                kill=True
-                sys.exit(1)
+                await reply(message, l('error'))
 
         elif args[0] in commands['reload'].split(','):
-            result=reload_configs(client)
+            success=reload_configs(client)
             try:
-                if result == 'Success':
-                    await reply(message, '正常に読み込みが完了しました')
+                if success:
+                    await reply(message, l('success'))
                 else:
-                    await reply(message, 'エラー')
+                    await reply(message, l('error'))
                     return
                 try:
                     client.owner=None
                     owner=await client.fetch_profile(data['fortnite']['owner'])
                     if owner is None:
-                        print(red(f'[{now_()}] [{client.user.display_name}] 所有者が見つかりません。正しい名前/IDになっているか確認してください。'))
-                        dstore(client.user.display_name,'>>> 所有者が見つかりません。正しい名前/IDになっているか確認してください')
+                        print(red(f'[{now_()}] [{client.user.display_name}] {l("owner_notfound")}'))
+                        dstore(client.user.display_name,f'>>> {l("owner_notfound")}')
                     else:
                         add_cache(client, owner)
                         client.owner=client.get_friend(owner.id)
@@ -10156,28 +10264,32 @@ if data['discord']['enabled'] is True:
                                     if data['loglevel'] == 'debug':
                                         print(red(traceback.format_exc()))
                                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                                    print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
-                                    dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
+                                    if data['loglevel'] == 'normal':
+                                        print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_sending_friendrequest")}'))
+                                        dstore(client.user.display_name,f'>>> {l("error_while_sending_friendrequest")}')
+                                    else:
+                                        print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_sending_friendrequest")}'))
+                                    dstore(client.user.display_name,f'>>> {l("error_while_sending_friendrequest")}')
                                 except Exception:
                                     print(red(traceback.format_exc()))
                                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                            print(red(f"[{now_()}] [{client.user.display_name}] 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{commands['reload']}] コマンドで再読み込みしてください。"))
-                            dstore(client.user.display_name,f'>>> 所有者とフレンドではありません。フレンドになってからもう一度起動するか、[{commands["reload"]}] コマンドで再読み込みしてください')
+                            print(red(f'[{now_()}] [{client.user.display_name}] {l("not_friend_with_owner", commands["reload"])}'))
+                            dstore(client.user.display_name,f'>>> {l("not_friend_with_owner", commands["reload"])}')
                         else:
                             if data['loglevel'] == 'normal':
                                 if data['no-logs'] is False:
-                                    print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {str(client.owner.display_name)}'))
-                                dstore(client.user.display_name,f'所有者: {str(client.owner.display_name)}')
+                                    print(green(f'[{now_()}] [{client.user.display_name}] {l("owner")}: {str(client.owner.display_name)}'))
+                                dstore(client.user.display_name,f'{l("owner")}: {str(client.owner.display_name)}')
                             else:
                                 if data['no-logs'] is False:
-                                    print(green(f'[{now_()}] [{client.user.display_name}] 所有者: {str(client.owner.display_name)} / {client.owner.id}'))
-                                dstore(client.user.display_name,f'所有者: {str(client.owner.display_name)} / {client.owner.id}')
+                                    print(green(f'[{now_()}] [{client.user.display_name}] {l("owner")}: {str(client.owner.display_name)} / {client.owner.id}'))
+                                dstore(client.user.display_name,f'{l("owner")}: {str(client.owner.display_name)} / {client.owner.id}')
                 except fortnitepy.HTTPException:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                    print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                    dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                    dstore(client.user.display_name,f'>>> {l("error_while_requesting_userinfo")}')
                 except Exception:
                     print(red(traceback.format_exc()))
                     dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -10187,8 +10299,8 @@ if data['discord']['enabled'] is True:
                         user = await client.fetch_profile(blacklistuser)
                         add_cache(client, user)
                         if user is None:
-                            print(red(f'[{now_()}] [{client.user.display_name}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
-                            dstore(client.user.display_name,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                            print(red(f'[{now_()}] [{client.user.display_name}] {l("blacklist_user_notfound", blacklistuser)}'))
+                            dstore(client.user.display_name,f'>>> {l("blacklist_user_notfound", blacklistuser)}')
                         else:
                             blacklist.append(user.id)
                             if data['loglevel'] == 'debug':
@@ -10204,8 +10316,8 @@ if data['discord']['enabled'] is True:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
                             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                        print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                        dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                        print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                        dstore(client.user.display_name,f'>>> {l("error_while_requesting_userinfo")}')
                     except Exception:
                         print(red(traceback.format_exc()))
                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -10216,8 +10328,8 @@ if data['discord']['enabled'] is True:
                         user = await client.fetch_profile(whitelistuser)
                         add_cache(client, user)
                         if user is None:
-                            print(red(f'[{now_()}] [{client.user.display_name}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
-                            dstore(client.user.display_name,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                            print(red(f'[{now_()}] [{client.user.display_name}] {l("whitelist_user_notfound", whitelistuser)}'))
+                            dstore(client.user.display_name,f'>>> {l("whitelist_user_notfound", whitelistuser)}')
                         else:
                             whitelist.append(user.id)
                             if data['loglevel'] == 'debug':
@@ -10226,8 +10338,8 @@ if data['discord']['enabled'] is True:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
                             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                        print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                        dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                        print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                        dstore(client.user.display_name,f'>>> {l("error_while_requesting_userinfo")}')
                     except Exception:
                         print(red(traceback.format_exc()))
                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -10238,25 +10350,29 @@ if data['discord']['enabled'] is True:
                     try:
                         user = await client.fetch_profile(invitelistuser)
                         if user is None:
-                            print(red(f'[{now_()}] [{client.user.display_name}] 招待リストのユーザー {invitelistuser} が見つかりません。正しい名前/IDになっているか確認してください。'))
-                            dstore(client.user.display_name,f'>>>招待リストのユーザー {invitelistuser} が見つかりません。正しい名前/IDになっているか確認してください')
+                            print(red(f'[{now_()}] [{client.user.display_name}] {l("invitelist_user_notfound", invitelistuser)}'))
+                            dstore(client.user.display_name,f'>>> {l("invitelist_user_notfound", invitelistuser)}')
                         else:
                             friend = client.get_friend(user.id)
                             if friend is None and user.id != client.user.id:
                                 if data['fortnite']['addfriend'] is True:
                                     try:
-                                        await client.add_friend(owner.id)
+                                        await client.add_friend(friend.id)
                                     except fortnitepy.HTTPException:
                                         if data['loglevel'] == 'debug':
                                             print(red(traceback.format_exc()))
                                             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                                        print(red(f'[{now_()}] [{client.user.display_name}] フレンド申請の送信リクエストを処理中にエラーが発生しました。'))
-                                        dstore(client.user.display_name,f'>>> フレンド申請の送信リクエストを処理中にエラーが発生しました')
+                                        if data['loglevel'] == 'normal':
+                                            print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_sending_friendrequest")}'))
+                                            dstore(client.user.display_name,f'>>> {l("error_while_sending_friendrequest")}')
+                                        else:
+                                            print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_sending_friendrequest")}'))
+                                            dstore(client.user.display_name,f'>>> {l("error_while_sending_friendrequest")}')
                                     except Exception:
                                         print(red(traceback.format_exc()))
                                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                                print(red(f"[{now_()}] [{client.user.display_name}] 招待リストのユーザー {invitelistuser} とフレンドではありません。フレンドになってからもう一度起動するか、[{commands['reload']}] コマンドで再読み込みしてください。"))
-                                dstore(client.user.display_name,f'>>> 招待リストのユーザー {invitelistuser} とフレンドではありません。フレンドになってからもう一度起動するか、[{commands["reload"]}] コマンドで再読み込みしてください')
+                                print(red(f'[{now_()}] [{client.user.display_name}] {l("not_friend_with_inviteuser", invitelistuser)}'))
+                                dstore(client.user.display_name,f'>>> {l("not_friend_with_inviteuser", invitelistuser)}')
                             else:
                                 add_cache(client, user)
                                 client.invitelist.append(user.id)
@@ -10266,8 +10382,8 @@ if data['discord']['enabled'] is True:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
                             dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-                        print(red(f'[{now_()}] [{client.user.display_name}] ユーザー情報のリクエストを処理中にエラーが発生しました。'))
-                        dstore(client.user.display_name,f'>>> ユーザー情報のリクエストを処理中にエラーが発生しました')
+                        print(red(f'[{now_()}] [{client.user.display_name}] {l("error_while_requesting_userinfo")}'))
+                        dstore(client.user.display_name,f'>>> {l("error_while_requesting_userinfo")}')
                     except Exception:
                         print(red(traceback.format_exc()))
                         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
@@ -10289,8 +10405,8 @@ if data['discord']['enabled'] is True:
                                     dstore(dclient_user,f'>>> {traceback.format_exc()}')
                                 user = None
                         if user is None:
-                            print(red(f'[{now_()}] [{dclient_user}] ブラックリストのユーザー {blacklistuser} が見つかりません。正しいIDになっているか確認してください。'))
-                            dstore(dclient_user,f'>>>ブラックリストのユーザー {blacklistuser} が見つかりません。正しいIDになっているか確認してください')
+                            print(red(f'[{now_()}] [{dclient_user}] {l("discord_blacklist_user_notfound", blacklistuser)}'))
+                            dstore(dclient_user,f'>>> {l("discord_blacklist_user_notfound", blacklistuser)}')
                         else:
                             blacklist_.append(user.id)
                             if data['loglevel'] == 'debug':
@@ -10308,8 +10424,8 @@ if data['discord']['enabled'] is True:
                                     dstore(dclient_user,f'>>> {traceback.format_exc()}')
                                 user = None
                         if user is None:
-                            print(red(f'[{now_()}] [{dclient_user}] ホワイトリストのユーザー {whitelistuser} が見つかりません。正しいIDになっているか確認してください。'))
-                            dstore(dclient_user,f'>>>ホワイトリストのユーザー {whitelistuser} が見つかりません。正しいIDになっているか確認してください')
+                            print(red(f'[{now_()}] [{dclient_user}] {l("discord_whitelist_user_notfound", whitelistuser)}'))
+                            dstore(dclient_user,f'>>> {l("discord_whitelist_user_notfound", whitelistuser)}')
                         else:
                             whitelist_.append(user.id)
                             if data['loglevel'] == 'debug':
@@ -10319,14 +10435,14 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['addblacklist'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['addblacklist']}] [ユーザー名/ユーザーID]")
+                    await reply(message, f"[{commands['addblacklist']}] [{l('name_or_id')}]")
                     return
-                users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and user.id not in blacklist}
+                users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(name) and user.id != client.user.id and user.id not in blacklist}
                 try:
                     user=await client.fetch_profile(rawcontent)
                     if user is not None:
@@ -10337,12 +10453,12 @@ if data['discord']['enabled'] is True:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザー数 {len(users)} は多すぎます")
+                    await reply(message, l('too_many_users', str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 if len(users) == 1:
                     user=tuple(users.values())[0]
@@ -10361,31 +10477,31 @@ if data['discord']['enabled'] is True:
                         data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
                         with open("config.json", "w", encoding="utf-8") as f:
                             json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                        await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストに追加しました")
+                        await reply(message, l('add_to_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))
                     else:
-                        await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にブラックリストに追加されています")
+                        await reply(message, l('already_in_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
-            if user.id not in blacklist:
-                blacklist.append(user.id)
-                if user.display_name is not None:
-                    data["fortnite"]["blacklist"].append(str(user.display_name))
+                if user.id not in blacklist:
+                    blacklist.append(user.id)
+                    if user.display_name is not None:
+                        data["fortnite"]["blacklist"].append(str(user.display_name))
+                    else:
+                        data["fortnite"]["blacklist"].append(user.id)
+                    try:
+                        with open("config.json", "r", encoding="utf-8") as f:
+                            data_ = json.load(f)
+                    except json.decoder.JSONDecodeError:
+                        with open("config.json", "r", encoding="utf-8-sig") as f:
+                            data_ = json.load(f)
+                    data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    await reply(message, l('add_to_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))
                 else:
-                    data["fortnite"]["blacklist"].append(user.id)
-                try:
-                    with open("config.json", "r", encoding="utf-8") as f:
-                        data_ = json.load(f)
-                except json.decoder.JSONDecodeError:
-                    with open("config.json", "r", encoding="utf-8-sig") as f:
-                        data_ = json.load(f)
-                data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
-                with open("config.json", "w", encoding="utf-8") as f:
-                    json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストに追加しました")
-            else:
-                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にブラックリストに追加されています")""" for user in users.values()
+                    await reply(message, l('already_in_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))""" for user in users.values()
                         ],
                         "variable": [
                             {"user": user} for user in users.values()
@@ -10394,17 +10510,17 @@ if data['discord']['enabled'] is True:
                     text = str()
                     for count, user in enumerate(users.values()):
                         text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                    text += "\n数字を入力することでそのユーザーをブラックリストに追加します"
+                    text += f"\n{l('enter_to_add_to_list', l('blacklist'))}"
                     await reply(message, text)
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['removeblacklist'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['removeblacklist']}] [ユーザー名/ユーザーID]")
+                    await reply(message, f"[{commands['removeblacklist']}] [{l('name_or_id')}]")
                     return
                 users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and user.id in blacklist}
                 try:
@@ -10417,12 +10533,12 @@ if data['discord']['enabled'] is True:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l('too_many_users', str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 if len(users) == 1:
                     user=tuple(users.values())[0]
@@ -10441,9 +10557,9 @@ if data['discord']['enabled'] is True:
                         data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
                         with open("config.json", "w", encoding="utf-8") as f:
                             json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                        await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
+                        await reply(message, l('remove_from_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))
                     else:
-                        await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")
+                        await reply(message, l('not_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
@@ -10463,9 +10579,9 @@ if data['discord']['enabled'] is True:
                 data_["fortnite"]["blacklist"] = data["fortnite"]["blacklist"]
                 with open("config.json", "w", encoding="utf-8") as f:
                     json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
+                await reply(message, l('remove_from_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))
             else:
-                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")""" for user in users.values()
+                await reply(message, l('not_list', f'{str(user.display_name)} / {user.id}', l('blacklist')))""" for user in users.values()
                         ],
                         "variable": [
                             {"user": user} for user in users.values()
@@ -10474,17 +10590,17 @@ if data['discord']['enabled'] is True:
                     text = str()
                     for count, user in enumerate(users.values()):
                         text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                    text += "\n数字を入力することでそのユーザーをブラックリストから削除します"
+                    text += f"\n{l('enter_to_remove_from_list', l('blacklist'))}"
                     await reply(message, text)
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['addwhitelist'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['addwhitelist']}] [ユーザー名/ユーザーID]")
+                    await reply(message, f"[{commands['addwhitelist']}] [{l('name_or_id')}]")
                     return
                 users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and user.id not in whitelist}
                 try:
@@ -10497,12 +10613,12 @@ if data['discord']['enabled'] is True:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l('too_many_users', str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 if len(users) == 1:
                     user=tuple(users.values())[0]
@@ -10521,9 +10637,9 @@ if data['discord']['enabled'] is True:
                         data_["fortnite"]["whitelist"] = data["fortnite"]["whitelist"]
                         with open("config.json", "w", encoding="utf-8") as f:
                             json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                        await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストに追加しました")
+                        await reply(message, l("add_to_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))
                     else:
-                        await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にホワイトリストに追加されています")
+                        await reply(message, l("already_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
@@ -10543,9 +10659,9 @@ if data['discord']['enabled'] is True:
                     data_["fortnite"]["whitelist"] = data["fortnite"]["whitelist"]
                     with open("config.json", "w", encoding="utf-8") as f:
                         json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストに追加しました")
+                    await reply(message, l("add_to_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))
                 else:
-                    await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既にホワイトリストに追加されています")""" for user in users.values()
+                    await reply(message, l("already_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))""" for user in users.values()
                         ],
                         "variable": [
                             {"user": user} for user in users.values()
@@ -10554,17 +10670,17 @@ if data['discord']['enabled'] is True:
                     text = str()
                     for count, user in enumerate(users.values()):
                         text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                    text += "\n数字を入力することでそのユーザーをホワイトリストに追加します"
+                    text += f"\n{l('enter_to_add_to_list', l('whitelist'))}"
                     await reply(message, text)
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['removewhitelist'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['removewhitelist']}] [ユーザー名/ユーザーID]")
+                    await reply(message, f"[{commands['removewhitelist']}] [{l('name_or_id')}]")
                     return
                 users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and user.id in whitelist}
                 try:
@@ -10577,12 +10693,12 @@ if data['discord']['enabled'] is True:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l("too_many_users", str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 if len(users) == 1:
                     user=tuple(users.values())[0]
@@ -10601,31 +10717,31 @@ if data['discord']['enabled'] is True:
                         data_["whitelist"] = data["whitelist"]
                         with open("config.json", "w", encoding="utf-8") as f:
                             json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                        await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をホワイトリストから削除")
+                        await reply(message, l("remove_from_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))
                     else:
-                        await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はホワイトリストに含まれていません")
+                        await reply(message, l("not_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
-            if str(user.display_name) in data["blacklist"] or user.id in data["blacklist"]:
-                blacklist.remove(user.id)
+            if user.id in whitelist:
+                whitelist.remove(user.id)
                 try:
-                    data["blacklist"].remove(str(user.display_name))
+                    data["whitelist"].remove(str(user.display_name))
                 except ValueError:
-                    data["blacklist"].remove(user.id)
+                    data["whitelist"].remove(user.id)
                 try:
                     with open("config.json", "r", encoding="utf-8") as f:
                         data_ = json.load(f)
                 except json.decoder.JSONDecodeError:
                     with open("config.json", "r", encoding="utf-8-sig") as f:
                         data_ = json.load(f)
-                data_["blacklist"] = data["blacklist"]
+                data_["whitelist"] = data["whitelist"]
                 with open("config.json", "w", encoding="utf-8") as f:
                     json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} をブラックリストから削除")
+                await reply(message, l("remove_from_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))
             else:
-                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} はブラックリストに含まれていません")""" for user in users.values()
+                await reply(message, l("not_list", f"{str(user.display_name)} / {user.id}", l('whitelist')))""" for user in users.values()
                         ],
                         "variable": [
                             {"user": user} for user in users.values()
@@ -10634,17 +10750,17 @@ if data['discord']['enabled'] is True:
                     text = str()
                     for count, user in enumerate(users.values()):
                         text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                    text += "\n数字を入力することでそのユーザーをホワイトリストから削除します"
+                    text += f"\n{l('enter_to_remove_from_list', l('whitelist'))}"
                     await reply(message, text)
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['addinvitelist'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['addinvitelist']}] [ユーザー名/ユーザーID]")
+                    await reply(message, f"[{commands['addinvitelist']}] [{l('name_or_id')}]")
                     return
                 users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and user.id not in client.invitelist}
                 try:
@@ -10657,12 +10773,12 @@ if data['discord']['enabled'] is True:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l("too_many_users", str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 if len(users) == 1:
                     user=tuple(users.values())[0]
@@ -10681,9 +10797,9 @@ if data['discord']['enabled'] is True:
                         data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
                         with open("config.json", "w", encoding="utf-8") as f:
                             json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                        await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストに追加しました")
+                        await reply(message, l("add_to_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))
                     else:
-                        await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既に招待リストに追加されています")
+                        await reply(message, l("already_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
@@ -10703,9 +10819,9 @@ if data['discord']['enabled'] is True:
                 data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
                 with open("config.json", "w", encoding="utf-8") as f:
                     json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストに追加しました")
+                await reply(message, l("add_to_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))
             else:
-                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は既に招待リストに追加されています")""" for user in users.values()
+                await reply(message, l("already_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))""" for user in users.values()
                         ],
                         "variable": [
                             {"user": user} for user in users.values()
@@ -10714,17 +10830,17 @@ if data['discord']['enabled'] is True:
                     text = str()
                     for count, user in enumerate(users.values()):
                         text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                    text += "\n数字を入力することでそのユーザーをブラックリストに追加します"
+                    text += f"\n{l('enter_to_add_to_list', l('invitelist'))}"
                     await reply(message, text)
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['removeinvitelist'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['removeinvitelist']}] [ユーザー名/ユーザーID]")
+                    await reply(message, f"[{commands['removeinvitelist']}] [{l('name_or_id')}]")
                     return
                 users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and user.id in client.invitelist}
                 try:
@@ -10737,12 +10853,12 @@ if data['discord']['enabled'] is True:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l("too_many_users", str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 if len(users) == 1:
                     user=tuple(users.values())[0]
@@ -10761,9 +10877,9 @@ if data['discord']['enabled'] is True:
                         data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
                         with open("config.json", "w", encoding="utf-8") as f:
                             json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                        await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストから削除")
+                        await reply(message, l("remove_from_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))
                     else:
-                        await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は招待リストに含まれていません")
+                        await reply(message, l("not_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
@@ -10783,9 +10899,9 @@ if data['discord']['enabled'] is True:
                 data_["fortnite"]["invitelist"] = data["fortnite"]["invitelist"]
                 with open("config.json", "w", encoding="utf-8") as f:
                     json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} を招待リストから削除")
+                await reply(message, l("remove_from_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))
             else:
-                await reply(message, f"ユーザー {str(user.display_name)} / {user.id} は招待リストに含まれていません")""" for user in users.values()
+                await reply(message, l("not_list", f"{str(user.display_name)} / {user.id}", l('invitelist')))""" for user in users.values()
                         ],
                         "variable": [
                             {"user": user} for user in users.values()
@@ -10794,41 +10910,41 @@ if data['discord']['enabled'] is True:
                     text = str()
                     for count, user in enumerate(users.values()):
                         text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                    text += "\n数字を入力することでそのユーザーをブラックリストから削除します"
+                    text += f"\n{l('enter_to_remove_from_list', l('invitelist'))}"
                     await reply(message, text)
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['get'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['get']}] [ユーザー名/ユーザーID]")
+                    await reply(message, f"[{commands['get']}] [{l('name_or_id')}]")
                     return
-                users = {str(member.display_name): member for member in client.user.party.members.values() if rawcontent in str(member.display_name)}
+                users = {str(member.display_name): member for member in client.party.members.values() if rawcontent in str(member.display_name)}
                 try:
                     user=await client.fetch_profile(rawcontent)
                     if user is not None:
-                        if client.user.party.members.get(user.id) is not None:
+                        if client.party.members.get(user.id) is not None:
                             users[str(user.display_name)] = user
                             add_cache(client, user)
                 except fortnitepy.HTTPException:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l("too_many_users", str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 if len(users) == 1:
                     user=tuple(users.values())[0]
-                    member=client.user.party.members.get(user.id)
+                    member=client.party.members.get(user.id)
                     if member is None:
-                        await reply(message, "ユーザーがパーティーにいません")
+                        await reply(message, l("user_not_in_party"))
                         return
                     if data['no-logs'] is False:
                         print(f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}')
@@ -10840,9 +10956,9 @@ if data['discord']['enabled'] is True:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
-            member=client.user.party.members.get(user.id)
+            member=client.party.members.get(user.id)
             if member is None:
-                await reply(message, "ユーザーがパーティーにいません")
+                await reply(message, l("user_not_in_party"))
                 return
             if data['no-logs'] is False:
                 print(f'''{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}''')
@@ -10858,23 +10974,23 @@ if data['discord']['enabled'] is True:
                     text = str()
                     for count, user in enumerate(users.values()):
                         text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                    text += "\n数字を入力することでそのユーザーの情報を取得します"
+                    text += f"\n{l('enter_to_get_userinfo')}"
                     await reply(message, text)
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['friendcount'].split(','):
             try:
                 if data['no-logs'] is False:
-                    print(f'フレンド数: {len(client.friends)}')
-                dstore(name,f'フレンド数: {len(client.friends)}')
-                await reply(message, f'フレンド数: {len(client.friends)}')
+                    print(f"{l('friendcount')}: {len(client.friends)}")
+                dstore(name,f"{l('friendcount')}: {len(client.friends)}")
+                await reply(message, f"{l('friendcount')}: {len(client.friends)}")
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['pendingcount'].split(','):
             try:
@@ -10886,24 +11002,24 @@ if data['discord']['enabled'] is True:
                     elif pending.direction == 'INBOUND':
                         inbound.append(pending)
                 if data['no-logs'] is False:
-                    print(f'保留数: {len(client.pending_friends)}\n送信: {len(outbound)}\n受信: {len(inbound)}')
-                dstore(name,f'保留数: {len(client.pending_friends)}\n送信: {len(outbound)}\n受信: {len(inbound)}')
-                await reply(message, f'保留数: {len(client.pending_friends)}\n送信: {len(outbound)}\n受信: {len(inbound)}')
+                    print(f"{l('pendingcount')}: {len(client.pending_friends)}\n{l('outbound')}: {len(outbound)}\n{l('inbound')}: {len(inbound)}")
+                dstore(name,f"{l('pendingcount')}: {len(client.pending_friends)}\n{l('outbound')}: {len(outbound)}\n{l('inbound')}: {len(inbound)}")
+                await reply(message, f"{l('pendingcount')}: {len(client.pending_friends)}\n{l('outbound')}: {len(outbound)}\n{l('inbound')}: {len(inbound)}")
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['blockcount'].split(','):
             try:
                 if data['no-logs'] is False:
-                    print(f'ブロック数: {len(client.blocked_users)}')
-                dstore(name,f'ブロック数: {len(client.blocked_users)}')
-                await reply(message, f'ブロック数: {len(client.blocked_users)}')
+                    print(f"{l('blockcount')}: {len(client.blocked_users)}")
+                dstore(name,f"{l('blockcount')}: {len(client.blocked_users)}")
+                await reply(message, f"{l('blockcount')}: {len(client.blocked_users)}")
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['friendlist'].split(','):
             try:
@@ -10918,7 +11034,7 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['pendinglist'].split(','):
             try:
@@ -10931,13 +11047,13 @@ if data['discord']['enabled'] is True:
                     elif pending.direction == 'INBOUND':
                         inbound+=f'\n{str(pending.display_name)}'
                 if data['no-logs'] is False:
-                    print(f'送信: {outbound}\n受信: {inbound}')
-                dstore(name,f'送信: {outbound}\n受信: {inbound}')
-                await reply(message, f'送信: {outbound}\n受信: {inbound}')
+                    print(f"{l('outbound')}: {outbound}\n{l('inbound')}: {inbound}")
+                dstore(name,f"{l('outbound')}: {outbound}\n{l('inbound')}: {inbound}")
+                await reply(message, f"{l('outbound')}: {outbound}\n{l('inbound')}: {inbound}")
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['blocklist'].split(','):
             try:
@@ -10952,16 +11068,16 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['outfitmimic'].split(','):
             try:
                 if args[1] in commands['true'].split(','):
                     client.outfitmimic=True
-                    await reply(message, 'コスチュームミミックをオンに設定')
+                    await reply(message, l('set_to', l('mimic', l('outfit')), l('on')))
                 elif args[1] in commands['false'].split(','):
                     client.outfitmimic=False
-                    await reply(message, 'コスチュームミミックをオフに設定')
+                    await reply(message, l('set_to', l('mimic', l('outfit')), l('off')))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
@@ -10970,16 +11086,16 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['backpackmimic'].split(','):
             try:
                 if args[1] in commands['true'].split(','):
                     client.backpackmimic=True
-                    await reply(message, 'バックアクセサリーミミックをオンに設定')
+                    await reply(message, l('mimic_set', l('set_to', l('mimic', l('backpack')), l('on'))))
                 elif args[1] in commands['false'].split(','):
                     client.backpackmimic=False
-                    await reply(message, 'バックアクセサリーミミックをオフに設定')
+                    await reply(message, l('mimic_set', l('set_to', l('mimic', l('backpack')), l('off'))))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
@@ -10988,16 +11104,16 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['pickaxemimic'].split(','):
             try:
                 if args[1] in commands['true'].split(','):
                     client.pickaxemimic=True
-                    await reply(message, '収集ツールミミックをオンに設定')
+                    await reply(message, l('mimic_set', l('set_to', l('mimic', l('pickaxe')), l('on'))))
                 elif args[1] in commands['false'].split(','):
                     client.pickaxemimic=False
-                    await reply(message, '収集ツールミミックをオフに設定')
+                    await reply(message, l('mimic_set', l('set_to', l('mimic', l('pickaxe')), l('off'))))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
@@ -11006,16 +11122,16 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['emotemimic'].split(','):
             try:
                 if args[1] in commands['true'].split(','):
                     client.emotemimic=True
-                    await reply(message, 'エモートミミックをオンに設定')
+                    await reply(message, l('mimic_set', l('set_to', l('mimic', l('emote')), l('on'))))
                 elif args[1] in commands['false'].split(','):
                     client.emotemimic=False
-                    await reply(message, 'エモートミミックをオフに設定')
+                    await reply(message, l('mimic_set', l('set_to', l('mimic', l('emote')), l('off'))))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
@@ -11024,16 +11140,16 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['whisper'].split(','):
             try:
                 if args[1] in commands['true'].split(','):
                     client.whisper=True
-                    await reply(message, '囁きからのコマンド受付をオンに設定')
+                    await reply(message, l('set_to', l('command_from', l('whisper'), l('on'))))
                 elif args[1] in commands['false'].split(','):
                     client.whisper=False
-                    await reply(message, '囁きからのコマンド受付をオフに設定')
+                    await reply(message, l('set_to', l('command_from', l('whisper'), l('off'))))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
@@ -11042,16 +11158,16 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['partychat'].split(','):
             try:
                 if args[1] in commands['true'].split(','):
                     client.partychat=True
-                    await reply(message, 'パーティーチャットからのコマンド受付をオンに設定')
+                    await reply(message, l('set_to', l('command_from', l('partychat'), l('on'))))
                 elif args[1] in commands['false'].split(','):
                     client.partychat=False
-                    await reply(message, 'パーティーチャットからのコマンド受付をオフに設定')
+                    await reply(message, l('set_to', l('command_from', l('partychat'), l('off'))))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
@@ -11060,16 +11176,16 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['discord'].split(','):
             try:
                 if args[1] in commands['true'].split(','):
                     client.discord=True
-                    await reply(message, 'Discordからのコマンド受付をオンに設定')
+                    await reply(message, l('set_to', l('command_from', l('discord'), l('on'))))
                 elif args[1] in commands['false'].split(','):
                     client.discord=False
-                    await reply(message, 'Discordからのコマンド受付をオフに設定')
+                    await reply(message, l('set_to', l('command_from', l('discord'), l('off'))))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
@@ -11078,16 +11194,16 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['disablewhisperperfectly'].split(','):
             try:
                 if args[1] in commands['true'].split(','):
                     client.whisperperfect=True
-                    await reply(message, '囁きの完全無効をオンに設定')
+                    await reply(message, l('set_to', l('disable_perfect', l('whisper'), l('on'))))
                 elif args[1] in commands['false'].split(','):
                     client.whisperperfect=False
-                    await reply(message, '囁きの完全無効をオフに設定')
+                    await reply(message, l('set_to', l('disable_perfect', l('whisper'), l('off'))))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
@@ -11096,16 +11212,16 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['disablepartychatperfectly'].split(','):
             try:
                 if args[1] in commands['true'].split(','):
                     client.partychatperfect=True
-                    await reply(message, 'パーティーチャットの完全無効をオンに設定')
+                    await reply(message, l('set_to', l('disable_perfect', l('partychat'), l('on'))))
                 elif args[1] in commands['false'].split(','):
                     client.partychatperfect=False
-                    await reply(message, 'パーティーチャットの完全無効をオフに設定')
+                    await reply(message, l('set_to', l('disable_perfect', l('partychat'), l('on'))))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
@@ -11114,16 +11230,16 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['disablediscordperfectly'].split(','):
             try:
                 if args[1] in commands['true'].split(','):
                     client.discordperfect=True
-                    await reply(message, 'Discordの完全無効をオンに設定')
+                    await reply(message, l('set_to', l('disable_perfect', l('discord'), l('on'))))
                 elif args[1] in commands['false'].split(','):
                     client.discordperfect=False
-                    await reply(message, 'Discordの完全無効をオフに設定')
+                    await reply(message, l('set_to', l('disable_perfect', l('discord'), l('on'))))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
@@ -11132,16 +11248,16 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['acceptinvite'].split(','):
             try:
                 if args[1] in commands['true'].split(','):
                     client.acceptinvite=True
-                    await reply(message, '招待を承諾に設定')
+                    await reply(message, l('set_to', l('invite'), l('accept')))
                 elif args[1] in commands['false'].split(','):
                     client.acceptinvite=False
-                    await reply(message, '招待を拒否に設定')
+                    await reply(message, l('set_to', l('invite'), l('decline')))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
@@ -11150,16 +11266,16 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['acceptfriend'].split(','):
             try:
                 if args[1] in commands['true'].split(','):
                     client.acceptfriend=True
-                    await reply(message, 'フレンド申請を承諾に設定')
+                    await reply(message, l('set_to', l('friendrequest'), l('accept')))
                 elif args[1] in commands['false'].split(','):
                     client.acceptfriend=False
-                    await reply(message, 'フレンド申請を拒否に設定')
+                    await reply(message, l('set_to', l('friendrequest'), l('decline')))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
@@ -11168,16 +11284,16 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['joinmessageenable'].split(','):
             try:
                 if args[1] in commands['true'].split(','):
                     client.joinmessageenable=True
-                    await reply(message, 'パーティー参加時のメッセージをオンに設定')
+                    await reply(message, l('set_to', l('join_', l('message')), l('on')))
                 elif args[1] in commands['false'].split(','):
                     client.joinmessageenable=False
-                    await reply(message, 'パーティー参加時のメッセージをオフに設定')
+                    await reply(message, l('set_to', l('join_', l('message')), l('off')))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
@@ -11186,16 +11302,16 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['randommessageenable'].split(','):
             try:
                 if args[1] in commands['true'].split(','):
                     client.randommessageenable=True
-                    await reply(message, 'パーティー参加時のランダムメッセージをオンに設定')
+                    await reply(message, l('set_to', l('join_', l('randommessage')), l('on')))
                 elif args[1] in commands['false'].split(','):
                     client.randommessageenable=False
-                    await reply(message, 'パーティー参加時のランダムメッセージをオフに設定')
+                    await reply(message, l('set_to', l('join_', l('randommessage')), l('off')))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
@@ -11204,7 +11320,7 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['wait'].split(','):
             try:
@@ -11216,10 +11332,10 @@ if data['discord']['enabled'] is True:
                         pass
                     client.timer_=Timer(data['fortnite']['waitinterval'], inviteaccept, [client])
                     client.timer_.start()
-                    await reply(message, f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")
+                    await reply(message, l('decline_invite_for', str(data['fortnite']['waitinterval'])))
                 else:
-                    if client.owner.id in client.user.party.members.keys() and message.author.id != client.owner.id:
-                        await reply(message, '現在利用できません')
+                    if client.owner.id in client.party.members.keys() and message.author.id != client.owner.id:
+                        await reply(message, l('not_available'))
                         return
                     client.acceptinvite=False
                     try:
@@ -11228,17 +11344,17 @@ if data['discord']['enabled'] is True:
                         pass
                     client.timer_=Timer(data['fortnite']['waitinterval'], inviteaccept, [client])
                     client.timer_.start()
-                    await reply(message, f"{str(data['fortnite']['waitinterval'])}秒間招待を拒否します")             
+                    await reply(message, l('decline_invite_for', str(data['fortnite']['waitinterval'])))
             except Exception:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['join'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['join']}] [ユーザー名/ユーザーID]")
+                    await reply(message, f"[{commands['join']}] [{l('name_or_id')}]")
                     return
                 users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is True}
                 try:
@@ -11251,18 +11367,18 @@ if data['discord']['enabled'] is True:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l('too_many_users', str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 if len(users) == 1:
                     user=tuple(users.values())[0]
                     friend=client.get_friend(user.id)
                     if friend is None:
-                        await reply(message, 'ユーザーとフレンドではありません')
+                        await reply(message, l('not_friend_with_user'))
                     else:
                         await friend.join_party()
                 else:
@@ -11272,29 +11388,29 @@ if data['discord']['enabled'] is True:
             try:
                 friend=client.get_friend(user.id)
                 if friend is None:
-                    await reply(message, 'ユーザーとフレンドではありません')
+                    await reply(message, l('not_friend_with_user'))
                 else:
                     await friend.join_party()
             except fortnitepy.PartyError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーが満員か、既にパーティーにいるか、ユーザーがオフラインです')
+                await reply(message, l('party_full_or_already_or_offline'))
             except fortnitepy.NotFound:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーが見つかりません')
+                await reply(message, l('party_notfound'))
             except fortnitepy.Forbidden:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーがプライベートです')
+                await reply(message, l('party_private'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーの参加リクエストを処理中にエラーが発生しました')""" for user in users.values()
+                await reply(message, l('error_while_joining_to_party'))""" for user in users.values()
                         ],
                         "variable": [
                             {"user": user} for user in users.values()
@@ -11303,32 +11419,32 @@ if data['discord']['enabled'] is True:
                     text = str()
                     for count, user in enumerate(users.values()):
                         text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                    text += "\n数字を入力することでそのユーザーのパーティーに参加します"
+                    text += f"{l('enter_join_party')}"
                     await reply(message, text)
             except fortnitepy.PartyError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーが満員か、既にパーティーにいるか、ユーザーがオフラインです')
+                await reply(message, l('party_full_or_already_or_offline'))
             except fortnitepy.NotFound:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーが見つかりません')
+                await reply(message, l('party_notfound'))
             except fortnitepy.Forbidden:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーがプライベートです')
+                await reply(message, l('party_private'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーの参加リクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_joining_to_party'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['joinid'].split(','):
             try:
@@ -11337,45 +11453,45 @@ if data['discord']['enabled'] is True:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, '既にこのパーティーのメンバーです')
+                await reply(message, l('party_full_or_already'))
             except fortnitepy.NotFound:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーが見つかりません')
+                await reply(message, l('party_notfound'))
             except fortnitepy.Forbidden:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーがプライベートです')
+                await reply(message, l('party_private'))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, f"[{commands['join']}] [パーティーID]")
+                await reply(message, f"[{commands['join']}] [{l('party_id')}]")
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['leave'].split(','):
             try:
-                await client.user.party.me.leave()
-                await reply(message, 'パーティーを離脱')
+                await client.party.me.leave()
+                await reply(message, l('party_leave', client.user.party.id))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティー離脱のリクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_leaving_party'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['invite'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['invite']}] [ユーザー名 / ユーザーID]")
+                    await reply(message, f"[{commands['invite']}] [{l('name_or_id')}]")
                     return
                 users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is True}
                 try:
@@ -11388,24 +11504,21 @@ if data['discord']['enabled'] is True:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l('too_many_users', str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 if len(users) == 1:
                     user=tuple(users.values())[0]
                     friend=client.get_friend(user.id)
                     if friend is None:
-                        await reply(message, 'ユーザーとフレンドではありません')
+                        await reply(message, l('not_friend_with_user'))
                         return
                     await friend.invite()
-                    if data['loglevel'] == 'normal':
-                        await reply(message, f'{str(friend.display_name)} をパーティーに招待')
-                    else:
-                        await reply(message, f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
+                    await reply(message, l('user_invited', f'{str(friend.display_name)} / {friend.id}', client.party.id))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
@@ -11413,23 +11526,20 @@ if data['discord']['enabled'] is True:
             try:
                 friend=client.get_friend(user.id)
                 if friend is None:
-                    await reply(message, 'ユーザーとフレンドではありません')
+                    await reply(message, l('not_friend_with_user'))
                     return
                 await friend.invite()
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(friend.display_name)} をパーティーに招待')
-                else:
-                    await reply(message, f'{str(friend.display_name)} / {friend.id} をパーティー {client.user.party.id} に招待')
+                await reply(message, l('user_invited', f'{str(friend.display_name)} / {friend.id}', client.party.id))
             except fortnitepy.PartyError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーが満員か、既にパーティーにいます')
+                await reply(message, l('party_full_or_already'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティー招待の送信リクエストを処理中にエラーが発生しました')""" for user in users.values()
+                await reply(message, l('error_while_sending_partyinvite'))""" for user in users.values()
                         ],
                         "variable": [
                             {"user": user} for user in users.values()
@@ -11438,55 +11548,52 @@ if data['discord']['enabled'] is True:
                     text = str()
                     for count, user in enumerate(users.values()):
                         text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                    text += "\n数字を入力することでそのユーザーを招待します"
+                    text += f"\n{l('enter_to_invite_user')}"
                     await reply(message, text)
             except fortnitepy.PartyError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーが満員か、既にパーティーにいます')
+                await reply(message, l('party_full_or_already'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティー招待の送信リクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_sending_partyinvite'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['inviteall'].split(','):
             try:
                 for inviteuser in client.invitelist:
-                    if inviteuser != client.user.id and inviteuser not in client.user.party.members:
+                    if inviteuser != client.user.id and inviteuser not in client.party.members:
                         try:
-                            await client.user.party.invite(inviteuser)
+                            await client.party.invite(inviteuser)
                         except fortnitepy.PartyError:
                             if data['loglevel'] == 'debug':
                                 print(red(traceback.format_exc()))
                                 dstore(name,f'>>> {traceback.format_exc()}')
-                            await reply(message, 'パーティーが満員か、既にパーティーにいます')
+                            await reply(message, l('party_full_or_already'))
                         except fortnitepy.Forbidden:
                             if data['loglevel'] == 'debug':
                                 print(red(traceback.format_exc()))
                                 dstore(name,f'>>> {traceback.format_exc()}')
-                            await reply(message, 'ユーザーとフレンドではありません')
+                            await reply(message, l('not_friend_with_user'))
                         except fortnitepy.HTTPException:
                             if data['loglevel'] == 'debug':
                                 print(red(traceback.format_exc()))
                                 dstore(name,f'>>> {traceback.format_exc()}')
-                            await reply(message, 'パーティー招待の送信リクエストを処理中にエラーが発生しました')
+                            await reply(message, l('error_while_sending_partyinvite'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['message'].split(','):
             try:
                 send=rawcontent.split(' : ')
-                if len(send) < 2:
-                    await reply(message, f"[{commands['message']}] [ユーザー名 / ユーザーID] : [内容]")
-                    return
                 users = {str(user.display_name): user for user in cache_users.values() if send[0] in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is True}
                 try:
                     user=await client.fetch_profile(send[0])
@@ -11498,24 +11605,21 @@ if data['discord']['enabled'] is True:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l('too_many_users', str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 if len(users) == 1:
                     user=tuple(users.values())[0]
                     friend=client.get_friend(user.id)
                     if friend is None:
-                        await reply(message, 'ユーザーとフレンドではありません')
+                        await reply(message, l('not_friend_with_user'))
                         return
                     await friend.send(send[1])
-                    if data['loglevel'] == 'normal':
-                        await reply(message, f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
-                    else:
-                        await reply(message, f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
+                    await reply(message, l('user_sent', f'{str(friend.display_name)} / {friend.id}', send[1]))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
@@ -11523,18 +11627,15 @@ if data['discord']['enabled'] is True:
             try:
                 friend=client.get_friend(user.id)
                 if friend is None:
-                    await reply(message, 'ユーザーとフレンドではありません')
+                    await reply(message, l('not_friend_with_user'))
                     return
                 await friend.send(send[1])
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(friend.display_name)} にメッセージ {send[1]} を送信')
-                else:
-                    await reply(message, f'{str(friend.display_name)} / {friend.id} にメッセージ {send[1]} を送信')
+                await reply(message, l('user_sent', f'{str(friend.display_name)} / {friend.id}', send[1]))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')""" for user in users.values()
+                await reply(message, l("error_while_requesting_userinfo"))""" for user in users.values()
                         ],
                         "variable": [
                             {"user": user, "send": send} for user in users.values()
@@ -11543,136 +11644,133 @@ if data['discord']['enabled'] is True:
                     text = str()
                     for count, user in enumerate(users.values()):
                         text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                    text += "\n数字を入力することでそのユーザーにメッセージを送信します"
+                    text += f"\n{l('enter_to_send')}"
                     await reply(message, text)
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                await reply(message, l("error_while_requesting_userinfo"))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, f"[{commands['message']}] [ユーザー名 / ユーザーID] : [内容]")
+                await reply(message, f"[{commands['message']}] [{l('name_or_id')}] : [{l('content')}]")
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['partymessage'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['partymessage']}] [内容]")
+                    await reply(message, f"[{commands['partymessage']}] [{l('content')}]")
                     return
-                await client.user.party.send(rawcontent)
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'パーティーにメッセージ {rawcontent} を送信')
-                else:
-                    await reply(message, f'パーティー {client.user.party.id} にメッセージ {rawcontent} を送信')
+                await client.party.send(rawcontent)
+                await reply(message, l('party_sent', client.party.id, rawcontent))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['status'].split(','):
             try:
                 await client.set_status(rawcontent)
-                await reply(message, f'ステータスを {rawcontent} に設定')
+                await reply(message, l('set_to', l('status'), rawcontent))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, f"[{commands['status']}] [内容]")
+                await reply(message, f"[{commands['status']}] [{l('content')}]")
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['banner'].split(','):
             try:
-                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_banner,args[1],args[2],client.user.party.me.banner[2]))
-                await reply(message, f'バナーを {args[1]}, {args[2]}に設定')
+                await client.party.me.edit_and_keep(partial(client.party.me.set_banner,args[1],args[2],client.party.me.banner[2]))
+                await reply(message, l('set_to', l('banner'), f"{args[1]}, {args[2]}"))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'バナー情報の設定リクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_changing_asset'))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, f"[{commands['banner']}] [バナーID] [バナーの色]")
+                await reply(message, f"[{commands['banner']}] [{l('bannerid')}] [{l('color')}]")
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['level'].split(','):
             try:
-                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_banner,client.user.party.me.banner[0],client.user.party.me.banner[1],int(args[1])))
-                await reply(message, f'レベルを {args[1]} に設定')
+                await client.party.me.edit_and_keep(partial(client.party.me.set_banner,client.party.me.banner[0],client.party.me.banner[1],int(args[1])))
+                await reply(message, l('level', args[1]))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'レベルの設定リクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_changing_asset'))
             except ValueError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, '数字を入力してください')
+                await reply(message, l('must_be_int'))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, f"[{commands['level']}] [レベル]")
+                await reply(message, f"[{commands['level']}] [{l('level')}]")
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['bp'].split(','):
             try:
-                await client.user.party.me.edit_and_keep(partial(client.user.party.me.set_battlepass_info,True,args[1],args[2],args[3]))
-                await reply(message, f'バトルパス情報を ティア: {args[1]} XPブースト: {args[2]} フレンドXPブースト: {args[3]} に設定')
+                await client.party.me.edit_and_keep(partial(client.party.me.set_battlepass_info,True,args[1],args[2],args[3]))
+                await reply(message, l('set_to', l('bpinfo'), f"{l('tier')}: {args[1]}, {l('xpboost')}: {args[2]}, {l('friendxpboost')}: {args[3]}"))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'バトルパス情報の設定リクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_changing_bpinfo'))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, f"[{commands['bp']}] [ティア] [XPブースト] [フレンドXPブースト]")
+                await reply(message, f"[{commands['bp']}] [{l('tier')}] [{l('xpboost')}] [{l('friendxpboost')}]")
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['privacy'].split(','):
             try:
                 if args[1] in commands['privacy_public'].split(','):
-                    await client.user.party.set_privacy(fortnitepy.PartyPrivacy.PUBLIC)
-                    await reply(message, 'プライバシーを パブリック に設定')
+                    await client.party.set_privacy(fortnitepy.PartyPrivacy.PUBLIC)
+                    await reply(message, l('set_to', l('privacy'), l('public')))
                 elif args[1] in commands['privacy_friends_allow_friends_of_friends'].split(','):
-                    await client.user.party.set_privacy(fortnitepy.PartyPrivacy.FRIENDS_ALLOW_FRIENDS_OF_FRIENDS)
-                    await reply(message, 'プライバシーを フレンド(フレンドのフレンドを許可) に設定')
+                    await client.party.set_privacy(fortnitepy.PartyPrivacy.FRIENDS_ALLOW_FRIENDS_OF_FRIENDS)
+                    await reply(message, l('set_to', l('privacy'), l('friends_allow_friends_of_friends')))
                 elif args[1] in commands['privacy_friends'].split(','):
-                    await client.user.party.set_privacy(fortnitepy.PartyPrivacy.FRIENDS)
-                    await reply(message, 'プライバシーを フレンド に設定')
+                    await client.party.set_privacy(fortnitepy.PartyPrivacy.FRIENDS)
+                    await reply(message, l('set_to', l('privacy'), l('friends')))
                 elif args[1] in commands['privacy_private_allow_friends_of_friends'].split(','):
-                    await client.user.party.set_privacy(fortnitepy.PartyPrivacy.PRIVATE_ALLOW_FRIENDS_OF_FRIENDS)
-                    await reply(message, 'プライバシーを プライベート(フレンドのフレンドを許可) に設定')
+                    await client.party.set_privacy(fortnitepy.PartyPrivacy.PRIVATE_ALLOW_FRIENDS_OF_FRIENDS)
+                    await reply(message, l('set_to', l('privacy'), l('private_allow_friends_of_friends')))
                 elif args[1] in commands['privacy_private'].split(','):
-                    await client.user.party.set_privacy(fortnitepy.PartyPrivacy.PRIVATE)
-                    await reply(message, 'プライバシーを プライベート に設定')
+                    await client.party.set_privacy(fortnitepy.PartyPrivacy.PRIVATE)
+                    await reply(message, l('set_to', l('privacy'), l('private')))
             except fortnitepy.Forbidden:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーリーダーではありません')
+                await reply(message, l('not_party_leader'))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
@@ -11681,12 +11779,12 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー') 
+                await reply(message, l('error')) 
 
         elif args[0] in commands['getuser'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['getuser']}] [ユーザー名 / ユーザーID]")
+                    await reply(message, f"[{commands['getuser']}] [{l('name_or_id')}]")
                     return
                 users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id}
                 try:
@@ -11698,12 +11796,12 @@ if data['discord']['enabled'] is True:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l('too_many_users', str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 text = str()
                 for user in users.values():
@@ -11715,12 +11813,12 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['getfriend'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['getfriend']}] [ユーザー名 / ユーザーID]")
+                    await reply(message, f"[{commands['getfriend']}] [{l('name_or_id')}]")
                     return
                 users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is True}
                 try:
@@ -11733,12 +11831,12 @@ if data['discord']['enabled'] is True:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l('too_many_users', str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 text = str()
                 for user in users.values():
@@ -11750,7 +11848,7 @@ if data['discord']['enabled'] is True:
                     else:
                         text += f'\n{friend.nickname}({str(friend.display_name)}) / {friend.id}'
                     if friend.last_logout is not None:
-                        text += '\n最後のログイン: {0.year}年{0.month}月{0.day}日 {0.hour}時{0.minute}分{0.second}秒'.format(friend.last_logout)
+                        text += "\n{1}: {0.year}/{0.month}/{0.day} {0.hour}:{0.minute}:{0.second}".format(friend.last_logout, l('lastlogin'))
                 if data['no-logs'] is False:
                     print(text)
                 dstore(name,text)
@@ -11758,12 +11856,12 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['getpending'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['getpending']}] [ユーザー名 / ユーザーID]")
+                    await reply(message, f"[{commands['getpending']}] [{l('name_or_id')}]")
                     return
                 users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_pending(user.id) is True}
                 try:
@@ -11776,12 +11874,12 @@ if data['discord']['enabled'] is True:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l('too_many_users', str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 text = str()
                 for user in users.values():
@@ -11796,12 +11894,12 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['getblock'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['getblock']}] [ユーザー名 / ユーザーID]")
+                    await reply(message, f"[{commands['getblock']}] [{l('name_or_id')}]")
                     return
                 users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_blocked(user.id) is True}
                 try:
@@ -11814,12 +11912,12 @@ if data['discord']['enabled'] is True:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l('too_many_users', str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 text = str()
                 for user in users.values():
@@ -11834,14 +11932,14 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['info'].split(','):
             try:
                 if args[1] in commands['info_party'].split(','):
                     text = str()
-                    text += f'{client.user.party.id}\n人数: {client.user.party.member_count}'
-                    for member in client.user.party.members.values():
+                    text += f"{client.party.id}\n{l('member_count')}: {client.party.member_count}"
+                    for member in client.party.members.values():
                         add_cache(client, member)
                         if data['loglevel'] == 'normal':
                             text += f'\n{str(member.display_name)}'
@@ -11851,55 +11949,55 @@ if data['discord']['enabled'] is True:
                     dstore(None, text)
                     await reply(message, text)
                     if data['loglevel'] == 'debug':
-                        print(json.dumps(client.user.party.meta.schema, indent=2))
+                        print(json.dumps(client.party.meta.schema, indent=2))
                 
-                elif True in [args[1] in commands[key].split(',') for key in ("cid", "bid", "petcarrier", "pickaxe_id", "eid", "emoji_id", "toy_id", "shout_id", "id")]:
+                elif True in [args[1] in commands[key].split(',') for key in ("cid", "bid", "petcarrier", "pickaxe_id", "eid", "emoji_id", "toy_id", "id")]:
                     type_ = convert_to_type(args[1])
                     if rawcontent2 == '':
                         await reply(message, f"[{commands[type_]}] [ID]")
                         return
-                    result = await loop.run_in_executor(None, search_item, "ja", "id", rawcontent2, type_)
+                    result = await loop.run_in_executor(None, search_item, data["lang"], "id", rawcontent2, type_)
                     if result is None:
                         result = await loop.run_in_executor(None, search_item, "en", "id", rawcontent2, type_)
                     if result is None:
-                        await reply(message, "見つかりません")
+                        await reply(message, l('item_notfound'))
                     else:
                         if len(result) > 30:
-                            await reply(message, f"見つかったアイテム数 {len(result)} は多すぎます")
+                            await reply(message, l('too_many_items', str(len(result))))
                             return
                         if len(result) == 1:
-                            await reply(message, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}\n説明: {result[0]['description']}\nレア度: {result[0]['displayRarity']}\n{result[0]['set']}")
+                            await reply(message, f"{result[0]['type']['displayValue']}: {result[0]['name']} | {result[0]['id']}\n{result[0]['description']}\{result[0]['rarity']['displayValue']}\n{result[0]['set']['value']}")
                         else:
                             text = str()
                             for count, item in enumerate(result):
-                                text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
-                            text += "\n数字を入力することでそのアイテムに設定します"
+                                text += f"\n{count+1} {item['type']['displayValue']}: {item['name']} | {item['id']}"
+                            text += f"\n{l('enter_to_show_info')}"
                             await reply(message, text)
-                            client.select[message.author.id] = {"exec": [f"await reply(message, f'''{item['shortDescription']}: {item['name']} | {item['id']}\n{item['description']}\n{item['displayRarity']}\n{item['set']}''')" for item in result]}
+                            client.select[message.author.id] = {"exec": [f"await reply(message, f'''{item['type']['displayValue']}: {item['name']} | {item['id']}\n{item['description']}\n{item['rarity']['displayValue']}\n{item['set']['value']}''')" for item in result]}
 
-                elif True in  [args[1] in commands[key].split(',') for key in ("outfit", "backpack", "pet", "pickaxe", "emote", "emoji", "toy", "shout", "item")]:
+                elif True in  [args[1] in commands[key].split(',') for key in ("outfit", "backpack", "pet", "pickaxe", "emote", "emoji", "toy", "item")]:
                     type_ = convert_to_type(args[1])
                     if rawcontent2 == '':
-                        await reply(message, f"[{commands[type_]}] [アイテム名]")
+                        await reply(message, f"[{commands[type_]}] [{l('itemname')}]")
                         return
-                    result = await loop.run_in_executor(None, search_item, "ja", "name", rawcontent2, type_)
+                    result = await loop.run_in_executor(None, search_item, data["lang"], "name", rawcontent2, type_)
                     if result is None:
                         result = await loop.run_in_executor(None, search_item, "en", "name", rawcontent2, type_)
                     if result is None:
-                        await reply(message, "見つかりません")
+                        await reply(message, l('item_notfound'))
                     else:
                         if len(result) > 30:
-                            await reply(message, f"見つかったアイテム数 {len(result)} は多すぎます")
+                            await reply(message, l('too_many_items', str(len(result))))
                             return
                         if len(result) == 1:
-                            await reply(message, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}\n{result[0]['description']}\n{result[0]['displayRarity']}\n{result[0]['set']}")
+                            await reply(message, f"{result[0]['type']['displayValue']}: {result[0]['name']} | {result[0]['id']}\n{result[0]['description']}\n{result[0]['rarity']['displayValue']}\n{result[0]['set']['value']}")
                         else:
                             text = str()
                             for count, item in enumerate(result):
-                                text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
-                            text += "\n数字を入力することでそのアイテムに設定します"
+                                text += f"\n{count+1} {item['type']['displayValue']}: {item['name']} | {item['id']}"
+                            text += f"\n{l('enter_to_show_info')}"
                             await reply(message, text)
-                            client.select[message.author.id] = {"exec": [f"await reply(message, f'''{item['shortDescription']}: {item['name']} | {item['id']}\n{item['description']}\n{item['displayRarity']}\n{item['set']}''')" for item in result]}
+                            client.select[message.author.id] = {"exec": [f"await reply(message, f'''{item['type']['displayValue']}: {item['name']} | {item['id']}\n{item['description']}\n{item['rarity']['displayValue']}\n{item['set']['value']}''')" for item in result]}
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
@@ -11908,7 +12006,7 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['pending'].split(','):
             try:
@@ -11921,44 +12019,32 @@ if data['discord']['enabled'] is True:
                     for pending in pendings:
                         try:
                             await pending.accept()
-                            if data['loglevel'] == 'normal':
-                                await reply(message, f'{str(pending.display_name)} をフレンドに追加')
-                            else:
-                                await reply(message, f'{str(pending.display_name)} / {pending.id} をフレンドに追加')
+                            await reply(message, l('add_friend', f'{str(pending.display_name)} / {pending.id}'))
                         except fortnitepy.HTTPException:
                             if data['loglevel'] == 'debug':
                                 print(red(traceback.format_exc()))
-                            if data['loglevel'] == 'normal':
-                                await reply(message, f'{str(pending.display_name)} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
-                            else:
-                                await reply(message, f'{str(pending.display_name)} / {pending.id} のフレンド申請の承認リクエストを処理中にエラーが発生しました')
+                            await reply(message, l('error_while_sending_friendrequest'))
                             continue
                         except Exception:
                             print(red(traceback.format_exc()))
                             dstore(name,f'>>> {traceback.format_exc()}')
-                            await reply(message, 'エラー')
+                            await reply(message, l('error'))
                             continue
                 elif args[1] in commands['false'].split(','):
                     for pending in pendings:
                         try:
                             await pending.decline()
-                            if data['loglevel'] == 'normal':
-                                await reply(message, f'{str(pending.display_name)} のフレンド申請を拒否')
-                            else:
-                                await reply(message, f'{str(pending.display_name)} / {pending.id} のフレンド申請を拒否')
+                            await reply(message, l('friend_request_decline', f'{str(pending.display_name)} / {pending.id}'))
                         except fortnitepy.HTTPException:
                             if data['loglevel'] == 'debug':
                                 print(red(traceback.format_exc()))
                                 dstore(name,f'>>> {traceback.format_exc()}')
-                            if data['loglevel'] == 'normal':
-                                await reply(message, f'{str(pending.display_name)} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
-                            else:
-                                await reply(message, f'{str(pending.display_name)} / {pending.id} のフレンド申請の拒否リクエストを処理中にエラーが発生しました')
+                            await reply(message, l('error_while_declining_friendrequest'))
                             continue
                         except Exception:
                             print(red(traceback.format_exc()))
                             dstore(name,f'>>> {traceback.format_exc()}')
-                            await reply(message, 'エラー')
+                            await reply(message, l('error'))
                             continue
             except IndexError:
                 if data['loglevel'] == 'debug':
@@ -11968,7 +12054,7 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['removepending'].split(','):
             try:
@@ -11980,35 +12066,29 @@ if data['discord']['enabled'] is True:
                 for pending in pendings:
                     try:
                         await pending.decline()
-                        if data['loglevel'] == 'normal':
-                            await reply(message, f'{str(pending.display_name)} へのフレンド申請を解除')
-                        else:
-                            await reply(message, f'{str(pending.display_name)} / {pending.id} へのフレンド申請を解除')
+                        await reply(message, l('remove_pending', f'{str(pending.display_name)} / {pending.id}'))
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             print(red(traceback.format_exc()))
                             dstore(name,f'>>> {traceback.format_exc()}')
-                        if data['loglevel'] == 'normal':
-                            await reply(message, f'{str(pending.display_name)} へのフレンド申請を解除リクエストを処理中にエラーが発生しました')
-                        else:
-                            await reply(message, f'{str(pending.display_name)} / {pending.id} へのフレンド申請を解除リクエストを処理中にエラーが発生しました')
+                        await reply(message, l('error_while_removing_friendrequest'))
                         continue
                     except Exception:
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                        await reply(message, 'エラー')
+                        await reply(message, l('error'))
                         continue
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['addfriend'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['addfriend']}] [ユーザー名 / ユーザーID]")
+                    await reply(message, f"[{commands['addfriend']}] [{l('name_or_id')}]")
                     return
-                users = {str(user.display_name): user for name, user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is False}
+                users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is False}
                 try:
                     user=await client.fetch_profile(rawcontent)
                     if user is not None:
@@ -12019,41 +12099,35 @@ if data['discord']['enabled'] is True:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l('too_many_users', str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 if len(users) == 1:
                     user=tuple(users.values())[0]
                     if client.has_friend(user.id) is True:
-                        await reply(message, '既にユーザーとフレンドです')
+                        await reply(message, l('already_friend'))
                         return
                     await client.add_friend(user.id)
-                    if data['loglevel'] == 'normal':
-                        await reply(message, f'{str(user.display_name)} にフレンド申請を送信')
-                    else:
-                        await reply(message, f'{str(user.display_name)} / {user.id} にフレンド申請を送信')
+                    await reply(message, l('friend_request_to', f'{str(user.display_name)} / {user.id}'))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
             try:
                 if client.has_friend(user.id) is True:
-                    await reply(message, '既にユーザーとフレンドです')
+                    await reply(message, l('already_friend'))
                     return
                 await client.add_friend(user.id)
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} にフレンド申請を送信')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} にフレンド申請を送信')
+                await reply(message, l('friend_request_to', f'{str(user.display_name)} / {user.id}'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'フレンド申請の送信リクエストを処理中にエラーが発生しました')""" for user in users.values()
+                await reply(message, l('error_while_sending_friendrequest'))""" for user in users.values()
                         ],
                         "variable": [
                             {"user": user} for user in users.values()
@@ -12062,24 +12136,24 @@ if data['discord']['enabled'] is True:
                     text = str()
                     for count, user in enumerate(users.values()):
                         text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                    text += "\n数字を入力することでそのユーザーにフレンド申請を送信します"
+                    text += f"\n{l('enter_to_send_friendrequest')}"
                     await reply(message, text)
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'フレンド申請の送信リクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_sending_friendrequest'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['removefriend'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['removefriend']}] [ユーザー名 / ユーザーID]")
+                    await reply(message, f"[{commands['removefriend']}] [{l('name_or_id')}]")
                     return
-                users = {str(user.display_name): user for name, user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is True}
+                users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id) is True}
                 try:
                     user=await client.fetch_profile(rawcontent)
                     if user is not None:
@@ -12090,41 +12164,35 @@ if data['discord']['enabled'] is True:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l('too_many_users', str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 if len(users) == 1:
                     user=tuple(users.values())[0]
                     if client.has_friend(user.id) is False:
-                        await reply(message, 'ユーザーとフレンドではありません')
+                        await reply(message, l('not_friend_with_user'))
                         return
                     await client.remove_or_decline_friend(user.id)
-                    if data['loglevel'] == 'normal':
-                        await reply(message, f'{str(user.display_name)} をフレンドから削除')
-                    else:
-                        await reply(message, f'{str(user.display_name)} / {user.id} をフレンドから削除')
+                    await reply(message, l('remove_friend', f'{str(user.display_name)} / {user.id}'))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
             try:
                 if client.has_friend(user.id) is False:
-                    await reply(message, 'ユーザーとフレンドではありません')
+                    await reply(message, l('not_friend_with_user'))
                     return
                 await client.remove_or_decline_friend(user.id)
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} をフレンドから削除')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} をフレンドから削除')
+                await reply(message, l('remove_friend', f'{str(user.display_name)} / {user.id}'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'フレンドの削除リクエストを処理中にエラーが発生しました')""" for user in users.values()
+                await reply(message, l('error_while_removing_friend')""" for user in users.values()
                         ],
                         "variable": [
                             {"user": user} for user in users.values()
@@ -12133,22 +12201,22 @@ if data['discord']['enabled'] is True:
                     text = str()
                     for count, user in enumerate(users.values()):
                         text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                    text += "\n数字を入力することでそのユーザーをフレンドから削除します"
+                    text += f"\n{l('enter_to_remove_friend')}"
                     await reply(message, text)
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'フレンドの削除リクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_removing_friend'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['acceptpending'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['acceptpending']}] [ユーザー名 / ユーザーID]")
+                    await reply(message, f"[{commands['acceptpending']}] [{l('name_or_id')}]")
                     return
                 users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_pending(user.id) is True}
                 try:
@@ -12161,41 +12229,35 @@ if data['discord']['enabled'] is True:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l('too_many_users', str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 if len(users) == 1:
                     user=tuple(users.values())[0]
                     if client.is_pending(user.id) is False:
-                        await reply(message, 'ユーザーからのフレンド申請がありません')
+                        await reply(message, l('not_pending_with_user'))
                         return
                     await client.accept_friend(user.id)
-                    if data['loglevel'] == 'normal':
-                        await reply(message, f'{str(user.display_name)} をフレンドに追加')
-                    else:
-                        await reply(message, f'{str(user.display_name)} / {user.id} をフレンドに追加')
+                    await reply(message, l('friend_add', f'{str(user.display_name)} / {user.id}'))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
             try:
                 if client.is_pending(user.id) is False:
-                    await reply(message, 'ユーザーからのフレンド申請がありません')
+                    await reply(message, l('not_pending_with_user'))
                     return
                 await client.accept_friend(user.id)
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} をフレンドに追加')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} をフレンドに追加')
+                await reply(message, l('friend_add', f'{str(user.display_name)} / {user.id}'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'フレンドの追加リクエストを処理中にエラーが発生しました')""" for user in users.values()
+                await reply(message, l('error_while_accepting_friendrequest'))""" for user in users.values()
                         ],
                         "variable": [
                             {"user": user} for user in users.values()
@@ -12204,22 +12266,22 @@ if data['discord']['enabled'] is True:
                     text = str()
                     for count, user in enumerate(users.values()):
                         text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                    text += "\n数字を入力することでそのユーザーからのフレンド申請を承諾します"
+                    text += f"\n{l('enter_to_accept_pending')}"
                     await reply(message, text)
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'フレンドの追加リクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_accepting_friendrequest'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['declinepending'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['declinepending']}] [ユーザー名 / ユーザーID]")
+                    await reply(message, f"[{commands['declinepending']}] [{l('name_or_id')}]")
                     return
                 users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_pending(user.id) is True}
                 try:
@@ -12232,41 +12294,35 @@ if data['discord']['enabled'] is True:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l('too_many_users', str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 if len(users) == 1:
                     user=tuple(users.values())[0]
                     if client.is_pending(user.id) is False:
-                        await reply(message, 'ユーザーからのフレンド申請がありません')
+                        await reply(message, l('nor_pending_with_user'))
                         return
                     await client.remove_or_decline_friend(user.id)
-                    if data['loglevel'] == 'normal':
-                        await reply(message, f'{str(user.display_name)} のフレンド申請を拒否')
-                    else:
-                        await reply(message, f'{str(user.display_name)} / {user.id} のフレンド申請を拒否')
+                    await reply(message, l('friend_request_decline', f'{str(user.display_name)} / {user.id}'))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
             try:
                 if client.is_pending(user.id) is False:
-                    await reply(message, 'ユーザーからのフレンド申請がありません')
+                    await reply(message, l('nor_pending_with_user'))
                     return
                 await client.remove_or_decline_friend(user.id)
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} のフレンド申請を拒否')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} のフレンド申請を拒否')
+                await reply(message, l('friend_request_decline', f'{str(user.display_name)} / {user.id}'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'フレンド申請の拒否リクエストを処理中にエラーが発生しました')""" for user in users.values()
+                await reply(message, l('error_while_declining_friendrequest'))""" for user in users.values()
                         ],
                         "variable": [
                             {"user": user} for user in users.values()
@@ -12275,24 +12331,24 @@ if data['discord']['enabled'] is True:
                     text = str()
                     for count, user in enumerate(users.values()):
                         text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                    text += "\n数字を入力することでそのユーザーからのフレンド申請を拒否します"
+                    text += f"\n{l('enter_to_decline_pending')}"
                     await reply(message, text)
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'フレンド申請の拒否リクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_declining_friendrequest'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['blockfriend'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['blockfriend']}] [ユーザー名 / ユーザーID]")
+                    await reply(message, f"[{commands['blockfriend']}] [{l('name_or_id')}]")
                     return
-                users = {user.display_name: user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_blocked(user.id) is False}
+                users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_blocked(user.id) is False}
                 try:
                     user=await client.fetch_profile(rawcontent)
                     if user is not None:
@@ -12303,41 +12359,35 @@ if data['discord']['enabled'] is True:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l('too_many_users', str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 if len(users) == 1:
                     user=tuple(users.values())[0]
                     if client.is_blocked(user.id) is True:
-                        await reply(message, '既にユーザーをブロックしています')
+                        await reply(message, l('already_block'))
                         return
                     await client.block_user(user.id)
-                    if data['loglevel'] == 'normal':
-                        await reply(message, f'{str(user.display_name)} をブロック')
-                    else:
-                        await reply(message, f'{str(user.display_name)} / {user.id} をブロック')
+                    await reply(message, l('block_user', f'{str(user.display_name)} / {user.id}'))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
             try:
                 if client.is_blocked(user.id) is True:
-                    await reply(message, '既にユーザーをブロックしています')
+                    await reply(message, l('already_block'))
                     return
                 await client.block_user(user.id)
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} をブロック')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} をブロック')
+                await reply(message, l('block_user', f'{str(user.display_name)} / {user.id}'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'フレンドのブロックリクエストを処理中にエラーが発生しました')""" for user in users.values()
+                await reply(message, l('error_while_blocking_user'))""" for user in users.values()
                         ],
                         "variable": [
                             {"user": user} for user in users.values()
@@ -12346,24 +12396,24 @@ if data['discord']['enabled'] is True:
                     text = str()
                     for count, user in enumerate(users.values()):
                         text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                    text += "\n数字を入力することでそのユーザーをブロックします"
+                    text += f"\n{l('enter_to_block_user')}"
                     await reply(message, text)
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'フレンドのブロックリクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_blocking_user'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['unblockfriend'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['unblockfriend']}] [ユーザー名 / ユーザーID]")
+                    await reply(message, f"[{commands['unblockfriend']}] [{l('name_or_id')}]")
                     return
-                users = {user.display_name: user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_blocked(user.id) is True}
+                users = {str(user.display_name): user for user in cache_users.values() if rawcontent in str(user.display_name) and user.id != client.user.id and client.is_blocked(user.id) is True}
                 try:
                     user=await client.fetch_profile(rawcontent)
                     if user is not None:
@@ -12374,41 +12424,35 @@ if data['discord']['enabled'] is True:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l('too_many_users', str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 if len(users) == 1:
                     user=tuple(users.values())[0]
                     if client.is_blocked(user.id) is False:
-                        await reply(message, 'ユーザーをブロックしていません')
+                        await reply(message, l('not_block'))
                         return
                     await client.unblock_user(user.id)
-                    if data['loglevel'] == 'normal':
-                        await reply(message, f'{str(user.display_name)} をブロック解除')
-                    else:
-                        await reply(message, f'{str(user.display_name)} / {user.id} をブロック解除')
+                    await reply(message, l('unblock_user', f'{str(user.display_name)} / {user.id}'))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
             try:
                 if client.is_blocked(user.id) is False:
-                    await reply(message, 'ユーザーをブロックしていません')
+                    await reply(message, l('not_block'))
                     return
                 await client.unblock_user(user.id)
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} をブロック解除')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} をブロック解除')
+                await reply(message, l('unblock_user', f'{str(user.display_name)} / {user.id}'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ブロックしたユーザーのブロック解除リクエストを処理中にエラーが発生しました')""" for user in users.values()
+                await reply(message, l('error_while_unblocking_user'))""" for user in users.values()
                         ],
                         "variable": [
                             {"user": user} for user in users.values()
@@ -12417,88 +12461,82 @@ if data['discord']['enabled'] is True:
                     text = str()
                     for count, user in enumerate(users.values()):
                         text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                    text += "\n数字を入力することでそのユーザーをブロック解除します"
+                    text += f"\n{l('enter_to_unblock_user')}"
                     await reply(message, text)
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'ブロックしたユーザーのブロック解除リクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_unblocking_user'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['chatban'].split(','):
             try:
                 reason=rawcontent.split(' : ')
                 if rawcontent == '':
-                    await reply(message, f"[{commands['chatban']}] [ユーザー名 / ユーザーID] : [理由(任意)]")
+                    await reply(message, f"[{commands['chatban']}] [{l('name_or_id')}] : [{l('reason')}({l('optional')})]")
                     return
-                users = {str(member.display_name): member for member in client.user.party.members.values() if rawcontent in str(member.display_name)}
+                users = {str(member.display_name): member for member in client.party.members.values() if rawcontent in str(member.display_name)}
                 try:
                     user=await client.fetch_profile(rawcontent)
                     if user is not None:
-                        if client.user.party.members.get(user.id) is not None:
+                        if client.party.members.get(user.id) is not None:
                             users[str(user.display_name)] = user
                             add_cache(client, user)
                 except fortnitepy.HTTPException:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l('too_many_users', str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 if len(users) == 1:
                     user=tuple(users.values())[0]
-                    if client.user.party.members.get(user.id) is None:
-                        await reply(message, 'ユーザーがパーティーにいません')
+                    if client.party.members.get(user.id) is None:
+                        await reply(message, l('user_not_in_party'))
                         return
-                    member=client.user.party.members.get(user.id)
+                    member=client.party.members.get(user.id)
                     try:
                         await member.chatban(reason[1])
                     except IndexError:
                         await member.chatban()
-                    if data['loglevel'] == 'normal':
-                        await reply(message, f'{str(user.display_name)} をバン')
-                    else:
-                        await reply(message, f'{str(user.display_name)} / {user.id} をバン')
+                    await reply(message, l('chatban_user', f'{str(user.display_name)} / {user.id}'))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
             try:
-                if client.user.party.members.get(user.id) is None:
-                    await reply(message, 'ユーザーがパーティーにいません')
+                if client.party.members.get(user.id) is None:
+                    await reply(message, l('user_not_in_party'))
                     return
-                member=client.user.party.members.get(user.id)
+                member=client.party.members.get(user.id)
                 try:
                     await member.chatban(reason[1])
                 except IndexError:
                     await member.chatban()
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} をバン')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} をバン')
+                await reply(message, l('chatban_user', f'{str(user.display_name)} / {user.id}'))
             except fortnitepy.Forbidden:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーリーダーではありません')
+                await reply(message, l('nor_party_leader'))
             except fortnitepy.NotFound:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'メンバーが見つかりません')
+                await reply(message, l('user_notfound'))
             except ValueError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, '既にバンされています')""" for user in users.values()
+                await reply(message, l('already_chatban'))""" for user in users.values()
                         ],
                         "variable": [
                             {"user": user, "reason": reason} for user in users.values()
@@ -12507,91 +12545,85 @@ if data['discord']['enabled'] is True:
                     text = str()
                     for count, user in enumerate(users.values()):
                         text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                    text += "\n数字を入力することでそのユーザーをバンします"
+                    text += f"\n{l('enter_to_chatban')}"
                     await reply(message, text)
             except fortnitepy.Forbidden:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーリーダーではありません')
+                await reply(message, l('nor_party_leader'))
             except fortnitepy.NotFound:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'メンバーが見つかりません')
+                await reply(message, l('user_notfound'))
             except ValueError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, '既にバンされています')
+                await reply(message, l('already_chatban'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['promote'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['promote']}] [ユーザー名 / ユーザーID]")
+                    await reply(message, f"[{commands['promote']}] [{l('name_or_id')}]")
                     return
-                users = {str(member.display_name): member for member in client.user.party.members.values() if rawcontent in str(member.display_name)}
+                users = {str(member.display_name): member for member in client.party.members.values() if rawcontent in str(member.display_name)}
                 try:
                     user=await client.fetch_profile(rawcontent)
                     if user is not None:
-                        if client.user.party.members.get(user.id) is not None:
+                        if client.party.members.get(user.id) is not None:
                             users[str(user.display_name)] = user
                             add_cache(client, user)
                 except fortnitepy.HTTPException:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l('too_many_users', str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 if len(users) == 1:
                     user=tuple(users.values())[0]
-                    if client.user.party.members.get(user.id) is None:
-                        await reply(message, 'ユーザーがパーティーにいません')
+                    if client.party.members.get(user.id) is None:
+                        await reply(message, l('user_not_in_party'))
                         return
-                    member=client.user.party.members.get(user.id)
+                    member=client.party.members.get(user.id)
                     await member.promote()
-                    if data['loglevel'] == 'normal':
-                        await reply(message, f'{str(user.display_name)} に譲渡')
-                    else:
-                        await reply(message, f'{str(user.display_name)} / {user.id} に譲渡')
+                    await reply(message, l('promote_user', f'{str(user.display_name)} / {user.id}'))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
             try:
-                if client.user.party.members.get(user.id) is None:
-                    await reply(message, 'ユーザーがパーティーにいません')
+                if client.party.members.get(user.id) is None:
+                    await reply(message, l('user_not_in_party'))
                     return
-                member=client.user.party.members.get(user.id)
+                member=client.party.members.get(user.id)
                 await member.promote()
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} に譲渡')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} に譲渡')
+                await reply(message, l('promote_user', f'{str(user.display_name)} / {user.id}'))
             except fortnitepy.Forbidden:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーリーダーではありません')
+                await reply(message, l('not_party_leader'))
             except fortnitepy.PartyError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, '既にパーティーリーダーです')
+                await reply(message, l('already_party_leader'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーリーダーの譲渡リクエストを処理中にエラーが発生しました')""" for user in users.values()
+                await reply(message, l('error_while_promoting_party_leader'))""" for user in users.values()
                         ],
                         "variable": [
                             {"user": user} for user in users.values()
@@ -12600,91 +12632,85 @@ if data['discord']['enabled'] is True:
                     text = str()
                     for count, user in enumerate(users.values()):
                         text += f"\n{count+1} {str(user.display_name)} / {user.id}"
-                    text += "\n数字を入力することでそのユーザーに譲渡します"
+                    text += f"\n{l('enter_to_promote_user')}"
                     await reply(message, text)
             except fortnitepy.Forbidden:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーリーダーではありません')
+                await reply(message, l('not_party_leader'))
             except fortnitepy.PartyError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, '既にパーティーリーダーです')
+                await reply(message, l('already_party_leader'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーリーダーの譲渡リクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_promoting_party_leader'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['kick'].split(','):
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands['kick']}] [ユーザー名 / ユーザーID]")
+                    await reply(message, f"[{commands['kick']}] [{l('name_or_id')}]")
                     return
-                users = {str(member.display_name): member for member in client.user.party.members.values() if rawcontent in str(member.display_name)}
+                users = {str(member.display_name): member for member in client.party.members.values() if rawcontent in str(member.display_name)}
                 try:
                     user=await client.fetch_profile(rawcontent)
                     if user is not None:
-                        if client.user.party.members.get(user.id) is not None:
+                        if client.party.members.get(user.id) is not None:
                             users[str(user.display_name)] = user
                             add_cache(client, user)
                 except fortnitepy.HTTPException:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'ユーザー情報のリクエストを処理中にエラーが発生しました')
+                    await reply(message, l("error_while_requesting_userinfo"))
                 if len(users) > 30:
-                    await reply(message, f"見つかったユーザ数 {len(users)} は多すぎます")
+                    await reply(message, l('too_many_users', str(len(users))))
                     return
                 if len(users) == 0:
-                    await reply(message, 'ユーザーが見つかりません')
+                    await reply(message, l('user_notfound'))
                     return
                 if len(users) == 1:
                     user=tuple(users.values())[0]
-                    if client.user.party.members.get(user.id) is None:
-                        await reply(message, 'ユーザーがパーティーにいません')
+                    if client.party.members.get(user.id) is None:
+                        await reply(message, l('user_not_in_party'))
                         return
-                    member=client.user.party.members.get(user.id)
+                    member=client.party.members.get(user.id)
                     await member.kick()
-                    if data['loglevel'] == 'normal':
-                        await reply(message, f'{str(user.display_name)} をキック')
-                    else:
-                        await reply(message, f'{str(user.display_name)} / {user.id} をキック')
+                    await reply(message, l('kick_user', f'{str(user.display_name)} / {user.id}'))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
                             """\
             try:
-                if client.user.party.members.get(user.id) is None:
-                    await reply(message, 'ユーザーがパーティーにいません')
+                if client.party.members.get(user.id) is None:
+                    await reply(message, l('user_not_in_party'))
                     return
-                member=client.user.party.members.get(user.id)
+                member=client.party.members.get(user.id)
                 await member.kick()
-                if data['loglevel'] == 'normal':
-                    await reply(message, f'{str(user.display_name)} をキック')
-                else:
-                    await reply(message, f'{str(user.display_name)} / {user.id} をキック')
+                await reply(message, l('kick_user', f'{str(user.display_name)} / {user.id}'))
             except fortnitepy.Forbidden:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーリーダーではありません')
+                await reply(message, l('not_party_leader'))
             except fortnitepy.PartyError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, '自分をキックすることはできません')
+                await reply(message, l('cant_kick_yourself'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーメンバーのキックリクエストを処理中にエラーが発生しました')""" for user in users.values()
+                await reply(message, l('error_while_kicking_user'))""" for user in users.values()
                         ],
                         "variable": [
                             {"user": user} for user in users.values()
@@ -12698,44 +12724,44 @@ if data['discord']['enabled'] is True:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーリーダーではありません')
+                await reply(message, l('not_party_leader'))
             except fortnitepy.PartyError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, '自分をキックすることはできません')
+                await reply(message, l('cant_kick_yourself'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーメンバーのキックリクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_kicking_user'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['ready'].split(','):
             try:
-                await client.user.party.me.set_ready(fortnitepy.ReadyState.READY)
-                await reply(message, '準備状態を 準備OK に設定')
+                await client.party.me.set_ready(fortnitepy.ReadyState.READY)
+                await reply(message, l('set_to', l('readystate'), l('ready')))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['unready'].split(','):
             try:
-                await client.user.party.me.set_ready(fortnitepy.ReadyState.NOT_READY)
-                await reply(message, '準備状態を 準備中 に設定')
+                await client.party.me.set_ready(fortnitepy.ReadyState.NOT_READY)
+                await reply(message, l('set_to', l('readystate'), l('unready')))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['sitout'].split(','):
             try:
-                await client.user.party.me.set_ready(fortnitepy.ReadyState.SITTING_OUT)
-                await reply(message, '準備状態を 欠場中 に設定')
+                await client.party.me.set_ready(fortnitepy.ReadyState.SITTING_OUT)
+                await reply(message, l('set_to', l('readystate'), l('sitout')))
             except fortnitepy.Forbidden:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
@@ -12743,16 +12769,105 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
+
+        elif args[0] in commands['match'].split(','):
+            try:
+                await client.party.me.set_in_match(players_left=int(args[1]) if args[1:2] else 100)
+                await reply(message, l('set_to', l('matchstate'), l('remaining', args[1] if args[1:2] else "100")))
+            except ValueError:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, l('remaining_must_be_between_0_and_255'))
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, l('error'))
+
+        elif args[0] in commands['unmatch'].split(','):
+            try:
+                await client.party.me.clear_in_match()
+                await reply(message, l('set_to', l('matchstate'), l('off')))
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, l('error'))
+
+        elif args[0] in commands['swap'].split(','):
+            try:
+                if rawcontent == '':
+                    await reply(message, f"[{commands['kick']}] [{l('name_or_id')}]")
+                    return
+                users = {str(member.display_name): member for member in client.party.members.values() if rawcontent in str(member.display_name)}
+                try:
+                    user=await client.fetch_profile(rawcontent)
+                    if user is not None:
+                        if client.party.members.get(user.id) is not None:
+                            users[str(user.display_name)] = user
+                            add_cache(client, user)
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        print(red(traceback.format_exc()))
+                        dstore(name,f'>>> {traceback.format_exc()}')
+                    await reply(message, l("error_while_requesting_userinfo"))
+                if len(users) > 30:
+                    await reply(message, l('too_many_users', str(len(users))))
+                    return
+                if len(users) == 0:
+                    await reply(message, l('user_notfound'))
+                    return
+                if len(users) == 1:
+                    user=tuple(users.values())[0]
+                    if client.party.members.get(user.id) is None:
+                        await reply(message, l('user_not_in_party'))
+                        return
+                    member=client.party.members.get(user.id)
+                    await member.swap_position()
+                    await reply(message, l('swap_user', f'{str(user.display_name)} / {user.id}'))
+                else:
+                    client.select[message.author.id] = {
+                        "exec": [
+                            """\
+            try:
+                if client.party.members.get(user.id) is None:
+                    await reply(message, l('user_not_in_party'))
+                    return
+                member=client.party.members.get(user.id)
+                await member.swap_position()
+                await reply(message, l('swap_user', f'{str(user.display_name)} / {user.id}'))
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, l('error_while_swapping_user'))""" for user in users.values()
+                        ],
+                        "variable": [
+                            {"user": user} for user in users.values()
+                        ]
+                    }
+                    text = str()
+                    for count, user in enumerate(users.values()):
+                        text += f"\n{count+1} {str(user.display_name)} / {user.id}"
+                    text += f"\n{l('enter_to_swap_user')}"
+            except fortnitepy.HTTPException:
+                if data['loglevel'] == 'debug':
+                    print(red(traceback.format_exc()))
+                    dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, l('error_while_swapping_user'))
+            except Exception:
+                print(red(traceback.format_exc()))
+                dstore(name,f'>>> {traceback.format_exc()}')
+                await reply(message, l('error'))
 
         elif args[0] in commands['outfitlock'].split(','):
             try:
                 if args[1] in commands['true'].split(','):
                     client.outfitlock=True
-                    await reply(message, 'コスチュームロックをオンに設定')
+                    await reply(message, l('set_to', l('lock', l('outfit')), l('on')))
                 elif args[1] in commands['false'].split(','):
                     client.outfitlock=False
-                    await reply(message, 'コスチュームロックをオフに設定')
+                    await reply(message, l('set_to', l('lock', l('outfit')), l('off')))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
@@ -12761,16 +12876,16 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['backpacklock'].split(','):
             try:
                 if args[1] in commands['true'].split(','):
                     client.backpacklock=True
-                    await reply(message, 'バックアクセサリーロックをオンに設定')
+                    await reply(message, l('set_to', l('lock', l('backpack')), l('on')))
                 elif args[1] in commands['false'].split(','):
                     client.backpacklock=False
-                    await reply(message, 'バックアクセサリーロックをオフに設定')
+                    await reply(message, l('set_to', l('lock', l('backpack')), l('off')))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
@@ -12779,16 +12894,16 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['pickaxelock'].split(','):
             try:
                 if args[1] in commands['true'].split(','):
                     client.pickaxelock=True
-                    await reply(message, '収集ツールロックをオンに設定')
+                    await reply(message, l('set_to', l('lock', l('pickaxe')), l('on')))
                 elif args[1] in commands['false'].split(','):
                     client.pickaxelock=False
-                    await reply(message, '収集ツールロックをオフに設定')
+                    await reply(message, l('set_to', l('lock', l('pickaxe')), l('off')))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
@@ -12797,16 +12912,16 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['emotelock'].split(','):
             try:
                 if args[1] in commands['true'].split(','):
                     client.emotelock=True
-                    await reply(message, 'エモートロックをオンに設定')
+                    await reply(message, l('set_to', l('lock', l('emote')), l('on')))
                 elif args[1] in commands['false'].split(','):
                     client.emotelock=False
-                    await reply(message, 'エモートロックをオフに設定')
+                    await reply(message, l('set_to', l('lock', l('emote')), l('off')))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
@@ -12815,19 +12930,19 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['stop'].split(','):
             try:
                 client.stopcheck=True
                 if await change_asset(client, message.author.id, "emote", "") is True:
-                    await reply(message, '停止しました')
+                    await reply(message, l('stopped'))
                 else:
-                    await reply(message, 'ロックされています')
+                    await reply(message, l('locked'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['alloutfit'].split(','):
             try:
@@ -12835,7 +12950,7 @@ if data['discord']['enabled'] is True:
                 if client.outfitlock is True:
                     flag = lock_check(client, author_id)
                 if flag is True:
-                    await reply(message, 'ロックされています')
+                    await reply(message, l('locked'))
                     return
                 with open('allen.json', 'r', encoding='utf-8') as f:
                     allskin = json.load(f)
@@ -12843,17 +12958,18 @@ if data['discord']['enabled'] is True:
                     if client.stopcheck is True:
                         client.stopcheck=False
                         break
-                    if item['type'] == 'outfit':
+                    if item['type']['value'] == 'outfit':
                         if 'banner' not in item['id']:
-                            await client.user.party.me.set_outfit(item['id'])
+                            await client.party.me.set_outfit(item['id'])
                         else:
-                            await client.user.party.me.set_outfit(item['id'],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner'))
+                            await client.party.me.set_outfit(item['id'],variants=client.party.me.create_variants(profile_banner='ProfileBanner'))
                         await asyncio.sleep(2)
-                await reply(message, '全てのコスチュームを表示し終わりました')
+                else:
+                    await reply(message, l('all_end', l('outfit')))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['allbackpack'].split(','):
             try:
@@ -12861,7 +12977,7 @@ if data['discord']['enabled'] is True:
                 if client.backpacklock is True:
                     flag = lock_check(client, author_id)
                 if flag is True:
-                    await reply(message, 'ロックされています')
+                    await reply(message, l('locked'))
                     return
                 with open('allen.json', 'r', encoding='utf-8') as f:
                     allskin = json.load(f)
@@ -12869,17 +12985,18 @@ if data['discord']['enabled'] is True:
                     if client.stopcheck is True:
                         client.stopcheck=False
                         break
-                    if item['type'] == 'backpack':
+                    if item['type']['value'] == 'backpack':
                         if 'banner' not in item['id']:
-                            await client.user.party.me.set_backpack(item['id'])
+                            await client.party.me.set_backpack(item['id'])
                         else:
-                            await client.user.party.me.set_backpack(item['id'],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner'))
+                            await client.party.me.set_backpack(item['id'],variants=client.party.me.create_variants(profile_banner='ProfileBanner'))
                         await asyncio.sleep(2)
-                await reply(message, '全てのバックアクセサリーを表示し終わりました')
+                else:
+                    await reply(message, l('all_end', l('backpack')))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['allpet'].split(','):
             try:
@@ -12887,7 +13004,7 @@ if data['discord']['enabled'] is True:
                 if client.backpacklock is True:
                     flag = lock_check(client, author_id)
                 if flag is True:
-                    await reply(message, 'ロックされています')
+                    await reply(message, l('locked'))
                     return
                 with open('allen.json', 'r', encoding='utf-8') as f:
                     allskin = json.load(f)
@@ -12895,17 +13012,18 @@ if data['discord']['enabled'] is True:
                     if client.stopcheck is True:
                         client.stopcheck=False
                         break
-                    if item['type'] == 'pet':
+                    if item['type']['value'] == 'pet':
                         if 'banner' not in item['id']:
-                            await client.user.party.me.set_backpack(item['id'])
+                            await client.party.me.set_backpack(item['id'])
                         else:
-                            await client.user.party.me.set_backpack(item['id'],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner'))
+                            await client.party.me.set_backpack(item['id'],variants=client.party.me.create_variants(profile_banner='ProfileBanner'))
                         await asyncio.sleep(2)
-                await reply(message, '全てのペットを表示し終わりました')
+                else:
+                    await reply(message, l('all_end', l('pet')))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['allpickaxe'].split(','):
             try:
@@ -12913,7 +13031,7 @@ if data['discord']['enabled'] is True:
                 if client.pickaxelock is True:
                     flag = lock_check(client, author_id)
                 if flag is True:
-                    await reply(message, 'ロックされています')
+                    await reply(message, l('locked'))
                     return
                 with open('allen.json', 'r', encoding='utf-8') as f:
                     allskin = json.load(f)
@@ -12921,17 +13039,18 @@ if data['discord']['enabled'] is True:
                     if client.stopcheck is True:
                         client.stopcheck=False
                         break
-                    if item['type'] == 'pickaxe':
+                    if item['type']['value'] == 'pickaxe':
                         if 'banner' not in item['id']:
-                            await client.user.party.me.set_pickaxe(item['id'])
+                            await client.party.me.set_pickaxe(item['id'])
                         else:
-                            await client.user.party.me.set_pickaxe(item['id'],variants=client.user.party.me.create_variants(profile_banner='ProfileBanner'))
+                            await client.party.me.set_pickaxe(item['id'],variants=client.party.me.create_variants(profile_banner='ProfileBanner'))
                         await asyncio.sleep(2)
-                await reply(message, '全ての収集ツールを表示し終わりました')
+                else:
+                    await reply(message, l('all_end', l('pickaxe')))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['allemote'].split(','):
             try:
@@ -12939,7 +13058,7 @@ if data['discord']['enabled'] is True:
                 if client.emotelock is True:
                     flag = lock_check(client, author_id)
                 if flag is True:
-                    await reply(message, 'ロックされています')
+                    await reply(message, l('locked'))
                     return
                 with open('allen.json', 'r', encoding='utf-8') as f:
                     allemote = json.load(f)
@@ -12947,15 +13066,15 @@ if data['discord']['enabled'] is True:
                     if client.stopcheck is True:
                         client.stopcheck=False
                         break
-                    if item['type'] == 'emote':
-                        await client.user.party.me.set_emote(item['id'])
+                    if item['type']['value'] == 'emote':
+                        await client.party.me.set_emote(item['id'])
                         await asyncio.sleep(5)
                 else:
-                    await reply(message, '全てのエモートを表示し終わりました')
+                    await reply(message, l('all_end', l('emote')))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['allemoji'].split(','):
             try:
@@ -12963,7 +13082,7 @@ if data['discord']['enabled'] is True:
                 if client.emotelock is True:
                     flag = lock_check(client, author_id)
                 if flag is True:
-                    await reply(message, 'ロックされています')
+                    await reply(message, l('locked'))
                     return
                 with open('allen.json', 'r', encoding='utf-8') as f:
                     allemote = json.load(f)
@@ -12971,15 +13090,15 @@ if data['discord']['enabled'] is True:
                     if client.stopcheck is True:
                         client.stopcheck=False
                         break
-                    if item['type'] == 'emoji':
-                        await client.user.party.me.set_emote(item['id'])
+                    if item['type']['value'] == 'emoji':
+                        await client.party.me.set_emote(item['id'])
                         await asyncio.sleep(5)
                 else:
-                    await reply(message, '全てのエモートアイコンを表示し終わりました')
+                    await reply(message, l('all_end', l('emoji')))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['alltoy'].split(','):
             try:
@@ -12987,7 +13106,7 @@ if data['discord']['enabled'] is True:
                 if client.emotelock is True:
                     flag = lock_check(client, author_id)
                 if flag is True:
-                    await reply(message, 'ロックされています')
+                    await reply(message, l('locked'))
                     return
                 with open('allen.json', 'r', encoding='utf-8') as f:
                     allemote = json.load(f)
@@ -12995,170 +13114,146 @@ if data['discord']['enabled'] is True:
                     if client.stopcheck is True:
                         client.stopcheck=False
                         break
-                    if item['type'] == 'toy':
-                        await client.user.party.me.set_emote(item['id'])
+                    if item['type']['value'] == 'toy':
+                        await client.party.me.set_emote(item['id'])
                         await asyncio.sleep(5)
                 else:
-                    await reply(message, '全てのおもちゃを表示し終わりました')
+                    await reply(message, l('all_end', l('toy')))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
-
-        elif args[0] in commands['allshout'].split(','):
-            try:
-                flag = False
-                if client.emotelock is True:
-                    flag = lock_check(client, author_id)
-                if flag is True:
-                    await reply(message, 'ロックされています')
-                    return
-                with open('allen.json', 'r', encoding='utf-8') as f:
-                    allemote = json.load(f)
-                for item in allemote['data']:
-                    if client.stopcheck is True:
-                        client.stopcheck=False
-                        break
-                    if item['type'] == 'shout':
-                        await client.user.party.me.set_emote(item['id'])
-                        await asyncio.sleep(5)
-                else:
-                    await reply(message, '全てのshoutを表示し終わりました')
-            except Exception:
-                print(red(traceback.format_exc()))
-                dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['setenlightenment'].split(','):
             try:
-                if await change_asset(client, message.author.id, "outfit", client.user.party.me.outfit, client.user.party.me.outfit_variants,(args[1],args[2])) is True:
-                    await reply(message, f'{args[1]}, {args[2]} に設定')
+                if await change_asset(client, message.author.id, "outfit", client.party.me.outfit, client.party.me.outfit_variants,(args[1],args[2])) is True:
+                    await reply(message, l('set_to', 'enlightenment', f'{args[1]}, {args[2]}'))
                 else:
-                    await reply(message, 'ロックされています')
+                    await reply(message, l('locked'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_changing_asset'))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, f"[{commands['setenlightenment']}] [数値] [数値]")
+                await reply(message, f"[{commands['setenlightenment']}] [{l('number')}] [{l('number')}]")
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
-        elif True in [args[0] in commands[key].split(',') for key in ("cid", "bid", "petcarrier", "pickaxe_id", "eid", "emoji_id", "toy_id", "shout_id", "id")]:
+        elif True in [args[0] in commands[key].split(',') for key in ("cid", "bid", "petcarrier", "pickaxe_id", "eid", "emoji_id", "toy_id", "id")]:
             type_ = convert_to_type(args[0])
             if rawcontent == '':
                 await reply(message, f"[{commands[type_]}] [ID]")
                 return
             try:
-                result = await loop.run_in_executor(None, search_item, "ja", "id", rawcontent, type_)
+                result = await loop.run_in_executor(None, search_item, data["lang"], "id", rawcontent, type_)
                 if result is None:
                     result = await loop.run_in_executor(None, search_item, "en", "id", rawcontent, type_)
                 if result is None:
-                    await reply(message, "見つかりません")
+                    await reply(message, l('item_notfound'))
                 else:
                     if len(result) > 30:
-                        await reply(message, f"見つかったアイテム数 {len(result)} は多すぎます")
+                        await reply(message, l('too_many_items', str(len(result))))
                         return
                     if len(result) == 1:
-                        if await change_asset(client, message.author.id, result[0]["type"], result[0]['id']) is True:
-                            await reply(message, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}")
+                        if await change_asset(client, message.author.id, result[0]["type"]["value"], result[0]['id']) is True:
+                            await reply(message, f"{result[0]['type']['displayValue']}: {result[0]['name']} | {result[0]['id']}")
                         else:
-                            await reply(message, "ロックされています")
+                            await reply(message, l('locked'))
                     else:
                         text = str()
                         for count, item in enumerate(result):
-                            text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
-                        text += "\n数字を入力することでそのアイテムに設定します"
+                            text += f"\n{count+1} {item['type']['displayValue']}: {item['name']} | {item['id']}"
+                        text += f"\n{l('enter_to_change_asset')}"
                         await reply(message, text)
-                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']}', '{item['id']}')" for item in result]}
+                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']['value']}', '{item['id']}')" for item in result]}
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_changing_asset'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
-        elif True in  [args[0] in commands[key].split(',') for key in ("outfit", "backpack", "pet", "pickaxe", "emote", "emoji", "toy", "shout", "item")]:
+        elif True in  [args[0] in commands[key].split(',') for key in ("outfit", "backpack", "pet", "pickaxe", "emote", "emoji", "toy", "item")]:
             type_ = convert_to_type(args[0])
             if rawcontent == '':
-                await reply(message, f"[{commands[type_]}] [アイテム名]")
+                await reply(message, f"[{commands[type_]}] [{l('itemname')}]")
                 return
             try:
-                result = await loop.run_in_executor(None, search_item, "ja", "name", rawcontent, type_)
+                result = await loop.run_in_executor(None, search_item, data["lang"], "name", rawcontent, type_)
                 if result is None:
                     result = await loop.run_in_executor(None, search_item, "en", "name", rawcontent, type_)
                 if result is None:
-                    await reply(message, "見つかりません")
+                    await reply(message, l('item_notfound'))
                 else:
                     if len(result) > 30:
-                        await reply(message, f"見つかったアイテム数 {len(result)} は多すぎます")
+                        await reply(message, l('too_many_items', str(len(result))))
                         return
                     if len(result) == 1:
-                        if await change_asset(client, message.author.id, result[0]["type"], result[0]['id']) is True:
-                            await reply(message, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}")
+                        if await change_asset(client, message.author.id, result[0]["type"]["value"], result[0]['id']) is True:
+                            await reply(message, f"{result[0]['type']['displayValue']}: {result[0]['name']} | {result[0]['id']}")
                         else:
-                            await reply(message, "ロックされています")
+                            await reply(message, l('locked'))
                     else:
                         text = str()
                         for count, item in enumerate(result):
-                            text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
-                        text += "\n数字を入力することでそのアイテムに設定します"
+                            text += f"\n{count+1} {item['type']['displayValue']}: {item['name']} | {item['id']}"
+                        text += f"\n{l('enter_to_change_asset')}"
                         await reply(message, text)
-                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']}', '{item['id']}')" for item in result]}
+                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']['value']}', '{item['id']}')" for item in result]}
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_changing_asset'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['set'].split(','):
             if rawcontent == '':
-                await reply(message, f"[{commands['set']}] [セット名]]")
+                await reply(message, f"[{commands['set']}] [{l('setname')}]")
                 return
             try:
-                result = await loop.run_in_executor(None, search_item, "ja", "set", rawcontent)
+                result = await loop.run_in_executor(None, search_item, data["lang"], "set", rawcontent)
                 if result is None:
                     result = await loop.run_in_executor(None, search_item, "en", "set", rawcontent)
                 if result is None:
-                    await reply(message, "見つかりません")
+                    await reply(message, l('item_notfound'))
                 else:
                     if len(result) > 30:
-                        await reply(message, f"見つかったアイテム数 {len(result)} は多すぎます")
+                        await reply(message, l('too_many_items', str(len(result))))
                         return
                     if len(result) == 1:
-                        if await change_asset(client, message.author.id, result[0]["type"], result[0]['id']) is True:
-                            await reply(message, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}({result[0]['set']})")
+                        if await change_asset(client, message.author.id, result[0]["type"]["value"], result[0]['id']) is True:
+                            await reply(message, f"{result[0]['type']['displayValue']}: {result[0]['name']} | {result[0]['id']}({result[0]['set']['value']})")
                         else:
-                            await reply(message, "ロックされています")
+                            await reply(message, l('locked'))
                     else:
                         text = str()
                         for count, item in enumerate(result):
-                            text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}({result[0]['set']})"
-                        text += "\n数字を入力することでそのアイテムに設定します"
+                            text += f"\n{count+1} {item['type']['displayValue']}: {item['name']} | {item['id']}({result[0]['set']['value']})"
+                        text += f"\n{l('enter_to_change_asset')}"
                         await reply(message, text)
-                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']}', '{item['id']}')" for item in result]}
+                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']['value']}', '{item['id']}')" for item in result]}
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_changing_asset'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['setstyle'].split(','):
             try:
@@ -13166,15 +13261,15 @@ if data['discord']['enabled'] is True:
                     await reply(message, f"[{commands['setstyle']}] [[{commands['outfit']}] / [{commands['backpack']}] / [{commands['pet']}] / [{commands['pickaxe']}]]")
                     return
                 type_ = convert_to_type(args[1])
-                id_ = member_asset(client.user.party.me, convert_to_asset(args[1]))
-                result = search_style("ja", id_)
+                id_ = member_asset(client.party.me, convert_to_asset(args[1]))
+                result = search_style(data["lang"], id_)
                 if result is None:
-                    await reply(message, "スタイル変更はありません")
+                    await reply(message, l('no_stylechange'))
                 else:
                     text = str()
                     for count, item in enumerate(result):
                         text += f"\n{count+1} {item['name']}"
-                    text += "\n数字を入力することでそのアイテムに設定します"
+                    text += f"\n{l('enter_to_set_style')}"
                     await reply(message, text)
                     client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{type_}', '{id_}', {variants['variants']})" for variants in result]}
             except IndexError:
@@ -13185,7 +13280,7 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['addstyle'].split(','):
             try:
@@ -13193,16 +13288,16 @@ if data['discord']['enabled'] is True:
                     await reply(message, f"[{commands['addstyle']}] [[{commands['outfit']}] / [{commands['backpack']}] / [{commands['pet']}] / [{commands['pickaxe']}]]")
                     return
                 type_ = convert_to_type(args[1])
-                id_ = member_asset(client.user.party.me, convert_to_asset(args[1]))
-                variants_ = eval(f"client.user.party.me.{convert_to_asset(args[1])}_variants")
-                result = search_style("ja", id_)
+                id_ = member_asset(client.party.me, convert_to_asset(args[1]))
+                variants_ = eval(f"client.party.me.{convert_to_asset(args[1])}_variants")
+                result = search_style(data["lang"], id_)
                 if result is None:
-                    await reply(message, "スタイル変更はありません")
+                    await reply(message, l('no_stylechange'))
                 else:
                     text = str()
                     for count, item in enumerate(result):
                         text += f"\n{count+1} {item['name']}"
-                    text += "\n数字を入力することでそのアイテムに設定します"
+                    text += f"\n{l('enter_to_set_style')}"
                     await reply(message, text)
                     client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{type_}', '{id_}', {variants_} + {variants['variants']})" for variants in result]}
             except IndexError:
@@ -13213,7 +13308,7 @@ if data['discord']['enabled'] is True:
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['setvariant'].split(','):
             try:
@@ -13229,25 +13324,26 @@ if data['discord']['enabled'] is True:
                     except IndexError:
                         break
                 type_ = convert_to_type(args[1])
-                id_ = member_asset(client.user.party.me, convert_to_asset(args[1]))
-                variants = client.user.party.me.create_variants(item='AthenaCharacter',**variantdict)
-                if await change_asset(client, message.author.id, type_, id_, variants, client.user.party.me.enlightenment) is False:
-                    await reply(message, "ロックされています")
+                id_ = member_asset(client.party.me, convert_to_asset(args[1]))
+                variants = client.party.me.create_variants(item='AthenaCharacter',**variantdict)
+                print(variants)
+                if await change_asset(client, message.author.id, type_, id_, variants, client.party.me.enlightenments) is False:
+                    await reply(message, l('locked'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_changing_asset'))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, f"[{commands['setvariant']}] [ID] [variant] [数値]\nvariantと数値は無限に設定可能")
+                await reply(message, f"[{commands['setvariant']}] [ID] [variant] [{l('number')}]")
             except Exception:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0] in commands['addvariant'].split(','):
             try:
@@ -13263,74 +13359,74 @@ if data['discord']['enabled'] is True:
                     except IndexError:
                         break
                 type_ = convert_to_type(args[1])
-                id_ = member_asset(client.user.party.me, convert_to_asset(args[1]))
-                variants = client.user.party.me.create_variants(item='AthenaCharacter',**variantdict)
-                variants += eval(f"client.user.party.me.{convert_to_asset(args[1])}_variants")
-                if await change_asset(client, message.author.id, type_, id_, variants, client.user.party.me.enlightenment) is False:
-                    await reply(message, "ロックされています")
+                id_ = member_asset(client.party.me, convert_to_asset(args[1]))
+                variants = client.party.me.create_variants(item='AthenaCharacter',**variantdict)
+                variants += eval(f"client.party.me.{convert_to_asset(args[1])}_variants")
+                if await change_asset(client, message.author.id, type_, id_, variants, client.party.me.enlightenments) is False:
+                    await reply(message, l('locked'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_changing_asset'))
             except IndexError:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, f"[{commands['addvariant']}] [ID] [variant] [数値]\nvariantと数値は無限に設定可能")
+                await reply(message, f"[{commands['addvariant']}] [ID] [variant] [{l('number')}]")
             except Exception:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif True in [args[0] in commands[key].split(',') for key in ("outfitasset", "backpackasset", "pickaxeasset", "emoteasset")]:
             type_ = convert_to_type(args[0])
             try:
                 if rawcontent == '':
-                    await reply(message, f"[{commands[f'{type_}asset']}] [アセットパス]")
+                    await reply(message, f"[{commands[f'{type_}asset']}] [{l('assetpath')}]")
                     return
                 if await change_asset(client, message.author.id, type_, rawcontent) is False:
-                    await reply(message, "ロックされています")
+                    await reply(message, l('locked'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_changing_asset'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
-        elif True in [args[0].lower().startswith(id_) for id_ in ("cid_", "bid_", "petcarrier_", "pickaxe_id_", "eid_", "emoji_", "toy_", "shout_")]:
+        elif True in [args[0].lower().startswith(id_) for id_ in ("cid_", "bid_", "petcarrier_", "pickaxe_id_", "eid_", "emoji_", "toy_")]:
             try:
                 type_ = convert_to_type("_".join(args[0].split('_')[:-1]) + "_")
                 if await change_asset(client, message.author.id, type_, args[0]) is False:
-                    await reply(message, "ロックされています")
+                    await reply(message, l('locked'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'アイテム情報の設定リクエストを処理中にエラーが発生しました')
+                await reply(message, l('error_while_changing_asset'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         elif args[0].lower().startswith('playlist_'):
             try:
-                await client.user.party.set_playlist(args[0])
-                await reply(message, f'プレイリストを {args[0]} に設定')
+                await client.party.set_playlist(args[0])
+                await reply(message, l('set_playlist', args[0]))
                 data['fortnite']['playlist']=args[0]
             except fortnitepy.Forbidden:
                 if data['loglevel'] == 'debug':
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'パーティーリーダーではありません')
+                await reply(message, l('not_party_leader'))
             except Exception:
                 print(red(traceback.format_exc()))
                 dstore(name,f'>>> {traceback.format_exc()}')
-                await reply(message, 'エラー')
+                await reply(message, l('error'))
 
         else:
             if ': ' in message.content:
@@ -13338,7 +13434,7 @@ if data['discord']['enabled'] is True:
             if args[0].isdigit() and client.select.get(message.author.id) is not None:
                 try:
                     if int(args[0]) == 0:
-                        await reply(message, '有効な数字を入力してください')
+                        await reply(message, l('please_enter_valid_number'))
                         return
                     exec_ = client.select[message.author.id]["exec"][int(args[0])-1]
                     variable=globals()
@@ -13350,31 +13446,31 @@ if data['discord']['enabled'] is True:
                     if data['loglevel'] == 'debug':
                         print(red(traceback.format_exc()))
                         dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, '有効な数字を入力してください')
+                    await reply(message, l('please_enter_valid_number'))
                 except Exception:
                     print(red(traceback.format_exc()))
                     dstore(name,f'>>> {traceback.format_exc()}')
-                    await reply(message, 'エラー')
+                    await reply(message, l('error'))
             else:
-                result = await loop.run_in_executor(None, search_item, "ja", "name", content, "item")
+                result = await loop.run_in_executor(None, search_item, data["lang"], "name", content, "item")
                 if result is None:
                     result = await loop.run_in_executor(None, search_item, "en", "name", content, "item")
                 if result is not None:
                     if len(result) > 30:
-                        await reply(message, f"見つかったアイテム数 {len(result)} は多すぎます")
+                        await reply(message, l('too_many_items', str(len(result))))
                         return
                     if len(result) == 1:
-                        if await change_asset(client, message.author.id, result[0]["type"], result[0]['id']) is True:
-                            await reply(message, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}")
+                        if await change_asset(client, message.author.id, result[0]["type"]["value"], result[0]['id']) is True:
+                            await reply(message, f"{result[0]['type']['displayValue']}: {result[0]['name']} | {result[0]['id']}")
                         else:
-                            await reply(message, "ロックされています")
+                            await reply(message, l('locked'))
                     else:
                         text = str()
                         for count, item in enumerate(result):
-                            text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
-                        text += "\n数字を入力することでそのアイテムに設定します"
+                            text += f"\n{count+1} {item['type']['displayValue']}: {item['name']} | {item['id']}"
+                        text += f"\n{l('enter_to_change_asset')}"
                         await reply(message, text)
-                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']}', '{item['id']}')" for item in result]}
+                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['type']['value']}', '{item['id']}')" for item in result]}
 
 #========================================================================================================================
 #========================================================================================================================
@@ -13399,19 +13495,21 @@ for count, credential in enumerate(credentials.items()):
                 delete_existing_device_auths=False,
                 **device_auth_details
             ),
-            default_party_member_config=[
-                partial(ClientPartyMember.set_outfit, data['fortnite']['cid'].replace('cid','CID',1)),
-                partial(ClientPartyMember.set_backpack, data['fortnite']['bid'].replace('bid','BID',1)),
-                partial(ClientPartyMember.set_pickaxe, data['fortnite']['pickaxe_id'].replace('pickaxe_id','Pickaxe_ID',1)),
-                partial(ClientPartyMember.set_battlepass_info, has_purchased=True, level=data['fortnite']['tier'], self_boost_xp=data['fortnite']['xpboost'], friend_boost_xp=data['fortnite']['friendxpboost']),
-                partial(ClientPartyMember.set_banner, icon=data['fortnite']['banner'], color=data['fortnite']['banner_color'], season_level=data['fortnite']['level']),
-            ],
+            default_party_member_config=fortnitepy.DefaultPartyMemberConfig(
+                meta=[
+                    partial(ClientPartyMember.set_outfit, data['fortnite']['cid'].replace('cid','CID',1)),
+                    partial(ClientPartyMember.set_backpack, data['fortnite']['bid'].replace('bid','BID',1)),
+                    partial(ClientPartyMember.set_pickaxe, data['fortnite']['pickaxe_id'].replace('pickaxe_id','Pickaxe_ID',1)),
+                    partial(ClientPartyMember.set_battlepass_info, has_purchased=True, level=data['fortnite']['tier'], self_boost_xp=data['fortnite']['xpboost'], friend_boost_xp=data['fortnite']['friendxpboost']),
+                    partial(ClientPartyMember.set_banner, icon=data['fortnite']['banner'], color=data['fortnite']['banner_color'], season_level=data['fortnite']['level']),
+                ]
+            )
         )
     except ValueError:
         print(red(traceback.format_exc()))
-        print(red(f'アカウント情報を設定中にエラーが発生しました。configのfortnite部分の設定が間違っている可能性があります。'))
+        print(red(l('error_while_setting_client')))
         dstore(client.user.display_name,f'>>> {traceback.format_exc()}')
-        dstore(client.user.display_name,f'アカウント情報を設定中にエラーが発生しました。configのfortnite部分の設定が間違っている可能性があります')
+        dstore(client.user.display_name,l('error_while_setting_client'))
         continue
     
     client.eid=data['fortnite']['eid']
@@ -13471,19 +13569,19 @@ try:
     fortnitepy.run_multiple(
         clients,
         ready_callback=event_ready,
-        all_ready_callback=lambda: print(green(f'[{now_()}] 全てのアカウントにログインしました。')) if len(clients) > 1 else print('')
+        all_ready_callback=lambda: print(green(f"[{now_()}] {l('all_login')}")) if len(clients) > 1 else print('')
     )
 except fortnitepy.AuthException as e:
     if "errors.com.epicgames.account.oauth.exchange_code_not_found" in e.args[0]:
         print(red(traceback.format_exc()))
-        print(f'[{now_()}] exchange_codeを\nhttps://www.epicgames.com/\nでボットのアカウントにログインし、\nhttps://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fexchange\nで取得してください。')
-        dstore('ボット',f'>>> {traceback.format_exc()}')
-        dstore('ボット',f'>>> exchange_codeを\nhttps://www.epicgames.com/\nでボットのアカウントにログインし、\nhttps://www.epicgames.com/id/login?redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fid%2Fapi%2Fexchange\nで取得してください')
+        print(f'[{now_()}] {l("exchange_code_error")}')
+        dstore(l("bot"),f'>>> {traceback.format_exc()}')
+        dstore(l("bot"),f'>>> {l("exchange_code_error")}')
     else:
         print(red(traceback.format_exc()))
-        print(red(f'[{now_()}] アカウントにログインできません。'))
-        dstore('ボット',f'>>> {traceback.format_exc()}')
-        dstore('ボット',f'>>> アカウントにログインできません')
+        print(red(f'[{now_()}] {l("login_failed")}'))
+        dstore(l("bot"),f'>>> {traceback.format_exc()}')
+        dstore(l("bot"),f'>>> {l("login_failed")}')
     kill=True
     sys.exit(1)
 except KeyboardInterrupt:
@@ -13491,8 +13589,8 @@ except KeyboardInterrupt:
     sys.exit(1)
 except Exception:
     print(red(traceback.format_exc()))
-    print(red(f'[{now_()}] アカウントの読み込みに失敗しました。もう一度試してみてください。'))
-    dstore('ボット',f'>>> {traceback.format_exc()}')
-    dstore('ボット',f'>>> アカウントの読み込みに失敗しました。もう一度試してみてください')
+    print(red(f'[{now_()}] {l("failed_to_load_account")}'))
+    dstore(l("bot"),f'>>> {traceback.format_exc()}')
+    dstore(l("bot"),f'>>> {l("failed_to_load_account")}')
     kill=True
     sys.exit(1)
