@@ -1,5 +1,5 @@
 # Fortnite-LobbyBot
-English is [Here](https://github.com/gomashio1596/Fortnite-LobbyBot/blob/Dev/README_EN.txt "README_EN.txt")  
+English is [Here](https://github.com/gomashio1596/Fortnite-LobbyBot/blob/Dev/README_EN.md "README_EN.md")  
 Fortnitepyを使用したFortniteのボット  
 コマンドを送ることで操作ができる  
 
