@@ -316,6 +316,9 @@ def reload_configs(client: fortnitepy.Client) -> bool:
         try:
             errorcheck=requests.get('https://fortnite-api.com/cosmetics/br/search?name=API-KEY-CHECK',headers={'x-api-key': data['api-key']}).json()
         except Exception:
+            if data['loglevel'] == 'debug':
+                print(red(traceback.format_exc()))
+                dstore(l("bot"),f'>>> {traceback.format_exc()}')
             flag = True
         else:
             if errorcheck['status'] == 503:
@@ -1112,8 +1115,11 @@ try:
         exec(f"errorcheck=data{key}")
     flag = False
     try:
-        errorcheck=requests.get('https://fortnite-api.com/cosmetics/br/search?name=API-KEY-CHECK',headers={'x-api-key': data['api-key']}).json()
+        errorcheck=requests.get('https://fortnite-api.com/v2/cosmetics/br/DOWN_CHECK').json()
     except Exception:
+        if data['loglevel'] == 'debug':
+            print(red(traceback.format_exc()))
+            dstore("Bot",f'>>> {traceback.format_exc()}')
         flag = True
     else:
         if errorcheck['status'] == 503:
