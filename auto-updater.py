@@ -14,7 +14,8 @@ def AddNewKey(data: dict, new: dict) -> dict:
     return result
 
 def CheckUpdate(filename: str, githuburl: str) -> bool:
-    print(f'{filename} のアップデートを確認中...')
+    print(f'{filename} の更新を確認中...')
+    print(f'Checking update for {filename}...\n')
     try:
         for count, text in enumerate(filename[::-1]):
             if text == ".":
@@ -30,7 +31,8 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
             else:
                 github = requests.get(githuburl + filename)
                 if github.status_code != 200:
-                    print(f'{filename} のデータを取得できませんでした。')
+                    print(f'{filename} のデータを取得できませんでした')
+                    print(f'Failed to get data for {filename}\n')
                     return None
                 github.encoding = github.apparent_encoding
                 github = github.text.encode(encoding='utf-8')
@@ -40,35 +42,38 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
                     current = f.read()
             github = requests.get(githuburl + filename)
             if github.status_code != 200:
-                print(f'{filename} のデータを取得できませんでした。')
+                print(f'{filename} のデータを取得できませんでした')
+                print(f'Failed to get data for {filename}\n')
                 return None
             github.encoding = github.apparent_encoding
             github = github.text.encode(encoding='utf-8')
             if current.replace('\n','').replace('\r','').encode(encoding='utf-8') != github.decode().replace('\n','').replace('\r','').encode(encoding='utf-8'):
-                print(f'{filename} のアップデートを確認しました!')
+                print(f'{filename} の更新を確認しました!')
                 print(f'{filename} をバックアップ中...')
+                print(f'Update found for {filename}!')
+                print(f'Backuping {filename}...\n')
                 if os.path.isfile(f'{filename_}_old{extension}'):
                     try:
                         os.remove(f'{filename_}_old{extension}')
                     except PermissionError:
-                        print(f'{filename} ファイルを削除できませんでした。\n{traceback.format_exc()}')
+                        print(f'{filename} ファイルを削除できませんでした')
+                        print(f'Failed to remove file {filename}\n')
+                        print(traceback.format_exc())
                 try:
                     os.rename(filename, f'{filename_}_old{extension}')
                 except PermissionError:
-                    print(f'{filename} ファイルをバックアップできませんでした。\n{traceback.format_exc()}')
+                    print(f'{filename} ファイルをバックアップできませんでした')
+                    print(f'Failed to backup file {filename}\n')
+                    print(traceback.format_exc())
                 else:
                     with open(filename, 'bw') as f:
                         f.write(github)
-                    print(f'{filename} の更新が完了しました!\n')
-                    CheckUpdate("auto-updater.py", githuburl)
-                    CheckUpdate("requirements.txt", githuburl)
-                    CheckUpdate("config.json", githuburl)
-                    CheckUpdate("commands.json", githuburl)
-                    CheckUpdate("Check update.bat", githuburl)
-                    CheckUpdate("INSTALL IFNOTWORK.bat", githuburl)
+                    print(f'{filename} の更新が完了しました!')
+                    print(f'Update for {filename} done!\n')
                     return True
             else:
-                print(f'{filename} の更新はありません!\n')
+                print(f'{filename} の更新はありません!')
+                print(f'No update for {filename}!\n')
                 return False
         elif extension == ".json":
             if os.path.isfile(filename):
@@ -77,7 +82,8 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
             else:
                 github = requests.get(githuburl + filename)
                 if github.status_code != 200:
-                    print(f'{filename} のデータを取得できませんでした。')
+                    print(f'{filename} のデータを取得できませんでした')
+                    print(f'Failed to get data for {filename}\n')
                     return None
                 github.encoding = github.apparent_encoding
                 github = github.text.encode(encoding='utf-8')
@@ -88,7 +94,8 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
             current = json.loads(current)
             github = requests.get(githuburl + filename)
             if github.status_code != 200:
-                print(f'{filename} のデータを取得できませんでした。')
+                print(f'{filename} のデータを取得できませんでした')
+                print(f'Failed to get data for {filename}\n')
                 return None
             github.encoding = github.apparent_encoding
             github = github.text
@@ -96,44 +103,70 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
             github = json.loads(github)
             new = AddNewKey(current, github)
             if current != new:
-                print(f'{filename} のアップデートを確認しました!')
+                print(f'{filename} の更新を確認しました!')
                 print(f'{filename} をバックアップ中...')
+                print(f'Update found for {filename}!')
+                print(f'Backuping {filename}...\n')
                 try:
                     if os.path.isfile(f'{filename_}_old{extension}'):
                         try:
                             os.remove(f'{filename_}_old{extension}')
                         except PermissionError:
-                            print(f'{filename_}_old{extension} ファイルを削除できませんでした\n{traceback.format_exc()}')
+                            print(f'{filename_}_old{extension} ファイルを削除できませんでした')
+                            print(f'Failed to remove file {filename_}_old{extension}')
+                            print(f'{traceback.format_exc()}\n')
                     os.rename(filename, f'{filename_}_old{extension}')
                 except PermissionError:
-                    print(f'{filename} ファイルをバックアップできませんでした\n{traceback.format_exc()}')
+                    print(f'{filename} ファイルをバックアップできませんでした')
+                    print(f'Failed to backup file {filename}')
+                    print(f'{traceback.format_exc()}\n')
                     return None
                 else:
                     with open(filename, 'w', encoding="utf-8") as f:
                         json.dump(new, f, indent=4, ensure_ascii=False)
-                    print(f'{filename} の更新が完了しました!\n')
+                    print(f'{filename} の更新が完了しました!')
+                    print(f'Update for {filename} done!\n')
                     return True
             else:
-                print(f'{filename} の更新はありません!\n')
+                print(f'{filename} の更新はありません!')
+                print(f'No update for {filename}!\n')
                 return False
         else:
-            print(f'拡張子 {extension} は対応していません\n')
+            print(f'拡張子 {extension} は対応していません')
+            print(f'Extension {extension} not supported\n')
             return None
     except Exception:
-        print("アップデートに失敗しました")
-        print(traceback.format_exc())
+        print("更新に失敗しました")
+        print("Update failed")
+        print(f'{traceback.format_exc()}\n')
         return None
 
 if "-dev" in sys.argv:
     githuburl = "https://raw.githubusercontent.com/gomashio1596/Fortnite-LobbyBot/Dev/"
 else:
     githuburl = "https://raw.githubusercontent.com/gomashio1596/Fortnite-LobbyBot/master/"
-if CheckUpdate("index.py", githuburl) is False and "-all" in sys.argv:
-    CheckUpdate("requirements.txt", githuburl)
-    CheckUpdate("config.json", githuburl)
-    CheckUpdate("commands.json", githuburl)
-    CheckUpdate("Check update.bat", githuburl)
-    CheckUpdate("INSTALL IFNOTWORK.bat", githuburl)
-CheckUpdate("auto-updater.py", githuburl)
-CheckUpdate("README.md", githuburl)
-print("すべてのアップデートが完了しました")
+CheckUpdate("index.py", githuburl)
+if CheckUpdate("requirements.txt", githuburl):
+    print("requirements.txtの更新を確認しました。念のためアップデーターをもう一度起動してください")
+    print("requirements.txt got updated. Please run updater once more\n")
+
+CheckUpdate("config.json", githuburl)
+CheckUpdate("commands.json", githuburl)
+CheckUpdate("Check update.bat", githuburl)
+CheckUpdate("INSTALL IFNOTWORK.bat", githuburl)
+CheckUpdate("lang/en.json", githuburl)
+CheckUpdate("lang/ja.json", githuburl)
+
+if CheckUpdate("auto-updater.py", githuburl):
+    print("auto-updater.pyの更新を確認しました。念のためアップデーターをもう一度起動してください")
+    print("auto-updater.py got updated. Please run updater more once\n")    
+
+if CheckUpdate("README.md", githuburl):
+    print("README.mdの更新を確認しました。新機能の説明、内容の修正などがある可能性があるので確認してください")
+    print("README.md got updated. Descriptions for new systems, fixes are included. Please check\n")
+if CheckUpdate("README_EN.md", githuburl):
+    print("README_EN.mdの更新を確認しました。新機能の説明、内容の修正などがある可能性があるので確認してください")
+    print("README_EN.md got updated. Descriptions for new systems, fixes are included. Please check\n")
+
+print("全ての更新が完了しました")
+print("All update finished")
