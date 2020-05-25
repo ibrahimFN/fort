@@ -15,8 +15,10 @@ def AddNewKey(data: dict, new: dict) -> dict:
 
 def CheckUpdate(filename: str, githuburl: str) -> bool:
     print(f'{filename} の更新を確認中...')
-    print(f'Checking update for {filename}...\n')
+    print(f'Checking update for {filename}...')
     try:
+        if "/" in filename:
+            os.makedirs("/".join(filename.split("/")[:-1]), exist_ok=True)
         for count, text in enumerate(filename[::-1]):
             if text == ".":
                 filename_ = filename[:len(filename)-count-1]
