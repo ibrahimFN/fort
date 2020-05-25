@@ -973,7 +973,7 @@ async def invitation_decline_interval(invitation: fortnitepy.ReceivedPartyInvita
     client=invitation.client
     try:
         await invitation.decline()
-        await invitation.sender.send(l("declined_invite_interval3"))
+        await invitation.sender.send(l("declined_invite_interval3"), str(data["fortnite"]["interval"]))
         if data['loglevel'] == 'normal':
             if data['no-logs'] is False:
                 print(f'[{now_()}] [{client.user.display_name}] {l("declined_invite_interval", str(invitation.sender.display_name), str(data["fortnite"]["interval"]))}')
