@@ -50,8 +50,8 @@ except ModuleNotFoundError as e:
     except ModuleNotFoundError:
         pass
     print(e)
-    print('標準ライブラリの読み込みに失敗しました。Pythonのバージョンが間違っている可能性があります。Pythonの再インストールなどを試してみてください。問題が修正されない場合はこちらまで連絡をください\nTwitter @gomashioepic\nDiscord gomashio#4335')
-    print('Failed to load basic library. Python version maybe wrong. Try reinstall Python. If the issue is not resolved, please contact me\nTwitter @gomashioepic\nDiscord gomashio#4335')
+    print('標準ライブラリの読み込みに失敗しました。Pythonのバージョンが間違っている可能性があります。Pythonの再インストールなどを試してみてください。問題が修正されない場合はこちらまで連絡をください\nTwitter @gomashio1596\nDiscord gomashio#4335')
+    print('Failed to load basic library. Python version maybe wrong. Try reinstall Python. If the issue is not resolved, please contact me\nTwitter @gomashio1596\nDiscord gomashio#4335')
     sys.exit(1)
 
 try:
@@ -76,8 +76,8 @@ except ModuleNotFoundError as e:
     except ModuleNotFoundError:
         pass
     print(e)
-    print('サードパーティーライブラリの読み込みに失敗しました。INSTALL.bat を実行してください。問題が修正されない場合はこちらまで連絡をください\nTwitter @gomashioepic\nDiscord gomashio#4335')
-    print('Failed to load third party library. Please run INSTALL.bat. If the issue is not resolved, please contact me\nTwitter @gomashioepic\nDiscord gomashio#4335')
+    print('サードパーティーライブラリの読み込みに失敗しました。INSTALL.bat を実行してください。問題が修正されない場合はこちらまで連絡をください\nTwitter @gomashio1596\nDiscord gomashio#4335')
+    print('Failed to load third party library. Please run INSTALL.bat. If the issue is not resolved, please contact me\nTwitter @gomashio1596\nDiscord gomashio#4335')
     sys.exit(1)
 
 if os.getcwd().startswith('/app'):
