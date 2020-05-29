@@ -760,7 +760,7 @@ def search_style(lang: str, id_: str) -> Optional[List[dict]]:
     for item in data_['data']:
         if item['id'].lower() == id_.lower():
             if item['variants'] is not None:
-                variants = convert_variant(item['backendType'], item['variants'])
+                variants = convert_variant(item['type']['backendValue'], item['variants'])
     print(yellow(f'{id_}: {variants}'))
     if len(variants) == 0:
         return None
