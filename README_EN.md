@@ -13,11 +13,6 @@ Run INSTALL.bat
 Write details in config  
 Write any command name in commands  
 Run RUN.bat  
-If you prompted for enter exchage_code, get exchange_code in  
-Login to bot account in [Official site](https://www.epicgames.com "epicgames.com") and  
-[Exchange](https://www.epicgames.com/id/api/exchange "exchange_code")  
-Back to bot and paste code, then click enter  
-exchange_code will expire fast, so you have to do quickly  
 
 # Glitch
 https://glitch.com/~fortnite-lobbybot  
@@ -30,12 +25,6 @@ Monitor Type set to HTTP(s) and paste in URL
 Make any name in Friendly Name and click Create Monitor  
 Write details in config  
 Write any command name in commands  
-If you prompted for enter exchage_code, click Tools on left down, click console and type python3 index.py  
-then enter. ff you prompted for enter exchage_code in console, get exchange_code in  
-Login to bot account in [Official site](https://www.epicgames.com "epicgames.com") and  
-[Exchange](https://www.epicgames.com/id/api/exchange "exchange_code")  
-Back to console and paste code(If you can't, write manually), then click enter  
-exchange_code will expire fast, so you have to do quickly  
 
 # config
 ```
