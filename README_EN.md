@@ -6,6 +6,7 @@ My translation is bad. If you have better translation, please tell me.
 
 # Install
 # PC
+https://github.com/gomashio1596/Fortnite-LobbyBot  
 [Python 3.7](https://www.python.org/downloads "Python Download") or higher is required  
 
 Run INSTALL.bat  
@@ -19,6 +20,7 @@ Back to bot and paste code, then click enter
 exchange_code will expire fast, so you have to do quickly  
 
 # Glitch
+https://glitch.com/~fortnite-lobbybot  
 Click project name and click Remix Project to remix  
 Click project name(your project) and click Make This Project Private to make project private  
 Create account in [Uptimerobot](https://uptimerobot.com "Uptimerobot")  
