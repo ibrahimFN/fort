@@ -147,6 +147,12 @@ if "-dev" in sys.argv:
     githuburl = "https://raw.githubusercontent.com/gomashio1596/Fortnite-LobbyBot/Dev/"
 else:
     githuburl = "https://raw.githubusercontent.com/gomashio1596/Fortnite-LobbyBot/master/"
+
+if CheckUpdate("auto-updater.py", githuburl):
+    print("auto-updater.pyの更新を確認しました。アップデーターをもう一度起動してください")
+    print("auto-updater.py got updated. Please run updater more once\n")
+    sys.exit(0) 
+
 CheckUpdate("index.py", githuburl)
 if CheckUpdate("requirements.txt", githuburl):
     print("requirements.txtの更新を確認しました。念のためアップデーターをもう一度起動してください")
@@ -157,18 +163,17 @@ CheckUpdate("commands.json", githuburl)
 CheckUpdate("Check update.bat", githuburl)
 CheckUpdate("INSTALL IFNOTWORK.bat", githuburl)
 CheckUpdate("lang/en.json", githuburl)
+CheckUpdate("lang/es.json", githuburl)
 CheckUpdate("lang/ja.json", githuburl)
-
-if CheckUpdate("auto-updater.py", githuburl):
-    print("auto-updater.pyの更新を確認しました。念のためアップデーターをもう一度起動してください")
-    print("auto-updater.py got updated. Please run updater more once\n")    
 
 if CheckUpdate("README.md", githuburl):
     print("README.mdの更新を確認しました。新機能の説明、内容の修正などがある可能性があるので確認してください")
-    print("README.md got updated. Descriptions for new systems, fixes are included. Please check\n")
 if CheckUpdate("README_EN.md", githuburl):
     print("README_EN.mdの更新を確認しました。新機能の説明、内容の修正などがある可能性があるので確認してください")
     print("README_EN.md got updated. Descriptions for new systems, fixes are included. Please check\n")
+"""if CheckUpdate("README_ES.md", githuburl):
+    print("README_ES.mdの更新を確認しました。新機能の説明、内容の修正などがある可能性があるので確認してください")
+    print("README_ES.md got updated. Descriptions for new systems, fixes are included. Please check\n")"""
 
 print("全ての更新が完了しました")
 print("All update finished")
