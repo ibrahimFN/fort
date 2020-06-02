@@ -5,7 +5,7 @@ Fortnitepyを使用したFortniteのボット
 
 # 導入
 # PC
-https://github.com/gomashio1596/Fortnite-LobbyBot
+https://github.com/gomashio1596/Fortnite-LobbyBot  
 [Python 3.7](https://www.python.org/downloads "Pythonダウンロード")以上が必要  
 
 INSTALL.batを実行する  
@@ -19,7 +19,7 @@ exchage_codeの入力を求められた場合、 exchange_codeを
 素早くやらないとexchange_codeが失効してしまうのでできるだけ急いでください)  
 
 # Glitch
-https://glitch.com/~fortnite-lobbybot
+https://glitch.com/~fortnite-lobbybot  
 プロジェクトのとこを押してRemix Projectを押してリミックスする  
 プロジェクトのとこ(さっき作ったやつ)を押してMake This Project Privateにチェックを入れてプロジェクトに鍵を掛ける  
 [Uptimerobot](https://uptimerobot.com "Uptimerobot")  
