@@ -173,7 +173,7 @@ if CheckUpdate("README.md", githuburl):
 if CheckUpdate("README_EN.md", githuburl):
     print("README_EN.mdの更新を確認しました。新機能の説明、内容の修正などがある可能性があるので確認してください")
     print("README_EN.md got updated. Descriptions for new systems, fixes are included. Please check\n")
-if CheckUpdate("README_EN.md", githuburl):
+if CheckUpdate("README_ES.md", githuburl):
     print("README_ES.mdの更新を確認しました。新機能の説明、内容の修正などがある可能性があるので確認してください")
     print("README_ES.md got updated. Descriptions for new systems, fixes are included. Please check\n")
 
