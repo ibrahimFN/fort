@@ -25,7 +25,7 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
                 extension = filename[-count-1:]
                 break
         else:
-            extension == ""
+            extension = ""
         if extension == ".py" or extension == ".bat" or extension == ".txt" or extension == ".md" or extension == "":
             if os.path.isfile(filename):
                 with open(filename, encoding='utf-8') as f:
@@ -155,8 +155,8 @@ if CheckUpdate("auto-updater.py", githuburl):
 
 CheckUpdate("index.py", githuburl)
 if CheckUpdate("requirements.txt", githuburl):
-    print("requirements.txtの更新を確認しました。念のためアップデーターをもう一度起動してください")
-    print("requirements.txt got updated. Please run updater once more\n")
+    print("requirements.txtの更新を確認しました。INSTALL.batを起動してください")
+    print("requirements.txt got updated. Please run INSTALL.bat\n")
 
 CheckUpdate("config.json", githuburl)
 CheckUpdate("commands.json", githuburl)
