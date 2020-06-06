@@ -83,7 +83,7 @@
 		"password": "pass",
 		"web": true,
 		"log": false
-	}
+	},
 	"lang": "ja",
 	"no-logs": false,
 	"ingame-error": true,
