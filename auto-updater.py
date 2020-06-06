@@ -28,7 +28,7 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
             extension = ""
         if extension in [".py", ".bat", ".txt", ".md", ".html", ""]:
             if os.path.isfile(filename):
-                with open(filename, encoding='utf-8') as f:
+                with open(filename, "r", encoding='utf-8') as f:
                     current = f.read()
             else:
                 github = requests.get(githuburl + filename)
@@ -40,7 +40,7 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
                 github = github.text.encode(encoding='utf-8')
                 with open(filename, "wb") as f:
                     f.write(github)
-                with open(filename, encoding='utf-8') as f:
+                with open(filename, "r", encoding='utf-8') as f:
                     current = f.read()
             github = requests.get(githuburl + filename)
             if github.status_code != 200:
@@ -79,7 +79,7 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
                 return False
         elif extension == ".json":
             if os.path.isfile(filename):
-                with open(filename, encoding='utf-8') as f:
+                with open(filename, "r", encoding='utf-8') as f:
                     current = f.read()
             else:
                 github = requests.get(githuburl + filename)
@@ -91,7 +91,7 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
                 github = github.text.encode(encoding='utf-8')
                 with open(filename, "wb") as f:
                     f.write(github)
-                with open(filename, encoding='utf-8') as f:
+                with open(filename, "r", encoding='utf-8') as f:
                     current = f.read()
             current = json.loads(current)
             github = requests.get(githuburl + filename)
@@ -135,7 +135,7 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
                 return False
         elif extension == ".png":
             if os.path.isfile(filename):
-                with open(filename, encoding='utf-8') as f:
+                with open(filename, "rb") as f:
                     current = f.read()
             else:
                 github = requests.get(githuburl + filename)
@@ -146,7 +146,7 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
                 github = github.content
                 with open(filename, "wb") as f:
                     f.write(github)
-                with open(filename) as f:
+                with open(filename, "rb") as f:
                     current = f.read()
             github = requests.get(githuburl + filename)
             if github.status_code != 200:
