@@ -259,5 +259,12 @@
     "command": "Comando",
     "run": "Iniciar",
     "result": "Resultado",
-    "web_notfound": "No encontrado"
+    "web_notfound": "No encontrado",
+    "password_reset_error": "Hay un problema con esta cuenta. Inicia sesión con la cuenta del bot aquí:\nhttps://www.epicgames.com/\ny cambia la contraseña",
+    "this_field_is_required": "Este espacio es requerido! {0}",
+    "replies_editor": "Editor de respuestas",
+    "trigger": "Texto accionador",
+    "text": "Texto",
+    "cannot_be_empty": "No puede estar vacío",
+    "restart": "Reiniciar"
 }

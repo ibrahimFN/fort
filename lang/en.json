@@ -265,5 +265,6 @@
     "this_field_is_required": "This filed is required! {0}",
     "trigger": "Trigger",
     "text": "Text",
-    "cannot_be_empty": "Cannot be empty"
+    "cannot_be_empty": "Cannot be empty",
+    "restart": "Restart"
 }
