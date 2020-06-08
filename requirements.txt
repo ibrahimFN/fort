@@ -3,4 +3,5 @@ discord.py
 requests
 crayons
 jaconv
-flask
+jinja2
+sanic
