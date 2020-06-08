@@ -94,6 +94,7 @@
     "login_failed": "アカウントにログインできません",
     "failed_to_load_account": "アカウントの読み込みに失敗しました。もう一度試してみてください",
     "exchange_code_error": "exchange_codeを\nhttps://www.epicgames.com/\nでボットのアカウントにログインし、\nhttps://www.epicgames.com/id/api/exchange\nで取得してください",
+    "password_reset_error": "アカウントに問題が生じています。https://www.epicgames.com/\nでボットのアカウントにログインし、パスワードリセットをしてください",
     "api_downing": "APIがダウンしています。しばらく待ってからもう一度起動してみてください",
     "api_downing2": "APIがダウンしているため、最新のアイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください",
     "not_enough_password": "メールアドレスの数に対しパスワードの数が足りません。読み込めたアカウントのみ起動されます",
@@ -245,6 +246,7 @@
     "main_page": "メインページ",
     "config_editor": "コンフィグエディター",
     "commands_editor": "コマンドエディター",
+    "replies_editor": "repliesエディター",
     "party_viewer": "パーティービューアー",
     "password": "パスワード",
     "web_save": "保存",
@@ -259,5 +261,9 @@
     "result": "実行結果",
     "web_notfound": "見つかりません",
     "web_already_running": "他のウェブサーバーが起動されています。他のウェブサーバーを閉じてください",
-    "failed_to_run_web": "ウェブサーバーの起動に失敗しました"
+    "failed_to_run_web": "ウェブサーバーの起動に失敗しました",
+    "this_field_is_required": "この項目は必須です! {0}",
+    "trigger": "反応するワード",
+    "text": "内容",
+    "cannot_be_empty": "空欄にはできません"
 }
