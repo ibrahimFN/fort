@@ -96,6 +96,7 @@
     "failed_to_run_web": "Failed to run web server",
     "web_already_running": "Other web server already running. Please close other web server",
     "exchange_code_error": "Login to account in here\nhttps://www.epicgames.com/\nand\nhttps://www.epicgames.com/id/api/exchange\nto get exchange_code",
+    "password_reset_error": "There is a problem on this account. Login to bot account in here\nhttps://www.epicgames.com/\nand do password reset",
     "api_downing": "API is downing now. Please try again later",
     "api_downing2": "Failed to download latest item data because API is downing now. Please try again later",
     "not_enough_password": " There are not enough passwords for number of email addresses",
@@ -247,6 +248,7 @@
     "main_page": "Main page",
     "config_editor": "Config editor",
     "commands_editor": "Command editor",
+    "replies_editor": "Replies editor",
     "party_viewer": "Party viewer",
     "password": "Password",
     "web_save": "Save",
@@ -259,5 +261,9 @@
     "command": "Command",
     "run": "Run",
     "result": "Result",
-    "web_notfound": "Notfound"
+    "web_notfound": "Notfound",
+    "this_field_is_required": "This filed is required! {0}",
+    "trigger": "Trigger",
+    "text": "Text",
+    "cannot_be_empty": "Cannot be empty"
 }
