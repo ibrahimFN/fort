@@ -1,31 +1,35 @@
 # Fortnite-LobbyBot
+[![Versiones de Python](https://img.shields.io/badge/3.7%20%7C%203.8-blue)](https://www.python.org/downloads/)  
+<a href="https://discord.gg/NEnka5N"><img src="https://discordapp.com/api/guilds/718709023427526697/widget.png?style=banner2"></img></a>  
 Un bot de Fortnite que utiliza fortnitepy 
 Puedes controlarlo mediante comandos 
-  
 
-# Install
+# Instalación
 # PC
 https://github.com/gomashio1596/Fortnite-LobbyBot  
 [Python 3.7](https://www.python.org/downloads "Descarga Python") o superior es requerido
 
 Ejecuta INSTALL.bat  
-Configura los detalles en config  
-Personaliza el nombre de los comandos en commands  
 Ejecuta RUN.bat  
+Escribe los detalles en el sitio que fue abierto
+Puedes aplicar los detalles refrescando la página  
 
 # Glitch
+https://glitch.com
+Inicie sesión con el botón de arriba a la derecha
 https://glitch.com/~fortnite-lobbybot  
 Haga click en el nombre del proyecto y seleccione Remix Proyect  
 Haga click en el nombre del proyecto (tu proyecto remixeado) y active Make This Proyect Private  
 Crea una cuenta en [Uptimerobot](https://uptimerobot.com "Uptimerobot")  
 inicia sesión y entra al dashboard  
 Haga click en \+ Monitor y en el proyecto de glitch haga click en Share y copie la URL de Live App luego vuelva a uptime robot,  
+Vuelve a glitch y arriba a la izquierda, presiona Show > Show in a new window
+Copia la url de la página abierta
 En Monitor Type seleccione HTTP(s) y pegue la URL  
 Escriba algún nombre para reconocerlo y haga click en Create Monitor  
-Configura los detalles en config  
-Configure el nombre de los comandos en commands  
+*Puedes aplicar los detalles refrescando el proyecto 
 
-# config
+# configuración
 ```
 Fortnite
 email                     : Dirección de correo electrónico para el bot. Puedes poner varios dividiendolos con  ,
@@ -93,6 +97,14 @@ whitelist                 : Miembros en la Lista Blanca. ID de usuario
 whitelist-ignorelock      : Determina si la lista blanca puede ignorar bloqueos de cosméticos. true o false
 whitelist-ownercommand    : Determina si los miembros de la lista blanca pueden usar comandos de owner. true o false
 
+Web
+enabled                   : Determina si se encenderá el servidor web. true o false
+ip                        : IP address for web server. Revise abajo para más información
+port                      : Puerto para el servidor web
+password                  : Contraseña para el servidor web
+web                       : Determina si el bot aceptará comandos del servidor web. true or false
+log                       : Determina si se crearán logs del servidor web
+
 lang                      : Lenguaje del bot
 no-logs                   : Determina si se escribirán logs en la consola. true o false
 ingame-error              : Determina si el usuario puede recibir los errores. true o false
@@ -146,6 +158,7 @@ emotemimic                                : emotemimic [true / false] Determina 
 whisper                                   : whisper [true / false] Determina si se aceptan comandos por susurro
 partychat                                 : partychat [true / false] Determina si se aceptan comandos de sala
 discord                                   : discord [true / false] Determina si el bot aceptará comandos de Discord
+web                                       : web [true / false] Determina si el bot aceptará comandos de Web
 disablewhisperperfectly                   : whisperperfect [true / false] Determina si el bot ignorará comandos de owner en susurro, en caso de estar desactivado
 disablepartychatperfectly                 : partychatperfect [true / false] Determina si el bot ignorará comandos de owner en sala, en caso de estar desactivado
 disablediscordperfectly                   : discordperfect [true / false] Determina si el bot ignorará comandos de owner en discord, en caso de estar desactivado
@@ -232,7 +245,7 @@ pickasset                                 : pickasset [path asset] Cambia el pic
 emoteasset                                : emoteasset [path asset] Cambia el emote con characters number
 ```
 
-# replies
+# respuestas / replies
 Conguralo como esto:
 "Palabra de activación": "Respuesta"  
 Puedes poner varios, como en el ejemplo:  
@@ -243,7 +256,7 @@ Puedes poner varios, como en el ejemplo:
 }
 ```
 
-# Other
+# Otros
 Plataforma 
 ```
 Windows     : WIN
@@ -254,6 +267,7 @@ Switch      : SWT
 IOS         : IOS
 Android     : AND
 ```
+
 Privacidad
 ```
 public                           : Público
@@ -262,6 +276,7 @@ friends                          : Amigos
 private_allow_friends_of_friends : Privado(Permite amigos de amigos)
 private                          : Privado
 ```
+
 Nombre del canal
 Variables para usar 
 ```
@@ -283,7 +298,13 @@ Test Bot1
 Test Bot2
 ```
 
-variant
+IP
+Variables utilizables
+```
+{ip}                             : Puede ser la IP local asignada a su PC en caso de estar en Windows.
+```
+
+variant / variantes
 ```
 pattern/numeric/clothing_color/jersey_color/parts/progressive/particle/material/emissive
 Usualmente material, progressive, parts son los más usados
@@ -292,7 +313,7 @@ clothing_color 1
 jersey_color es usado para las skins de fútbol
 ```
 
-enlightenment  
+enlightenment / iluminación 
 ```
 Por ejemplo, Bola 8 vs Bola blanca glitcheada la información es la iluminación
 Season(En el capítulo 2) / Número
