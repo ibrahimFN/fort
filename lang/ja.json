@@ -265,5 +265,6 @@
     "this_field_is_required": "この項目は必須です! {0}",
     "trigger": "反応するワード",
     "text": "内容",
-    "cannot_be_empty": "空欄にはできません"
+    "cannot_be_empty": "空欄にはできません",
+    "restart": "再起動"
 }

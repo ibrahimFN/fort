@@ -317,7 +317,7 @@ def reload_configs(client: fortnitepy.Client) -> bool:
             exec(f"errorcheck=data{key}")
         flag = False
         try:
-            errorcheck=requests.get('https://fortnite-api.com/cosmetics/br/search?name=API-KEY-CHECK',headers={'x-api-key': data['api-key']}).json()
+            errorcheck=requests.get('https://fortnite-api.com/v2/cosmetics/br/DOWN_CHECK').json()
         except Exception:
             if data['loglevel'] == 'debug':
                 print(red(traceback.format_exc()))
@@ -1899,8 +1899,8 @@ if True:
                     user = await client.fetch_profile(blacklistuser)
                     add_cache(client, user)
                     if user is None:
-                        print(red(f'[{now_()}] [{client.user.display_name}] {l("blacklist_user_notfount", blacklistuser)}'))
-                        dstore(client.user.display_name,f'>>> {l("blacklist_user_notfount", blacklistuser)}')
+                        print(red(f'[{now_()}] [{client.user.display_name}] {l("blacklist_user_notfound", blacklistuser)}'))
+                        dstore(client.user.display_name,f'>>> {l("blacklist_user_notfound", blacklistuser)}')
                     else:
                         blacklist.append(user.id)
                         if data['loglevel'] == 'debug':
@@ -6789,7 +6789,7 @@ select_loglevel = select(
 )
 select_lang = select(
     [
-        {"value": i.replace("lang\\","").replace(".json",""),"display_value": i.replace("lang\\","").replace(".json","")} for i in glob("lang/*.json")
+        {"value": re.sub(r"lang(\\|/)","",i).replace(".json",""),"display_value": re.sub(r"lang(\\|/)","",i).replace(".json","")} for i in glob("lang/*.json") if "_old.json" not in i
     ]
 )
 
@@ -7070,7 +7070,12 @@ if True:
     else:
         @app.route("/", methods=["GET", "POST"])
         async def main(request: Request):
-            return render_template("main.html", l=l, authenticated=auth.authenticated(request))
+            print(request.method)
+            if request.method == "GET":
+                return render_template("main.html", l=l, authenticated=auth.authenticated(request))
+            elif request.method == "POST":
+                os.chdir(os.getcwd())
+                os.execv(os.sys.executable,['python', *sys.argv])
 
         @app.route("/login", methods=["GET", "POST"])
         async def login(request: Request):
