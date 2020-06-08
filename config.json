@@ -1,10 +1,10 @@
   
 {
 	"fortnite": {
-		"email": "ボットのメールアドレス",
-		"password": "ボットのパスワード",
-		"owner": "所有者の名前かID",
-		"platform": "プラットフォーム",
+		"email": "",
+		"password": "",
+		"owner": "",
+		"platform": "WIN",
 		"cid": "CID_429_Athena_Commando_F_NeonLines",
 		"bid": "BID_284_NeonLines",
 		"pickaxe_id": "Pickaxe_ID_071_StreetRacer",
@@ -81,7 +81,7 @@
 		"enabled": true,
 		"ip": "{ip}",
 		"port": 8080,
-		"password": "pass",
+		"password": "",
 		"web": true,
 		"log": false
 	},
