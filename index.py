@@ -6932,7 +6932,7 @@ if True:
         else:
             return sanic.response.html("")
 
-    if os.environ.get("FORTNITE_LOBBYBOT_STATUS", 0) == -1:
+    if os.environ.get("FORTNITE_LOBBYBOT_STATUS") == "-1":
         @app.route("/", methods=["GET"])
         async def main(request: Request):
             return sanic.response.html(
