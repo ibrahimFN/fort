@@ -1,4 +1,6 @@
 # Fortnite-LobbyBot
+[![Python Versions](https://img.shields.io/badge/3.7%20%7C%203.8-blue)](https://www.python.org/downloads/)  
+<a href="https://discord.gg/NEnka5N"><img src="https://discordapp.com/api/guilds/718709023427526697/widget.png?style=banner2"></img></a>  
 A Fortnite bot using fortnitepy  
 You can control bot by sending command  
 
@@ -6,8 +8,6 @@ My translation is bad. If you have better translation, please tell me.
 
 # Install
 # PC
-[![Python Versions](https://img.shields.io/badge/3.7%20%7C%203.8-blue)](https://www.python.org/downloads/)  
-<a href="https://discord.gg/NEnka5N"><img src="https://discordapp.com/api/guilds/718709023427526697/widget.png?style=banner2"></img></a>  
 https://github.com/gomashio1596/Fortnite-LobbyBot  
 [Python 3.7](https://www.python.org/downloads "Python Download") or higher is required  
 
