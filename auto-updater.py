@@ -26,9 +26,9 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
                 break
         else:
             extension = ""
-        if extension == ".py" or extension == ".bat" or extension == ".txt" or extension == ".md" or extension == "":
+        if extension in [".py", ".bat", ".txt", ".md", ".html", ""]:
             if os.path.isfile(filename):
-                with open(filename, encoding='utf-8') as f:
+                with open(filename, "r", encoding='utf-8') as f:
                     current = f.read()
             else:
                 github = requests.get(githuburl + filename)
@@ -38,9 +38,9 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
                     return None
                 github.encoding = github.apparent_encoding
                 github = github.text.encode(encoding='utf-8')
-                with open(filename, 'bw') as f:
+                with open(filename, "wb") as f:
                     f.write(github)
-                with open(filename, encoding='utf-8') as f:
+                with open(filename, "r", encoding='utf-8') as f:
                     current = f.read()
             github = requests.get(githuburl + filename)
             if github.status_code != 200:
@@ -68,7 +68,7 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
                     print(f'Failed to backup file {filename}\n')
                     print(traceback.format_exc())
                 else:
-                    with open(filename, 'bw') as f:
+                    with open(filename, "wb") as f:
                         f.write(github)
                     print(f'{filename} の更新が完了しました!')
                     print(f'Update for {filename} done!\n')
@@ -79,7 +79,7 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
                 return False
         elif extension == ".json":
             if os.path.isfile(filename):
-                with open(filename, encoding='utf-8') as f:
+                with open(filename, "r", encoding='utf-8') as f:
                     current = f.read()
             else:
                 github = requests.get(githuburl + filename)
@@ -89,9 +89,9 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
                     return None
                 github.encoding = github.apparent_encoding
                 github = github.text.encode(encoding='utf-8')
-                with open(filename, 'bw') as f:
+                with open(filename, "wb") as f:
                     f.write(github)
-                with open(filename, encoding='utf-8') as f:
+                with open(filename, "r", encoding='utf-8') as f:
                     current = f.read()
             current = json.loads(current)
             github = requests.get(githuburl + filename)
@@ -133,6 +133,55 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
                 print(f'{filename} の更新はありません!')
                 print(f'No update for {filename}!\n')
                 return False
+        elif extension == ".png":
+            if os.path.isfile(filename):
+                with open(filename, "rb") as f:
+                    current = f.read()
+            else:
+                github = requests.get(githuburl + filename)
+                if github.status_code != 200:
+                    print(f'{filename} のデータを取得できませんでした')
+                    print(f'Failed to get data for {filename}\n')
+                    return None
+                github = github.content
+                with open(filename, "wb") as f:
+                    f.write(github)
+                with open(filename, "rb") as f:
+                    current = f.read()
+            github = requests.get(githuburl + filename)
+            if github.status_code != 200:
+                print(f'{filename} のデータを取得できませんでした')
+                print(f'Failed to get data for {filename}\n')
+                return None
+            github = github.content
+            if current != github:
+                print(f'{filename} の更新を確認しました!')
+                print(f'{filename} をバックアップ中...')
+                print(f'Update found for {filename}!')
+                print(f'Backuping {filename}...\n')
+                if os.path.isfile(f'{filename_}_old{extension}'):
+                    try:
+                        os.remove(f'{filename_}_old{extension}')
+                    except PermissionError:
+                        print(f'{filename} ファイルを削除できませんでした')
+                        print(f'Failed to remove file {filename}\n')
+                        print(traceback.format_exc())
+                try:
+                    os.rename(filename, f'{filename_}_old{extension}')
+                except PermissionError:
+                    print(f'{filename} ファイルをバックアップできませんでした')
+                    print(f'Failed to backup file {filename}\n')
+                    print(traceback.format_exc())
+                else:
+                    with open(filename, "wb") as f:
+                        f.write(github)
+                    print(f'{filename} の更新が完了しました!')
+                    print(f'Update for {filename} done!\n')
+                    return True
+            else:
+                print(f'{filename} の更新はありません!')
+                print(f'No update for {filename}!\n')
+                return False
         else:
             print(f'拡張子 {extension} は対応していません')
             print(f'Extension {extension} not supported\n')
@@ -149,14 +198,17 @@ else:
     githuburl = "https://raw.githubusercontent.com/gomashio1596/Fortnite-LobbyBot/master/"
 
 if CheckUpdate("auto-updater.py", githuburl):
-    print("auto-updater.pyの更新を確認しました。アップデーターをもう一度起動してください")
-    print("auto-updater.py got updated. Please run updater more once\n")
-    sys.exit(0) 
+    print("auto-updater.pyの更新を確認しました。アップデーターをもう一度起動します...")
+    print("auto-updater.py got updated. Run updater again...\n")
+    os.chdir(os.getcwd())
+    os.execv(os.sys.executable,['python', *sys.argv])
 
+flag = False
 CheckUpdate("index.py", githuburl)
 if CheckUpdate("requirements.txt", githuburl):
-    print("requirements.txtの更新を確認しました。INSTALL.batを起動してください")
-    print("requirements.txt got updated. Please run INSTALL.bat\n")
+    print("requirements.txtの更新を確認しました。INSTALLを実行します")
+    print("requirements.txt got updated. Run INSTALL\n")
+    flag = True
 
 CheckUpdate("config.json", githuburl)
 CheckUpdate("commands.json", githuburl)
@@ -164,6 +216,17 @@ CheckUpdate("lang/en.json", githuburl)
 CheckUpdate("lang/es.json", githuburl)
 CheckUpdate("lang/ja.json", githuburl)
 CheckUpdate("LICENSE", githuburl)
+
+CheckUpdate("templates/clients_viewer.html", githuburl)
+CheckUpdate("templates/commands_editor.html", githuburl)
+CheckUpdate("templates/config_editor.html", githuburl)
+CheckUpdate("templates/login.html", githuburl)
+CheckUpdate("templates/main.html", githuburl)
+CheckUpdate("templates/not_found.html", githuburl)
+CheckUpdate("templates/party_viewer.html", githuburl)
+CheckUpdate("templates/images/crown.png", githuburl)
+CheckUpdate("templates/images/icon.png", githuburl)
+CheckUpdate("templates/images/placeholder.png", githuburl)
 if not os.getcwd().startswith('/app'):
     CheckUpdate("Check update.bat", githuburl)
     CheckUpdate("INSTALL IFNOTWORK.bat", githuburl)
@@ -179,3 +242,7 @@ if CheckUpdate("README_ES.md", githuburl):
 
 print("全ての更新が完了しました")
 print("All update finished")
+if flag:
+    os.chdir(os.getcwd())
+    os.execv(os.sys.executable,['python3', "-m", "pip", "install", "--user", "-U", "-r", "requirements.txt"])
+    sys.exit(0)

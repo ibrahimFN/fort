@@ -77,6 +77,14 @@
 		"whitelist-ignorelock": true,
 		"whitelist-ownercommand": true
 	},
+	"web": {
+		"enabled": true,
+		"ip": "{ip}",
+		"port": 8080,
+		"password": "pass",
+		"web": true,
+		"log": false
+	},
 	"lang": "ja",
 	"no-logs": false,
 	"ingame-error": true,
@@ -88,5 +96,6 @@
 	"webhook": "",
 	"caseinsensitive": true,
 	"loglevel": "normal",
-	"debug": false
+    "debug": false,
+    "status": 0
 }

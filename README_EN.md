@@ -1,4 +1,6 @@
 # Fortnite-LobbyBot
+[![Python Versions](https://img.shields.io/badge/3.7%20%7C%203.8-blue)](https://www.python.org/downloads/)  
+<a href="https://discord.gg/NEnka5N"><img src="https://discordapp.com/api/guilds/718709023427526697/widget.png?style=banner2"></img></a>  
 A Fortnite bot using fortnitepy  
 You can control bot by sending command  
 
@@ -10,11 +12,13 @@ https://github.com/gomashio1596/Fortnite-LobbyBot
 [Python 3.7](https://www.python.org/downloads "Python Download") or higher is required  
 
 Run INSTALL.bat  
-Write details in config  
-Write any command name in commands  
 Run RUN.bat  
+Write details in site which opened  
+You can write other details by reload tab  
 
 # Glitch
+https://glitch.com
+Click Sign in on the top right  
 https://glitch.com/~fortnite-lobbybot  
 Click project name and click Remix Project to remix  
 Click project name(your project) and click Make This Project Private to make project private  
@@ -23,8 +27,9 @@ and login and click Dashboard
 Click \+ Monitor and click Share in Glitch and copy URL in Live App and go to uptimerobot,  
 Monitor Type set to HTTP(s) and paste in URL  
 Make any name in Friendly Name and click Create Monitor  
-Write details in config  
-Write any command name in commands  
+Back to Glitch and click show on the top, and click In a New Window  
+Write details in site which opened  
+You can write other details by reload tab  
 
 # config
 ```
@@ -94,6 +99,14 @@ whitelist                 : List of whitelist users. user ID
 whitelist-ignorelock      : Config whether whitelisted users can ignore locks. true or false
 whitelist-ownercommand    : Config whether whitelisted users can use owner commands. true or false
 
+Web
+enabled                   : Config whether will boot web server. true or false
+ip                        : IP address for web server. See below
+port                      : Port for web server
+password                  : Password for web server
+web                       : Config whether bot will accept command from web. true or false
+log                       : Config whether print web server access log
+
 lang                      : Bot's lang
 no-logs                   : Config whether print logs in console. true or false
 ingame-error              : Config whether send errors to player. true or false
@@ -147,6 +160,7 @@ emotemimic                                : emotemimic [true / false] Config whe
 whisper                                   : whisper [true / false] Cofig whether bot will accept command from whisper
 partychat                                 : partychat [true / false] Cofig whether bot will accept command from party chat
 discord                                   : discord [true / false] Cofig whether bot will accept command from Discord
+web                                       : web [true / false] Config whether bot will accept command from web
 disablewhisperperfectly                   : whisperperfect [true / false] Config for if whisper is disabled, whether decline command from owner too
 disablepartychatperfectly                 : partychatperfect [true / false] Config for if party chat is disabled, whether decline command from owner too
 disablediscordperfectly                   : discordperfect [true / false] Config for if Discord is disabled, whether decline command from owner too
@@ -255,6 +269,7 @@ Switch      : SWT
 IOS         : IOS
 Android     : AND
 ```
+
 Privacy  
 ```
 public                           : Public
@@ -263,6 +278,7 @@ friends                          : Friend
 private_allow_friends_of_friends : Private(Allow friends of friends)
 private                          : Private
 ```
+
 Channel name  
 Usable variables  
 ```
@@ -282,6 +298,12 @@ and bot's name is
 ```
 Test Bot1
 Test Bot2
+```
+
+IP
+Usable variables  
+```
+{ip}                             : Default IP
 ```
 
 variant  

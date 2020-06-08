@@ -33,6 +33,7 @@
 	"whisper": "whisper",
 	"partychat": "partychat",
 	"discord": "discord",
+	"web": "web",
 	"disablewhisperperfectly": "whisperperfect",
 	"disablepartychatperfectly": "partychatperfect",
 	"disablediscordperfectly": "discordperfect",

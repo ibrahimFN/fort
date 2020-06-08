@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html style="background-image: url('/images/background.png'); background-color: #000000; background-size: cover; width: 100%; height: 100%;">
+<head>
+    <meta charset="UTF-8">
+    <title>{{l('party_viewer')}}</title>
+</head>
+<body text="#fffffff">
+    <h3>
+        <a href="/">{{l('web_back')}}</a>
+    </h3>
+    {% for count,client in enumerate(clients) %}
+        {% if not client.isready %}
+            {% set add = "" %}
+        {% else %}
+            {% set add = "({0} / {1})".format(client.user.display_name,client.user.id) %}
+        {% endif %}
+        <p>
+            <a href="/clients{{count}}">{{"{0}{1}{2}".format(l('bot'),count+1,add)}}</a>
+        </p>
+    {% endfor %}
+</body>
+</html>

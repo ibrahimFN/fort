@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html style="background-image: url('/images/background.png'); background-color: #000000; background-size: cover; width: 100%; height: 100%;">
+<head>
+    <meta charset="UTF-8">
+    <title>{{l('main_page')}}</title>
+</head>
+<body text="#fffffff">
+    <p>
+        {% if authenticated %}
+            <p style="color: #57ff33">{{l('web_logged')}}</p>
+            <p>
+                <a href="/logout">{{l('web_logout')}}</a>
+            </p>
+            <p>
+                <a href="/config_editor">{{l('config_editor')}}</a>
+            </p>
+            <p>
+                <a href="/commands_editor">{{l('commands_editor')}}</a>
+            </p>
+            <p>
+                <a href="/replies_editor">{{l('replies_editor')}}</a>
+            </p>
+            <p>
+                <a href="/party_viewer">{{l('party_viewer')}}</a>
+            </p>
+        {% else %}
+            <p style="color: #ff0000">{{l('web_not_logged')}}</p>
+            <p>
+                <a href="/login">{{l('web_login')}}</a>
+            </p>
+        {% endif %}
+    </p>
+</body>
+</html>

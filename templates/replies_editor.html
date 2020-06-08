@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html style="background-image: url('/images/background.png'); background-color: #000000; background-size: cover; width: 100%; height: 100%;">
+<style>
+    span {
+        width: 30%;
+        float: left;
+    }
+
+    input {
+        width: 30%;
+    }
+</style>
+<head>
+    <meta charset="UTF-8">
+    <title>{{l('replies_editor')}}</title>
+</head>
+<script>
+    function add(t) {
+        var num = 0;
+        var element = "";
+        while (element != null) {
+            element = document.getElementById("trigger" + String(num));
+            num++;
+        }
+        num--;
+
+        var node = t.parentNode.cloneNode(true);
+        node.childNodes[1].setAttribute("id","trigger" + String(num));
+        node.childNodes[1].setAttribute("name","trigger" + String(num));
+        node.childNodes[1].removeAttribute("value");
+        node.childNodes[1].value = ""
+        node.childNodes[3].setAttribute("id","content" + String(num));
+        node.childNodes[3].setAttribute("name","content" + String(num));
+        node.childNodes[3].removeAttribute("value","");
+        node.childNodes[3].value = ""
+        t.parentNode.parentNode.insertBefore(node, t.parentNode.nextSibling);
+        element = document.getElementById("number");
+        element.setAttribute("value",Number(element.value) + 1)
+    }
+    function remove(t) {
+        var target = t.parentNode
+        if (target.parentNode.childElementCount > 3) {
+            target.parentNode.removeChild(target)
+        }
+    }
+</script>
+<body text="#fffffff">
+    <h3>
+        <a href="/">{{l('web_back')}}</a>
+    </h3>
+    {% for message in flash_messages %}
+        <p style="color: #57ff33">{{message}}</p>
+    {% endfor %}
+    {% for message in flash_messages_red %}
+        <p style="color: #ff0000">{{message}}</p>
+    {% endfor %}
+    <form action="" method="post" id="form">
+        {% set number = 0 %}
+        {% for num,items in enumerate(data.items()) %}
+            {% set key = items[0] %}
+            {% set value = items[1] %}
+            <div>
+                <input type="text" id="trigger{{num}}" name="trigger{{num}}" placeholder="{{l('trigger')}}" value="{{key.replace('\n','\\n')}}">
+                →
+                <input type="text" id="content{{num}}" name="content{{num}}" placeholder="{{l('text')}}" value="{{value.replace('\n','\\n')}}">
+                <button type="button" onclick="add(this)">+</button>
+                <button type="button" onclick="remove(this)">-</button>
+            </div>
+        {% endfor %}
+        <button type="submit">{{l('web_save')}}</button>
+    </form>
+    <script>
+        var form = document.getElementById("form");
+        var element = document.createElement("input");
+        element.setAttribute("type","hidden");
+        element.setAttribute("id","number");
+        element.setAttribute("name","number");
+        element.setAttribute("value",String(form.childElementCount - 1))
+        form.insertBefore(element, form.parentElement.nextSibling);
+    </script>
+</body>
+</html>

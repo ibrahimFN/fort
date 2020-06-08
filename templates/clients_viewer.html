@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html style="background-image: url('/images/background.png'); background-color: #000000; background-size: cover; width: 100%; height: 100%;">
+<style>
+    textarea {
+        width: 50%;
+    }
+</style>
+<head>
+    <meta charset="UTF-8">
+    <title>{{l('party_viewer')}}</title>
+</head>
+<script>
+    function update() {
+        const request = new XMLHttpRequest();
+        var text = ""
+        var num = location.pathname.split("/");
+        num = num[num.length - 1].replace("clients", "")
+        request.open("GET", "./clients_info/" + num, true);
+        request.responseType = 'json';
+        request.send("");
+        request.onreadystatechange = function() {
+            if (this.readyState == 4) {
+                if (typeof this.response["error"] === "undefined") {
+                    text += '<h3>' + "{{l('party')}}" + " / " + this.response["party_id"] + '</h3>'
+                    if (this.response["members"].length > 1) {
+                        this.response["members"].forEach(function(member) {
+                            var parts = [member["outfit"], member["backpack"], member["pickaxe"], member["emote"]]
+                            if (member["leader"]) {
+                                text += '<h4>' + '<img src="/images/crown.png">' + member["display_name"] + " / " + member["id"] + '</h4>'
+                            } else {
+                                text += '<h4>' + member["display_name"] + " / " + member["id"] + '</h4>'
+                            }
+                            parts.forEach(function(part) {
+                                if (part == null) {
+                                    text += '<img src="/images/placeholder.png">\n';
+                                } else {
+                                    text += ('<img src="https://fortnite-api.com/images/cosmetics/br/' + part + '/smallicon.png">\n');
+                                }
+                            })
+                        })
+                    } else {
+                        var member = this.response
+                        var parts = [member["outfit"], member["backpack"], member["pickaxe"], member["emote"]]
+                        if (member["leader"]) {
+                            text += '<h4>' + '<img src="/images/crown.png">' + member["display_name"] + " / " + member["id"] + '</h4>' 
+                        } else {
+                            text += '<h4>' + member["display_name"] + " / " + member["id"] + '</h4>'
+                        }
+                        parts.forEach(function(part) {
+                            if (part == null) {
+                                text += '<img src="/images/placeholder.png">\n';
+                            } else {
+                                text += ('<img src="https://fortnite-api.com/images/cosmetics/br/' + part + '/smallicon.png">\n');
+                            }
+                        })
+                    }
+                    document.getElementById("members").innerHTML = text; 
+                } else if (this.response["error"] == "account_not_exists") {
+                    document.getElementById("members").innerHTML = "{{l('account_not_exists')}}";
+                } else if (this.response["error"] == "account_not_loaded") {
+                    document.getElementById("members").innerHTML = "{{l('account_not_loaded')}}";
+                } else if (this.response["error"] == "party_moving") {
+                    document.getElementById("members").innerHTML = "{{l('party_moving')}}";
+                }
+            } 
+        }
+    }
+    update();
+    setInterval('update()',5000);
+</script>
+<body text="#fffffff">
+    <h3>
+        <a href="/party_viewer">{{l('web_back')}}</a>
+    </h3>
+    <p>{{l('command')}}</p>
+    <form action="" method="post">
+        <textarea name="command" rows="5" placeholder="{{l('command')}}"></textarea>
+        <button type="submit">{{l('run')}}</button>
+    </form>
+    {% if len(flash_messages) > 0 %}
+        <p>{{l('result')}}</p>
+        {% for message in flash_messages %}
+            <p>{{message}}</p>
+        {% endfor %}
+    {% endif %}
+    <div id="members">
+        <p>{{l('loading')}}</p>
+    </div>
+</body>
+</html>
