@@ -27,7 +27,9 @@ try:
     from typing import Optional, Union, Type, Any, List
     from functools import partial, wraps
     from threading import Thread, Timer
+    from glob import glob
     import unicodedata
+    import webbrowser
     import threading
     import traceback
     import datetime
@@ -36,6 +38,7 @@ try:
     import random
     import string
     import socket
+    import json
     import time
     import sys
     import os
@@ -69,7 +72,6 @@ try:
     import requests
     import discord
     import jaconv
-    import json
 except ModuleNotFoundError as e:
     try:
         import traceback
@@ -102,7 +104,7 @@ invitelist_flag = True
 otherbotlist_flag = True
 discord_flag = True
 kill=False
-localizekeys=['bot','lobbybot','credit','library','loglevel','normal','info','debug','debug_is_on','on','off','booting','get_code','authorization_expired','waiting_for_authorization','logged_in_as','login','all_login','relogin','owner','party','userid','name_or_id','partyid','content','number','eval','exec','invite_is_decline','restarting','relogining','success','accepted_invite_from','accepted_invite_from2','declined_invite_from','declined_invite_from2','declined_invite_interval','declined_invite_interval2','declined_invite_interval3','declined_invite_owner','declined_invite_owner2','declined_invite_owner3','declined_invite_whitelist','declined_invite_whitelist2','declined_invite_whitelist3','party_member_joined','party_member_left','party_member_request','party_member_kick','party_member_promote','party_member_update','party_member_disconnect','party_member_chatban','party_member_chatban2','party_update','random_message','click_invite','inviteaccept','inviteinterval','invite_from','invite_from2','friend_request_to','friend_request_from','friend_request_decline','friend_accept','friend_add','friend_remove','this_command_owneronly','failed_ownercommand','error_while_declining_partyrequest','error_while_accepting_friendrequest','error_while_declining_friendrequest','error_while_sending_friendrequest','error_while_removing_friendrequest','error_while_removing_friend','error_while_accepting_invite','error_while_declining_invite','error_while_blocking_user','error_while_unblocking_user','error_while_requesting_userinfo','error_while_joining_to_party','error_while_leaving_party','error_while_sending_partyinvite','error_while_changing_asset','error_while_changing_bpinfo','error_while_promoting_party_leader','error_while_kicking_user','error_while_swapping_user','error_while_setting_client','error_already_member_of_party','error_netcl_does_not_match','error_private_party','login_failed','failed_to_load_account','failed_to_run_web','web_already_running','exchange_code_error','api_downing','api_downing2','not_enough_password','owner_notfound','discord_owner_notfound','blacklist_user_notfound','whitelist_user_notfound','discord_blacklist_user_notfound','discord_whitelist_user_notfound','botlist_user_notfound','invitelist_user_notfound','not_friend_with_owner','not_friend_with_inviteuser','not_friend_with_user','nor_pending_with_user','not_party_leader','load_failed_keyerror','load_failed_json','load_failed_notfound','is_missing','too_many_users','too_many_items','user_notfound','user_not_in_party','party_full_or_already_or_offline','party_full_or_already','party_notfound','party_private','not_available','must_be_int','item_notfound','error','add_to_list','already_list','remove_from_list','not_list','enter_to_add_to_list','enter_to_remove_from_list','blacklist','whitelist','discord_blacklist','discord_whitelist','invitelist','botlist','enter_to_get_userinfo','friendcount','pendingcount','outbound','inbound','blockcount','set_to','mimic','outfit','backpack','pet','pickaxe','emote','emoji','toy','command_from','whisper','partychat','discord','disable_perfect','invite','accept','decline','friend_request','join_','message','randommessage','decline_invite_for','enter_to_join_party','party_leave','user_invited','enter_to_invite_user','user_sent','enter_to_send','party_sent','status','banner','bannerid','color','level','bpinfo','tier','xpboost','friendxpboost','privacy','public','friends_allow_friends_of_friends','friends','private_allow_friends_of_friends','private','lastlogin','member_count','enter_to_show_info','itemname','remove_pending','already_friend','enter_to_send_friendrequest','remove_friend','enter_to_remove_friend','enter_to_accept_pending','enter_to_decline_pending','already_block','block_user','enter_to_block_user','not_block','unblock_user','enter_to_unblock_user','optional','reason','chatban_user','already_chatban','enter_to_chatban_user','promote_user','already_party_leader','enter_to_promote_user','kick_user','cant_kick_yourself','readystate','ready','unready','sitout','matchstate','remaining','remaining_must_be_between_0_and_255','swap_user','enter_to_swap_user','lock','stopped','locked','all_end','enter_to_change_asset','setname','no_stylechange','enter_to_set_style','assetpath','set_playlist','please_enter_valid_number','web','web_login','web_logout','web_logged','web_not_logged','invalid_password','main_page','config_editor','commands_editor','party_viewer','password','web_save','web_saved','web_back','account_not_exists','account_not_loaded','party_moving','loading','command','run','result','web_notfound']
+localizekeys=['bot','lobbybot','credit','library','loglevel','normal','info','debug','debug_is_on','on','off','booting','get_code','authorization_expired','waiting_for_authorization','logged_in_as','login','all_login','relogin','owner','party','userid','name_or_id','partyid','content','number','eval','exec','invite_is_decline','restarting','relogining','success','accepted_invite_from','accepted_invite_from2','declined_invite_from','declined_invite_from2','declined_invite_interval','declined_invite_interval2','declined_invite_interval3','declined_invite_owner','declined_invite_owner2','declined_invite_owner3','declined_invite_whitelist','declined_invite_whitelist2','declined_invite_whitelist3','party_member_joined','party_member_left','party_member_request','party_member_kick','party_member_promote','party_member_update','party_member_disconnect','party_member_chatban','party_member_chatban2','party_update','random_message','click_invite','inviteaccept','inviteinterval','invite_from','invite_from2','friend_request_to','friend_request_from','friend_request_decline','friend_accept','friend_add','friend_remove','this_command_owneronly','failed_ownercommand','error_while_declining_partyrequest','error_while_accepting_friendrequest','error_while_declining_friendrequest','error_while_sending_friendrequest','error_while_removing_friendrequest','error_while_removing_friend','error_while_accepting_invite','error_while_declining_invite','error_while_blocking_user','error_while_unblocking_user','error_while_requesting_userinfo','error_while_joining_to_party','error_while_leaving_party','error_while_sending_partyinvite','error_while_changing_asset','error_while_changing_bpinfo','error_while_promoting_party_leader','error_while_kicking_user','error_while_swapping_user','error_while_setting_client','error_already_member_of_party','error_netcl_does_not_match','error_private_party','login_failed','failed_to_load_account','failed_to_run_web','web_already_running','exchange_code_error','api_downing','api_downing2','not_enough_password','owner_notfound','discord_owner_notfound','blacklist_user_notfound','whitelist_user_notfound','discord_blacklist_user_notfound','discord_whitelist_user_notfound','botlist_user_notfound','invitelist_user_notfound','not_friend_with_owner','not_friend_with_inviteuser','not_friend_with_user','nor_pending_with_user','not_party_leader','load_failed_keyerror','load_failed_json','load_failed_notfound','is_missing','too_many_users','too_many_items','user_notfound','user_not_in_party','party_full_or_already_or_offline','party_full_or_already','party_notfound','party_private','not_available','must_be_int','item_notfound','error','add_to_list','already_list','remove_from_list','not_list','enter_to_add_to_list','enter_to_remove_from_list','blacklist','whitelist','discord_blacklist','discord_whitelist','invitelist','botlist','enter_to_get_userinfo','friendcount','pendingcount','outbound','inbound','blockcount','set_to','mimic','outfit','backpack','pet','pickaxe','emote','emoji','toy','command_from','whisper','partychat','discord','disable_perfect','invite','accept','decline','friend_request','join_','message','randommessage','decline_invite_for','enter_to_join_party','party_leave','user_invited','enter_to_invite_user','user_sent','enter_to_send','party_sent','status','banner','bannerid','color','level','bpinfo','tier','xpboost','friendxpboost','privacy','public','friends_allow_friends_of_friends','friends','private_allow_friends_of_friends','private','lastlogin','member_count','enter_to_show_info','itemname','remove_pending','already_friend','enter_to_send_friendrequest','remove_friend','enter_to_remove_friend','enter_to_accept_pending','enter_to_decline_pending','already_block','block_user','enter_to_block_user','not_block','unblock_user','enter_to_unblock_user','optional','reason','chatban_user','already_chatban','enter_to_chatban_user','promote_user','already_party_leader','enter_to_promote_user','kick_user','cant_kick_yourself','readystate','ready','unready','sitout','matchstate','remaining','remaining_must_be_between_0_and_255','swap_user','enter_to_swap_user','lock','stopped','locked','all_end','enter_to_change_asset','setname','no_stylechange','enter_to_set_style','assetpath','set_playlist','please_enter_valid_number','web','web_login','web_logout','web_logged','web_not_logged','invalid_password','main_page','config_editor','commands_editor','party_viewer','password','web_save','web_saved','web_back','account_not_exists','account_not_loaded','party_moving','loading','command','run','result','web_notfound','password_reset_error','this_field_is_required','replies_editor','trigger','text','cannot_be_empty']
 ignore=['ownercommands','true','false','me', 'privacy_public', 'privacy_friends_allow_friends_of_friends', 'privacy_friends', 'privacy_private_allow_friends_of_friends', 'privacy_private', 'info_party']
 launcher_token = fortnitepy.Auth().ios_token
 oauth_url = "https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/token"
@@ -311,7 +313,7 @@ def reload_configs(client: fortnitepy.Client) -> bool:
         if data['loglevel'] == 'debug':
             print(yellow(f'\n{data}\n'))
             dstore(l("bot"),f'\n```\n{data}\n```\n')
-        for key in configkeys:
+        for key in config_tags.keys():
             exec(f"errorcheck=data{key}")
         flag = False
         try:
@@ -549,7 +551,7 @@ def reload_configs(client: fortnitepy.Client) -> bool:
         if data['loglevel'] == 'debug':
             print(yellow(f'\n{commands}\n'))
             dstore(l("bot"),f'\n```\n{commands}\n```\n')
-        for key in commandskeys:
+        for key in commands_tags.keys():
             exec(f"errorcheck=commands['{key}']")
         if data['caseinsensitive'] is True:
             commands=dict((k.lower(), jaconv.kata2hira(v.lower())) for k,v in commands.items())
@@ -855,6 +857,11 @@ def exchange(access_token: str) -> str:
         }
     )
     return res.json()["code"]
+
+def uptime() -> None:
+    while True:
+        requests.head(f"http://{data['web']['ip']}:{data['web']['port']}")
+        time.sleep(3)
 
 async def reply(message: Union[Type[fortnitepy.message.MessageBase], Type[discord.Message]], content: str) -> None:
     if isinstance(message, fortnitepy.message.MessageBase) is True:
@@ -1191,6 +1198,18 @@ async def aexec(code: str, variable: dict) -> Any:
         exec(exc)
     return result
 
+class bool_:
+    @classmethod
+    def create(self, content: str) -> bool:
+        d = {"False": False, "True": True}
+        return d.get(content, False)
+
+class bool_none:
+    @classmethod
+    def create(self, content: str) -> Optional[bool]:
+        d = {"False": False, "True": True, "None": None}
+        return d.get(content, False)
+
 config_tags={
     "['fortnite']": [dict],
     "['fortnite']['email']": [str,"can_be_multiple"],
@@ -1210,71 +1229,71 @@ config_tags={
     "['fortnite']['friendxpboost']": [int],
     "['fortnite']['status']": [str],
     "['fortnite']['privacy']": [str,"select_privacy"],
-    "['fortnite']['whisper']": [bool,"select_bool"],
-    "['fortnite']['partychat']": [bool,"select_bool"],
-    "['fortnite']['disablewhisperperfectly']": [bool,"select_bool"],
-    "['fortnite']['disablepartychatperfectly']": [bool,"select_bool"],
-    "['fortnite']['ignorebot']": [bool,"select_bool"],
+    "['fortnite']['whisper']": [bool_,"select_bool"],
+    "['fortnite']['partychat']": [bool_,"select_bool"],
+    "['fortnite']['disablewhisperperfectly']": [bool_,"select_bool"],
+    "['fortnite']['disablepartychatperfectly']": [bool_,"select_bool"],
+    "['fortnite']['ignorebot']": [bool_,"select_bool"],
     "['fortnite']['joinmessage']": [str],
     "['fortnite']['randommessage']": [str,"can_be_multiple"],
-    "['fortnite']['joinmessageenable']": [bool,"select_bool"],
-    "['fortnite']['randommessageenable']": [bool,"select_bool"],
-    "['fortnite']['outfitmimic']": [bool,"select_bool"],
-    "['fortnite']['backpackmimic']": [bool,"select_bool"],
-    "['fortnite']['pickaxemimic']": [bool,"select_bool"],
-    "['fortnite']['emotemimic']": [bool,"select_bool"],
-    "['fortnite']['acceptinvite']": [bool,"select_bool"],
-    "['fortnite']['acceptfriend']": [bool,"select_bool_none"],
-    "['fortnite']['addfriend']": [bool,"select_bool"],
-    "['fortnite']['invite-ownerdecline']": [bool,"select_bool"],
-    "['fortnite']['inviteinterval']": [bool,"select_bool"],
+    "['fortnite']['joinmessageenable']": [bool_,"select_bool"],
+    "['fortnite']['randommessageenable']": [bool_,"select_bool"],
+    "['fortnite']['outfitmimic']": [bool_,"select_bool"],
+    "['fortnite']['backpackmimic']": [bool_,"select_bool"],
+    "['fortnite']['pickaxemimic']": [bool_,"select_bool"],
+    "['fortnite']['emotemimic']": [bool_,"select_bool"],
+    "['fortnite']['acceptinvite']": [bool_,"select_bool"],
+    "['fortnite']['acceptfriend']": [bool_none,"select_bool_none"],
+    "['fortnite']['addfriend']": [bool_,"select_bool"],
+    "['fortnite']['invite-ownerdecline']": [bool_,"select_bool"],
+    "['fortnite']['inviteinterval']": [bool_,"select_bool"],
     "['fortnite']['interval']": [int],
     "['fortnite']['waitinterval']": [int],
     "['fortnite']['blacklist']": [list,"can_be_multiple"],
-    "['fortnite']['blacklist-declineinvite']": [bool,"select_bool"],
-    "['fortnite']['blacklist-autoblock']": [bool,"select_bool"],
-    "['fortnite']['blacklist-autokick']": [bool,"select_bool"],
-    "['fortnite']['blacklist-autochatban']": [bool,"select_bool"],
-    "['fortnite']['blacklist-ignorecommand']": [bool,"select_bool"],
+    "['fortnite']['blacklist-declineinvite']": [bool_,"select_bool"],
+    "['fortnite']['blacklist-autoblock']": [bool_,"select_bool"],
+    "['fortnite']['blacklist-autokick']": [bool_,"select_bool"],
+    "['fortnite']['blacklist-autochatban']": [bool_,"select_bool"],
+    "['fortnite']['blacklist-ignorecommand']": [bool_,"select_bool"],
     "['fortnite']['whitelist']": [list,"can_be_multiple"],
-    "['fortnite']['whitelist-allowinvite']": [bool,"select_bool"],
-    "['fortnite']['whitelist-declineinvite']": [bool,"select_bool"],
-    "['fortnite']['whitelist-ignorelock']": [bool,"select_bool"],
-    "['fortnite']['whitelist-ownercommand']": [bool,"select_bool"],
+    "['fortnite']['whitelist-allowinvite']": [bool_,"select_bool"],
+    "['fortnite']['whitelist-declineinvite']": [bool_,"select_bool"],
+    "['fortnite']['whitelist-ignorelock']": [bool_,"select_bool"],
+    "['fortnite']['whitelist-ownercommand']": [bool_,"select_bool"],
     "['fortnite']['invitelist']": [list,"can_be_multiple"],
     "['fortnite']['otherbotlist']": [list,"can_be_multiple"],
     "['discord']": [dict],
-    "['discord']['enabled']": [bool,"select_bool"],
+    "['discord']['enabled']": [bool_,"select_bool"],
     "['discord']['token']": [str],
     "['discord']['owner']": [int],
     "['discord']['channelname']": [str],
     "['discord']['status']": [str],
-    "['discord']['discord']": [bool,"select_bool"],
-    "['discord']['disablediscordperfectly']": [bool,"select_bool"],
-    "['discord']['ignorebot']": [bool,"select_bool"],
+    "['discord']['discord']": [bool_,"select_bool"],
+    "['discord']['disablediscordperfectly']": [bool_,"select_bool"],
+    "['discord']['ignorebot']": [bool_,"select_bool"],
     "['discord']['blacklist']": [list,"can_be_multiple"],
-    "['discord']['blacklist-ignorecommand']": [bool,"select_bool"],
+    "['discord']['blacklist-ignorecommand']": [bool_,"select_bool"],
     "['discord']['whitelist']": [list,"can_be_multiple"],
-    "['discord']['whitelist-ignorelock']": [bool,"select_bool"],
-    "['discord']['whitelist-ownercommand']": [bool,"select_bool"],
-    "['web']['enabled']": [bool,"select_bool"],
+    "['discord']['whitelist-ignorelock']": [bool_,"select_bool"],
+    "['discord']['whitelist-ownercommand']": [bool_,"select_bool"],
+    "['web']['enabled']": [bool_,"select_bool"],
     "['web']['ip']": [str],
     "['web']['port']": [int],
     "['web']['password']": [str],
-    "['web']['web']": [bool,"select_bool"],
-    "['web']['log']": [bool,"select_bool"],
-    "['lang']": [str],
-    "['no-logs']": [bool,"select_bool"],
-    "['ingame-error']": [bool,"select_bool"],
-    "['discord-log']": [bool,"select_bool"],
-    "['hide-email']": [bool,"select_bool"],
-    "['hide-password']": [bool,"select_bool"],
-    "['hide-token']": [bool,"select_bool"],
-    "['hide-webhook']": [bool,"select_bool"],
+    "['web']['web']": [bool_,"select_bool"],
+    "['web']['log']": [bool_,"select_bool"],
+    "['lang']": [str,"select_lang"],
+    "['no-logs']": [bool_,"select_bool"],
+    "['ingame-error']": [bool_,"select_bool"],
+    "['discord-log']": [bool_,"select_bool"],
+    "['hide-email']": [bool_,"select_bool"],
+    "['hide-password']": [bool_,"select_bool"],
+    "['hide-token']": [bool_,"select_bool"],
+    "['hide-webhook']": [bool_,"select_bool"],
     "['webhook']": [str],
-    "['caseinsensitive']": [bool,"select_bool"],
+    "['caseinsensitive']": [bool_,"select_bool"],
     "['loglevel']": [str,"select_loglevel"],
-    "['debug']": [bool,"select_bool"]
+    "['debug']": [bool_,"select_bool"]
 }
 commands_tags={
     "['ownercommands']": [str,"can_be_multiple"],
@@ -1477,6 +1496,11 @@ except FileNotFoundError:
     dstore('ボット',f'>>> config.json ファイルが存在しません。')
     dstore('Bot',f'>>> config.json file does not exist.')
     sys.exit(1)
+
+if data["status"] == 0:
+    config_tags["['fortnite']['email']"].append("red")
+    config_tags["['fortnite']['password']"].append("red")
+    config_tags["['web']['password']"].append("red")
 
 if os.path.isfile(f"lang/{data['lang']}.json"):
     try:
@@ -1953,8 +1977,8 @@ if True:
             try:
                 user = await client.fetch_profile(invitelistuser)
                 if user is None:
-                    print(red(f'[{now_()}] [{client.user.display_name}] {l("invitelist_user_notfound")}'))
-                    dstore(client.user.display_name,f'>>> {l("invitelist_user_notfound")}')
+                    print(red(f'[{now_()}] [{client.user.display_name}] {l("invitelist_user_notfound", invitelistuser)}'))
+                    dstore(client.user.display_name,f'>>> {l("invitelist_user_notfound", invitelistuser)}')
                 else:
                     friend = client.get_friend(user.id)
                     if friend is None and user.id != client.user.id:
@@ -6614,6 +6638,10 @@ if data['discord']['enabled'] is True:
 #========================================================================================================================
 #========================================================================================================================
 
+threading.Thread(target=dprint,args=()).start()
+if data["status"] != 0:
+    threading.Thread(target=get_item_info,args=()).start()
+
 clients = []
 for count, credential in enumerate(credentials.items()):
     email = credential[0]
@@ -6716,16 +6744,19 @@ class select:
     def __init__(self, content: List[dict]) -> None:
         self.content = content
 
+class Red:
+    pass
+
 select_bool = select(
     [
         {"value": "True","display_value": "true"},
-        {"value": "False","display_value": "frue"}
+        {"value": "False","display_value": "false"}
     ]
 )
 select_bool_none = select(
     [
         {"value": "True","display_value": "true"},
-        {"value": "False","display_value": "frue"},
+        {"value": "False","display_value": "false"},
         {"value": "None","display_value": "null"}
     ]
 )
@@ -6756,6 +6787,11 @@ select_loglevel = select(
         {"value": "debug","display_value": l('debug')}
     ]
 )
+select_lang = select(
+    [
+        {"value": i.replace("lang\\","").replace(".json",""),"display_value": i.replace("lang\\","").replace(".json","")} for i in glob("lang/*.json")
+    ]
+)
 
 for key,value in config_tags.items():
     for count,tag in enumerate(value):
@@ -6771,417 +6807,632 @@ for key,value in config_tags.items():
             config_tags[key][count] = select_privacy
         elif tag == "select_loglevel":
             config_tags[key][count] = select_loglevel
+        elif tag == "select_lang":
+            config_tags[key][count] = select_lang
+        elif tag == "red":
+            config_tags[key][count] = Red
 for key,value in commands_tags.items():
     for count,tag in enumerate(value):
         if tag == "can_be_multiple":
             commands_tags[key][count] = can_be_multiple
 
 app=Sanic(__name__)
-app.secret_key = "pass"
+app.secret_key = os.urandom(32)
 
-env = Environment(loader=FileSystemLoader('./templates', encoding='utf8'))
-def render_template(file: str, **kwargs: Any) -> str:
-    template = env.get_template(file)
-    return sanic.response.html(template.render(**kwargs))
+if True:
+    env = Environment(loader=FileSystemLoader('./templates', encoding='utf8'))
+    def render_template(file: str, **kwargs: Any) -> str:
+        template = env.get_template(file)
+        return sanic.response.html(template.render(**kwargs))
 
-class LoginManager:
-    def __init__(self) -> None:
-        self.id_len = 64
-        self.expire_time = datetime.timedelta(minutes=10)
-        self.expires = {}
-        self.cookie_key = "X-SessionId"
-        self.no_auth_handler_ = sanic.response.html("Unauthorized")
+    class LoginManager:
+        def __init__(self) -> None:
+            self.id_len = 64
+            self.expire_time = datetime.timedelta(minutes=10)
+            self.expires = {}
+            self.cookie_key = "X-SessionId"
+            self.no_auth_handler_ = sanic.response.html("Unauthorized")
 
-    def generate_id(self, request) -> str:
-        Id = "".join(random.choices(string.ascii_letters + string.digits, k=self.id_len))
-        while Id in self.expires.keys():
+        def generate_id(self, request) -> str:
             Id = "".join(random.choices(string.ascii_letters + string.digits, k=self.id_len))
-        return Id
+            while Id in self.expires.keys():
+                Id = "".join(random.choices(string.ascii_letters + string.digits, k=self.id_len))
+            return Id
 
-    def authenticated(self, request) -> bool:
-        Id = request.cookies.get(self.cookie_key)
-        if Id is None:
-            return False
-        elif Id in self.expires.keys():
-            return True
-        else:
-            return False
+        def authenticated(self, request) -> bool:
+            Id = request.cookies.get(self.cookie_key)
+            if Id is None:
+                return False
+            elif Id in self.expires.keys():
+                return True
+            else:
+                return False
 
-    def login_user(self, request, responce) -> None:
-        Id = self.generate_id(request)
-        responce.cookies[self.cookie_key] = Id
-        self.expires[Id] = datetime.datetime.utcnow() + self.expire_time
-
-    def logout_user(self, request, responce) -> None:
-        Id = request.cookies.get(self.cookie_key)
-        if Id is not None:
-            del responce.cookies[self.cookie_key]
+        def login_user(self, request, responce) -> None:
+            Id = self.generate_id(request)
+            responce.cookies[self.cookie_key] = Id
             self.expires[Id] = datetime.datetime.utcnow() + self.expire_time
-            
-    def login_required(self, func):
-        @wraps(func)
-        def deco(*args, **kwargs):
-            request = args[0]
-            if self.authenticated(request) is True:
+
+        def logout_user(self, request, responce) -> None:
+            Id = request.cookies.get(self.cookie_key)
+            if Id is not None:
+                del responce.cookies[self.cookie_key]
+                self.expires[Id] = datetime.datetime.utcnow() + self.expire_time
+                
+        def login_required(self, func):
+            @wraps(func)
+            def deco(*args, **kwargs):
+                request = args[0]
+                if self.authenticated(request) is True:
+                    return func(*args, **kwargs)
+                elif isinstance(self.no_auth_handler_, sanic.response.BaseHTTPResponse):
+                    return self.no_auth_handler_
+                elif callable(self.no_auth_handler_):
+                    return self.no_auth_handler_(*args, **kwargs)
+            return deco
+
+        def no_auth_handler(self, func):
+            if asyncio.iscoroutinefunction(func) is False:
+                raise ValueError("Function must be a coroutine")
+            self.no_auth_handler_ = func
+            @wraps(func)
+            def deco(*args, **kwargs):
                 return func(*args, **kwargs)
-            elif isinstance(self.no_auth_handler_, sanic.response.BaseHTTPResponse):
-                return self.no_auth_handler_
-            elif callable(self.no_auth_handler_):
-                return self.no_auth_handler_(*args, **kwargs)
-        return deco
+            return deco
 
-    def no_auth_handler(self, func):
-        if asyncio.iscoroutinefunction(func) is False:
-            raise ValueError("Function must be a coroutine")
-        self.no_auth_handler_ = func
-        @wraps(func)
-        def deco(*args, **kwargs):
-            return func(*args, **kwargs)
-        return deco
+    class WebUser:
+        def __init__(self, sessionId: str) -> None:
+            self._id = sessionId
 
-class WebUser:
-    def __init__(self, sessionId: str) -> None:
-        self._id = sessionId
+        @property
+        def display_name(self) -> None:
+            return "WebUser"
 
-    @property
-    def display_name(self) -> None:
-        return "WebUser"
+        @property
+        def id(self) -> None:
+            return self._id
 
-    @property
-    def id(self) -> None:
-        return self._id
+    class WebMessage:
+        def __init__(self, content: str, sessionId: str, client: fortnitepy.Client) -> None:
+            self._sessionId = sessionId
+            self._content = content
+            self._client = client
+            self._author = WebUser(self._sessionId)
+            self._messages = []
+            
+        @property
+        def author(self) -> str:
+            return self._author
 
-class WebMessage:
-    def __init__(self, content: str, sessionId: str, client: fortnitepy.Client) -> None:
-        self._sessionId = sessionId
-        self._content = content
-        self._client = client
-        self._author = WebUser(self._sessionId)
-        self._messages = []
-        
-    @property
-    def author(self) -> str:
-        return self._author
+        @property
+        def content(self) -> str:
+            return self._content
 
-    @property
-    def content(self) -> str:
-        return self._content
+        @property
+        def client(self) -> str:
+            return self._client
 
-    @property
-    def client(self) -> str:
-        return self._client
+        @property
+        def result(self) -> str:
+            return self._messages
 
-    @property
-    def result(self) -> str:
-        return self._messages
+        async def reply(self, content: str) -> None:
+            self._messages.append(content)
 
-    async def reply(self, content: str) -> None:
-        self._messages.append(content)
+    auth = LoginManager()
 
-auth = LoginManager()
+    @app.route("/favicon.ico", methods=["GET"])
+    async def favicon(request: Request):
+        return sanic.response.redirect("/images/icon.png")
 
-@app.route("/", methods=["GET"])
-async def main(request: Request):
-    return render_template("main.html", l=l, authenticated=auth.authenticated(request))
+    @app.route("/images/<image>", methods=["GET"])
+    async def images(request: Request, image: str):
+        if os.path.isfile(f"templates/images/{image}"):
+            return await sanic.response.file_stream(f"templates/images/{image}")
+        else:
+            return sanic.response.html("")
 
-@app.route("/images/<image>", methods=["GET"])
-async def placeholder(request: Request, image: str):
-    return await sanic.response.file_stream(f"templates/images/{image}")
-
-@app.route("/favicon.ico", methods=["GET"])
-async def favicon(request: Request):
-    return sanic.response.redirect("/images/icon.png")
-
-@app.route("/login", methods=["GET", "POST"])
-async def login(request: Request):
-    if auth.authenticated(request) is True:
-        return sanic.response.redirect("/")
-    else:
-        flash_messages = []
-        if request.method == "GET":
-            return render_template("login.html", l=l, flash_messages=flash_messages)
-        elif request.method == "POST":
-            if request.form["password"][-1] == app.secret_key:
-                r = sanic.response.redirect("/")
-                auth.login_user(request, r)
-                return r
-            else: 
-                flash_messages.append(l('invalid_password'))
-                return render_template("login.html", l=l, flash_messages=flash_messages)
-
-@app.route("/logout")
-@auth.login_required
-async def logout(request: Request):
-    r = sanic.response.redirect("/")
-    auth.logout_user(request, r)
-    return r
-
-@app.route("/config_editor", methods=["GET", "POST"])
-@auth.login_required
-async def config_editor(request: Request):
-    flash_messages = []
-    if request.method == "GET":
-        try:
-            with open('config.json', 'r', encoding='utf-8') as f:
-                data = json.load(f)
-        except json.decoder.JSONDecodeError:
-            with open('config.json', 'r', encoding='utf-8-sig') as f:
-                data = json.load(f)
-        return render_template(
-            "config_editor.html",
-            l=l,
-            data=data,
-            config_tags=config_tags,
-            len=len,
-            join=str.join,
-            split=str.split,
-            type=type,
-            can_be_multiple=can_be_multiple,
-            select=select,
-            str=str,
-            int=int,
-            bool=bool,
-            list=list,
-            flash_messages=flash_messages
-        )
-    else:
-        raw = request.form
-        corrected = {}
-        for key_,tags in config_tags.items():
-            keys = key_.replace("'","").replace("[","").split("]")
-            key = keys[0]
-            nest = len(keys) - 1
-
-            if nest == 1:
-                if dict in tags:
-                    corrected[key] = {}
-                else:
-                    value = raw.get(f"['{key}']", [""])[-1]
+    if os.environ.get("FORTNITE_LOBBYBOT_STATUS", 0) == -1:
+        @app.route("/", methods=["GET"])
+        async def main(request: Request):
+            return sanic.response.html(
+                "<h2>Fortnite-LobbyBot<h2>"
+                "<p>初めに<a href='https://github.com/gomashio1596/Fortnite-LobbyBot/blob/master/README.md'>README</a>をお読みください</p>"
+                "<p>First, please read <a href='https://github.com/gomashio1596/Fortnite-LobbyBot/blob/master/README_EN.md'>README<a/></p>"
+                "<p>質問などは私(Twitter @gomashio1596 Discord gomashio#4335)か<a href='https://discord.gg/NEnka5N'>Discordサーバー</a>まで</p>"
+                "<p>For questions, Contact to me(Twitter @gomashio1596 Discord gomashio#4335) or ask in <a href='https://discord.gg/NEnka5N'>Discord server</a></p>"
+                "<p><a href='https://glitch.com/edit/#!/remix/fortnite-lobbybot'>ここをクリック</a>してRemix</p>"
+                "<p><a href='https://glitch.com/edit/#!/remix/fortnite-lobbybot'>Click here</a> to Remix</p>"
+                "<a href='https://discord.gg/NEnka5N'><img src='https://discordapp.com/api/guilds/718709023427526697/widget.png?style=banner1'></img></a>"
+            )
+    elif data["status"] == 0:
+        @app.route("/", methods=["GET", "POST"])
+        async def main(request: Request):
+            flash_messages = []
+            flash_messages_red = []
+            if request.method == "GET":
+                try:
+                    with open('config.json', 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                except json.decoder.JSONDecodeError:
+                    with open('config.json', 'r', encoding='utf-8-sig') as f:
+                        data = json.load(f)
+                return render_template(
+                    "config_editor.html",
+                    l=l,
+                    data=data,
+                    config_tags=config_tags,
+                    len=len,
+                    join=str.join,
+                    split=str.split,
+                    type=type,
+                    can_be_multiple=can_be_multiple,
+                    select=select,
+                    str=str,
+                    int=int,
+                    bool=bool,
+                    list=list,
+                    red=Red,
+                    flash_messages=flash_messages,
+                    flash_messages_red=flash_messages_red
+                )
+            else:
+                flag = False
+                raw = request.form
+                try:
+                    with open('config.json', 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                except json.decoder.JSONDecodeError:
+                    with open('config.json', 'r', encoding='utf-8-sig') as f:
+                        data = json.load(f)
+                corrected = data
                 
-                if can_be_multiple in tags:
-                    if str in tags:
-                        corrected[key] = ",".join(re.split(r'\n|\r',value))
-                    elif list in tags:
-                        corrected[key] = re.split(r'\n|\r',value)
-                elif str in tags:
-                    corrected[key] = value.replace(r"\\n",r"\n").replace(r"\n","\n")
-                elif int in tags:
-                    corrected[key]  = int(value)
-                elif bool in tags:
-                    corrected[key]  = bool(value)
-            elif nest == 2:
-                key2 = keys[1]
+                for key_,tags in config_tags.items():
+                    keys = key_.replace("'","").replace("[","").split("]")
+                    key = keys[0]
+                    nest = len(keys) - 1
 
-                if dict in tags:
-                    corrected[key][key2] = {}
+                    if nest == 1:
+                        if dict in tags:
+                            if corrected.get(key) is None:
+                                corrected[key] = {}
+                        else:
+                            value = raw.get(f"['{key}']")
+                        
+                        if Red in tags and value is None:
+                            flash_messages_red.append(l('this_field_is_required', key))
+                            flag = True
+                        if can_be_multiple in tags:
+                            if str in tags:
+                                corrected[key] = ",".join([i for i in re.split(r'\n|\r',value if value else "") if i])
+                            elif list in tags:
+                                corrected[key] = re.split(r'\n|\r',value) if value else []
+                        elif str in tags:
+                            corrected[key] = value.replace(r"\\n",r"\n").replace(r"\n","\n") if value else ""
+                        elif int in tags:
+                            corrected[key] = int(value) if value else 0
+                        elif bool_ in tags:
+                            corrected[key] = bool_.create(value)
+                        elif bool_none in tags:
+                            corrected[key] = bool_none.create(value)
+                    elif nest == 2:
+                        key2 = keys[1]
+
+                        if dict in tags:
+                            if corrected.get(key) is None:
+                                if corrected.get(key).get(key2) is None:
+                                    corrected[key][key2] = {}
+                        else:
+                            value2 = raw.get(f"['{key}']['{key2}']")
+                        
+                        if Red in tags and value2 is None:
+                            flash_messages_red.append(l('this_field_is_required', f"{key}, {key2}"))
+                            flag = True
+                        if can_be_multiple in tags:
+                            if str in tags:
+                                corrected[key][key2] = ",".join([i for i in re.split(r'\n|\r',value2 if value2 else "") if i])
+                            elif list in tags:
+                                corrected[key][key2]  = re.split(r'\n|\r',value2) if value2 else []
+                        elif str in tags:
+                            corrected[key][key2]  = value2.replace(r"\\n",r"\n").replace(r"\n","\n") if value2 else ""
+                        elif int in tags:
+                            corrected[key][key2] = int(value2) if value2 else 0
+                        elif bool_ in tags:
+                            corrected[key][key2] = bool_.create(value2)
+                        elif bool_none in tags:
+                            corrected[key][key2] = bool_none.create(value2)
+                if flag is True:
+                    return render_template(
+                        "config_editor.html",
+                        l=l,
+                        data=data,
+                        config_tags=config_tags,
+                        len=len,
+                        join=str.join,
+                        split=str.split,
+                        type=type,
+                        can_be_multiple=can_be_multiple,
+                        select=select,
+                        str=str,
+                        int=int,
+                        bool=bool,
+                        list=list,
+                        red=Red,
+                        flash_messages=flash_messages,
+                        flash_messages_red=flash_messages_red
+                    )
                 else:
-                    value2 = raw.get(f"['{key}']['{key2}']", [""])[-1]
-                
-                if can_be_multiple in tags:
-                    if str in tags:
-                        corrected[key][key2] = ",".join([i for i in re.split(r'\n|\r',value2) if i != ""])
-                    elif list in tags:
-                        corrected[key][key2]  = re.split(r'\n|\r',value2)
-                elif str in tags:
-                    corrected[key][key2]  = value2.replace(r"\\n",r"\n").replace(r"\n","\n")
-                elif int in tags:
-                    corrected[key][key2]  = int(value2)
-                elif bool in tags:
-                    corrected[key][key2]  = bool(value2)
-        with open('config.json', 'w', encoding='utf-8') as f:
-            json.dump(corrected, f, ensure_ascii=False, indent=4, sort_keys=False)
-        flash_messages.append(l('web_saved'))
-        return render_template(
-            "config_editor.html",
-            l=l,
-            data=corrected,
-            config_tags=config_tags,
-            len=len,
-            join=str.join,
-            split=str.split,
-            type=type,
-            can_be_multiple=can_be_multiple,
-            select=select,
-            str=str,
-            int=int,
-            bool=bool,
-            list=list,
-            flash_messages=flash_messages
-        )
-
-@app.route("/commands_editor", methods=["GET", "POST"])
-@auth.login_required
-async def commands_editor(request: Request):
-    flash_messages = []
-    if request.method == "GET":
-        try:
-            with open('commands.json', 'r', encoding='utf-8') as f:
-                data = json.load(f)
-        except json.decoder.JSONDecodeError:
-            with open('commands.json', 'r', encoding='utf-8-sig') as f:
-                data = json.load(f)
-        return render_template(
-            "commands_editor.html",
-            l=l,
-            data=data,
-            commands_tags=commands_tags,
-            len=len,
-            join=str.join,
-            split=str.split,
-            type=type,
-            can_be_multiple=can_be_multiple,
-            select=select,
-            str=str,
-            int=int,
-            bool=bool,
-            list=list,
-            flash_messages=flash_messages
-        )
-    elif request.method == "POST":
-        raw = request.form
-        corrected = {}
-        for key_,tags in config_tags.items():
-            keys = key_.replace("'","").replace("[","").split("]")
-            key = keys[0]
-            nest = len(keys) - 1
-
-            if nest == 1:
-                if dict in tags:
-                    corrected[key] = {}
-                else:
-                    value = raw.get(f"['{key}']", [""])[-1]
-                
-                if can_be_multiple in tags:
-                    if str in tags:
-                        corrected[key] = ",".join(re.split(r'\n|\r',value))
-        with open('commands.json', 'w', encoding='utf-8') as f:
-            json.dump(corrected, f, ensure_ascii=False, indent=4, sort_keys=False)
-        flash_messages.append(l('web_saved'))
-        return render_template(
-            "commands_editor.html",
-            l=l,
-            data=corrected,
-            commands_tags=commands_tags,
-            len=len,
-            join=str.join,
-            split=str.split,
-            type=type,
-            can_be_multiple=can_be_multiple,
-            select=select,
-            str=str,
-            int=int,
-            bool=bool,
-            list=list,
-            flash_messages=flash_messages
-        )
-
-@app.route("/party_viewer", methods=["GET"])
-@auth.login_required
-async def party_viewer(request: Request):
-    return render_template(
-        "party_viewer.html",
-        l=l,
-        clients=clients,
-        enumerate=enumerate
-    )
-
-@app.route("/clients<num>", methods=["GET", "POST"])
-@auth.login_required
-async def clients_viewer(request: Request, num: str):
-    num = int(num)
-    client = clients[num] if len(clients[num:num+1]) == 1 else None
-
-    if client is None:
-        sanic.exceptions.abort(404)
-    flash_messages = []
-    if request.method == "GET":
-        return render_template(
-            "clients_viewer.html",
-            l=l,
-            client=client,
-            none=None,
-            len=len,
-            member_asset=member_asset,
-            placeholder="images/placeholder.png",
-            crown="images/crown.png",
-            flash_messages=flash_messages
-        )
+                    corrected["status"] = 1
+                    with open('config.json', 'w', encoding='utf-8') as f:
+                        json.dump(corrected, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    os.chdir(os.getcwd())
+                    os.execv(os.sys.executable,['python', *sys.argv])
     else:
-        content = request.form["command"][-1]
-        message = WebMessage(content, request.cookies.get(auth.cookie_key), client)
-        await process_command(message)
-        flash_messages = message.result
+        @app.route("/", methods=["GET", "POST"])
+        async def main(request: Request):
+            return render_template("main.html", l=l, authenticated=auth.authenticated(request))
 
-        return render_template(
-            "clients_viewer.html",
-            l=l,
-            client=client,
-            none=None,
-            len=len,
-            member_asset=member_asset,
-            placeholder="images/placeholder.png",
-            crown="images/crown.png",
-            flash_messages=flash_messages
-        )
+        @app.route("/login", methods=["GET", "POST"])
+        async def login(request: Request):
+            if auth.authenticated(request) is True:
+                return sanic.response.redirect("/")
+            else:
+                flash_messages = []
+                if request.method == "GET":
+                    return render_template("login.html", l=l, flash_messages=flash_messages)
+                elif request.method == "POST":
+                    if request.form["password"][-1] == data["web"]["password"]:
+                        r = sanic.response.redirect("/")
+                        auth.login_user(request, r)
+                        return r
+                    else: 
+                        flash_messages.append(l('invalid_password'))
+                        return render_template("login.html", l=l, flash_messages=flash_messages)
 
-@app.route("/clients_info/<num>", methods=["GET"])
-@auth.login_required
-async def clients_info(request: Request, num: str):
-    num = int(num)
-    client = clients[num] if len(clients[num:num+1]) == 1 else None
+        @app.route("/logout")
+        @auth.login_required
+        async def logout(request: Request):
+            r = sanic.response.redirect("/")
+            auth.logout_user(request, r)
+            return r
 
-    if client is None:
-        return sanic.response.json(
-            {
-                "error": "account_not_exists"
-            }
-        )
-    elif client.isready is False:
-        return sanic.response.json(
-            {
-                "error": "account_not_loaded"
-            }
-        )
-    elif client.party == None:
-        return sanic.response.json(
-            {
-                "error": "party_moving"
-            }
-        )
-    else:
-        return sanic.response.json(
-            {
-                "display_name": client.user.display_name,
-                "id": client.user.id,
-                "leader": client.party.me.leader,
-                "outfit": member_asset(client.party.me, "outfit"),
-                "backpack": member_asset(client.party.me, "backpack"),
-                "pickaxe": member_asset(client.party.me, "pickaxe"),
-                "emote": member_asset(client.party.me, "emote"),
-                "party_id": client.party.id,
-                "members": [
+        @app.route("/config_editor", methods=["GET", "POST"])
+        @auth.login_required
+        async def config_editor(request: Request):
+            flash_messages = []
+            if request.method == "GET":
+                try:
+                    with open('config.json', 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                except json.decoder.JSONDecodeError:
+                    with open('config.json', 'r', encoding='utf-8-sig') as f:
+                        data = json.load(f)
+                return render_template(
+                    "config_editor.html",
+                    l=l,
+                    data=data,
+                    config_tags=config_tags,
+                    len=len,
+                    join=str.join,
+                    split=str.split,
+                    type=type,
+                    can_be_multiple=can_be_multiple,
+                    select=select,
+                    str=str,
+                    int=int,
+                    bool=bool,
+                    list=list,
+                    flash_messages=flash_messages
+                )
+            else:
+                raw = request.form
+                try:
+                    with open('config.json', 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                except json.decoder.JSONDecodeError:
+                    with open('config.json', 'r', encoding='utf-8-sig') as f:
+                        data = json.load(f)
+                corrected = data
+                for key_,tags in config_tags.items():
+                    keys = key_.replace("'","").replace("[","").split("]")
+                    key = keys[0]
+                    nest = len(keys) - 1
+
+                    if nest == 1:
+                        if dict in tags:
+                            if corrected.get(key) is None:
+                                corrected[key] = {}
+                        else:
+                            value = raw.get(f"['{key}']")
+                        
+                        if can_be_multiple in tags:
+                            if str in tags:
+                                corrected[key] = ",".join([i for i in re.split(r'\n|\r',value if value else "") if i])
+                            elif list in tags:
+                                corrected[key] = re.split(r'\n|\r',value) if value else []
+                        elif str in tags:
+                            corrected[key] = value.replace(r"\\n",r"\n").replace(r"\n","\n") if value else ""
+                        elif int in tags:
+                            corrected[key] = int(value) if value else 0
+                        elif bool_ in tags:
+                            corrected[key] = bool_.create(value)
+                        elif bool_none in tags:
+                            corrected[key] = bool_none.create(value)
+                    elif nest == 2:
+                        key2 = keys[1]
+
+                        if dict in tags:
+                            if corrected.get(key) is None:
+                                if corrected.get(key).get(key2) is None:
+                                    corrected[key][key2] = {}
+                        else:
+                            value2 = raw.get(f"['{key}']['{key2}']")
+                        
+                        if can_be_multiple in tags:
+                            if str in tags:
+                                corrected[key][key2] = ",".join([i for i in re.split(r'\n|\r',value2 if value2 else "") if i])
+                            elif list in tags:
+                                corrected[key][key2]  = re.split(r'\n|\r',value2) if value2 else []
+                        elif str in tags:
+                            corrected[key][key2]  = value2.replace(r"\\n",r"\n").replace(r"\n","\n") if value2 else ""
+                        elif int in tags:
+                            corrected[key][key2] = int(value2) if value2 else 0
+                        elif bool_ in tags:
+                            corrected[key][key2] = bool_.create(value2)
+                        elif bool_none in tags:
+                            corrected[key][key2] = bool_none.create(value2)
+                corrected["status"] = 1
+                with open('config.json', 'w', encoding='utf-8') as f:
+                    json.dump(corrected, f, ensure_ascii=False, indent=4, sort_keys=False)
+                flash_messages.append(l('web_saved'))
+                return render_template(
+                    "config_editor.html",
+                    l=l,
+                    data=corrected,
+                    config_tags=config_tags,
+                    len=len,
+                    join=str.join,
+                    split=str.split,
+                    type=type,
+                    can_be_multiple=can_be_multiple,
+                    select=select,
+                    str=str,
+                    int=int,
+                    bool=bool,
+                    list=list,
+                    flash_messages=flash_messages
+                )
+
+        @app.route("/commands_editor", methods=["GET", "POST"])
+        @auth.login_required
+        async def commands_editor(request: Request):
+            flash_messages = []
+            if request.method == "GET":
+                try:
+                    with open('commands.json', 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                except json.decoder.JSONDecodeError:
+                    with open('commands.json', 'r', encoding='utf-8-sig') as f:
+                        data = json.load(f)
+                return render_template(
+                    "commands_editor.html",
+                    l=l,
+                    data=data,
+                    commands_tags=commands_tags,
+                    len=len,
+                    join=str.join,
+                    split=str.split,
+                    type=type,
+                    can_be_multiple=can_be_multiple,
+                    select=select,
+                    str=str,
+                    int=int,
+                    bool=bool,
+                    list=list,
+                    flash_messages=flash_messages
+                )
+            elif request.method == "POST":
+                raw = request.form
+                try:
+                    with open('commands.json', 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                except json.decoder.JSONDecodeError:
+                    with open('commands.json', 'r', encoding='utf-8-sig') as f:
+                        data = json.load(f)
+                corrected = data
+                for key_,tags in commands_tags.items():
+                    keys = key_.replace("'","").replace("[","").split("]")
+                    key = keys[0]
+                    nest = len(keys) - 1
+
+                    if nest == 1:
+                        if dict in tags:
+                            if corrected[key] is None:
+                                corrected[key] = {}
+                        else:
+                            value = raw.get(f"['{key}']")
+                        
+                        if can_be_multiple in tags:
+                            if str in tags:
+                                corrected[key] = ",".join([i for i in re.split(r'\n|\r',value if value else "") if i])
+                with open('commands.json', 'w', encoding='utf-8') as f:
+                    json.dump(corrected, f, ensure_ascii=False, indent=4, sort_keys=False)
+                flash_messages.append(l('web_saved'))
+                return render_template(
+                    "commands_editor.html",
+                    l=l,
+                    data=corrected,
+                    commands_tags=commands_tags,
+                    len=len,
+                    join=str.join,
+                    split=str.split,
+                    type=type,
+                    can_be_multiple=can_be_multiple,
+                    select=select,
+                    str=str,
+                    int=int,
+                    bool=bool,
+                    list=list,
+                    flash_messages=flash_messages
+                )
+
+        @app.route("/replies_editor", methods=["GET", "POST"])
+        @auth.login_required
+        async def replies_editor(request: Request):
+            flash_messages = []
+            flash_messages_red = []
+            if request.method == "GET":
+                try:
+                    with open('replies.json', 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                except json.decoder.JSONDecodeError:
+                    with open('replies.json', 'r', encoding='utf-8-sig') as f:
+                        data = json.load(f)
+                return render_template(
+                    "replies_editor.html",
+                    l=l,
+                    data=data,
+                    flash_messages=flash_messages,
+                    flash_messages_red=flash_messages_red,
+                    enumerate=enumerate,
+                    str=str
+                )
+            elif request.method == "POST":
+                raw = request.form
+                print(raw)
+                corrected = {}
+                for num in range(0,int(raw["number"][0])):
+                    print(num)
+                    trigger = raw.get(f"trigger{str(num)}")
+                    if trigger is None:
+                        flash_messages_red.append(l('cannot_be_empty'))
+                        break
+                    content = raw.get(f"content{str(num)}")
+                    if content is None:
+                        flash_messages_red.append(l('cannot_be_empty'))
+                        break
+                    corrected[trigger] = content
+                with open('replies.json', 'w', encoding='utf-8') as f:
+                    json.dump(corrected, f, ensure_ascii=False, indent=4, sort_keys=False)
+                flash_messages.append(l('web_saved'))
+                return render_template(
+                    "replies_editor.html",
+                    l=l,
+                    data=corrected,
+                    flash_messages=flash_messages,
+                    flash_messages_red=flash_messages_red,
+                    enumerate=enumerate,
+                    str=str
+                )
+
+        @app.route("/party_viewer", methods=["GET"])
+        @auth.login_required
+        async def party_viewer(request: Request):
+            return render_template(
+                "party_viewer.html",
+                l=l,
+                clients=clients,
+                enumerate=enumerate
+            )
+
+        @app.route("/clients<num>", methods=["GET", "POST"])
+        @auth.login_required
+        async def clients_viewer(request: Request, num: str):
+            num = int(num)
+            client = clients[num] if len(clients[num:num+1]) == 1 else None
+
+            if client is None:
+                sanic.exceptions.abort(404)
+            flash_messages = []
+            if request.method == "GET":
+                return render_template(
+                    "clients_viewer.html",
+                    l=l,
+                    client=client,
+                    none=None,
+                    len=len,
+                    member_asset=member_asset,
+                    placeholder="images/placeholder.png",
+                    crown="images/crown.png",
+                    flash_messages=flash_messages
+                )
+            else:
+                content = request.form["command"][-1]
+                message = WebMessage(content, request.cookies.get(auth.cookie_key), client)
+                await process_command(message)
+                flash_messages = message.result
+
+                return render_template(
+                    "clients_viewer.html",
+                    l=l,
+                    client=client,
+                    none=None,
+                    len=len,
+                    member_asset=member_asset,
+                    placeholder="images/placeholder.png",
+                    crown="images/crown.png",
+                    flash_messages=flash_messages
+                )
+
+        @app.route("/clients_info/<num>", methods=["GET"])
+        @auth.login_required
+        async def clients_info(request: Request, num: str):
+            num = int(num)
+            client = clients[num] if len(clients[num:num+1]) == 1 else None
+
+            if client is None:
+                return sanic.response.json(
                     {
-                        "display_name": i.display_name,
-                        "id": i.id,
-                        "leader": i.leader,
-                        "outfit": member_asset(i, "outfit"),
-                        "backpack": member_asset(i, "backpack"),
-                        "pickaxe": member_asset(i, "pickaxe"),
-                        "emote": member_asset(i, "emote")
-                    } for i in client.party.members.values()
-                ]
-            }
-        )
+                        "error": "account_not_exists"
+                    }
+                )
+            elif client.isready is False:
+                return sanic.response.json(
+                    {
+                        "error": "account_not_loaded"
+                    }
+                )
+            elif client.party == None:
+                return sanic.response.json(
+                    {
+                        "error": "party_moving"
+                    }
+                )
+            else:
+                return sanic.response.json(
+                    {
+                        "display_name": client.user.display_name,
+                        "id": client.user.id,
+                        "leader": client.party.me.leader,
+                        "outfit": member_asset(client.party.me, "outfit"),
+                        "backpack": member_asset(client.party.me, "backpack"),
+                        "pickaxe": member_asset(client.party.me, "pickaxe"),
+                        "emote": member_asset(client.party.me, "emote"),
+                        "party_id": client.party.id,
+                        "members": [
+                            {
+                                "display_name": i.display_name,
+                                "id": i.id,
+                                "leader": i.leader,
+                                "outfit": member_asset(i, "outfit"),
+                                "backpack": member_asset(i, "backpack"),
+                                "pickaxe": member_asset(i, "pickaxe"),
+                                "emote": member_asset(i, "emote")
+                            } for i in client.party.members.values()
+                        ]
+                    }
+                )
 
-@app.exception(sanic.exceptions.NotFound)
-async def not_found(request: Request, exception: Exception):
-    return render_template("not_found.html", l=l)
+        @app.exception(sanic.exceptions.NotFound)
+        async def not_found(request: Request, exception: Exception):
+            return render_template("not_found.html", l=l)
 
-@auth.no_auth_handler
-async def unauthorized(request: Request, *args, **kwargs):
-    return sanic.response.redirect("/")
+        @auth.no_auth_handler
+        async def unauthorized(request: Request, *args, **kwargs):
+            return sanic.response.redirect("/")
 
 async def run_bot() -> None:
+    global kill
     try:
         await fortnitepy.start_multiple(
             clients,
@@ -7189,16 +7440,25 @@ async def run_bot() -> None:
             all_ready_callback=lambda: print(green(f"[{now_()}] {l('all_login')}")) if len(clients) > 1 else print('')
         )
     except fortnitepy.AuthException as e:
+        if data["loglevel"] == "debug":
+            print(red(traceback.format_exc()))
+            dstore(l("bot"),f'>>> {traceback.format_exc()}')
         if "errors.com.epicgames.account.oauth.exchange_code_not_found" in e.args[0]:
-            if data["loglevel"] == "debug":
-                print(red(traceback.format_exc()))
-                dstore(l("bot"),f'>>> {traceback.format_exc()}')
             print(f'[{now_()}] {l("exchange_code_error")}')
             dstore(l("bot"),f'>>> {l("exchange_code_error")}')
         else:
-            if data["loglevel"] == "debug":
-                print(red(traceback.format_exc()))
-                dstore(l("bot"),f'>>> {traceback.format_exc()}')
+            print(red(f'[{now_()}] {l("login_failed")}'))
+            dstore(l("bot"),f'>>> {l("login_failed")}')
+        kill=True
+        sys.exit(1)
+    except fortnitepy.HTTPException as e:
+        if data["loglevel"] == "debug":
+            print(red(traceback.format_exc()))
+            dstore(l("bot"),f'>>> {traceback.format_exc()}')
+        if "reset" in e.args[0]:
+            print(f'[{now_()}] {l("password_reset_error")}')
+            dstore(l("bot"),f'>>> {l("password_reset_error")}')
+        else:
             print(red(f'[{now_()}] {l("login_failed")}'))
             dstore(l("bot"),f'>>> {l("login_failed")}')
         kill=True
@@ -7227,11 +7487,20 @@ async def run_app() -> None:
         print(red(traceback.format_exc()))
         dstore(l("bot"),f'>>> {traceback.format_exc()}')
     else:
+        if data["status"] == 0:
+            webbrowser.open(f"http://{data['web']['ip']}:{data['web']['port']}")
+        if os.getcwd().startswith('/app'):
+            threading.Thread(target=uptime).start()
         print(l('web_running',f"http://{data['web']['ip']}:{data['web']['port']}"))
         dstore(l("bot"),l('web_running',f"{data['web']['ip']}:{data['web']['port']}"))
 
 loop = asyncio.get_event_loop()
-if data['web']['enabled'] is True:
+if data['web']['enabled'] is True or data['status'] == 0:
     asyncio.ensure_future(run_app())
-asyncio.ensure_future(run_bot())
-loop.run_forever()
+if data['status'] != 0:
+    asyncio.ensure_future(run_bot())
+try:
+    loop.run_forever()
+except KeyboardInterrupt:
+    kill=True
+    sys.exit(1)
