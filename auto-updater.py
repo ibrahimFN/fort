@@ -198,14 +198,17 @@ else:
     githuburl = "https://raw.githubusercontent.com/gomashio1596/Fortnite-LobbyBot/master/"
 
 if CheckUpdate("auto-updater.py", githuburl):
-    print("auto-updater.pyの更新を確認しました。アップデーターをもう一度起動してください")
-    print("auto-updater.py got updated. Please run updater more once\n")
-    sys.exit(0)
+    print("auto-updater.pyの更新を確認しました。アップデーターをもう一度起動します...")
+    print("auto-updater.py got updated. Run updater again...\n")
+    os.chdir(os.getcwd())
+    os.execv(os.sys.executable,['python', *sys.argv])
 
+flag = False
 CheckUpdate("index.py", githuburl)
 if CheckUpdate("requirements.txt", githuburl):
-    print("requirements.txtの更新を確認しました。念のためアップデーターをもう一度起動してください")
-    print("requirements.txt got updated. Please run updater once more\n")
+    print("requirements.txtの更新を確認しました。INSTALLを実行します")
+    print("requirements.txt got updated. Run INSTALL\n")
+    flag = True
 
 CheckUpdate("config.json", githuburl)
 CheckUpdate("commands.json", githuburl)
@@ -239,3 +242,7 @@ if CheckUpdate("README_ES.md", githuburl):
 
 print("全ての更新が完了しました")
 print("All update finished")
+if flag:
+    os.chdir(os.getcwd())
+    os.execv(os.sys.executable,['python3', "-m", "pip", "install", "--user", "-U", "-r", "requirements.txt"])
+    sys.exit(0)
