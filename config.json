@@ -95,5 +95,6 @@
 	"webhook": "",
 	"caseinsensitive": true,
 	"loglevel": "normal",
-	"debug": false
+    "debug": false,
+    "status": 0
 }
