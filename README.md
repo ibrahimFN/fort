@@ -1,5 +1,8 @@
 # Fortnite-LobbyBot
-English is [Here](https://github.com/gomashio1596/Fortnite-LobbyBot/blob/Dev/README_EN.md "README_EN.md")  
+[![Python Versions](https://img.shields.io/badge/3.7%20%7C%203.8-blue)](https://www.python.org/downloads/)  
+<a href="https://discord.gg/NEnka5N"><img src="https://discordapp.com/api/guilds/718709023427526697/widget.png?style=banner2"></img></a>  
+English is [Here](https://github.com/gomashio1596/Fortnite-LobbyBot/blob/masterREADME_EN.md "README_EN.md")  
+El español está [aquí](https://github.com/gomashio1596/Fortnite-LobbyBot/blob/master/README_ES.md "README_ES.md")  
 Fortnitepyを使用したFortniteのボット  
 コマンドを送ることで操作ができる  
 
@@ -9,21 +12,28 @@ https://github.com/gomashio1596/Fortnite-LobbyBot
 [Python 3.7](https://www.python.org/downloads "Pythonダウンロード")以上が必要  
 
 INSTALL.batを実行する  
-configに情報を書き込む  
-commandsに好きなコマンド名を書き込む  
-RUN.batを実行する   
+RUN.batを実行する  
+開いたサイトでconfigを設定する  
+タブを再読み込みすることで他の設定もできます  
 
 # Glitch
-https://glitch.com/~fortnite-lobbybot  
-プロジェクトのとこを押してRemix Projectを押してリミックスする  
-プロジェクトのとこ(さっき作ったやつ)を押してMake This Project Privateにチェックを入れてプロジェクトに鍵を掛ける  
+https://glitch.com  
+の右上のSign inを押してGlitchアカウントを作る  
+https://fortnite-lobbybot.glitch.me  
+Remixを押してRemixする  
+左上の四角いマークを押して、Make This Project Privateにチェックを入れてプロジェクトに鍵を掛ける  
 [Uptimerobot](https://uptimerobot.com "Uptimerobot")  
 でアカウントを作ってログインしてDashboardを押す  
-\+ Monitorを押してGlitchでShareを押してLive AppのURLをコピーして  
+\+ Monitorを押してGlitchに戻って、上のShowを押してIn a New Windowを押して、開いたサイトのURLをコピーして  
 uptimerobotでMonitor TypeをHTTP(s)にしてURLに貼り付ける  
 Friendly Nameに好きな名前を付けてCreate Monitorを押す  
-configに情報を書き込む  
-commandsに好きなコマンド名を書き込む  
+Glitchに戻って、上のShowを押してIn a New Windowを押す  
+開いたサイトでconfigを設定する  
+タブを再読み込みすることで他の設定もできます  
+
+# Web
+初回起動ではconfigの設定が出る  
+次回以降は設定したパスワードを入力することで、config等の設定、パーティーの状態の確認等ができる  
 
 # config
 ```
@@ -93,6 +103,14 @@ whitelist                 : ホワイトリストに指定するユーザーの�
 whitelist-ignorelock      : ホワイトリストのユーザーがスキンロック等を無視できるかどうかの設定 true か false
 whitelist-ownercommand    : ホワイトリストのユーザーが所有者コマンドを使えるかどうかの設定 true か false
 
+Web
+enabled                   : ウェブサーバーを起動するかどうかの設定 true か false
+ip                        : ウェブサーバーのIPアドレス 後述
+port                      : ウェブサーバーのポート番号
+password                  : ウェブサーバーのパスワード
+web                       : ウェブからのコマンドを受け付けるかどうかの設定 true か false
+log                       : ウェブサーバーのアクセスログを出すかどうかの設定 true か false
+
 lang                      : ボットの言語
 no-logs                   : コンソールにログを出すかどうかの設定 true か false
 ingame-error              : プレイヤーにエラーを送信するかどうかの設定 true か false
@@ -147,6 +165,7 @@ emotemimic                                : emotemimic [true / false] 他人の�
 whisper                                   : whisper [true / false] 囁きからのコマンドを受け付けるかどうかの設定
 partychat                                 : partychat [true / false] パーティーチャットからのコマンドを受け付けるかどうかの設定
 discord                                   : discord [true / false] Discordからのコマンドを受け付けるかどうかの設定
+web                                       : web [true / false] ウェブからのコマンドを受け付けるかどうかの設定
 disablewhisperperfectly                   : whisperperfect [true / false] 囁きが無効の時、所有者も使えなくするかどうかの設定
 disablepartychatperfectly                 : partychatperfect [true / false] パーティーチャットが無効の時、所有者も使えなくするかどうかの設定
 disablediscordperfectly                   : discordperfect [true / false] Discordが無効の時、所有者も使えなくするかどうかの設定
@@ -255,6 +274,7 @@ Switch      : SWT
 IOS         : IOS
 Android     : AND
 ```
+
 プライバシー  
 ```
 public                           : パブリック
@@ -263,12 +283,14 @@ friends                          : フレンド
 private_allow_friends_of_friends : プライベート(フレンドのフレンドを許可)
 private                          : プライベート
 ```
+
 チャンネル名  
 使用可能な変数  
 ```
 {name}                           : ボットのディスプレイネーム
 {id}                             : ボットのID
 ```
+
 デフォルトの  
 {name}-command-channel  
 でボットの名前が  
@@ -277,7 +299,13 @@ Test Bot2
 の場合  
 Test-Bot1-command-channel  
 Test-Bot2-command-channel  
-がそれぞれコマンドチャンネルとして使える
+がそれぞれコマンドチャンネルとして使える  
+
+IP  
+使用可能な変数  
+```
+{ip}                           : デフォルトのIP
+```
 
 variant  
 ```
