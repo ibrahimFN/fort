@@ -665,13 +665,13 @@ def add_cache(client: fortnitepy.Client, user: Type[fortnitepy.user.UserBase]) -
         dstore(l("bot"),f'>>> {traceback.format_exc()}')
 
 def partymember_backpack(member: Type[fortnitepy.party.PartyMemberBase]) -> str:
-    asset = member.meta.get_prop("AthenaCosmeticLoadout_j")["AthenaCosmeticLoadout"]["backpackDef"]
+    asset = member.meta.backpack
     result = re.search(r".*\.([^\'\"]*)", asset.strip("'"))
     if result is not None and result.group(1) != 'None':
         return result.group(1)
 
 def partymember_emote(member: Type[fortnitepy.party.PartyMemberBase]) -> str:
-    asset = member.meta.get_prop("FrontendEmote_j")["FrontendEmote"]["emoteItemDef"]
+    asset = member.meta.emote
     result = re.search(r".*\.([^\'\"]*)", asset.strip("'"))
     if result is not None and result.group(1) != 'None':
         return result.group(1)
