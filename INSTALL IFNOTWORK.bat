@@ -1,5 +1,4 @@
-#py -3 -m pip install -U fortnitepy
-py -3 -m pip install -U git+https://github.com/gomashio1596/fortnitepy-test
+py -3 -m pip install -U fortnitepy
 py -3 -m pip install -U discord.py
 py -3 -m pip install -U requests
 py -3 -m pip install -U crayons
