@@ -1,4 +1,5 @@
-fortnitepy
+#fortnitepy
+git+https://github.com/gomashio1596/fortnitepy-test
 discord.py
 requests
 crayons
