@@ -1,8 +1,32 @@
 <!DOCTYPE html>
-<html style="background-image: url('/images/background.png'); background-color: #000000; background-size: cover; width: 100%; height: 100%;">
+<html style="background-image: url('/images/background.png'); background-color: #36393F; background-size: cover; width: 100%; height: 100%; font-size: 1.9vmin;">
 <style>
     textarea {
-        width: 50%;
+        background-color: #40444B;
+        color: #DDDDDD;
+        width: 80vmin;
+    }
+
+    textarea::placeholder {
+        color: #DDDDDD;
+    }
+
+    button {
+        background-color: #B9BBBE;
+        color: #40444B;
+        width: 20vmin;
+    }
+
+    p {
+        font-size: 1vmin;
+    }
+
+    a:link, a:visited, a:hover, a:active {
+        color: #DDDDDD;
+    }
+
+    body {
+        font-family: "Whitney", "Hiragino Sans", "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "メイリオ", "Meiryo", "Osaka", "MS PGothic", "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
 </style>
 <head>
@@ -32,9 +56,9 @@
                             }
                             parts.forEach(function(part) {
                                 if (part == null) {
-                                    text += '<img src="/images/placeholder.png">\n';
+                                    text += '<img src="/images/placeholder.png" style="width: 15vmin;" />\n';
                                 } else {
-                                    text += ('<img src="https://fortnite-api.com/images/cosmetics/br/' + part + '/smallicon.png">\n');
+                                    text += ('<img src="https://fortnite-api.com/images/cosmetics/br/' + part + '/smallicon.png" style="width: 15vmin;" />\n');
                                 }
                             })
                         })
@@ -42,15 +66,15 @@
                         var member = this.response
                         var parts = [member["outfit"], member["backpack"], member["pickaxe"], member["emote"]]
                         if (member["leader"]) {
-                            text += '<h4>' + '<img src="/images/crown.png">' + member["display_name"] + " / " + member["id"] + '</h4>' 
+                            text += '<h4>' + '<img src="/images/crown.png" style="width: 4vmin;" />' + member["display_name"] + " / " + member["id"] + '</h4>' 
                         } else {
                             text += '<h4>' + member["display_name"] + " / " + member["id"] + '</h4>'
                         }
                         parts.forEach(function(part) {
                             if (part == null) {
-                                text += '<img src="/images/placeholder.png">\n';
+                                text += '<img src="/images/placeholder.png" style="width: 15vmin;" />\n';
                             } else {
-                                text += ('<img src="https://fortnite-api.com/images/cosmetics/br/' + part + '/smallicon.png">\n');
+                                text += ('<img src="https://fortnite-api.com/images/cosmetics/br/' + part + '/smallicon.png" style="width: 15vmin;" />\n');
                             }
                         })
                     }
@@ -68,7 +92,7 @@
     update();
     setInterval('update()',5000);
 </script>
-<body text="#fffffff">
+<body style="color: #DDDDDD;">
     <h3>
         <a href="/party_viewer">{{l('web_back')}}</a>
     </h3>

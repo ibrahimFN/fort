@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html style="background-image: url('/images/background.png'); background-color: #36393F; background-size: cover; width: 100%; height: 100%; font-size: 1.9vmin;">
+<style>
+    span {
+        width: 60vmin;
+        float: left;
+    }
+
+    .text {
+        width: 20vmin;
+        float: left;
+    }
+
+    textarea {
+        background-color: #40444B;
+        color: #DDDDDD;
+        width: 80vmin;
+    }
+
+    textarea::placeholder {
+        color: #DDDDDD;
+    }
+
+    button {
+        background-color: #B9BBBE;
+        color: #40444B;
+        width: 20vmin;
+    }
+
+    a:link, a:visited, a:hover, a:active {
+        color: #DDDDDD;
+    }
+
+    body {
+        font-family: "Whitney", "Hiragino Sans", "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "メイリオ", "Meiryo", "Osaka", "MS PGothic", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+</style>
+<head>
+    <meta charset="UTF-8">
+    <title>{{l('boot_switch')}}</title>
+</head>
+<script>
+    function update() {
+        const request = new XMLHttpRequest();
+        var text = ""
+        request.open("GET", "./boot_info", true);
+        request.responseType = 'json';
+        request.send("");
+        request.onreadystatechange = function() {
+            if (this.readyState == 4) {
+                data = this.response
+                var count = 0
+                for (let email in data) {
+                    client = data[email]
+                    text += '<p>'
+                    text += '<span>' + email + '</span>'
+                    if (client["info"] == "info_closed") {
+                        text += "<div class='text'>{{l('info_closed')}}</div>"
+                    } else if (client["info"] == "info_booting") {
+                        text += "<div class='text'>{{l('info_booting')}}</div>"
+                    } else if (client["info"] == "info_ready") {
+                        text += "<div class='text'>{{l('info_ready')}}</div>"
+                    }
+                    if (client["info"] == "info_closed") {
+                        text += '<input type="submit" name="on' + String(count) + '" value="' + "{{l('on')}}" + '">'
+                    } else {
+                        text += '<input type="submit" name="off' + String(count) + '" value="' + "{{l('off')}}" + '">'
+                    }
+                    text += '<p>'
+                    count++
+                }
+                document.getElementById("accounts").innerHTML = text; 
+            } 
+        }
+    }
+    update();
+    setInterval('update()',5000);
+</script>
+<body style="color: #DDDDDD;">
+    <h3>
+        <a href="/">{{l('web_back')}}</a>
+    </h3>
+    <form action="" method="post">
+    <div id="accounts">
+        <p>{{l('loading')}}</p>
+    </div>
+    </form>
+    {% if len(flash_messages) > 0 %}
+        <p>{{l('result')}}</p>
+        {% for message in flash_messages %}
+            <p>{{message}}</p>
+        {% endfor %}
+    {% endif %}
+</body>
+</html>
