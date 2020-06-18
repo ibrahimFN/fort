@@ -1538,7 +1538,7 @@ if True:
         if data["status"] == 0:
             config_tags["['fortnite']['email']"].append("red")
             config_tags["['fortnite']['password']"].append("red")
-            config_tags["['web']['password']"].append("red")
+            config_tags["['lang']"].append("red")
 
         data['fortnite']['privacy']=eval(f"fortnitepy.PartyPrivacy.{data['fortnite']['privacy'].upper()}")
         if os.getcwd().startswith('/app'):
@@ -7043,7 +7043,7 @@ if True:
                     corrected["status"] = 1
                     with open('config.json', 'w', encoding='utf-8') as f:
                         json.dump(corrected, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    Thread(target=restart,args=(1,))
+                    Thread(target=restart,args=(1,)).start()
                     return sanic.response.redirect("/")
     else:
         @app.route("/", methods=["GET", "POST"])
