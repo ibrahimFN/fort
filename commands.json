@@ -49,6 +49,7 @@
 	"inviteall": "inviteall",
 	"message": "message",
 	"partymessage": "pmessage",
+	"sendall": "sendall",
 	"status": "status",
 	"banner": "banner",
 	"level": "level",
