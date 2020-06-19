@@ -91,9 +91,12 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
                 github = github.text.encode(encoding='utf-8')
                 with open(filename, "wb") as f:
                     f.write(github)
-                with open(filename, "r", encoding='utf-8') as f:
-                    current = f.read()
-            current = json.loads(current)
+                try:
+                    with open(filename, "r", encoding='utf-8') as f:
+                        current = json.load(f)
+                except json.decoder.JSONDecodeError:
+                    with open(filename, "r", encoding='utf-8-sig') as f:
+                        current = json.load(f)
             github = requests.get(githuburl + filename)
             if github.status_code != 200:
                 print(f'{filename} のデータを取得できませんでした')
@@ -217,6 +220,7 @@ CheckUpdate("lang/es.json", githuburl)
 CheckUpdate("lang/ja.json", githuburl)
 CheckUpdate("LICENSE", githuburl)
 
+CheckUpdate("templates/boot_switch.html", githuburl)
 CheckUpdate("templates/clients_viewer.html", githuburl)
 CheckUpdate("templates/commands_editor.html", githuburl)
 CheckUpdate("templates/config_editor.html", githuburl)
