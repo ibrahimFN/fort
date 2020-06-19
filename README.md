@@ -1,7 +1,7 @@
 # Fortnite-LobbyBot
 [![Python Versions](https://img.shields.io/badge/3.7%20%7C%203.8-blue)](https://www.python.org/downloads/)  
-<a href="https://discord.gg/NEnka5N"><img src="https://discordapp.com/api/guilds/718709023427526697/widget.png?style=banner2"></img></a>  
-English is [Here](https://github.com/gomashio1596/Fortnite-LobbyBot/blob/masterREADME_EN.md "README_EN.md")  
+<a href="https://discord.gg/NEnka5N"><img src="https://discordapp.com/api/guilds/718709023427526697/widget.png?style=banner2" /></a>  
+English is [Here](https://github.com/gomashio1596/Fortnite-LobbyBot/blob/master/README_EN.md "README_EN.md")  
 El español está [aquí](https://github.com/gomashio1596/Fortnite-LobbyBot/blob/master/README_ES.md "README_ES.md")  
 Fortnitepyを使用したFortniteのボット  
 コマンドを送ることで操作ができる  
@@ -108,6 +108,7 @@ enabled                   : ウェブサーバーを起動するかどうかの�
 ip                        : ウェブサーバーのIPアドレス 後述
 port                      : ウェブサーバーのポート番号
 password                  : ウェブサーバーのパスワード
+login_required            : ウェブサーバーにアクアスするのにパスワードが必要かどうかの設定 true か false
 web                       : ウェブからのコマンドを受け付けるかどうかの設定 true か false
 log                       : ウェブサーバーのアクセスログを出すかどうかの設定 true か false
 
@@ -181,6 +182,7 @@ invite                                    : invite [ユーザー名 / ユーザ�
 inviteall                                 : configのinvitelistのユーザーを招待する
 message                                   : message [ユーザー名 / ユーザーID] : [内容] ユーザーにメッセージを送信する
 partymessage                              : partymessage [内容] パーティーチャットにメッセージを送信する
+sendall                                   : sendall [内容] 全てのボットに同じコマンドを実行する
 status                                    : status [内容] ステータスを設定する
 banner                                    : banner [バナーID] [バナーの色] バナーを設定する
 level                                     : level [レベル] レベルを設定する

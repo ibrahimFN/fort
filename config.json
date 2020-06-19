@@ -82,10 +82,11 @@
 		"ip": "{ip}",
 		"port": 8080,
 		"password": "",
+		"login_required": true,
 		"web": true,
 		"log": false
 	},
-	"lang": "ja",
+	"lang": "en",
 	"no-logs": false,
 	"ingame-error": true,
 	"discord-log": false,

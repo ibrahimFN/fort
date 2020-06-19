@@ -1,36 +1,45 @@
 <!DOCTYPE html>
-<html style="background-image: url('/images/background.png'); background-color: #000000; background-size: cover; width: 100%; height: 100%;">
+<html style="background-image: url('/images/background.png'); background-color: #36393F; background-size: cover; width: 100%; height: 100%; font-size: 1.8vmin;">
 <style>
     span {
-        width: 30%;
+        width: 60vmin;
         float: left;
     }
 
-    textarea {
-        width: 50%;
+    textarea, input, select {
+        background-color: #40444B;
+        color: #DDDDDD;
+        width: 60vmin;
+        max-width: 30%;
     }
 
-    input {
-        width: 50%;
+    button {
+        background-color: #B9BBBE;
+        color: #40444B;
+        width: 20vmin;
     }
 
-    select {
-        width: 50%;
+    a:link, a:visited, a:hover, a:active {
+        color: #DDDDDD;
+    }
+    
+    body {
+        font-family: "Whitney", "Hiragino Sans", "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "メイリオ", "Meiryo", "Osaka", "MS PGothic", "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
 </style>
 <head>
     <meta charset="UTF-8">
     <title>{{l('config_editor')}}</title>
 </head>
-<body text="#fffffff">
+<body style="color: #DDDDDD;">
     <h3>
         <a href="/">{{l('web_back')}}</a>
     </h3>
     {% for message in flash_messages %}
-        <p style="color: #57ff33">{{message}}</p>
+        <p style="color: #57FF33">{{message}}</p>
     {% endfor %}
     {% for message in flash_messages_red %}
-        <p style="color: #ff0000">{{message}}</p>
+        <p style="color: #FF0000">{{message}}</p>
     {% endfor %}
     <form action="" method="post">
         {% for key_,tags in config_tags.items() %}
@@ -44,7 +53,11 @@
                     <h2>{{key}}</h2>
                 {% else %}
                     <div>
-                        <span>{{'&nbsp;'|safe*((nest - 1)*4)}}{{key}}</span>
+                        {% if red in tags %}
+                            <span style="color: #FF0000">{{'&nbsp;'|safe*((nest - 1)*4)}}{{l('config_' + key)}}</span>
+                        {% else %}
+                            <span>{{'&nbsp;'|safe*((nest - 1)*4)}}{{l('config_' + key)}}</span>
+                        {% endif %}
                         {% if can_be_multiple in tags %}
                             {% if str in tags %}
                                 <textarea name="['{{key}}']" rows="5">{{"\n".join(value.split(","))}}</textarea>
@@ -54,18 +67,9 @@
                         {% elif type(tags[1]) == select %}
                             <select name="['{{key}}']">
                                 {% for tag in tags[1].content %}
-                                    <script>
-                                        console.log("{{tag['value']}} == {{str(value)}}")
-                                    </script>
                                     {% if tag['value'] == str(value) %}
-                                        <script>
-                                            console.log("selected")
-                                        </script>
                                         <option value="{{tag['value']}}" selected>{{str(tag['display_value'])}}</option>
                                     {% else %}
-                                        <script>
-                                            console.log("not selected")
-                                        </script>
                                         <option value="{{tag['value']}}">{{str(tag['display_value'])}}</option>
                                     {% endif %}
                                 {% endfor %}
@@ -81,14 +85,14 @@
                 {% set key2 = keys[1] %}
                 {% set value2 = data[key][key2] %}
 
-                {% if dict in tags %}}
+                {% if dict in tags %}
                     <h2>{{'&nbsp;'|safe*((nest - 1)*4)}}{{key2}}</h2>
                 {% else %}
                     <div>
                         {% if red in tags %}
-                            <span style="color: #ff0000">{{'&nbsp;'|safe*((nest - 1)*4)}}{{key2}}</span>
+                            <span style="color: #FF0000">{{'&nbsp;'|safe*((nest - 1)*4)}}{{l('config_' + key + '_' + key2)}}</span>
                         {% else %}
-                            <span>{{'&nbsp;'|safe*((nest - 1)*4)}}{{key2}}</span>
+                            <span>{{'&nbsp;'|safe*((nest - 1)*4)}}{{l('config_' + key + '_' + key2)}}</span>
                         {% endif %}
                         {% if can_be_multiple in tags %}
                             {% if str in tags %}
@@ -99,18 +103,9 @@
                         {% elif type(tags[1]) == select %}
                             <select name="['{{key}}']['{{key2}}']">
                                 {% for tag in tags[1].content %}
-                                    <script>
-                                        console.log("{{tag['value']}} == {{str(value2)}}")
-                                    </script>
                                     {% if tag['value'] == str(value2) %}
-                                        <script>
-                                            console.log("selected")
-                                        </script>
                                         <option value="{{tag['value']}}" selected>{{str(tag['display_value'])}}</option>
                                     {% else %}
-                                        <script>
-                                            console.log("not selected")
-                                        </script>
                                         <option value="{{tag['value']}}">{{str(tag['display_value'])}}</option>
                                     {% endif %}
                                 {% endfor %}
@@ -125,7 +120,8 @@
             {% endif %}
         {% endfor %}
 
-        <button type="submit">{{l('web_save')}}</button>
+        <input type="submit" name="save" value="{{l('web_save')}}">
+        <input type="submit" name="reload" value="{{l('web_save_reload')}}">
     </form>
 </body>
 </html>

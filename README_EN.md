@@ -1,6 +1,6 @@
 # Fortnite-LobbyBot
 [![Python Versions](https://img.shields.io/badge/3.7%20%7C%203.8-blue)](https://www.python.org/downloads/)  
-<a href="https://discord.gg/NEnka5N"><img src="https://discordapp.com/api/guilds/718709023427526697/widget.png?style=banner2"></img></a>  
+<a href="https://discord.gg/NEnka5N"><img src="https://discordapp.com/api/guilds/718709023427526697/widget.png?style=banner2" /></a>  
 A Fortnite bot using fortnitepy  
 You can control bot by sending command  
 
@@ -104,6 +104,7 @@ enabled                   : Config whether will boot web server. true or false
 ip                        : IP address for web server. See below
 port                      : Port for web server
 password                  : Password for web server
+login_required            : Config whether login required to access web server. true or false
 web                       : Config whether bot will accept command from web. true or false
 log                       : Config whether print web server access log
 
@@ -121,7 +122,7 @@ loglevel                  : Log level. normal or info or debug
 debug                     : Config whether enable fortnitepy debug mode. true or false
 ```
 
-# コマンド一覧
+# List of commands
 All command can set multiple by split in ,  
 Also enter item name to change item to it  
 
@@ -176,6 +177,7 @@ invite                                    : invite [user name / user ID] Invite 
 inviteall                                 : Invite config's invitelist users
 message                                   : message [user name / user ID] : [Content] Send message to user
 partymessage                              : partymessage [content] Send message to party chat
+sendall                                   : sendall [content] Send same command to all bots
 status                                    : status [content] Set status
 banner                                    : banner [banner ID] [banner color] Set banner
 level                                     : level [level] Set level
