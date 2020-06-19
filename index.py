@@ -2889,7 +2889,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 return
             if message.author.id in otherbotlist and data['fortnite']['ignorebot'] is True:
                 return
-            if isinstance(message, fortnitepy.FriendMessage):
+            if isinstance(message.base, fortnitepy.FriendMessage):
                 if client.owner is not None:
                     if client.whisper is False:
                         if client.whisperperfect is True:
@@ -2908,7 +2908,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['no-logs'] is False:
                         print(f'[{now_()}] [{client.user.display_name}] {str(message.author.display_name)} / {message.author.id} [{platform_to_str(message.author.platform)}] | {content}')
                     dstore(f'{message.author.display_name} / {message.author.id} [{platform_to_str(message.author.platform)}]',content)
-            elif isinstance(message, fortnitepy.PartyMessage):
+            elif isinstance(message.base, fortnitepy.PartyMessage):
                 if client.owner is not None:
                     if client.partychat is False:
                         if client.partychatperfect is True:
@@ -2964,8 +2964,6 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     flag = True
         elif isinstance(message.base, discord.message.Message) is True:
             if data['discord']['enabled'] is True and dclient.isready is False:
-                return
-            if isinstance(message.channel, discord.TextChannel) is False:
                 return
             if message.author == dclient.user:
                 return
@@ -7069,7 +7067,7 @@ if True:
                 if request.method == "GET":
                     return render_template("login.html", l=l, flash_messages=flash_messages)
                 elif request.method == "POST":
-                    if request.form["password"][-1] == data["web"]["password"]:
+                    if request.form.get("password","") == data["web"]["password"]:
                         r = sanic.response.redirect("/")
                         auth.login_user(request, r)
                         return r

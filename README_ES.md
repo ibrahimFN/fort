@@ -102,7 +102,8 @@ enabled                   : Determina si se encenderá el servidor web. true o f
 ip                        : IP address for web server. Revise abajo para más información
 port                      : Puerto para el servidor web
 password                  : Contraseña para el servidor web
-web                       : Determina si el bot aceptará comandos del servidor web. true or false
+login_required            : Determina si se necesita iniciar sesión para el servidor web. true o false
+web                       : Determina si el bot aceptará comandos del servidor web. true o false
 log                       : Determina si se crearán logs del servidor web
 
 lang                      : Lenguaje del bot
@@ -174,6 +175,7 @@ invite                                    : invite [user name / user ID] Invita 
 inviteall                                 : Invita toda la lista de miembros en la invitelist
 message                                   : message [user name / user ID] : [Contenido] Envía un mensaje a un usuario
 partymessage                              : partymessage [contenido] Envía un mensaje a chat de la sala
+sendall                                   : sendall [contenido] Envía el mismo mensaje a todos los bots
 status                                    : status [contenido] Configura el estado
 banner                                    : banner [banner ID] [banner color] Configura el banner
 level                                     : level [level] Configura el nivel
