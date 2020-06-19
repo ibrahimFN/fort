@@ -80,7 +80,7 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
         elif extension == ".json":
             if os.path.isfile(filename):
                 with open(filename, "r", encoding='utf-8') as f:
-                    current = f.read()
+                    current = json.load(f)
             else:
                 github = requests.get(githuburl + filename)
                 if github.status_code != 200:
