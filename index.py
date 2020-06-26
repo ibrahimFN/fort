@@ -5388,7 +5388,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
     elif args[0] in commands['swap'].split(','):
         try:
             if rawcontent == '':
-                await reply(message, client, f"[{commands['kick']}] [{l('name_or_id')}]")
+                await reply(message, client, f"[{commands['swap']}] [{l('name_or_id')}]")
                 return
             users = {str(member.display_name): member for member in client.party.members.values() if rawcontent in str(member.display_name)}
             try:
