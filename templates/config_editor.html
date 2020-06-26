@@ -6,11 +6,17 @@
         float: left;
     }
 
+    .background {
+        margin: 8px;
+        background-color: #40444B;
+    }
+
     textarea, input, select {
         background-color: #40444B;
         color: #DDDDDD;
         width: 60vmin;
         max-width: 30%;
+        box-sizing: border-box;
     }
 
     button {
@@ -30,6 +36,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{{l('config_editor')}}</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
 </head>
 <body style="color: #DDDDDD;">
     <h3>
@@ -45,15 +52,15 @@
         {% for key_,tags in config_tags.items() %}
             {% set keys = key_.replace("'","").replace("[","").split("]") %}
             {% set key = keys[0] %}
-            {% set value = data[key] %}
+            {% set value = data.get(key,"") %}
             {% set nest = len(keys) - 1 %}
 
             {% if nest == 1 %}
                 {% if dict in tags %}
                     <h2>{{key}}</h2>
                 {% else %}
-                    <div>
-                        {% if red in tags %}
+                    <div class="background">
+                        {% if red in tags or fix_required in tags %}
                             <span style="color: #FF0000">{{'&nbsp;'|safe*((nest - 1)*4)}}{{l('config_' + key)}}</span>
                         {% else %}
                             <span>{{'&nbsp;'|safe*((nest - 1)*4)}}{{l('config_' + key)}}</span>
@@ -83,38 +90,40 @@
                 {% endif %}
             {% elif nest == 2 %}
                 {% set key2 = keys[1] %}
-                {% set value2 = data[key][key2] %}
+                {% set value2 = data.get(key,{}).get(key2,"") %}
 
                 {% if dict in tags %}
                     <h2>{{'&nbsp;'|safe*((nest - 1)*4)}}{{key2}}</h2>
                 {% else %}
                     <div>
-                        {% if red in tags %}
-                            <span style="color: #FF0000">{{'&nbsp;'|safe*((nest - 1)*4)}}{{l('config_' + key + '_' + key2)}}</span>
-                        {% else %}
-                            <span>{{'&nbsp;'|safe*((nest - 1)*4)}}{{l('config_' + key + '_' + key2)}}</span>
-                        {% endif %}
-                        {% if can_be_multiple in tags %}
-                            {% if str in tags %}
-                                <textarea name="['{{key}}']['{{key2}}']" rows="5">{{"\n".join(value2.split(","))}}</textarea>
-                            {% elif list in tags %}
-                                <textarea name="['{{key}}']['{{key2}}']" rows="5">{{"\n".join(value2)}}</textarea>
+                        <div class="background">
+                            {% if red in tags or fix_required in tags %}
+                                <span style="color: #FF0000">{{'&nbsp;'|safe*((nest - 1)*4)}}{{l('config_' + key + '_' + key2)}}</span>
+                            {% else %}
+                                <span>{{'&nbsp;'|safe*((nest - 1)*4)}}{{l('config_' + key + '_' + key2)}}</span>
                             {% endif %}
-                        {% elif type(tags[1]) == select %}
-                            <select name="['{{key}}']['{{key2}}']">
-                                {% for tag in tags[1].content %}
-                                    {% if tag['value'] == str(value2) %}
-                                        <option value="{{tag['value']}}" selected>{{str(tag['display_value'])}}</option>
-                                    {% else %}
-                                        <option value="{{tag['value']}}">{{str(tag['display_value'])}}</option>
-                                    {% endif %}
-                                {% endfor %}
-                            </select>
-                        {% elif str in tags %}
-                            <input type="text" name="['{{key}}']['{{key2}}']" value="{{value2.replace('\n','\\n')}}">
-                        {% elif int in tags %}
-                            <input type="number" name="['{{key}}']['{{key2}}']" value="{{value2}}">
-                        {% endif %}
+                            {% if can_be_multiple in tags %}
+                                {% if str in tags %}
+                                    <textarea name="['{{key}}']['{{key2}}']" rows="5">{{"\n".join(value2.split(","))}}</textarea>
+                                {% elif list in tags %}
+                                    <textarea name="['{{key}}']['{{key2}}']" rows="5">{{"\n".join(value2)}}</textarea>
+                                {% endif %}
+                            {% elif type(tags[1]) == select %}
+                                <select name="['{{key}}']['{{key2}}']">
+                                    {% for tag in tags[1].content %}
+                                        {% if tag['value'] == str(value2) %}
+                                            <option value="{{tag['value']}}" selected>{{str(tag['display_value'])}}</option>
+                                        {% else %}
+                                            <option value="{{tag['value']}}">{{str(tag['display_value'])}}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            {% elif str in tags %}
+                                <input type="text" name="['{{key}}']['{{key2}}']" value="{{value2.replace('\n','\\n')}}">
+                            {% elif int in tags %}
+                                <input type="number" name="['{{key}}']['{{key2}}']" value="{{value2}}">
+                            {% endif %}
+                        </div>
                     </div>
                 {% endif %}
             {% endif %}

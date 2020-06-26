@@ -203,6 +203,7 @@ pending                                   : pending [true / false] 保留して�
 removepending                             : 自分が送ったフレンド申請を全て解除する
 addfriend                                 : addfriend [ユーザー名 / ユーザーID] ユーザーにフレンド申請を送信する
 removefriend                              : removefriend [ユーザー名 / ユーザーID] ユーザーをフレンドから削除する
+removeallfriend                           : removeallfriend 全てのフレンドを削除する
 acceptpending                             : acceptpending [ユーザー名 / ユーザーID] ユーザーからのフレンド申請を承諾する
 declinepending                            : declinepending [ユーザー名 / ユーザーID] ユーザーからのフレンド申請を拒否する
 blockfriend                               : blockfriend[ユーザー名 / ユーザーID] ユーザーをブロックする

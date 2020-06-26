@@ -5,6 +5,7 @@
         background-color: #40444B;
         color: #DDDDDD;
         width: 20vmin;
+        box-sizing: border-box;
     }
 
     button {
@@ -23,6 +24,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{{l('web_login')}}</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
 </head>
 <body style="color: #DDDDDD">
     {% for message in flash_messages %}
