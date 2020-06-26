@@ -70,6 +70,7 @@
 	"removepending": "removepending",
 	"addfriend": "add",
 	"removefriend": "remove",
+	"removeallfriend": "removeallfriend",
 	"acceptpending": "accept",
 	"declinepending": "decline",
 	"blockfriend": "block",
