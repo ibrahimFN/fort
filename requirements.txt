@@ -1,4 +1,4 @@
-fortnitepy=2.1.1
+fortnitepy==2.1.1
 discord.py
 requests
 crayons
