@@ -1451,7 +1451,7 @@ if True:
                 "Spray",
                 "Battle Bus"
             ]
-            req=requests.get('https://benbotfn.tk/api/v1/cosmetics/br', params={"language": "en"})
+            req=requests.get('https://benbotfn.tk/api/v1/cosmetics/br', params={"lang": "en"})
             if req.status_code == 200:
                 data_ = {}
                 allcosmen=req.json()
@@ -1465,7 +1465,7 @@ if True:
                     with open(f'items/all{k}_en.json', 'w') as f:
                         json.dump(v, f)
             if data["lang"] != "en":
-                req=requests.get(f'https://benbotfn.tk/api/v1/cosmetics/br', params={"language": data["lang"]})
+                req=requests.get(f'https://benbotfn.tk/api/v1/cosmetics/br', params={"lang": data["lang"]})
                 if req.status_code == 200:
                     data_ = {}
                     allcosm=req.json()
@@ -4644,7 +4644,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
         except IndexError:
             if data['loglevel'] == 'debug':
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-            await reply(message, client, f"[{commands['info']}] [[{commands['info_party']}] / [{commands['info_item']}] / [{commands['id']}] / [{commands['outfit']}] / [{commands['backpack']}] / [{commands['pickaxe']}] / [{commands['emote']}]]")
+            await reply(message, client, f"[{commands['info']}] [[{commands['info_party']}] / [{commands['item']}] / [{commands['id']}] / [{commands['outfit']}] / [{commands['backpack']}] / [{commands['pickaxe']}] / [{commands['emote']}]]")
         except Exception:
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
