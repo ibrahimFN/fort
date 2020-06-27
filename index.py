@@ -2610,15 +2610,6 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
     display_name = name(client.user)
     if message.author.id in blacklist_ and data['discord']['blacklist-ignorecommand'] is True:
         return
-    if not dclient.owner is None:
-        if client.discord is False:
-            if client.discordperfect is True:
-                return
-            elif not message.author.id == dclient.owner.id:
-                return
-    else:
-        if client.discord is False:
-            return
     if flag is True:
         for checks in commands.items():
             if checks[0] in ignore:
