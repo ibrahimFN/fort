@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html style="background-image: url('/images/background.png'); width: 100vw; height: 100vh; background-color: #36393F; background-size: cover; font-size: 2vmin;">
+<style>
+    .editor {
+        width: 95%;
+    }
+
+    .field {
+        margin-left: 10px;
+    }
+
+    .title {
+        float: none;
+    }
+
+    .text {
+        float: left;
+        width: 50%;
+    }
+
+    .input {
+        width: 40%;
+    }
+
+    textarea, input, select {
+        background-color: #40444B;
+        color: #DDDDDD;
+    }
+
+    button {
+        background-color: #B9BBBE;
+        color: #40444B;
+    }
+
+    a:link, a:visited, a:hover, a:active {
+        color: #DDDDDD;
+    }
+    
+    body {
+        font-family: "Whitney", "Hiragino Sans", "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "メイリオ", "Meiryo", "Osaka", "MS PGothic", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+</style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>{{l('config_editor')}}</title>
+</head>
+<script>
+    function ResizeEvent (event) {
+        document.querySelectorAll(".field").forEach(function(element) {
+            width = element.clientWidth * 0.45;
+            height = element.clientHeight;
+            if (width > 500) {
+                width = 500;
+            }
+            node = element.children[0]; //text
+            node.setAttribute("style", "font-size: " + width / 30 + "px;");
+            width = width * 0.95
+            node = element.children[1]; //input
+            node.setAttribute("style", "width: " + width + "px; font-size: " + width / 30 + "px;");
+        });
+    };
+    window.addEventListener("load", ResizeEvent)
+    window.addEventListener("resize", ResizeEvent)
+</script>
+<body style="color: #DDDDDD;">
+    <h3>
+        <a href="/">{{l('web_back')}}</a>
+    </h3>
+    <div id="flash_messages">
+        {% for message in flash_messages %}
+            <p style="color: #57FF33">{{message}}</p>
+        {% endfor %}
+        {% for message in flash_messages_red %}
+            <p style="color: #FF0000">{{message}}</p>
+        {% endfor %}
+    </div>
+    <div class="editor">
+        <form action="" method="post">
+            {% for key_,tags in config_tags.items() %}
+                {% set keys = key_.replace("'","").replace("[","").split("]") %}
+                {% set key = keys[0] %}
+                {% set value = data.get(key,"") %}
+                {% set nest = len(keys) - 1 %}
+
+                {% if nest == 1 %}
+                    {% if dict in tags %}
+                        <h2 class="title">{{key}}</h2>
+                    {% else %}
+                        <div class="field">
+                            {% if red in tags or fix_required in tags %}
+                                <span class="text" style="color: #FF0000">{{'&nbsp;'|safe*((nest - 1)*4)}}{{l('config_' + key)}}</span>
+                            {% else %}
+                                <span class="text">{{'&nbsp;'|safe*((nest - 1)*4)}}{{l('config_' + key)}}</span>
+                            {% endif %}
+                            {% if can_be_multiple in tags %}
+                                {% if str in tags %}
+                                    <textarea class="input" name="['{{key}}']" rows="5">{{"\n".join(value.split(","))}}</textarea>
+                                {% elif list in tags %}
+                                    <textarea class="input" name="['{{key}}']" rows="5">{{"\n".join(value)}}</textarea>
+                                {% endif %}
+                            {% elif type(tags[1]) == select %}
+                                <select class="input" name="['{{key}}']">
+                                    {% for tag in tags[1].content %}
+                                        {% if tag['value'] == str(value) %}
+                                            <option value="{{tag['value']}}" selected>{{str(tag['display_value'])}}</option>
+                                        {% else %}
+                                            <option value="{{tag['value']}}">{{str(tag['display_value'])}}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            {% elif str in tags %}
+                                <input class="input" type="text" name="['{{key}}']" value="{{value.replace('\n','\\n')}}">
+                            {% elif int in tags %}
+                                <input class="input" type="number" name="['{{key}}']" value="{{value}}">
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% elif nest == 2 %}
+                    {% set key2 = keys[1] %}
+                    {% set value2 = data[key][key2] %}
+
+                    {% if dict in tags %}
+                        <h2 class="title">{{'&nbsp;'|safe*((nest - 1)*4)}}{{key2}}</h2>
+                    {% else %}
+                        <div class="field">
+                            {% if red in tags %}
+                                <span class="text" style="color: #FF0000">{{'&nbsp;'|safe*((nest - 1)*4)}}{{l('config_' + key + '_' + key2)}}</span>
+                            {% else %}
+                                <span class="text">{{'&nbsp;'|safe*((nest - 1)*4)}}{{l('config_' + key + '_' + key2)}}</span>
+                            {% endif %}
+                            {% if can_be_multiple in tags %}
+                                {% if str in tags %}
+                                    <textarea class="input" name="['{{key}}']['{{key2}}']" rows="5">{{"\n".join(value2.split(","))}}</textarea>
+                                {% elif list in tags %}
+                                    <textarea class="input" name="['{{key}}']['{{key2}}']" rows="5">{{"\n".join(value2)}}</textarea>
+                                {% endif %}
+                            {% elif type(tags[1]) == select %}
+                                <select class="input" name="['{{key}}']['{{key2}}']">
+                                    {% for tag in tags[1].content %}
+                                        {% if tag['value'] == str(value2) %}
+                                            <option value="{{tag['value']}}" selected>{{str(tag['display_value'])}}</option>
+                                        {% else %}
+                                            <option value="{{tag['value']}}">{{str(tag['display_value'])}}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            {% elif str in tags %}
+                                <input class="input" type="text" name="['{{key}}']['{{key2}}']" value="{{value2.replace('\n','\\n')}}">
+                            {% elif int in tags %}
+                                <input class="input" type="number" name="['{{key}}']['{{key2}}']" value="{{value2}}">
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+
+            <input type="submit" name="save" value="{{l('web_save')}}">
+            <input type="submit" name="reload" value="{{l('web_save_reload')}}">
+        </form>
+    </div>
+</body>
+</html>

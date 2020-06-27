@@ -11,20 +11,12 @@
         float: left;
     }
 
-    textarea {
-        background-color: #40444B;
-        color: #DDDDDD;
-        width: 80vmin;
-    }
-
-    textarea::placeholder {
-        color: #DDDDDD;
-    }
-
-    button {
+    input {
         background-color: #B9BBBE;
         color: #40444B;
-        width: 20vmin;
+        width: 8vmin;
+        font-size: 80%;
+        box-sizing: border-box;
     }
 
     a:link, a:visited, a:hover, a:active {
@@ -38,6 +30,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{{l('boot_switch')}}</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
 </head>
 <script>
     function update() {
@@ -52,8 +45,8 @@
                 var count = 0
                 for (let email in data) {
                     client = data[email]
-                    text += '<p>'
-                    text += '<span>' + email + '</span>'
+                    text += '<div id="account">'
+                    text += '<span style="vertical-align: bottom;">' + email + '</span>'
                     if (client["info"] == "info_closed") {
                         text += "<div class='text'>{{l('info_closed')}}</div>"
                     } else if (client["info"] == "info_booting") {
@@ -66,7 +59,7 @@
                     } else {
                         text += '<input type="submit" name="off' + String(count) + '" value="' + "{{l('off')}}" + '">'
                     }
-                    text += '<p>'
+                    text += '</div>'
                     count++
                 }
                 document.getElementById("accounts").innerHTML = text; 

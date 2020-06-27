@@ -2,16 +2,21 @@
 <html style="background-image: url('/images/background.png'); background-color: #36393F; background-size: cover; width: 100%; height: 100%; font-size: 2vmin;">
 <style>
     span {
-        width: 50vmin;
+        width: 60vmin;
         float: left;
+    }
+
+    .background {
+        margin: 8px;
+        background-color: #40444B;
     }
 
     textarea {
         background-color: #40444B;
         color: #DDDDDD;
-        width: 40vmin;
         width: 60vmin;
         max-width: 30%;
+        box-sizing: border-box;
     }
 
     button {
@@ -31,6 +36,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{{l('config_editor')}}</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
 </head>
 <body style="color: #DDDDDD;">
     <h3>
@@ -39,19 +45,26 @@
     {% for message in flash_messages %}
         <p style="color: #57FF33">{{message}}</p>
     {% endfor %}
+    {% for message in flash_messages_red %}
+        <p style="color: #FF0000">{{message}}</p>
+    {% endfor %}
     <form action="" method="post">
         {% for key_,tags in commands_tags.items() %}
             {% set keys = key_.replace("'","").replace("[","").split("]") %}
             {% set key = keys[0] %}
-            {% set value = data[key] %}
+            {% set value = data.get(key,"") %}
             {% set nest = len(keys) - 1 %}
 
             {% if nest == 1 %}
                 {% if dict in tags %}
                     <h2>{{key}}</h2>
                 {% else %}
-                    <div>
-                        <span>{{'&nbsp;'|safe*((nest - 1)*4)}}{{key}}</span>
+                    <div class="background">
+                        {% if red in tags or fix_required in tags %}
+                            <span style="color: #FF0000">{{'&nbsp;'|safe*((nest - 1)*4)}}{{key}}</span>
+                        {% else %}
+                            <span>{{'&nbsp;'|safe*((nest - 1)*4)}}{{key}}</span>
+                        {% endif %}
                         {% if can_be_multiple in tags %}
                             {% if str in tags %}
                                 <textarea name="['{{key}}']" rows="3">{{"\n".join(value.split(","))}}</textarea>

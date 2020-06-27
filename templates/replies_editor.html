@@ -11,6 +11,7 @@
         background-color: #40444B;
         color: #DDDDDD;
         width: 30vmin;
+        box-sizing: border-box;
     }
 
     button {
@@ -19,11 +20,12 @@
     }
 
     .save_button {
-        width: 20vmin;
+        width: 30vmin;
+        font-size: 1.9vmin;
     }
 
     .pm_button {
-        width: 5vmin;
+        width: 25px;
     }
 
     a:link, a:visited, a:hover, a:active {
@@ -35,7 +37,9 @@
     }
 </style>
 <head>
+    <meta charset="UTF-8">
     <title>{{l('replies_editor')}}</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
 </head>
 <script>
     function add(t) {
@@ -90,8 +94,9 @@
                 <button type="button" onclick="remove(this)" class="pm_button">-</button>
             </div>
         {% endfor %}
-        <input type="submit" name="save" value="{{l('web_save')}}">
-        <input type="submit" name="reload" value="{{l('web_save_reload')}}">
+        <input type="submit" name="save" value="{{l('web_save')}}" class="save_button">
+        &nbsp;&nbsp;&nbsp;
+        <input type="submit" name="reload" value="{{l('web_save_reload')}}" class="save_button">
     </form>
     <script>
         var form = document.getElementById("form");

@@ -102,8 +102,8 @@ enabled                   : Determina si se encenderá el servidor web. true o f
 ip                        : IP address for web server. Revise abajo para más información
 port                      : Puerto para el servidor web
 password                  : Contraseña para el servidor web
-login_required            : Determina si se necesita iniciar sesión para el servidor web. true o false
-web                       : Determina si el bot aceptará comandos del servidor web. true o false
+**NEW**login_required            : Config whether login required to access web server. true or false
+web                       : Determina si el bot aceptará comandos del servidor web. true or false
 log                       : Determina si se crearán logs del servidor web
 
 lang                      : Lenguaje del bot
@@ -196,6 +196,7 @@ pending                                   : pending [true / false] Acepta las pe
 removepending                             : Cancela todas las solicitudes enviadas por los bots
 addfriend                                 : addfriend [user name / user ID] Envía una solicitud de amistad al usuario
 removefriend                              : removefriend [user name / user ID] Quita un usuario de amigos
+removeallfriend                           : Elimina a todos los amigos
 acceptpending                             : acceptpending [user name / user ID] Acepta la solicitud pendiente de un usuario
 declinepending                            : declinepending [user name / user ID] Rechaza la solicitud pendiente de un usuario
 blockfriend                               : blockfriend[user name / user ID] Bloquea un usuario

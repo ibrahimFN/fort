@@ -14,7 +14,8 @@ https://github.com/gomashio1596/Fortnite-LobbyBot
 Run INSTALL.bat  
 Run RUN.bat  
 Write details in site which opened  
-You can write other details by reload tab  
+Press Save button
+You can write other details by reloading tab  
 
 # Glitch
 https://glitch.com
@@ -198,6 +199,7 @@ pending                                   : pending [true / false] Accept all pe
 removepending                             : Cancel all friend request which bot sent
 addfriend                                 : addfriend [user name / user ID] Send friend request to user
 removefriend                              : removefriend [user name / user ID] Remove user from friend
+removeallfriend                           : removeallfriend Remove all friends
 acceptpending                             : acceptpending [user name / user ID] Accept friend request from user
 declinepending                            : declinepending [user name / user ID] Decline friend request from user
 blockfriend                               : blockfriend[user name / user ID] Block user
