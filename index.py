@@ -2196,6 +2196,7 @@ config_tags={
     "['web']['login_required']": [bool_,"select_bool"],
     "['web']['web']": [bool_,"select_bool"],
     "['web']['log']": [bool_,"select_bool"],
+    "['restart_in']": [int],
     "['lang']": [str,"select_lang"],
     "['no-logs']": [bool_,"select_bool"],
     "['ingame-error']": [bool_,"select_bool"],
@@ -7176,6 +7177,8 @@ async def run_bot() -> None:
     try:
         for client in clients:
             client.booting = True
+        if data.get('restart_in') is not None:
+            Timer(data.get('restart_in'), restart).start()
         await fortnitepy.start_multiple(
             clients,
             all_ready_callback=lambda: send(l("bot"),l("all_login"),green,add_p=lambda x:f'[{now_()}] {x}') if len(clients) > 1 else print('')
