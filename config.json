@@ -86,6 +86,7 @@
 		"log": false
 	},
 	"lang": "en",
+	"restart_in": null,
 	"no-logs": false,
 	"ingame-error": true,
 	"discord-log": false,
@@ -96,6 +97,6 @@
 	"webhook": "",
 	"caseinsensitive": true,
 	"loglevel": "normal",
-    "debug": false,
-    "status": 0
+    	"debug": false,
+    	"status": 0
 }
