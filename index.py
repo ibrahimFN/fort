@@ -6213,79 +6213,79 @@ Thread(target=dprint,args=()).start()
 if data.get("status",1) != 0:
     Thread(target=get_item_info,args=()).start()
 
-clients = []
-for count, credential in enumerate(credentials.items()):
-    email = credential[0]
-    password = credential[1]
-    try:
-        device_auth_details = get_device_auth_details().get(email.lower(), {})
-        if not device_auth_details:
-            device_auth_details = generate_device_auth_and_store(email)
-        client = Client(
-            auth=fortnitepy.AdvancedAuth(
-                email=email,
-                password=password,
-                prompt_exchange_code=False,
-                prompt_authorization_code=False,
-                prompt_code_if_throttled=True,
-                prompt_code_if_invalid=True,
-                delete_existing_device_auths=False,
-                **device_auth_details
-            ),
-            default_party_member_config=fortnitepy.DefaultPartyMemberConfig(
-                meta=[
-                    partial(ClientPartyMember.set_outfit, data['fortnite']['cid'].replace('cid','CID',1)),
-                    partial(ClientPartyMember.set_backpack, data['fortnite']['bid'].replace('bid','BID',1)),
-                    partial(ClientPartyMember.set_pickaxe, data['fortnite']['pickaxe_id'].replace('pickaxe_id','Pickaxe_ID',1)),
-                    partial(ClientPartyMember.set_battlepass_info, has_purchased=True, level=data['fortnite']['tier'], self_boost_xp=data['fortnite']['xpboost'], friend_boost_xp=data['fortnite']['friendxpboost']),
-                    partial(ClientPartyMember.set_banner, icon=data['fortnite']['banner'], color=data['fortnite']['banner_color'], season_level=data['fortnite']['level']),
-                ]
-            ),
-            platform=fortnitepy.Platform(data['fortnite']['platform'].upper()),
-            status=data['fortnite']['status']
-        )
-    except ValueError:
-        send(l("bot"),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-        send(l("bot"),l('error_while_setting_client'),red,add_d=lambda x:f'>>> {x}')
-        continue
-    
-    client.email = email
-    client.eid=data['fortnite']['eid']
-    client.isready=False
-    client.booting=False
-    client.acceptinvite_interval=True
-    client.stopcheck=False
-    client.outfitlock=False
-    client.backpacklock=False
-    client.pickaxelock=False
-    client.emotelock=False
-    client.owner=None
-    client.prevoutfit=None
-    client.prevoutfitvariants=None
-    client.prevbackpack=None
-    client.prevbackpackvariants=None
-    client.prevpickaxe=None
-    client.prevpickaxevariants=None
-    client.prevmessage={}
-    client.select={}
-    client.invitelist=[]
-    client.whisper=data['fortnite']['whisper']
-    client.partychat=data['fortnite']['partychat']
-    client.discord=data['discord']['discord']
-    client.web=data['web']['web']
-    client.whisperperfect=data['fortnite']['disablewhisperperfectly']
-    client.partychatperfect=data['fortnite']['disablepartychatperfectly']
-    client.discordperfect=data['discord']['disablediscordperfectly']
-    client.joinmessageenable=data['fortnite']['joinmessageenable']
-    client.randommessageenable=data['fortnite']['randommessageenable']
-    client.outfitmimic=data['fortnite']['outfitmimic']
-    client.backpackmimic=data['fortnite']['backpackmimic']
-    client.pickaxemimic=data['fortnite']['pickaxemimic']
-    client.emotemimic=data['fortnite']['emotemimic']
-    client.acceptinvite=data['fortnite']['acceptinvite']
-    client.acceptfriend=data['fortnite']['acceptfriend']
+    clients = []
+    for count, credential in enumerate(credentials.items()):
+        email = credential[0]
+        password = credential[1]
+        try:
+            device_auth_details = get_device_auth_details().get(email.lower(), {})
+            if not device_auth_details:
+                device_auth_details = generate_device_auth_and_store(email)
+            client = Client(
+                auth=fortnitepy.AdvancedAuth(
+                    email=email,
+                    password=password,
+                    prompt_exchange_code=False,
+                    prompt_authorization_code=False,
+                    prompt_code_if_throttled=True,
+                    prompt_code_if_invalid=True,
+                    delete_existing_device_auths=False,
+                    **device_auth_details
+                ),
+                default_party_member_config=fortnitepy.DefaultPartyMemberConfig(
+                    meta=[
+                        partial(ClientPartyMember.set_outfit, data['fortnite']['cid'].replace('cid','CID',1)),
+                        partial(ClientPartyMember.set_backpack, data['fortnite']['bid'].replace('bid','BID',1)),
+                        partial(ClientPartyMember.set_pickaxe, data['fortnite']['pickaxe_id'].replace('pickaxe_id','Pickaxe_ID',1)),
+                        partial(ClientPartyMember.set_battlepass_info, has_purchased=True, level=data['fortnite']['tier'], self_boost_xp=data['fortnite']['xpboost'], friend_boost_xp=data['fortnite']['friendxpboost']),
+                        partial(ClientPartyMember.set_banner, icon=data['fortnite']['banner'], color=data['fortnite']['banner_color'], season_level=data['fortnite']['level']),
+                    ]
+                ),
+                platform=fortnitepy.Platform(data['fortnite']['platform'].upper()),
+                status=data['fortnite']['status']
+            )
+        except ValueError:
+            send(l("bot"),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+            send(l("bot"),l('error_while_setting_client'),red,add_d=lambda x:f'>>> {x}')
+            continue
 
-    clients.append(client)
+        client.email = email
+        client.eid=data['fortnite']['eid']
+        client.isready=False
+        client.booting=False
+        client.acceptinvite_interval=True
+        client.stopcheck=False
+        client.outfitlock=False
+        client.backpacklock=False
+        client.pickaxelock=False
+        client.emotelock=False
+        client.owner=None
+        client.prevoutfit=None
+        client.prevoutfitvariants=None
+        client.prevbackpack=None
+        client.prevbackpackvariants=None
+        client.prevpickaxe=None
+        client.prevpickaxevariants=None
+        client.prevmessage={}
+        client.select={}
+        client.invitelist=[]
+        client.whisper=data['fortnite']['whisper']
+        client.partychat=data['fortnite']['partychat']
+        client.discord=data['discord']['discord']
+        client.web=data['web']['web']
+        client.whisperperfect=data['fortnite']['disablewhisperperfectly']
+        client.partychatperfect=data['fortnite']['disablepartychatperfectly']
+        client.discordperfect=data['discord']['disablediscordperfectly']
+        client.joinmessageenable=data['fortnite']['joinmessageenable']
+        client.randommessageenable=data['fortnite']['randommessageenable']
+        client.outfitmimic=data['fortnite']['outfitmimic']
+        client.backpackmimic=data['fortnite']['backpackmimic']
+        client.pickaxemimic=data['fortnite']['pickaxemimic']
+        client.emotemimic=data['fortnite']['emotemimic']
+        client.acceptinvite=data['fortnite']['acceptinvite']
+        client.acceptfriend=data['fortnite']['acceptfriend']
+
+        clients.append(client)
 
 select_bool = select(
     [
