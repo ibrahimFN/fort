@@ -2698,13 +2698,6 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
         rawargs = content.split()
         rawcontent = ' '.join(rawargs[1:])
         rawcontent2 = ' '.join(rawargs[2:])
-        print(
-            f"content: {content}\n"
-            + f"args: {args}\n"
-            + f"rawargs: {rawargs}\n"
-            + f"rawcontent: {rawcontent}\n"
-            + f"rawcontent2: {rawcontent2}"
-        )
 
         if flag is True:
             for checks in commands.items():
@@ -6084,7 +6077,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
         else:
             if ': ' in message.content:
                 continue
-            if args[0].isdigit() and client.select.get(message.author.id) is not None:
+            if content.isdigit() and client.select.get(message.author.id) is not None:
                 try:
                     if int(args[0]) == 0:
                         await reply(message, client, l('please_enter_valid_number'))
