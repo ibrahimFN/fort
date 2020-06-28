@@ -46,7 +46,7 @@ try:
 except ModuleNotFoundError as e:
     try:
         import traceback
-        print(f'{traceback.format_exc()}')
+        print(traceback.format_exc())
     except ModuleNotFoundError:
         pass
     try:
@@ -75,7 +75,7 @@ try:
 except ModuleNotFoundError as e:
     try:
         import traceback
-        print(f'{traceback.format_exc()}')
+        print(traceback.format_exc())
     except ModuleNotFoundError:
         pass
     try:
@@ -7177,7 +7177,7 @@ async def run_bot() -> None:
     try:
         for client in clients:
             client.booting = True
-        if data.get('restart_in') is not None:
+        if data.get('restart_in') not in [None, 0]:
             Timer(data.get('restart_in'), restart).start()
         await fortnitepy.start_multiple(
             clients,
