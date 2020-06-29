@@ -639,7 +639,8 @@ if True:
             if data['fortnite']['addfriend'] is True:
                 for member in member.party.members.copy().keys():
                     try:
-                        await client.add_friend(member)
+                        if client.has_friend(member.id) is False:
+                            await client.add_friend(member)
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -2446,6 +2447,8 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
     rawargs = content.split()
     rawcontent = ' '.join(rawargs[1:])
     rawcontent2 = ' '.join(rawargs[2:])
+    if len(args) < 1:
+        return
     if isinstance(message, fortnitepy.message.MessageBase) is True:
         client=message.client
         if data['discord']['enabled'] is True and dclient.isready is False:
@@ -3209,7 +3212,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     continue
                 if len(users) == 0:
@@ -3292,7 +3295,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     continue
                 if len(users) == 0:
@@ -3375,7 +3378,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(l("bot"),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     continue
                 if len(users) == 0:
@@ -3458,7 +3461,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(l("bot"),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l("too_many_users", str(len(users))))
                     continue
                 if len(users) == 0:
@@ -3541,7 +3544,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l("too_many_users", str(len(users))))
                     continue
                 if len(users) == 0:
@@ -3624,7 +3627,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l("too_many_users", str(len(users))))
                     continue
                 if len(users) == 0:
@@ -3707,7 +3710,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l("too_many_users", str(len(users))))
                     continue
                 if len(users) == 0:
@@ -4137,7 +4140,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     continue
                 if len(users) == 0:
@@ -4260,7 +4263,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     continue
                 if len(users) == 0:
@@ -4354,7 +4357,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     continue
                 if len(users) == 0:
@@ -4547,7 +4550,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     continue
                 if len(users) == 0:
@@ -4581,7 +4584,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     continue
                 if len(users) == 0:
@@ -4623,7 +4626,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     continue
                 if len(users) == 0:
@@ -4660,7 +4663,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     continue
                 if len(users) == 0:
@@ -4705,7 +4708,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if result is None:
                         await reply(message, client, l('item_notfound'))
                     else:
-                        if len(result) > 30:
+                        if len(result) > 60:
                             await reply(message, client, l('too_many_items', str(len(result))))
                             continue
                         if len(result) == 1:
@@ -4729,7 +4732,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if result is None:
                         await reply(message, client, l('item_notfound'))
                     else:
-                        if len(result) > 30:
+                        if len(result) > 60:
                             await reply(message, client, l('too_many_items', str(len(result))))
                             continue
                         if len(result) == 1:
@@ -4835,7 +4838,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     continue
                 if len(users) == 0:
@@ -4899,7 +4902,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     continue
                 if len(users) == 0:
@@ -4976,7 +4979,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     continue
                 if len(users) == 0:
@@ -5040,7 +5043,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     continue
                 if len(users) == 0:
@@ -5104,7 +5107,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     continue
                 if len(users) == 0:
@@ -5168,7 +5171,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     continue
                 if len(users) == 0:
@@ -5233,7 +5236,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     continue
                 if len(users) == 0:
@@ -5321,7 +5324,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     continue
                 if len(users) == 0:
@@ -5403,7 +5406,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     continue
                 if len(users) == 0:
@@ -5531,7 +5534,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 30:
+                if len(users) > 60:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     continue
                 if len(users) == 0:
@@ -5845,7 +5848,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 if result is None:
                     await reply(message, client, l('item_notfound'))
                 else:
-                    if len(result) > 30:
+                    if len(result) > 60:
                         await reply(message, client, l('too_many_items', str(len(result))))
                         continue
                     if len(result) == 1:
@@ -5877,7 +5880,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
         elif True in  [args[0] in commands[key].split(',') for key in ("outfit", "backpack", "pet", "pickaxe", "emote", "emoji", "toy", "item")]:
             type_ = convert_to_type(args[0])
             if rawcontent == '':
-                await reply(message, client, f"[{commands[type_]}] [{l('itemname')}]")
+                await reply(message, client, f"[{commands[convert_to_old_type(type_)]}] [{l('itemname')}]")
                 continue
             try:
                 result = await loop.run_in_executor(None, search_item, data["lang"], "name", rawcontent, type_)
@@ -5886,7 +5889,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 if result is None:
                     await reply(message, client, l('item_notfound'))
                 else:
-                    if len(result) > 30:
+                    if len(result) > 60:
                         await reply(message, client, l('too_many_items', str(len(result))))
                         continue
                     if len(result) == 1:
@@ -5926,7 +5929,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 if result is None:
                     await reply(message, client, l('item_notfound'))
                 else:
-                    if len(result) > 30:
+                    if len(result) > 60:
                         await reply(message, client, l('too_many_items', str(len(result))))
                         continue
                     if len(result) == 1:
@@ -6085,7 +6088,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
             type_ = convert_to_type(args[0])
             try:
                 if rawcontent == '':
-                    await reply(message, client, f"[{commands[f'{type_}asset']}] [{l('assetpath')}]")
+                    await reply(message, client, f"[{commands[f'{convert_to_old_type(type_)}asset']}] [{l('assetpath')}]")
                     continue
                 if await change_asset(client, message.author.id, type_, rawcontent) is False:
                     await reply(message, client, l('locked'))
@@ -6149,7 +6152,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 if result is None:
                     result = await loop.run_in_executor(None, search_item, "en", "name", content, "Item")
                 if result is not None:
-                    if len(result) > 30:
+                    if len(result) > 60:
                         await reply(message, client, l('too_many_items', str(len(result))))
                         continue
                     if len(result) == 1:
