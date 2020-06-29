@@ -5877,7 +5877,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
         elif True in  [args[0] in commands[key].split(',') for key in ("outfit", "backpack", "pet", "pickaxe", "emote", "emoji", "toy", "item")]:
             type_ = convert_to_type(args[0])
             if rawcontent == '':
-                await reply(message, client, f"[{commands[type_]}] [{l('itemname')}]")
+                await reply(message, client, f"[{commands[convert_to_old_type(type_)]}] [{l('itemname')}]")
                 continue
             try:
                 result = await loop.run_in_executor(None, search_item, data["lang"], "name", rawcontent, type_)
@@ -6085,7 +6085,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
             type_ = convert_to_type(args[0])
             try:
                 if rawcontent == '':
-                    await reply(message, client, f"[{commands[f'{type_}asset']}] [{l('assetpath')}]")
+                    await reply(message, client, f"[{commands[f'{convert_to_old_type(type_)}asset']}] [{l('assetpath')}]")
                     continue
                 if await change_asset(client, message.author.id, type_, rawcontent) is False:
                     await reply(message, client, l('locked'))
