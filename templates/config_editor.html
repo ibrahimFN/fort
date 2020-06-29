@@ -106,7 +106,11 @@
                                 {% if str in tags %}
                                     <textarea name="['{{key}}']['{{key2}}']" rows="5">{{"\n".join(value2.split(","))}}</textarea>
                                 {% elif list in tags %}
-                                    <textarea name="['{{key}}']['{{key2}}']" rows="5">{{"\n".join(value2)}}</textarea>
+                                    {% set v = [] %}
+                                    {% for val in value2 %}
+                                        {% do v.append(str(val)) %}
+                                    {% endfor %}
+                                    <textarea name="['{{key}}']['{{key2}}']" rows="5">{{"\n".join(v)}}</textarea>
                                 {% endif %}
                             {% elif type(tags[1]) == select %}
                                 <select name="['{{key}}']['{{key2}}']">
