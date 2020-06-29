@@ -42,6 +42,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
 </head>
 <script>
+
     function add(t) {
         var num = 0;
         var element = "";
@@ -69,6 +70,14 @@
         if (target.parentNode.childElementCount > 3) {
             target.parentNode.removeChild(target)
         }
+    } 
+    function add_() {
+        var form = document.getElementById("form")
+        text += '<input type="text" id="trigger0" name="trigger0" placeholder="{{l("trigger")}}">'
+        text += '&rarr;'
+        text += '<input type="text" id="content0" name="content0" placeholder="{{l("text")}}">'
+        form.innerHTML = text
+        
     }
 </script>
 <body style="color: #DDDDDD">
@@ -83,17 +92,27 @@
     {% endfor %}
     <form action="" method="post" id="form">
         {% set number = 0 %}
-        {% for num,items in enumerate(data.items()) %}
-            {% set key = items[0] %}
-            {% set value = items[1] %}
+        {% if len(data) == 0 %}
             <div>
-                <input type="text" id="trigger{{num}}" name="trigger{{num}}" placeholder="{{l('trigger')}}" value="{{key.replace('\n','\\n')}}">
+                <input type="text" id="trigger0" name="trigger0" placeholder="{{l('trigger')}}">
                 &rarr;
-                <input type="text" id="content{{num}}" name="content{{num}}" placeholder="{{l('text')}}" value="{{value.replace('\n','\\n')}}">
+                <input type="text" id="content0" name="content0" placeholder="{{l('text')}}">
                 <button type="button" onclick="add(this)" class="pm_button">+</button>
                 <button type="button" onclick="remove(this)" class="pm_button">-</button>
             </div>
-        {% endfor %}
+        {% else %}
+            {% for num,items in enumerate(data.items()) %}
+                {% set key = items[0] %}
+                {% set value = items[1] %}
+                <div>
+                    <input type="text" id="trigger{{num}}" name="trigger{{num}}" placeholder="{{l('trigger')}}" value="{{key.replace('\n','\\n')}}">
+                    &rarr;
+                    <input type="text" id="content{{num}}" name="content{{num}}" placeholder="{{l('text')}}" value="{{value.replace('\n','\\n')}}">
+                    <button type="button" onclick="add(this)" class="pm_button">+</button>
+                    <button type="button" onclick="remove(this)" class="pm_button">-</button>
+                </div>
+            {% endfor %}
+        {% endif %}
         <input type="submit" name="save" value="{{l('web_save')}}" class="save_button">
         &nbsp;&nbsp;&nbsp;
         <input type="submit" name="reload" value="{{l('web_save_reload')}}" class="save_button">

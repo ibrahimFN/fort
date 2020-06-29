@@ -6577,7 +6577,7 @@ if True:
                 )
             elif request.method == "POST":
                 if auth.authenticated is True:
-                    Thread(target=restart,args=(1,))
+                    Thread(target=restart,args=(1,)).start()
                 return sanic.response.redirect("/")
 
         @app.route("/login", methods=["GET", "POST"])
@@ -7026,6 +7026,7 @@ if True:
                     data=data,
                     flash_messages=flash_messages,
                     flash_messages_red=flash_messages_red,
+                    len=len,
                     enumerate=enumerate,
                     str=str
                 )
@@ -7055,6 +7056,7 @@ if True:
                         data=corrected,
                         flash_messages=flash_messages,
                         flash_messages_red=flash_messages_red,
+                        len=len,
                         enumerate=enumerate,
                         str=str
                     )
