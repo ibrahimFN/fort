@@ -1257,11 +1257,11 @@ if True:
                     data.get('fortnite',{}).get('otherbotlist',[]).remove(key)
             
             for key in data.get('discord',{}).get('blacklist',[]).copy():
-                if len(key) == 0:
+                if len(str(key)) == 0:
                     data.get('discord',{}).get('blacklist',[]).remove(key)
             
             for key in data.get('discord',{}).get('whitelist',[]).copy():
-                if len(key) == 0:
+                if len(str(key)) == 0:
                     data.get('discord',{}).get('whitelist',[]).remove(key)
             
             with open('config.json', 'w', encoding='utf-8') as f:
@@ -1321,7 +1321,7 @@ if True:
             config_tags["['lang']"].append("red")
 
         data['fortnite']['privacy']=eval(f"fortnitepy.PartyPrivacy.{data.get('fortnite',{}).get('privacy','public').upper()}")
-        if os.getcwd().startswith('/app'):
+        if os.getcwd().startswith('/app') or os.getcwd().startswith('/home/runner'):
             data['web']['ip']="0.0.0.0"
         else:
             data['web']['ip']=data['web']['ip'].format(ip=socket.gethostbyname(socket.gethostname()))
@@ -1592,8 +1592,9 @@ if True:
                         with open(filename, 'r', encoding='utf-8') as f:
                             d = json.load(f)
                         return d
-                    _ = lambda x: re.sub(r"items(\\|/)all","",x).replace(f"_{lang}.json","")
-                    futures = [executor.submit(_open_file,f'items/all{_(i)}_{lang}.json') for i in glob(f"items/all*_{lang}.json")]
+                    def _(text: str) -> str:
+                        return re.sub(r"items(\\|/)all","",text).replace(f"_{lang}.json","")
+                    futures = [executor.submit(_open_file,f'items/all{_(i)}_{lang}.json') for i in glob(f"items/all*_{lang}.json") if _(i)[0].isupper()]
                     for future in futures:
                         data_.extend(future.result())
         for item in data_:
@@ -1661,8 +1662,9 @@ if True:
                         with open(filename, 'r', encoding='utf-8') as f:
                             d = json.load(f)
                         return d
-                    _ = lambda x: re.sub(r"items(\\|/)all","",x).replace(f"_{lang}.json","")
-                    futures = [executor.submit(_open_file,f'items/all{_(i)}_{lang}.json') for i in glob(f"items/all*_{lang}.json")]
+                    def _(text: str) -> str:
+                        return re.sub(r"items(\\|/)all","",text).replace(f"_{lang}.json","")
+                    futures = [executor.submit(_open_file,f'items/all{_(i)}_{lang}.json') for i in glob(f"items/all*_{lang}.json") if _(i)[0].isupper()]
                     for future in futures:
                         data_.extend(future.result())
         variants = None
@@ -2365,7 +2367,7 @@ if data.get('debug',False) is True:
     handler.setFormatter(logging.Formatter('\u001b[35m %(asctime)s:%(levelname)s:%(name)s: %(message)s \u001b[0m'))
     logger.addHandler(handler)
 
-if os.getcwd().startswith('/app'):
+if os.getcwd().startswith('/app') or os.getcwd().startswith('/home/runner'):
     data['web']['ip']="0.0.0.0"
 else:
     data['web']['ip']=data['web']['ip'].format(ip=socket.gethostbyname(socket.gethostname()))
@@ -2485,13 +2487,28 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
             return
         if message.author.bot is True and data['discord']['ignorebot'] is True:
             return
-        for clientname, client in client_name.items():
-            if client.isready is False:
-                continue
-            if message.channel.name == data['discord']['channelname'].format(name=clientname, id=client.user.id).replace(" ","-").replace("--","-").lower():
-                break
-        else:
+        if "{name}" not in data['discord']['channelname'] and "{id}" not in data['discord']['channelname']:
+            tasks = {}
+            for client_ in loadedclients:
+                mes = AllMessage(content, message.author, client_, message)
+                task = loop.create_task(process_command(mes))
+                tasks[client_] = [task, mes]
+            await asyncio.gather(*[i[0] for i in tasks.values()])
+            for client_,list_ in tasks.items():
+                result = list_[1].result
+                if result.get(client_.user.id) is not None:
+                    results = '\n'.join(result[client_.user.id])
+                    await reply(message, client_, f"[{name(client_.user)}] {results}")
             return
+        else:
+            for clientname, client in client_name.items():
+                if client.isready is False:
+                    continue
+                
+                if message.channel.name == data['discord']['channelname'].format(name=clientname, id=client.user.id).replace(" ","-").replace("--","-").lower():
+                    break
+            else:
+                return
         if dclient.owner is not None:
             if client.discord is False:
                 if client.discordperfect is True:
@@ -3674,7 +3691,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     send(display_name,f'{name(member)}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}',add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}')
                     if data['loglevel'] == 'debug':
                         send(display_name,json.dumps(member.meta.schema, indent=2),yellow,add_d=lambda x:f'```\n{x}\n```',add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}')
-                    await reply(message, client, f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}')
+                    await reply(message, client, f'{name(member)}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}')
                 else:
                     client.select[message.author.id] = {
                         "exec": [
@@ -3686,7 +3703,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
             send(display_name,f'{name(member)}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}',add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}')
             if data['loglevel'] == 'debug':
                 send(display_name,json.dumps(member.meta.schema, indent=2),yellow,add_d=lambda x:f'>>> {x}',add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}')
-            await reply(message, client, f'{str(member.display_name)} / {member.id}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}')""" for user in users.values()
+            await reply(message, client, f'{name(member)}\n{member.outfit} {member.outfit_variants}\n{partymember_backpack(member)} {member.backpack_variants}\n{member.pickaxe} {member.pickaxe_variants}\n{partymember_emote(member)}')""" for user in users.values()
                         ],
                         "variable": [
                             {"user": user} for user in users.values()
@@ -3694,7 +3711,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     }
                     text = str()
                     for count, user in enumerate(users.values()):
-                        text += f"\n{count+1} {str(user.display_name)} / {user.id}"
+                        text += f"\n{count+1} {name(user)}"
                     text += f"\n{l('enter_to_get_userinfo')}"
                     await reply(message, client, text)
             except Exception:
@@ -4135,7 +4152,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     }
                     text = str()
                     for count, user in enumerate(users.values()):
-                        text += f"\n{count+1} {str(user.display_name)} / {user.id}"
+                        text += f"\n{count+1} {name(user)}"
                     text += f"{l('enter_to_join_party')}"
                     await reply(message, client, text)
             except fortnitepy.PartyError:
@@ -4252,7 +4269,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     }
                     text = str()
                     for count, user in enumerate(users.values()):
-                        text += f"\n{count+1} {str(user.display_name)} / {user.id}"
+                        text += f"\n{count+1} {name(user)}"
                     text += f"\n{l('enter_to_invite_user')}"
                     await reply(message, client, text)
             except fortnitepy.PartyError:
@@ -4342,7 +4359,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     }
                     text = str()
                     for count, user in enumerate(users.values()):
-                        text += f"\n{count+1} {str(user.display_name)} / {user.id}"
+                        text += f"\n{count+1} {name(user)}"
                     text += f"\n{l('enter_to_send')}"
                     await reply(message, client, text)
             except fortnitepy.HTTPException:
@@ -4374,7 +4391,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     await reply(message, client, f"[{commands['sendall']}] [{l('content')}]")
                     continue
                 tasks = {}
-                for client_ in clients:
+                for client_ in loadedclients:
                     mes = AllMessage(rawcontent, message.author, client_, message)
                     task = loop.create_task(process_command(mes))
                     tasks[client_] = [task, mes]
@@ -4383,7 +4400,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     result = list_[1].result
                     if result.get(client_.user.id) is not None:
                         results = '\n'.join(result[client_.user.id])
-                        await reply(message, client, f"[{client_.user.display_name} / {client_.user.id}] {results}")
+                        await reply(message, client, f"[{name(client_.user)}] {results}")
             except Exception:
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l('error'))
@@ -4507,7 +4524,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     continue
                 text = str()
                 for user in users.values():
-                    text += f'\n{str(user.display_name)} / {user.id}'
+                    text += f'\n{name(user)}'
                 send(display_name,text)
                 await reply(message, client, text)
             except Exception:
@@ -4799,7 +4816,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                         await reply(message, client, l('already_friend'))
                         continue
                     await client.add_friend(user.id)
-                    await reply(message, client, l('friend_request_to', f'{str(user.display_name)} / {user.id}'))
+                    await reply(message, client, l('friend_request_to', f'{name(user)}'))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
@@ -4809,7 +4826,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     await reply(message, client, l('already_friend'))
                     return
                 await client.add_friend(user.id)
-                await reply(message, client, l('friend_request_to', f'{str(user.display_name)} / {user.id}'))
+                await reply(message, client, l('friend_request_to', f'{name(user)}'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -4821,7 +4838,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     }
                     text = str()
                     for count, user in enumerate(users.values()):
-                        text += f"\n{count+1} {str(user.display_name)} / {user.id}"
+                        text += f"\n{count+1} {name(user)}"
                     text += f"\n{l('enter_to_send_friendrequest')}"
                     await reply(message, client, text)
             except fortnitepy.HTTPException:
@@ -4863,7 +4880,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                         await reply(message, client, l('not_friend_with_user'))
                         continue
                     await client.remove_or_decline_friend(user.id)
-                    await reply(message, client, l('remove_friend', f'{str(user.display_name)} / {user.id}'))
+                    await reply(message, client, l('remove_friend', f'{name(user)}'))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
@@ -4873,7 +4890,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     await reply(message, client, l('not_friend_with_user'))
                     return
                 await client.remove_or_decline_friend(user.id)
-                await reply(message, client, l('remove_friend', f'{str(user.display_name)} / {user.id}'))
+                await reply(message, client, l('remove_friend', f'{name(user)}'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -4885,7 +4902,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     }
                     text = str()
                     for count, user in enumerate(users.values()):
-                        text += f"\n{count+1} {str(user.display_name)} / {user.id}"
+                        text += f"\n{count+1} {name(user)}"
                     text += f"\n{l('enter_to_remove_friend')}"
                     await reply(message, client, text)
             except fortnitepy.HTTPException:
@@ -4940,7 +4957,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                         await reply(message, client, l('not_pending_with_user'))
                         continue
                     await client.accept_friend(user.id)
-                    await reply(message, client, l('friend_add', f'{str(user.display_name)} / {user.id}'))
+                    await reply(message, client, l('friend_add', f'{name(user)}'))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
@@ -4950,7 +4967,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     await reply(message, client, l('not_pending_with_user'))
                     return
                 await client.accept_friend(user.id)
-                await reply(message, client, l('friend_add', f'{str(user.display_name)} / {user.id}'))
+                await reply(message, client, l('friend_add', f'{name(user)}'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -4962,7 +4979,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     }
                     text = str()
                     for count, user in enumerate(users.values()):
-                        text += f"\n{count+1} {str(user.display_name)} / {user.id}"
+                        text += f"\n{count+1} {name(user)}"
                     text += f"\n{l('enter_to_accept_pending')}"
                     await reply(message, client, text)
             except fortnitepy.HTTPException:
@@ -5004,7 +5021,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                         await reply(message, client, l('nor_pending_with_user'))
                         continue
                     await client.remove_or_decline_friend(user.id)
-                    await reply(message, client, l('friend_request_decline', f'{str(user.display_name)} / {user.id}'))
+                    await reply(message, client, l('friend_request_decline', f'{name(user)}'))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
@@ -5014,7 +5031,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     await reply(message, client, l('nor_pending_with_user'))
                     return
                 await client.remove_or_decline_friend(user.id)
-                await reply(message, client, l('friend_request_decline', f'{str(user.display_name)} / {user.id}'))
+                await reply(message, client, l('friend_request_decline', f'{name(user)}'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5026,7 +5043,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     }
                     text = str()
                     for count, user in enumerate(users.values()):
-                        text += f"\n{count+1} {str(user.display_name)} / {user.id}"
+                        text += f"\n{count+1} {name(user)}"
                     text += f"\n{l('enter_to_decline_pending')}"
                     await reply(message, client, text)
             except fortnitepy.HTTPException:
@@ -5068,7 +5085,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                         await reply(message, client, l('already_block'))
                         continue
                     await client.block_user(user.id)
-                    await reply(message, client, l('block_user', f'{str(user.display_name)} / {user.id}'))
+                    await reply(message, client, l('block_user', f'{name(user)}'))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
@@ -5078,7 +5095,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     await reply(message, client, l('already_block'))
                     return
                 await client.block_user(user.id)
-                await reply(message, client, l('block_user', f'{str(user.display_name)} / {user.id}'))
+                await reply(message, client, l('block_user', f'{name(user)}'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5090,7 +5107,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     }
                     text = str()
                     for count, user in enumerate(users.values()):
-                        text += f"\n{count+1} {str(user.display_name)} / {user.id}"
+                        text += f"\n{count+1} {name(user)}"
                     text += f"\n{l('enter_to_block_user')}"
                     await reply(message, client, text)
             except fortnitepy.HTTPException:
@@ -5132,7 +5149,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                         await reply(message, client, l('not_block'))
                         continue
                     await client.unblock_user(user.id)
-                    await reply(message, client, l('unblock_user', f'{str(user.display_name)} / {user.id}'))
+                    await reply(message, client, l('unblock_user', f'{name(user)}'))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
@@ -5142,7 +5159,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     await reply(message, client, l('not_block'))
                     return
                 await client.unblock_user(user.id)
-                await reply(message, client, l('unblock_user', f'{str(user.display_name)} / {user.id}'))
+                await reply(message, client, l('unblock_user', f'{name(user)}'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5154,7 +5171,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     }
                     text = str()
                     for count, user in enumerate(users.values()):
-                        text += f"\n{count+1} {str(user.display_name)} / {user.id}"
+                        text += f"\n{count+1} {name(user)}"
                     text += f"\n{l('enter_to_unblock_user')}"
                     await reply(message, client, text)
             except fortnitepy.HTTPException:
@@ -5201,7 +5218,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                         await member.chatban(reason[1])
                     except IndexError:
                         await member.chatban()
-                    await reply(message, client, l('chatban_user', f'{str(user.display_name)} / {user.id}'))
+                    await reply(message, client, l('chatban_user', f'{name(user)}'))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
@@ -5215,7 +5232,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     await member.chatban(reason[1])
                 except IndexError:
                     await member.chatban()
-                await reply(message, client, l('chatban_user', f'{str(user.display_name)} / {user.id}'))
+                await reply(message, client, l('chatban_user', f'{name(user)}'))
             except fortnitepy.Forbidden:
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5235,7 +5252,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     }
                     text = str()
                     for count, user in enumerate(users.values()):
-                        text += f"\n{count+1} {str(user.display_name)} / {user.id}"
+                        text += f"\n{count+1} {name(user)}"
                     text += f"\n{l('enter_to_chatban')}"
                     await reply(message, client, text)
             except fortnitepy.Forbidden:
@@ -5286,7 +5303,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                         continue
                     member=client.party.members.get(user.id)
                     await member.promote()
-                    await reply(message, client, l('promote_user', f'{str(user.display_name)} / {user.id}'))
+                    await reply(message, client, l('promote_user', f'{name(user)}'))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
@@ -5297,7 +5314,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     return
                 member=client.party.members.get(user.id)
                 await member.promote()
-                await reply(message, client, l('promote_user', f'{str(user.display_name)} / {user.id}'))
+                await reply(message, client, l('promote_user', f'{name(user)}'))
             except fortnitepy.Forbidden:
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5317,7 +5334,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     }
                     text = str()
                     for count, user in enumerate(users.values()):
-                        text += f"\n{count+1} {str(user.display_name)} / {user.id}"
+                        text += f"\n{count+1} {name(user)}"
                     text += f"\n{l('enter_to_promote_user')}"
                     await reply(message, client, text)
             except fortnitepy.Forbidden:
@@ -5368,7 +5385,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                         continue
                     member=client.party.members.get(user.id)
                     await member.kick()
-                    await reply(message, client, l('kick_user', f'{str(user.display_name)} / {user.id}'))
+                    await reply(message, client, l('kick_user', f'{name(user)}'))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
@@ -5379,7 +5396,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     return
                 member=client.party.members.get(user.id)
                 await member.kick()
-                await reply(message, client, l('kick_user', f'{str(user.display_name)} / {user.id}'))
+                await reply(message, client, l('kick_user', f'{name(user)}'))
             except fortnitepy.Forbidden:
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5399,7 +5416,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     }
                     text = str()
                     for count, user in enumerate(users.values()):
-                        text += f"\n{count+1} {str(user.display_name)} / {user.id}"
+                        text += f"\n{count+1} {name(user)}"
                     text += f"\n{l('enter_to_kick_user')}"
             except fortnitepy.Forbidden:
                 if data['loglevel'] == 'debug':
@@ -5496,7 +5513,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                         continue
                     member=client.party.members.get(user.id)
                     await member.swap_position()
-                    await reply(message, client, l('swap_user', f'{str(user.display_name)} / {user.id}'))
+                    await reply(message, client, l('swap_user', f'{name(user)}'))
                 else:
                     client.select[message.author.id] = {
                         "exec": [
@@ -5507,7 +5524,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     return
                 member=client.party.members.get(user.id)
                 await member.swap_position()
-                await reply(message, client, l('swap_user', f'{str(user.display_name)} / {user.id}'))
+                await reply(message, client, l('swap_user', f'{name(user)}}'))
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5519,7 +5536,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     }
                     text = str()
                     for count, user in enumerate(users.values()):
-                        text += f"\n{count+1} {str(user.display_name)} / {user.id}"
+                        text += f"\n{count+1} {name(user)}"
                     text += f"\n{l('enter_to_swap_user')}"
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
@@ -6248,7 +6265,7 @@ if data.get("status",1) != 0:
             send(l("bot"),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             send(l("bot"),l('error_while_setting_client'),red,add_d=lambda x:f'>>> {x}')
             continue
-
+        
         client.email = email
         client.eid=data['fortnite']['eid']
         client.isready=False
@@ -7229,7 +7246,7 @@ async def run_app() -> None:
     else:
         if data["status"] == 0 or bot_ready is False:
             webbrowser.open(f"http://{data['web']['ip']}:{data['web']['port']}")
-        if os.getcwd().startswith('/app'):
+        if os.getcwd().startswith('/app') or os.getcwd().startswith('/home/runner'):
             Thread(target=uptime).start()
         send(l("bot"),l("web_running",f"http://{data['web']['ip']}:{data['web']['port']}"),add_p=lambda x:f'[{now_()}] {x}',add_d=lambda x:f'>>> {x}')
 
