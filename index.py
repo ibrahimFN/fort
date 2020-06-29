@@ -88,6 +88,8 @@ except ModuleNotFoundError as e:
     print('Failed to load third party library. Please run INSTALL.bat. If the issue is not resolved, contact me\nTwitter @gomashio1596\nDiscord gomashio#4335\nor please join support Discord server\nhttps://discord.gg/NEnka5N')
     sys.exit(1)
 
+asyncio.set_event_loop(asyncio.ProactorEventLoop())
+
 filename = 'device_auths.json'
 storedlog = []
 loadedclients = []
@@ -522,10 +524,10 @@ if True:
                 send(display_name,l("invite_from2",f'{name(invitation.sender)} [{platform_to_str(invitation.sender.platform)}]',invitation.party.id),add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}')
 
             if client.owner is not None:
-                if client.owner.id in client.party.members.keys() and data['fortnite']['invite-ownerdecline'] is True:
+                if client.owner.id in client.party.members.copy().keys() and data['fortnite']['invite-ownerdecline'] is True:
                     await invitation_decline_owner(invitation)
                     return
-            if True in [memberid in whitelist for memberid in client.party.members.keys()] and data['fortnite']['whitelist-declineinvite'] is True:
+            if True in [memberid in whitelist for memberid in client.party.members.copy().keys()] and data['fortnite']['whitelist-declineinvite'] is True:
                 await invitation_decline_whitelist(invitation)
             elif client.acceptinvite is False:
                 await invitation_decline(invitation)
@@ -632,7 +634,7 @@ if True:
                     return
             
             if data['fortnite']['addfriend'] is True:
-                for member in member.party.members.keys():
+                for member in member.party.members.copy().keys():
                     try:
                         await client.add_friend(member)
                     except fortnitepy.HTTPException:
@@ -689,7 +691,7 @@ if True:
                     send(display_name_,l("party_member_left",f'{name(member)} [{platform_to_str(member.platform)}/{member.input}]',member.party.member_count),magenta,lambda x:f'[{now_()}] [{l("party")}] [{display_name_}] {x}')
 
             if data['fortnite']['addfriend'] is True:
-                for member in member.party.members.keys():
+                for member in member.party.members.copy().keys():
                     try:
                         await client.add_friend(member)
                     except fortnitepy.HTTPException:
@@ -771,7 +773,7 @@ if True:
                 try:
                     await client.party.set_playlist(data['fortnite']['playlist'])
                     await client.party.set_privacy(data['fortnite']['privacy'])
-                    for member in client.party.members.values():
+                    for member in client.party.members.copy().values():
                         if member.id in blacklist:
                             if data['fortnite']['blacklist-autokick'] is True:
                                 try:
@@ -1057,7 +1059,7 @@ if True:
     def is_most(client: Type[fortnitepy.Client]) -> None:
         name=client.user.display_name
         member_joined_at_most=[client.user.id, getattr(client.party.me, "joined_at", datetime.datetime.now())]
-        for member_ in client.party.members.values():
+        for member_ in client.party.members.copy().values():
             add_cache(client, member_)
             try:
                 if member_.id in [i.user.id for i in loadedclients]:
@@ -1595,10 +1597,13 @@ if True:
         if cached_items.get(lang) is None:
             cached_items[lang] = []
         if cache is True:
-            data_ = [i for i in cached_items[lang] if convert_backend_type(i["backendType"]) in type_.split(',')]
+            if mode == 'set':
+                data_ = cached_items[lang]
+            else:
+                data_ = [i for i in cached_items[lang] if convert_backend_type(i["backendType"]) in type_.split(',')]
         else:
             data_ = []
-            if type_ != "Item":
+            if type_ not in ["Item", None]:
                 with ThreadPoolExecutor() as executor:
                     def _open_file(filename: str) -> Union[list, dict]:
                         with open(filename, 'r', encoding='utf-8') as f:
@@ -3686,9 +3691,9 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     await reply(message, client, f"[{commands['get']}] [{l('name_or_id')}]")
                     continue
                 if data["caseinsensitive"] is True:
-                    users = {str(member.display_name): member for member in client.party.members.values() if content_ in jaconv.kata2hira(str(member.display_name).lower())}
+                    users = {str(member.display_name): member for member in client.party.members.copy().values() if content_ in jaconv.kata2hira(str(member.display_name).lower())}
                 else:
-                    users = {str(member.display_name): member for member in client.party.members.values() if content_ in str(member.display_name)}
+                    users = {str(member.display_name): member for member in client.party.members.copy().values() if content_ in str(member.display_name)}
                 try:
                     user=await client.fetch_profile(rawcontent)
                     if user is not None:
@@ -4094,7 +4099,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     client.timer_.start()
                     await reply(message, client, l('decline_invite_for', str(data['fortnite']['waitinterval'])))
                 else:
-                    if client.owner.id in client.party.members.keys() and message.author.id != client.owner.id:
+                    if client.owner.id in client.party.members.copy().keys() and message.author.id != client.owner.id:
                         await reply(message, client, l('not_available'))
                         continue
                     client.acceptinvite=False
@@ -4675,7 +4680,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 if args[1] in commands['info_party'].split(','):
                     text = str()
                     text += f"{client.party.id}\n{l('member_count')}: {client.party.member_count}\n{client.party.playlist_info[0]}"
-                    for member in client.party.members.values():
+                    for member in client.party.members.copy().values():
                         add_cache(client, member)
                         if data['loglevel'] == 'normal':
                             text += f'\n{str(member.display_name)}'
@@ -5212,9 +5217,9 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     await reply(message, client, f"[{commands['chatban']}] [{l('name_or_id')}] : [{l('reason')}({l('optional')})]")
                     continue
                 if data['caseinsensitive'] is True:
-                    users = {str(member.display_name): member for member in client.party.members.values() if content_ in jaconv.kata2hira(str(member.display_name).lower())}
+                    users = {str(member.display_name): member for member in client.party.members.copy().values() if content_ in jaconv.kata2hira(str(member.display_name).lower())}
                 else:
-                    users = {str(member.display_name): member for member in client.party.members.values() if content_ in str(member.display_name)}
+                    users = {str(member.display_name): member for member in client.party.members.copy().values() if content_ in str(member.display_name)}
                 try:
                     user=await client.fetch_profile(rawcontent)
                     if user is not None:
@@ -5300,9 +5305,9 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     await reply(message, client, f"[{commands['promote']}] [{l('name_or_id')}]")
                     continue
                 if data['caseinsensitive'] is True:
-                    users = {str(member.display_name): member for member in client.party.members.values() if content_ in jaconv.kata2hira(str(member.display_name).lower())}
+                    users = {str(member.display_name): member for member in client.party.members.copy().values() if content_ in jaconv.kata2hira(str(member.display_name).lower())}
                 else:
-                    users = {str(member.display_name): member for member in client.party.members.values() if content_ in str(member.display_name)}
+                    users = {str(member.display_name): member for member in client.party.members.copy().values() if content_ in str(member.display_name)}
                 try:
                     user=await client.fetch_profile(rawcontent)
                     if user is not None:
@@ -5382,9 +5387,9 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     await reply(message, client, f"[{commands['kick']}] [{l('name_or_id')}]")
                     continue
                 if data['caseinsensitive'] is True:
-                    users = {str(member.display_name): member for member in client.party.members.values() if content_ in jaconv.kata2hira(str(member.display_name).lower())}
+                    users = {str(member.display_name): member for member in client.party.members.copy().values() if content_ in jaconv.kata2hira(str(member.display_name).lower())}
                 else:
-                    users = {str(member.display_name): member for member in client.party.members.values() if content_ in str(member.display_name)}
+                    users = {str(member.display_name): member for member in client.party.members.copy().values() if content_ in str(member.display_name)}
                 try:
                     user=await client.fetch_profile(rawcontent)
                     if user is not None:
@@ -5510,9 +5515,9 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     await reply(message, client, f"[{commands['swap']}] [{l('name_or_id')}]")
                     continue
                 if data['caseinsensitive'] is True:
-                    users = {str(member.display_name): member for member in client.party.members.values() if content_ in jaconv.kata2hira(str(member.display_name).lower())}
+                    users = {str(member.display_name): member for member in client.party.members.copy().values() if content_ in jaconv.kata2hira(str(member.display_name).lower())}
                 else:
-                    users = {str(member.display_name): member for member in client.party.members.values() if content_ in str(member.display_name)}
+                    users = {str(member.display_name): member for member in client.party.members.copy().values() if content_ in str(member.display_name)}
                 try:
                     user=await client.fetch_profile(rawcontent)
                     if user is not None:
@@ -6406,7 +6411,7 @@ app=Sanic(__name__)
 app.secret_key = os.urandom(32)
 
 if True:
-    env = Environment(loader=FileSystemLoader('./templates', encoding='utf8'))
+    env = Environment(loader=FileSystemLoader('./templates', encoding='utf8'), extensions=['jinja2.ext.do'])
     auth = LoginManager()
 
     @app.route("/favicon.ico", methods=["GET"])
@@ -7149,7 +7154,7 @@ if True:
                                 "backpack": member_asset(i, "backpack"),
                                 "pickaxe": member_asset(i, "pickaxe"),
                                 "emote": member_asset(i, "emote")
-                            } for i in client.party.members.values()
+                            } for i in client.party.members.copy().values()
                         ]
                     }
                 )
