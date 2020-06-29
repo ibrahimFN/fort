@@ -2446,6 +2446,8 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
     rawargs = content.split()
     rawcontent = ' '.join(rawargs[1:])
     rawcontent2 = ' '.join(rawargs[2:])
+    if len(args) < 1:
+        return
     if isinstance(message, fortnitepy.message.MessageBase) is True:
         client=message.client
         if data['discord']['enabled'] is True and dclient.isready is False:
