@@ -312,6 +312,13 @@ if True:
                 add_cache(client, pending_)
             for block_ in client.blocked_users.values():
                 add_cache(client, block_)
+            try:
+                if client.party.leader.id == client.user.id:
+                    prop = {"VoiceChat:implementation_s": "VivoxVoiceChat"}
+                    await client.party.patch(updated=prop)
+            except Exception:
+                if data['loglevel'] == 'debug':
+                    send(name(client.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
             try:
                 client.owner=None
@@ -595,6 +602,13 @@ if True:
             add_cache(client, member) 
             display_name = name(client.user)
             display_name_ = is_most(client)
+            try:
+                if client.party.leader.id == client.user.id:
+                    prop = {"VoiceChat:implementation_s": "VivoxVoiceChat"}
+                    await client.party.patch(updated=prop)
+            except Exception:
+                if data['loglevel'] == 'debug':
+                    send(name(client.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             if display_name_:
                 if data['loglevel'] == 'normal':
                     send(display_name_,l('party_member_joined',name(member),member.party.member_count),magenta,add_p=lambda x:f'[{now_()}] [{l("party")}] [{display_name_}] {x}')
@@ -740,6 +754,13 @@ if True:
             add_cache(client, new_leader)
             display_name = name(client.user)
             display_name_ = is_most(client)
+            try:
+                if new_leader.id == client.user.id:
+                    prop = {"VoiceChat:implementation_s": "VivoxVoiceChat"}
+                    await client.party.patch(updated=prop)
+            except Exception:
+                if data['loglevel'] == 'debug':
+                    send(name(client.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             if display_name_:
                 if data['loglevel'] == 'normal':
                     send(display_name_,l("party_member_promote",name(old_leader),name(new_leader)),magenta,add_p=lambda x:f'[{now_()}] [{l("party")}] [{display_name_}] {x}')
@@ -2461,9 +2482,6 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 else:
                     send(f'{name(message.author)} [{platform_to_str(message.author.platform)}/{message.author.input}]',content,add_p=lambda x:f'[{now_()}] [{l("party")}/{client.party.id}] [{display_name_}] {name(message.author)} [{platform_to_str(message.author.platform)}/{message.author.input}] | {x}',add_d=lambda x:f'[{l("party")}/{client.party.id}] [{display_name_}] {x}')
 
-        if rawcontent in commands['me'].split(','):
-            rawcontent=str(message.author.display_name)
-
         flag = False
         if client.owner is not None:
             if data['fortnite']['whitelist-ownercommand'] is True:
@@ -2716,6 +2734,11 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
         rawargs = content.split()
         rawcontent = ' '.join(rawargs[1:])
         rawcontent2 = ' '.join(rawargs[2:])
+        if isinstance(message, fortnitepy.message.MessageBase) is True:
+            if rawcontent in commands['me'].split(','):
+                rawcontent = str(message.author.display_name)
+            if content_ in commands['me'].split(','):
+                content_ = str(message.author.display_name)
 
         if flag is True:
             for checks in commands.items():
