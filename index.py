@@ -88,7 +88,10 @@ except ModuleNotFoundError as e:
     print('Failed to load third party library. Please run INSTALL.bat. If the issue is not resolved, contact me\nTwitter @gomashio1596\nDiscord gomashio#4335\nor please join support Discord server\nhttps://discord.gg/NEnka5N')
     sys.exit(1)
 
-asyncio.set_event_loop(asyncio.ProactorEventLoop())
+try:
+    asyncio.set_event_loop(asyncio.ProactorEventLoop())
+except Exception:
+    pass
 
 filename = 'device_auths.json'
 storedlog = []
