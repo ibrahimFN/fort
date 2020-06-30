@@ -2699,43 +2699,59 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
         rawcontent2 = ' '.join(rawargs[2:])
     client.prevmessage[message.author.id]=content
 
-    if args[0] in commands['eval'].split(','):
-        try:
-            if rawcontent == "":
-                await reply(message, client, f"[{commands['eval']}] [{l('eval')}]")
-                return
-            variable=globals()
-            variable.update(locals())
-            if rawcontent.startswith("await "):
-                if data['loglevel'] == "debug":
-                    send(display_name,f"await eval({rawcontent.replace('await ','',1)})",yellow,add_d=lambda x:f'```\n{x}\n```')
-                result = await eval(rawcontent.replace("await ","",1), variable)
-                await reply(message, client, str(result))
-            else:
-                if data['loglevel'] == "debug":
-                    send(display_name,f"eval {rawcontent}",yellow,add_d=lambda x:f'```\n{x}\n```')
-                result = eval(rawcontent, variable)
-                await reply(message, client, str(result))
-        except Exception:
-            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-            await reply(message, client, f"{l('error')}\n{traceback.format_exc()}")
+    f = False
+    if flag is True:
+        if commands['ownercommands'] != '':
+            for checks in commands.items():
+                if checks[0] in ignore:
+                    continue
+                for command in commands['ownercommands'].split(','):
+                    if args[0] in commands[command.lower()].split(','):
+                        await reply(message, client, l("this_command_owneronly"))
+                        f = True
+                        break
+                else:
+                    continue
+                break
+    
+    if f is False:
+        if args[0] in commands['eval'].split(','):
+            try:
+                if rawcontent == "":
+                    await reply(message, client, f"[{commands['eval']}] [{l('eval')}]")
+                    return
+                variable=globals()
+                variable.update(locals())
+                if rawcontent.startswith("await "):
+                    if data['loglevel'] == "debug":
+                        send(display_name,f"await eval({rawcontent.replace('await ','',1)})",yellow,add_d=lambda x:f'```\n{x}\n```')
+                    result = await eval(rawcontent.replace("await ","",1), variable)
+                    await reply(message, client, str(result))
+                else:
+                    if data['loglevel'] == "debug":
+                        send(display_name,f"eval {rawcontent}",yellow,add_d=lambda x:f'```\n{x}\n```')
+                    result = eval(rawcontent, variable)
+                    await reply(message, client, str(result))
+            except Exception:
+                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                await reply(message, client, f"{l('error')}\n{traceback.format_exc()}")
 
-    elif args[0] in commands['exec'].split(','):
-        try:
-            if rawcontent == "":
-                await reply(message, client, f"[{commands['exec']}] [{l('exec')}]")
-                return
-            variable=globals()
-            variable.update(locals())
-            args_=[i.replace("\\nn", "\n") for i in content.replace("\n", "\\nn").split()]
-            content_=" ".join(args_[1:])
-            result = await aexec(content_, variable)
-            await reply(message, client, str(result))
-        except Exception as e:
-            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-            await reply(message, client, f"{l('error')}\n{traceback.format_exc()}")
+        elif args[0] in commands['exec'].split(','):
+            try:
+                if rawcontent == "":
+                    await reply(message, client, f"[{commands['exec']}] [{l('exec')}]")
+                    return
+                variable=globals()
+                variable.update(locals())
+                args_=[i.replace("\\nn", "\n") for i in content.replace("\n", "\\nn").split()]
+                content_=" ".join(args_[1:])
+                result = await aexec(content_, variable)
+                await reply(message, client, str(result))
+            except Exception as e:
+                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                await reply(message, client, f"{l('error')}\n{traceback.format_exc()}")
 
-    for m in content.split("\n"):
+    for m in content.split("\n")[1:]:
         content = m
         if data['caseinsensitive'] is True:
             args = jaconv.kata2hira(content.lower()).split()
@@ -2754,17 +2770,24 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
             if content_ in commands['me'].split(','):
                 content_ = str(message.author.display_name)
 
+        f = False
         if flag is True:
-            for checks in commands.items():
-                if checks[0] in ignore:
-                    continue
-                if commands['ownercommands'] == '':
-                    break
-                for command in commands['ownercommands'].split(','):
-                    if args[0] in commands[command.lower()].split(','):
-                        await reply(message, client, l("this_command_owneronly"))
+            if commands['ownercommands'] != '':
+                for checks in commands.items():
+                    if checks[0] in ignore:
                         continue
+                    for command in commands['ownercommands'].split(','):
+                        if args[0] in commands[command.lower()].split(','):
+                            await reply(message, client, l("this_command_owneronly"))
+                            f = True
+                            break
+                    else:
+                        continue
+                    break
+        if f is True:
+            continue
 
+        f = False
         for key,value in replies.items():
             if args[0] in key.split(','):
                 try:
@@ -2772,7 +2795,10 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 except Exception:
                     send(name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l('error'))
-                continue
+                f = True
+                break
+        if f is True:
+            continue
 
         if data['discord']['enabled'] is True and dclient.isready is True:
             if args[0] in commands['addblacklist_discord'].split(','):
@@ -4722,7 +4748,15 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                                 text += f"\n{count+1} {convert_backend_type(item['backendType'])}: {item['name']} | {item['id']}"
                             text += f"\n{l('enter_to_show_info')}"
                             await reply(message, client, text)
-                            client.select[message.author.id] = {"exec": [f"await reply(message, client, f'''{convert_backend_type(item['backendType'])}: {item['name']} | {item['id']}\n{item['description']}\n{item['rarity']}\n{item['set']}''')" for item in result]}
+                            client.select[message.author.id] = {
+                                "exec": [
+                                    """\
+                                    await reply(message, client, f"{convert_backend_type(item['backendType'])}: {item['name']} | {item['id']}\n{item['description']}\n{item['rarity']}\n{item['set']}")""" for item in result
+                                    ],
+                                    "variable": [
+                                        {"item": item} for item in result
+                                    ]
+                                }
 
                 elif True in  [args[1] in commands[key].split(',') for key in ("outfit", "backpack", "pet", "pickaxe", "emote", "emoji", "toy", "item")]:
                     type_ = convert_to_type(args[1])
@@ -4746,7 +4780,15 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                                 text += f"\n{count+1} {convert_backend_type(item['backendType'])}: {item['name']} | {item['id']}"
                             text += f"\n{l('enter_to_show_info')}"
                             await reply(message, client, text)
-                            client.select[message.author.id] = {"exec": [f"await reply(message, client, f'''{convert_backend_type(item['backendType'])}: {item['name']} | {item['id']}\n{item['description']}\n{item['rarity']}\n{item['set']}''')" for item in result]}
+                            client.select[message.author.id] = {
+                                "exec": [
+                                    """\
+                                    await reply(message, client, f"{convert_backend_type(item['backendType'])}: {item['name']} | {item['id']}\n{item['description']}\n{item['rarity']}\n{item['set']}")""" for item in result
+                                ],
+                                "variable": [
+                                    {"item": item} for item in result
+                                ]
+                            }
             except IndexError:
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5871,7 +5913,21 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                                 text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
                         text += f"\n{l('enter_to_change_asset')}"
                         await reply(message, client, text)
-                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['shortDescription']}', '{item['id']}')" for item in result]}
+                        client.select[message.author.id] = {
+                            "exec": [
+                                """\
+                                if await change_asset(client, message.author.id, convert_backend_type(item['backendType']), item['id']) is True:
+                                    if data['loglevel'] == 'normal':
+                                        await reply(message, client, f"{item['shortDescription']}: {item['name']}")
+                                    else:
+                                        await reply(message, client, f"{item['shortDescription']}: {item['name']} | {item['id']}")
+                                else:
+                                    await reply(message, client, l('locked'))""" for item in result
+                            ],
+                            "variable": [
+                                {"item": item} for item in result
+                            ]
+                        }
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5912,7 +5968,21 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                                 text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
                         text += f"\n{l('enter_to_change_asset')}"
                         await reply(message, client, text)
-                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['shortDescription']}', '{item['id']}')" for item in result]}
+                        client.select[message.author.id] = {
+                            "exec": [
+                                """\
+                                if await change_asset(client, message.author.id, convert_backend_type(item['backendType']), item['id']) is True:
+                                    if data['loglevel'] == 'normal':
+                                        await reply(message, client, f"{item['shortDescription']}: {item['name']}")
+                                    else:
+                                        await reply(message, client, f"{item['shortDescription']}: {item['name']} | {item['id']}")
+                                else:
+                                    await reply(message, client, l('locked'))""" for item in result
+                            ],
+                            "variable": [
+                                {"item": item} for item in result
+                            ]
+                        }
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5952,7 +6022,21 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                                 text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}({result[0]['set']})"
                         text += f"\n{l('enter_to_change_asset')}"
                         await reply(message, client, text)
-                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['shortDescription']}', '{item['id']}')" for item in result]}
+                        client.select[message.author.id] = {
+                            "exec": [
+                                """\
+                                if await change_asset(client, message.author.id, convert_backend_type(item["backendType"]), item['id']) is True:
+                                    if data['loglevel'] == 'normal':
+                                        await reply(message, client, f"{item['shortDescription']}: {item['name']} | {item['set']}")
+                                    else:
+                                        await reply(message, client, f"{item['shortDescription']}: {item['name']} | {item['id']}({item['set']})")
+                                else:
+                                    await reply(message, client, l('locked'))""" for item in result
+                            ],
+                            "variable": [
+                                {"item": item}
+                            ]
+                        }
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -6175,7 +6259,21 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                                 text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
                         text += f"\n{l('enter_to_change_asset')}"
                         await reply(message, client, text)
-                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['shortDescription']}', '{item['id']}')" for item in result]}
+                        client.select[message.author.id] = {
+                            "exec": [
+                                """\
+                                    if await change_asset(client, message.author.id, convert_backend_type(item["backendType"]), item['id']) is True:
+                                        if data['loglevel'] == 'normal':
+                                            await reply(message, client, f"{item['shortDescription']}: {item['name']}")
+                                        else:
+                                            await reply(message, client, f"{item['shortDescription']}: {item['name']} | {item['id']}")
+                                    else:
+                                        await reply(message, client, l('locked'))""" for item in result
+                            ],
+                            "variable": [
+                                {"item": item} for item in result
+                            ]
+                        }
 
 #========================================================================================================================
 #========================================================================================================================
