@@ -344,6 +344,8 @@
     "config_web_web": "Commands from web server",
     "config_web_log": "Print access logs of web server",
     "config_lang": "Bot's lang",
+    "config_restart_in": "Time until restart",
+    "config_search-lang": "Item search lang",
     "config_no-logs": "Print logs in console",
     "config_ingame-error": "Send errors to player",
     "config_discord-log": "Send logs to Discord",
