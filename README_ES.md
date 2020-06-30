@@ -102,7 +102,7 @@ enabled                   : Determina si se encenderá el servidor web. true o f
 ip                        : IP address for web server. Revise abajo para más información
 port                      : Puerto para el servidor web
 password                  : Contraseña para el servidor web
-**NEW**login_required            : Config whether login required to access web server. true or false
+login_required            : Determina si es necesario iniciar sesión en web. true o false
 web                       : Determina si el bot aceptará comandos del servidor web. true or false
 log                       : Determina si se crearán logs del servidor web
 
@@ -249,9 +249,9 @@ emoteasset                                : emoteasset [path asset] Cambia el em
 ```
 
 # respuestas / replies
-Conguralo como esto:
+Configuralo como esto:
 "Palabra de activación": "Respuesta"  
-Puedes poner varios, como en el ejemplo:  
+Puedes poner varios, como por ejemplo:  
 ```
 {
     "hola": "Hola!",
