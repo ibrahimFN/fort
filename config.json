@@ -87,6 +87,7 @@
 		"log": false
 	},
 	"lang": "en",
+	"search-lang": "en",
 	"restart_in": null,
 	"no-logs": false,
 	"ingame-error": true,
