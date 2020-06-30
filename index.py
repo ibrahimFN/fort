@@ -1517,8 +1517,8 @@ if True:
                 for k,v in data_.items():
                     with open(f'items/all{k}_en.json', 'w') as f:
                         json.dump(v, f)
-            if data["lang"] != "en":
-                req=requests.get(f'https://benbotfn.tk/api/v1/cosmetics/br', params={"lang": data["lang"]})
+            if data["search-lang"] != "en":
+                req=requests.get(f'https://benbotfn.tk/api/v1/cosmetics/br', params={"lang": data["search-lang"]})
                 if req.status_code == 200:
                     data_ = {}
                     allcosm=req.json()
@@ -2230,6 +2230,7 @@ config_tags={
     "['web']['log']": [bool_,"select_bool"],
     "['restart_in']": [int],
     "['lang']": [str,"select_lang"],
+    "['search-lang']": [str,"select_ben_lang"],
     "['no-logs']": [bool_,"select_bool"],
     "['ingame-error']": [bool_,"select_bool"],
     "['discord-log']": [bool_,"select_bool"],
@@ -2745,6 +2746,8 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
         rawargs = content.split()
         rawcontent = ' '.join(rawargs[1:])
         rawcontent2 = ' '.join(rawargs[2:])
+        if len(args) < 1:
+            return
         if isinstance(message, fortnitepy.message.MessageBase) is True:
             if rawcontent in commands['me'].split(','):
                 rawcontent = str(message.author.display_name)
@@ -2956,7 +2959,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 if flag is True:
                     await reply(message, client, l('invite_is_decline'))
                     continue
-                await reply(message, client, l('restaring'))
+                await reply(message, client, l('restarting'))
                 restart()
             except Exception:
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5663,7 +5666,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 if flag is True:
                     await reply(message, client, l('locked'))
                     continue
-                with open('items/allOutfit.json', 'r', encoding='utf-8') as f:
+                with open(f'items/allOutfit_{data["search-lang"]}.json', 'r', encoding='utf-8') as f:
                     allitem = json.load(f)
                 for item in allitem:
                     if client.stopcheck is True:
@@ -5688,7 +5691,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 if flag is True:
                     await reply(message, client, l('locked'))
                     continue
-                with open('items/allBack Bling.json', 'r', encoding='utf-8') as f:
+                with open(f'items/allBack Bling_{data["search-lang"]}.json', 'r', encoding='utf-8') as f:
                     allitem = json.load(f)
                 for item in allitem:
                     if client.stopcheck is True:
@@ -5713,7 +5716,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 if flag is True:
                     await reply(message, client, l('locked'))
                     continue
-                with open('items/allPet.json', 'r', encoding='utf-8') as f:
+                with open(f'items/allPet_{data["search-lang"]}.json', 'r', encoding='utf-8') as f:
                     allitem = json.load(f)
                 for item in allitem:
                     if client.stopcheck is True:
@@ -5735,7 +5738,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 if flag is True:
                     await reply(message, client, l('locked'))
                     continue
-                with open('items/allHarvesting Tool.json', 'r', encoding='utf-8') as f:
+                with open(f'items/allHarvesting Tool_{data["search-lang"]}.json', 'r', encoding='utf-8') as f:
                     allitem = json.load(f)
                 for item in allitem:
                     if client.stopcheck is True:
@@ -5760,7 +5763,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 if flag is True:
                     await reply(message, client, l('locked'))
                     continue
-                with open('items/allEmote.json', 'r', encoding='utf-8') as f:
+                with open(f'items/allEmote_{data["search-lang"]}.json', 'r', encoding='utf-8') as f:
                     allitem = json.load(f)
                 for item in allitem:
                     if client.stopcheck is True:
@@ -5782,7 +5785,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 if flag is True:
                     await reply(message, client, l('locked'))
                     continue
-                with open('items/allEmoticon.json', 'r', encoding='utf-8') as f:
+                with open(f'items/allEmoticon_{data["search-lang"]}.json', 'r', encoding='utf-8') as f:
                     allitem = json.load(f)
                 for item in allitem:
                     if client.stopcheck is True:
@@ -5804,7 +5807,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 if flag is True:
                     await reply(message, client, l('locked'))
                     continue
-                with open('items/allToy.json', 'r', encoding='utf-8') as f:
+                with open(f'items/allToy_{data["search-lang"]}.json', 'r', encoding='utf-8') as f:
                     allitem = json.load(f)
                 for item in allitem:
                     if client.stopcheck is True:
@@ -5842,8 +5845,8 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 await reply(message, client, f"[{commands[convert_to_old_type(type_)]}] [ID]")
                 continue
             try:
-                result = await loop.run_in_executor(None, search_item, data["lang"], "id", rawcontent, type_)
-                if result is None:
+                result = await loop.run_in_executor(None, search_item, data["search-lang"], "id", rawcontent, type_)
+                if result is None and data["search-lang"] != "en":
                     result = await loop.run_in_executor(None, search_item, "en", "id", rawcontent, type_)
                 if result is None:
                     await reply(message, client, l('item_notfound'))
@@ -5854,21 +5857,21 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if len(result) == 1:
                         if await change_asset(client, message.author.id, convert_backend_type(result[0]['backendType']), result[0]['id']) is True:
                             if data['loglevel'] == 'normal':
-                                await reply(message, client, f"{convert_backend_type(result[0]['backendType'])}: {result[0]['name']}")
+                                await reply(message, client, f"{result[0]['shortDescription']}: {result[0]['name']}")
                             else:
-                                await reply(message, client, f"{convert_backend_type(result[0]['backendType'])}: {result[0]['name']} | {result[0]['id']}")
+                                await reply(message, client, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}")
                         else:
                             await reply(message, client, l('locked'))
                     else:
                         text = str()
                         for count, item in enumerate(result):
                             if data['loglevel'] == 'normal':
-                                text += f"\n{count+1} {convert_backend_type(item['backendType'])}: {item['name']}"
+                                text += f"\n{count+1} {item['shortDescription']}: {item['name']}"
                             else:
-                                text += f"\n{count+1} {convert_backend_type(item['backendType'])}: {item['name']} | {item['id']}"
+                                text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
                         text += f"\n{l('enter_to_change_asset')}"
                         await reply(message, client, text)
-                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{convert_backend_type(item['backendType'])}', '{item['id']}')" for item in result]}
+                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['shortDescription']}', '{item['id']}')" for item in result]}
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5883,8 +5886,8 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 await reply(message, client, f"[{commands[convert_to_old_type(type_)]}] [{l('itemname')}]")
                 continue
             try:
-                result = await loop.run_in_executor(None, search_item, data["lang"], "name", rawcontent, type_)
-                if result is None:
+                result = await loop.run_in_executor(None, search_item, data["search-lang"], "name", rawcontent, type_)
+                if result is None and data["search-lang"] != "en":
                     result = await loop.run_in_executor(None, search_item, "en", "name", rawcontent, type_)
                 if result is None:
                     await reply(message, client, l('item_notfound'))
@@ -5895,21 +5898,21 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if len(result) == 1:
                         if await change_asset(client, message.author.id, convert_backend_type(result[0]['backendType']), result[0]['id']) is True:
                             if data['loglevel'] == 'normal':
-                                await reply(message, client, f"{convert_backend_type(result[0]['backendType'])}: {result[0]['name']}")
+                                await reply(message, client, f"{result[0]['shortDescription']}: {result[0]['name']}")
                             else:
-                                await reply(message, client, f"{convert_backend_type(result[0]['backendType'])}: {result[0]['name']} | {result[0]['id']}")
+                                await reply(message, client, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}")
                         else:
                             await reply(message, client, l('locked'))
                     else:
                         text = str()
                         for count, item in enumerate(result):
                             if data['loglevel'] == 'normal':
-                                text += f"\n{count+1} {convert_backend_type(item['backendType'])}: {item['name']}"
+                                text += f"\n{count+1} {item['shortDescription']}: {item['name']}"
                             else:
-                                text += f"\n{count+1} {convert_backend_type(item['backendType'])}: {item['name']} | {item['id']}"
+                                text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
                         text += f"\n{l('enter_to_change_asset')}"
                         await reply(message, client, text)
-                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{convert_backend_type(item['backendType'])}', '{item['id']}')" for item in result]}
+                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['shortDescription']}', '{item['id']}')" for item in result]}
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5923,8 +5926,8 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 await reply(message, client, f"[{commands['set']}] [{l('setname')}]")
                 continue
             try:
-                result = await loop.run_in_executor(None, search_item, data["lang"], "set", rawcontent)
-                if result is None:
+                result = await loop.run_in_executor(None, search_item, data["search-lang"], "set", rawcontent)
+                if result is None and data["search-lang"] != "en":
                     result = await loop.run_in_executor(None, search_item, "en", "set", rawcontent)
                 if result is None:
                     await reply(message, client, l('item_notfound'))
@@ -5935,21 +5938,21 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if len(result) == 1:
                         if await change_asset(client, message.author.id, convert_backend_type(result[0]["backendType"]), result[0]['id']) is True:
                             if data['loglevel'] == 'normal':
-                                await reply(message, client, f"{convert_backend_type(result[0]['backendType'])}: {result[0]['name']} | {result[0]['set']}")
+                                await reply(message, client, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['set']}")
                             else:
-                                await reply(message, client, f"{convert_backend_type(result[0]['backendType'])}: {result[0]['name']} | {result[0]['id']}({result[0]['set']})")
+                                await reply(message, client, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}({result[0]['set']})")
                         else:
                             await reply(message, client, l('locked'))
                     else:
                         text = str()
                         for count, item in enumerate(result):
                             if data['loglevel'] == 'normal':
-                                text += f"\n{count+1} {convert_backend_type(item['backendType'])}: {item['name']} | {result[0]['set']}"
+                                text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {result[0]['set']}"
                             else:
-                                text += f"\n{count+1} {convert_backend_type(item['backendType'])}: {item['name']} | {item['id']}({result[0]['set']})"
+                                text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}({result[0]['set']})"
                         text += f"\n{l('enter_to_change_asset')}"
                         await reply(message, client, text)
-                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{convert_backend_type(item['backendType'])}', '{item['id']}')" for item in result]}
+                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{tem['shortDescription']}', '{item['id']}')" for item in result]}
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5968,7 +5971,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 type_ = convert_to_new_type(type_)
                 if type_ == "Back Bling" and (id_.startswith("pet_carrier_") or id_.startswith("pet_")):
                     type_ = "Pet"
-                result = await loop.run_in_executor(None, search_style, data["lang"], id_, type_)
+                result = await loop.run_in_executor(None, search_style, data["search-lang"], id_, type_)
                 if result is None:
                     await reply(message, client, l('no_stylechange'))
                 else:
@@ -5997,7 +6000,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 type_ = convert_to_new_type(type_)
                 if type_ == "Back Bling" and (id_.startswith("pet_carrier_") or id_.startswith("pet_")):
                     type_ = "Pet"
-                result = await loop.run_in_executor(None, search_style, data["lang"], id_, type_)
+                result = await loop.run_in_executor(None, search_style, data["search-lang"], id_, type_)
                 if result is None:
                     await reply(message, client, l('no_stylechange'))
                 else:
@@ -6148,8 +6151,8 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l('error'))
             else:
-                result = await loop.run_in_executor(None, search_item, data["lang"], "name", content, "Item")
-                if result is None:
+                result = await loop.run_in_executor(None, search_item, data["search-lang"], "name", content, "Item")
+                if result is None and data["search-lang"] != "en":
                     result = await loop.run_in_executor(None, search_item, "en", "name", content, "Item")
                 if result is not None:
                     if len(result) > 60:
@@ -6158,21 +6161,21 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if len(result) == 1:
                         if await change_asset(client, message.author.id, convert_backend_type(result[0]["backendType"]), result[0]['id']) is True:
                             if data['loglevel'] == 'normal':
-                                await reply(message, client, f"{convert_backend_type(result[0]['backendType'])}: {result[0]['name']}")
+                                await reply(message, client, f"{result[0]['shortDescription']}: {result[0]['name']}")
                             else:
-                                await reply(message, client, f"{convert_backend_type(result[0]['backendType'])}: {result[0]['name']} | {result[0]['id']}")
+                                await reply(message, client, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}")
                         else:
                             await reply(message, client, l('locked'))
                     else:
                         text = str()
                         for count, item in enumerate(result):
                             if data['loglevel'] == 'normal':
-                                text += f"\n{count+1} {convert_backend_type(item['backendType'])}: {item['name']}"
+                                text += f"\n{count+1} {item['shortDescription']}: {item['name']}"
                             else:
-                                text += f"\n{count+1} {convert_backend_type(item['backendType'])}: {item['name']} | {item['id']}"
+                                text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
                         text += f"\n{l('enter_to_change_asset')}"
                         await reply(message, client, text)
-                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{convert_backend_type(item['backendType'])}', '{item['id']}')" for item in result]}
+                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['shortDescription']}', '{item['id']}')" for item in result]}
 
 #========================================================================================================================
 #========================================================================================================================
@@ -6383,6 +6386,11 @@ select_lang = select(
         {"value": re.sub(r"lang(\\|/)","",i).replace(".json",""),"display_value": re.sub(r"lang(\\|/)","",i).replace(".json","")} for i in glob("lang/*.json") if "_old.json" not in i
     ]
 )
+select_ben_lang = select(
+    [
+        {"value": i,"display_vlue": i} for i in ["ar","de","en","es","es-419","fr","it","ja","ko","pl","pt-BR","ru","tr","zh-CN","zh-Hant"]
+    ]
+)
 
 for key,value in config_tags.items():
     for count,tag in enumerate(value):
@@ -6400,6 +6408,8 @@ for key,value in config_tags.items():
             config_tags[key][count] = select_loglevel
         elif tag == "select_lang":
             config_tags[key][count] = select_lang
+        elif tag == "select_ben_lang":
+            config_tags[key][count] = select_ben_lang
         elif tag == "red":
             config_tags[key][count] = Red
         elif tag == "fix_required":
