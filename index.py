@@ -2193,6 +2193,9 @@ config_tags={
     "['fortnite']['inviteinterval']": [bool_,"select_bool"],
     "['fortnite']['interval']": [int],
     "['fortnite']['waitinterval']": [int],
+    "['fortnite']['hide-user']": [bool_,"select_bool"],
+    "['fortnite']['owner-show']": [bool_,"select_bool"],
+    "['fortnite']['whitelist-show']": [bool_,"select_bool"],
     "['fortnite']['blacklist']": [list,"can_be_multiple"],
     "['fortnite']['blacklist-declineinvite']": [bool_,"select_bool"],
     "['fortnite']['blacklist-autoblock']": [bool_,"select_bool"],
@@ -6388,7 +6391,7 @@ select_lang = select(
 )
 select_ben_lang = select(
     [
-        {"value": i,"display_vlue": i} for i in ["ar","de","en","es","es-419","fr","it","ja","ko","pl","pt-BR","ru","tr","zh-CN","zh-Hant"]
+        {"value": i,"display_value": i} for i in ["ar","de","en","es","es-419","fr","it","ja","ko","pl","pt-BR","ru","tr","zh-CN","zh-Hant"]
     ]
 )
 

@@ -110,6 +110,8 @@ web                       : Config whether bot will accept command from web. tru
 log                       : Config whether print web server access log
 
 lang                      : Bot's lang
+search-lang               : Item search lang
+restart_in                : Time until restart bot
 no-logs                   : Config whether print logs in console. true or false
 ingame-error              : Config whether send errors to player. true or false
 discord-log               : Config whether send logs to Discord. true or false
@@ -199,7 +201,7 @@ pending                                   : pending [true / false] Accept all pe
 removepending                             : Cancel all friend request which bot sent
 addfriend                                 : addfriend [user name / user ID] Send friend request to user
 removefriend                              : removefriend [user name / user ID] Remove user from friend
-removeallfriend                           : removeallfriend Remove all friends
+removeallfriend                           : Remove all friends
 acceptpending                             : acceptpending [user name / user ID] Accept friend request from user
 declinepending                            : declinepending [user name / user ID] Decline friend request from user
 blockfriend                               : blockfriend[user name / user ID] Block user

@@ -344,6 +344,8 @@
     "config_web_web": "ウェブからのコマンド受け付け",
     "config_web_log": "ウェブサーバーのアクセスログを出すか",
     "config_lang": "ボットの言語",
+    "config_restart_in": "再起動までの時間",
+    "config_search-lang": "アイテム検索に使う言語",
     "config_no-logs": "コンソールにログを出すか",
     "config_ingame-error": "プレイヤーにエラーを送信するか",
     "config_discord-log": "Discordにログを送信するか",

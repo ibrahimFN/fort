@@ -16,18 +16,24 @@ RUN.batを実行する
 開いたサイトでconfigを設定する  
 タブを再読み込みすることで他の設定もできます  
 
+#Repl.it
+https://repl.it  
+の右上の"sign up"を押してログインする  
+右上の"+ new repl"を押して、"Import From GitHub"タブを開く  
+https://github.com/gomashio1596/Fortnite-LobbyBot  
+をコピーして"Paste any repository URL"に貼り付ける  
+Import from Githubを押す  
+開いたページ(replページと呼びます)の上の"run▶"を押す  
+
 # Glitch
+Glitchは24時間起動をすることができなくなったので推奨されません!
+
 https://glitch.com  
 の右上のSign inを押してGlitchアカウントを作る  
 https://fortnite-lobbybot.glitch.me  
 Remixを押してRemixする  
 左上の四角いマークを押して、Make This Project Privateにチェックを入れてプロジェクトに鍵を掛ける  
-[Uptimerobot](https://uptimerobot.com "Uptimerobot")  
-でアカウントを作ってログインしてDashboardを押す  
-\+ Monitorを押してGlitchに戻って、上のShowを押してIn a New Windowを押して、開いたサイトのURLをコピーして  
-uptimerobotでMonitor TypeをHTTP(s)にしてURLに貼り付ける  
-Friendly Nameに好きな名前を付けてCreate Monitorを押す  
-Glitchに戻って、上のShowを押してIn a New Windowを押す  
+上のShowを押してIn a New Windowを押す  
 開いたサイトでconfigを設定する  
 タブを再読み込みすることで他の設定もできます  
 
@@ -113,6 +119,8 @@ web                       : ウェブからのコマンドを受け付けるか�
 log                       : ウェブサーバーのアクセスログを出すかどうかの設定 true か false
 
 lang                      : ボットの言語
+search-lang               : アイテム検索に使う言語
+restart_in                : ボットが再起動するまでの時間
 no-logs                   : コンソールにログを出すかどうかの設定 true か false
 ingame-error              : プレイヤーにエラーを送信するかどうかの設定 true か false
 discord-log               : Discordにログを送信するかどうかの設定 true か false
