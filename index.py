@@ -2714,8 +2714,10 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     continue
                 break
     
+    fg = False
     if f is False:
         if args[0] in commands['eval'].split(','):
+            fg = True
             try:
                 if rawcontent == "":
                     await reply(message, client, f"[{commands['eval']}] [{l('eval')}]")
@@ -2737,6 +2739,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 await reply(message, client, f"{l('error')}\n{traceback.format_exc()}")
 
         elif args[0] in commands['exec'].split(','):
+            fg = True
             try:
                 if rawcontent == "":
                     await reply(message, client, f"[{commands['exec']}] [{l('exec')}]")
@@ -2751,7 +2754,10 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, f"{l('error')}\n{traceback.format_exc()}")
 
-    for m in content.split("\n")[1:]:
+    if fg is True:
+        return
+    con = content.split("\n")
+    for m in con:
         content = m
         if data['caseinsensitive'] is True:
             args = jaconv.kata2hira(content.lower()).split()
@@ -2763,7 +2769,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
         rawcontent = ' '.join(rawargs[1:])
         rawcontent2 = ' '.join(rawargs[2:])
         if len(args) < 1:
-            return
+            continue
         if isinstance(message, fortnitepy.message.MessageBase) is True:
             if rawcontent in commands['me'].split(','):
                 rawcontent = str(message.author.display_name)
