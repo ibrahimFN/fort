@@ -1529,7 +1529,7 @@ if True:
                                 data_[type_] = []
                             data_[type_].append(item)
                     for k,v in data_.items():
-                        with open(f'items/all{k}_{data["lang"]}.json', 'w') as f:
+                        with open(f'items/all{k}_{data["search-lang"]}.json', 'w') as f:
                             json.dump(v, f)
         except UnicodeEncodeError:
             if data['loglevel'] == 'debug':
