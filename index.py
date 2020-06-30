@@ -1943,7 +1943,7 @@ if True:
             if flag is True:
                 return False
             else:
-                if client.party.me.emote is not None:
+                if getattr(client.party.me, "emote", None) is not None:
                     if client.party.me.emote.lower() == id_.lower():
                         await client.party.me.clear_emote()
                 await client.party.me.set_emote(asset=id_)
@@ -1955,7 +1955,7 @@ if True:
             if flag is True:
                 return False
             else:
-                if client.party.me.emote is not None:
+                if getattr(client.party.me, "emote", None) is not None:
                     if client.party.me.emote.lower() == id_.lower():
                         await client.party.me.clear_emote()
                 id_ = f"/Game/Athena/Items/Cosmetics/Dances/Emoji/{id_}.{id_}"
@@ -1968,7 +1968,7 @@ if True:
             if flag is True:
                 return False
             else:
-                if client.party.me.emote is not None:
+                if getattr(client.party.me, "emote", None) is not None:
                     if client.party.me.emote.lower() == id_.lower():
                         await client.party.me.clear_emote()
                 id_ = f"/Game/Athena/Items/Cosmetics/Toys/{id_}.{id_}"
@@ -6589,7 +6589,7 @@ if True:
                     data=data
                 )
             elif request.method == "POST":
-                if auth.authenticated is True:
+                if auth.authenticated(request) is True:
                     Thread(target=restart,args=(1,)).start()
                 return sanic.response.redirect("/")
 
