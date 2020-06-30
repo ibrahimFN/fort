@@ -5952,7 +5952,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                                 text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}({result[0]['set']})"
                         text += f"\n{l('enter_to_change_asset')}"
                         await reply(message, client, text)
-                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{tem['shortDescription']}', '{item['id']}')" for item in result]}
+                        client.select[message.author.id] = {"exec": [f"await change_asset(client, '{message.author.id}', '{item['shortDescription']}', '{item['id']}')" for item in result]}
             except fortnitepy.HTTPException:
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
