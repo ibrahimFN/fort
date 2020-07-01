@@ -1572,20 +1572,15 @@ if True:
             return getattr(member, asset)
 
     def lock_check(client: Type[fortnitepy.Client], author_id: str) -> bool:
-        if client.owner is not None:
-            if data['fortnite']['whitelist-ignorelock']:
-                if client.owner.id != author_id and author_id not in whitelist:
-                    return True
-            else:
-                if client.owner.id != author_id:
-                    return True
-        else:
-            if data['fortnite']['whitelist-ignorelock']:
-                if author_id not in whitelist:
-                    return True
-            else:
-                return True
-        return False
+        if getattr(client.owner,"id",None) == author_id:
+            return False
+        elif data['fortnite']['whitelist-ignorelock'] is True and author_id in whitelist:
+            return False
+        elif getattr(dclient.owner,"id",None) == author_id:
+            return False
+        elif data['discord']['whitelist-ignorelock'] is True and author_id in whitelist_:
+            return False
+        return True
 
     def search_item(lang: str, mode: str, text: str, type_: Optional[str] = None, cache: Optional[bool] = True) -> Optional[List[dict]]:
         ignoretype = [
@@ -4737,8 +4732,8 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if rawcontent2 == '':
                         await reply(message, client, f"[{commands[convert_to_old_type(type_)]}] [ID]")
                         continue
-                    result = await loop.run_in_executor(None, search_item, data["lang"], "id", rawcontent2, type_)
-                    if result is None and data["lang"] != "en":
+                    result = await loop.run_in_executor(None, search_item, data["search-lang"], "id", rawcontent2, type_)
+                    if result is None and data["search-lang"] != "en":
                         result = await loop.run_in_executor(None, search_item, "en", "id", rawcontent2, type_)
                     if result is None:
                         await reply(message, client, l('item_notfound'))
@@ -4769,8 +4764,8 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                     if rawcontent2 == '':
                         await reply(message, client, f"[{commands[convert_to_old_type(type_)]}] [{l('itemname')}]")
                         continue
-                    result = await loop.run_in_executor(None, search_item, data["lang"], "name", rawcontent2, type_)
-                    if result is None and data["lang"] != "en":
+                    result = await loop.run_in_executor(None, search_item, data["search-lang"], "name", rawcontent2, type_)
+                    if result is None and data["search-lang"] != "en":
                         result = await loop.run_in_executor(None, search_item, "en", "name", rawcontent2, type_)
                     if result is None:
                         await reply(message, client, l('item_notfound'))
@@ -6820,153 +6815,6 @@ if True:
                 if flag is True:
                     return render_template(
                         "config_editor.html",
-                        l=l,
-                        data=corrected,
-                        config_tags=config_tags,
-                        len=len,
-                        join=str.join,
-                        split=str.split,
-                        type=type,
-                        can_be_multiple=can_be_multiple,
-                        select=select,
-                        str=str,
-                        int=int,
-                        bool=bool,
-                        list=list,
-                        red=Red,
-                        fix_required=FixRequired,
-                        flash_messages=flash_messages,
-                        flash_messages_red=flash_messages_red
-                    )
-                else:
-                    corrected["status"] = 1
-                    with open('config.json', 'w', encoding='utf-8') as f:
-                        json.dump(corrected, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    if raw.get("reload"):
-                        Thread(target=restart, args=(1,)).start()
-                        return sanic.response.redirect("/")
-                    else:
-                        flash_messages.append(l('web_saved'))
-                        return render_template(
-                            "config_editor.html",
-                            l=l,
-                            data=corrected,
-                            config_tags=config_tags,
-                            len=len,
-                            join=str.join,
-                            split=str.split,
-                            type=type,
-                            can_be_multiple=can_be_multiple,
-                            select=select,
-                            str=str,
-                            int=int,
-                            bool=bool,
-                            list=list,
-                            red=Red,
-                            fix_required=FixRequired,
-                            flash_messages=flash_messages,
-                            flash_messages_red=flash_messages_red
-                        )
-
-        @app.route("/config_editor_old", methods=["GET", "POST"])
-        @auth.login_required
-        async def config_editor_old(request: Request):
-            flash_messages = []
-            flash_messages_red = []
-            if request.method == "GET":
-                try:
-                    with open('config.json', 'r', encoding='utf-8') as f:
-                        data = json.load(f)
-                except json.decoder.JSONDecodeError:
-                    with open('config.json', 'r', encoding='utf-8-sig') as f:
-                        data = json.load(f)
-                return render_template(
-                    "config_editor_old.html",
-                    l=l,
-                    data=data,
-                    config_tags=config_tags,
-                    len=len,
-                    join=str.join,
-                    split=str.split,
-                    type=type,
-                    can_be_multiple=can_be_multiple,
-                    select=select,
-                    str=str,
-                    int=int,
-                    bool=bool,
-                    list=list,
-                    red=Red,
-                    fix_required=FixRequired,
-                    flash_messages=flash_messages,
-                    flash_messages_red=flash_messages_red
-                )
-            else:
-                flag = False
-                raw = request.form
-                try:
-                    with open('config.json', 'r', encoding='utf-8') as f:
-                        data = json.load(f)
-                except json.decoder.JSONDecodeError:
-                    with open('config.json', 'r', encoding='utf-8-sig') as f:
-                        data = json.load(f)
-                corrected = data
-                for key_,tags in config_tags.items():
-                    keys = key_.replace("'","").replace("[","").split("]")
-                    key = keys[0]
-                    nest = len(keys) - 1
-
-                    if nest == 1:
-                        if dict in tags:
-                            if corrected.get(key) is None:
-                                corrected[key] = {}
-                        else:
-                            value = raw.get(f"['{key}']")
-                        
-                        if FixRequired in tags and value == corrected.get(key):
-                            flash_messages_red.append(l('this_field_fix_required', key))
-                            flag = True
-                        if can_be_multiple in tags:
-                            if str in tags:
-                                corrected[key] = ",".join([i for i in re.split(r'\n|\r',value) if i]) if value else ""
-                            elif list in tags:
-                                corrected[key] = re.split(r'\r\n|\n',value) if value else []
-                        elif str in tags:
-                            corrected[key] = value.replace(r"\\n",r"\n").replace(r"\n","\n") if value else ""
-                        elif int in tags:
-                            corrected[key] = int(value) if value else 0
-                        elif bool_ in tags:
-                            corrected[key] = bool_.create(value)
-                        elif bool_none in tags:
-                            corrected[key] = bool_none.create(value)
-                    elif nest == 2:
-                        key2 = keys[1]
-
-                        if dict in tags:
-                            if corrected.get(key) is None:
-                                if corrected.get(key).get(key2) is None:
-                                    corrected[key][key2] = {}
-                        else:
-                            value2 = raw.get(f"['{key}']['{key2}']")
-                        
-                        if FixRequired in tags and value2 == corrected.get(key,{}).get(key2):
-                            flash_messages_red.append(l('this_field_fix_required', f"{key}: {key2}"))
-                            flag = True
-                        if can_be_multiple in tags:
-                            if str in tags:
-                                corrected[key][key2] = ",".join([i for i in re.split(r'\n|\r',value2) if i]) if value2 else ""
-                            elif list in tags:
-                                corrected[key][key2]  = re.split(r'\r\n|\n',value2) if value2 else []
-                        elif str in tags:
-                            corrected[key][key2]  = value2.replace(r"\\n",r"\n").replace(r"\n","\n") if value2 else ""
-                        elif int in tags:
-                            corrected[key][key2] = int(value2) if value2 else 0
-                        elif bool_ in tags:
-                            corrected[key][key2] = bool_.create(value2)
-                        elif bool_none in tags:
-                            corrected[key][key2] = bool_none.create(value2)
-                if flag is True:
-                    return render_template(
-                        "config_editor_old.html",
                         l=l,
                         data=corrected,
                         config_tags=config_tags,
