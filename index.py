@@ -112,7 +112,7 @@ invitelist_flag = True
 otherbotlist_flag = True
 discord_flag = True
 kill=False
-localizekeys=['bot','lobbybot','credit','library','loglevel','normal','info','debug','debug_is_on','on','off','booting','get_code','authorization_expired','waiting_for_authorization','account_incorrect','login','all_login','relogin','owner','party','userid','name_or_id','partyid','content','number','eval','exec','invite_is_decline','restarting','relogining','success','accepted_invite_from','accepted_invite_from2','declined_invite_from','declined_invite_from2','declined_invite_interval','declined_invite_interval2','declined_invite_interval3','declined_invite_owner','declined_invite_owner2','declined_invite_owner3','declined_invite_whitelist','declined_invite_whitelist2','declined_invite_whitelist3','party_member_joined','party_member_left','party_member_request','party_member_kick','party_member_promote','party_member_update','party_member_disconnect','party_member_chatban','party_member_chatban2','party_update','random_message','click_invite','inviteaccept','inviteinterval','invite_from','invite_from2','friend_request_to','friend_request_from','friend_request_decline','friend_accept','friend_add','friend_remove','this_command_owneronly','failed_ownercommand','error_while_declining_partyrequest','error_while_accepting_friendrequest','error_while_declining_friendrequest','error_while_sending_friendrequest','error_while_removing_friendrequest','error_while_removing_friend','error_while_accepting_invite','error_while_declining_invite','error_while_blocking_user','error_while_unblocking_user','error_while_requesting_userinfo','error_while_joining_to_party','error_while_leaving_party','error_while_sending_partyinvite','error_while_changing_asset','error_while_changing_bpinfo','error_while_promoting_party_leader','error_while_kicking_user','error_while_swapping_user','error_while_setting_client','error_already_member_of_party','error_netcl_does_not_match','error_private_party','login_failed','failed_to_load_account','failed_to_run_web','web_already_running','exchange_code_error','api_downing','api_downing2','not_enough_password','owner_notfound','discord_owner_notfound','blacklist_user_notfound','whitelist_user_notfound','discord_blacklist_user_notfound','discord_whitelist_user_notfound','botlist_user_notfound','invitelist_user_notfound','not_friend_with_owner','not_friend_with_inviteuser','not_friend_with_user','nor_pending_with_user','not_party_leader','load_failed_keyerror','load_failed_json','load_failed_notfound','is_missing','too_many_users','too_many_items','user_notfound','user_not_in_party','party_full_or_already_or_offline','party_full_or_already','party_notfound','party_private','not_available','must_be_int','item_notfound','error','add_to_list','already_list','remove_from_list','not_list','enter_to_add_to_list','enter_to_remove_from_list','blacklist','whitelist','discord_blacklist','discord_whitelist','invitelist','botlist','enter_to_get_userinfo','friendcount','pendingcount','outbound','inbound','blockcount','set_to','mimic','outfit','backpack','pet','pickaxe','emote','emoji','toy','command_from','whisper','partychat','discord','disable_perfect','invite','accept','decline','friend_request','join_','message','randommessage','decline_invite_for','enter_to_join_party','party_leave','user_invited','enter_to_invite_user','user_sent','enter_to_send','party_sent','status','banner','bannerid','color','level','bpinfo','tier','xpboost','friendxpboost','privacy','public','friends_allow_friends_of_friends','friends','private_allow_friends_of_friends','private','lastlogin','member_count','enter_to_show_info','itemname','remove_pending','already_friend','enter_to_send_friendrequest','remove_friend','enter_to_remove_friend','enter_to_accept_pending','enter_to_decline_pending','already_block','block_user','enter_to_block_user','not_block','unblock_user','enter_to_unblock_user','optional','reason','chatban_user','already_chatban','enter_to_chatban_user','promote_user','already_party_leader','enter_to_promote_user','kick_user','cant_kick_yourself','readystate','ready','unready','sitout','matchstate','remaining','remaining_must_be_between_0_and_255','swap_user','enter_to_swap_user','lock','stopped','locked','all_end','enter_to_change_asset','setname','no_stylechange','enter_to_set_style','assetpath','set_playlist','please_enter_valid_number','web','web_login','web_logout','web_logged','web_not_logged','invalid_password','main_page','config_editor','commands_editor','party_viewer','password','web_save','web_saved','web_back','account_not_exists','account_not_loaded','party_moving','loading','command','run','result','web_notfound','password_reset_error','this_field_is_required','replies_editor','trigger','text','cannot_be_empty']
+localizekeys=['bot','lobbybot','credit','library','loglevel','normal','info','debug','debug_is_on','on','off','booting','get_code','authorization_expired','waiting_for_authorization','account_incorrect','login','all_login','relogin','closing','owner','party','userid','name_or_id','partyid','content','number','eval','exec','invite_is_decline','restarting','relogining','success','accepted_invite_from','accepted_invite_from2','declined_invite_from','declined_invite_from2','declined_invite_interval','declined_invite_interval2','declined_invite_interval3','declined_invite_owner','declined_invite_owner2','declined_invite_owner3','declined_invite_whitelist','declined_invite_whitelist2','declined_invite_whitelist3','party_member_joined','party_member_left','party_member_request','party_member_kick','party_member_promote','party_member_update','party_member_disconnect','party_member_chatban','party_member_chatban2','party_update','random_message','click_invite','inviteaccept','inviteinterval','invite_from','invite_from2','friend_request_to','friend_request_from','friend_request_decline','friend_accept','friend_add','friend_remove','this_command_owneronly','failed_ownercommand','error_while_accepting_partyrequest','error_while_declining_partyrequest','error_while_accepting_friendrequest','error_while_declining_friendrequest','error_while_sending_friendrequest','error_while_removing_friendrequest','error_while_removing_friend','error_while_accepting_invite','error_while_declining_invite','error_while_blocking_user','error_while_unblocking_user','error_while_requesting_userinfo','error_while_joining_to_party','error_while_leaving_party','error_while_sending_partyinvite','error_while_changing_asset','error_while_changing_bpinfo','error_while_promoting_party_leader','error_while_kicking_user','error_while_swapping_user','error_while_setting_client','error_already_member_of_party','error_netcl_does_not_match','error_private_party','login_failed','failed_to_load_account','exchange_code_error','password_reset_error','api_downing','api_downing2','not_enough_password','owner_notfound','discord_owner_notfound','blacklist_user_notfound','whitelist_user_notfound','discord_blacklist_user_notfound','discord_whitelist_user_notfound','botlist_user_notfound','invitelist_user_notfound','not_friend_with_owner','not_friend_with_inviteuser','not_friend_with_user','nor_pending_with_user','not_party_leader','load_failed_keyerror','load_failed_json','load_failed_notfound','is_missing','too_many_users','too_many_items','user_notfound','user_not_in_party','party_full_or_already_or_offline','party_full_or_already','party_notfound','party_private','not_available','must_be_int','item_notfound','error','add_to_list','already_list','remove_from_list','not_list','enter_to_add_to_list','enter_to_remove_from_list','blacklist','whitelist','discord_blacklist','discord_whitelist','invitelist','botlist','enter_to_get_userinfo','friendcount','pendingcount','outbound','inbound','blockcount','set_to','mimic','outfit','backpack','pet','pickaxe','emote','emoji','toy','command_from','whisper','partychat','discord','disable_perfect','invite','accept','decline','friend_request','join_','message','randommessage','decline_invite_for','enter_to_join_party','party_leave','user_invited','enter_to_invite_user','user_sent','enter_to_send','party_sent','status','avatar','color_must_be','banner','bannerid','color','level','bpinfo','tier','xpboost','friendxpboost','privacy','public','friends_allow_friends_of_friends','friends','private_allow_friends_of_friends','private','lastlogin','member_count','enter_to_show_info','itemname','remove_pending','already_friend','enter_to_send_friendrequest','remove_friend','remove_allfriend','enter_to_remove_friend','enter_to_accept_pending','enter_to_decline_pending','already_block','block_user','enter_to_block_user','not_block','unblock_user','enter_to_unblock_user','optional','reason','chatban_user','already_chatban','enter_to_chatban_user','promote_user','already_party_leader','enter_to_promote_user','kick_user','cant_kick_yourself','enter_to_kick_user','hide_user','hide_all_user','enter_to_hide_user','show_user','show_all_user','enter_to_show_user','readystate','ready','unready','sitout','matchstate','remaining','remaining_must_be_between_0_and_255','swap_user','enter_to_swap_user','lock','stopped','locked','all_end','enter_to_change_asset','setname','no_stylechange','enter_to_set_style','assetpath','set_playlist','please_enter_valid_number','web','web_running','web_login','web_logout','web_logged','web_not_logged','invalid_password','main_page','config_editor','commands_editor','replies_editor','party_viewer','password','web_save','web_save_reload','web_saved','web_back','account_not_exists','account_not_loaded','party_moving','loading','command','run','result','web_notfound','web_already_running','failed_to_run_web','this_field_is_required','this_field_fix_required','trigger','text','cannot_be_empty','restart','config_fortnite_email','config_fortnite_password','config_fortnite_owner','config_fortnite_platform','config_fortnite_cid','config_fortnite_bid','config_fortnite_pickaxe_id','config_fortnite_eid','config_fortnite_playlist','config_fortnite_banner','config_fortnite_banner_color','config_fortnite_avatar_id','config_fortnite_avatar_color','config_fortnite_level','config_fortnite_tier','config_fortnite_xpboost','config_fortnite_friendxpboost','config_fortnite_status','config_fortnite_privacy','config_fortnite_whisper','config_fortnite_partychat','config_fortnite_disablewhisperperfectly','config_fortnite_disablepartychatperfectly','config_fortnite_ignorebot','config_fortnite_joinmessage','config_fortnite_joinmessageenable','config_fortnite_randommessage','config_fortnite_randommessageenable','config_fortnite_outfitmimic','config_fortnite_backpackmimic','config_fortnite_pickaxemimic','config_fortnite_emotemimic','config_fortnite_acceptinvite','config_fortnite_acceptfriend','config_fortnite_addfriend','config_fortnite_invite-ownerdecline','config_fortnite_inviteinterval','config_fortnite_interval','config_fortnite_waitinterval','config_fortnite_hide-user','config_fortnite_show-owner','config_fortnite_show-whitelist','config_fortnite_blacklist','config_fortnite_blacklist-declineinvite','config_fortnite_blacklist-autoblock','config_fortnite_blacklist-autokick','config_fortnite_blacklist-autochatban','config_fortnite_blacklist-ignorecommand','config_fortnite_whitelist','config_fortnite_whitelist-allowinvite','config_fortnite_whitelist-declineinvite','config_fortnite_whitelist-ignorelock','config_fortnite_whitelist-ownercommand','config_fortnite_invitelist','config_fortnite_otherbotlist','config_discord_enabled','config_discord_token','config_discord_owner','config_discord_channelname','config_discord_status','config_discord_discord','config_discord_disablediscordperfectly','config_discord_ignorebot','config_discord_blacklist','config_discord_blacklist-ignorecommand','config_discord_whitelist','config_discord_whitelist-ignorelock','config_discord_whitelist-ownercommand','config_web_enabled','config_web_ip','config_web_port','config_web_password','config_web_login_required','config_web_web','config_web_log','config_lang','config_restart_in','config_search-lang','config_no-logs','config_ingame-error','config_discord-log','config_hide-email','config_hide-password','config_hide-token','config_hide-webhook','config_webhook','config_caseinsensitive','config_loglevel','config_debug','bool_true','bool_false','bool_none','boot_switch','info_closed','info_booting','info_ready']
 ignore=['ownercommands','true','false','me', 'privacy_public', 'privacy_friends_allow_friends_of_friends', 'privacy_friends', 'privacy_private_allow_friends_of_friends', 'privacy_private', 'info_party']
 auth = fortnitepy.Auth()
 launcher_token = auth.ios_token
@@ -317,10 +317,10 @@ if True:
                 add_cache(client, pending_)
             for block_ in client.blocked_users.values():
                 add_cache(client, block_)
+            client.set_avatar(avatar=fortnitepy.Avatar(asset=data['fortnite']['avatar_id'], background_colors=data['fortnite']['avatar_color']))
             try:
-                if client.party.leader.id == client.user.id:
-                    prop = {"VoiceChat:implementation_s": "VivoxVoiceChat"}
-                    await client.party.patch(updated=prop)
+                prop = {"VoiceChat:implementation_s": client.party.meta.set_prop("VoiceChat:implementation_s", "VivoxVoiceChat")}
+                await client.party.patch(updated=prop)
             except Exception:
                 if data['loglevel'] == 'debug':
                     send(name(client.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -604,13 +604,17 @@ if True:
             client=member.client
             if client.isready is False:
                 return
-            add_cache(client, member) 
+            add_cache(client, member)
             display_name = name(client.user)
             display_name_ = is_most(client)
             try:
                 if client.party.leader.id == client.user.id:
-                    prop = {"VoiceChat:implementation_s": "VivoxVoiceChat"}
+                    prop = {"VoiceChat:implementation_s": client.party.meta.set_prop("VoiceChat:implementation_s", "VivoxVoiceChat")}
                     await client.party.patch(updated=prop)
+                    if data['fortnite']['hide-user']:
+                        if (not (getattr(client.owner,"id",None) == member.id and data['fortnite']['show-owner'] is True)
+                            and not (member.id in whitelist and data['fortnite']['show-whitelist'] is True)):
+                            await hide(client, member.id)
             except Exception:
                 if data['loglevel'] == 'debug':
                     send(name(client.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -762,8 +766,10 @@ if True:
             display_name_ = is_most(client)
             try:
                 if new_leader.id == client.user.id:
-                    prop = {"VoiceChat:implementation_s": "VivoxVoiceChat"}
+                    prop = {"VoiceChat:implementation_s": client.party.meta.set_prop("VoiceChat:implementation_s", "VivoxVoiceChat")}
                     await client.party.patch(updated=prop)
+                    if data['fortnite']['hide-user']:
+                        await hide(client)
             except Exception:
                 if data['loglevel'] == 'debug':
                     send(name(client.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -1424,6 +1430,19 @@ if True:
                 send('ボット',f'en.json ファイルが存在しません',red,add_d=lambda x:f'>>> {x}')
                 send('Bot',f'en.json file does not exist',red,add_d=lambda x:f'>>> {x}')
                 return False
+        
+        try:
+            color = data['fortnite']['avatar_color'].split(',') if data['fortnite']['avatar_color'] is not None else ""
+            if len(color) > 2:
+                background_colors = [color[0], color[1], color[2]]
+            elif len(color) == 0:
+                background_colors = None
+            else:
+                background_colors = eval(f"fortnitepy.KairosBackgroundColorPreset.{''.join(color[0])}")
+            data['fortnite']['avatar_color'] = background_colors
+        except AttributeError:
+            send(l('bot'),l('color_must_be'))
+            return False
 
         try:
             try:
@@ -2147,6 +2166,46 @@ if True:
             exec(exc)
         return result
 
+    async def hide(client: Type[fortnitepy.Client], member_id: Optional[str] = None) -> None:
+        if client.party.me.leader is False:
+            raise fortnitepy.Forbidden("You must be the party leader to perform this action.")
+        if member_id is None:
+            squad_assignments = [{"memberId": client.user.id, "absoluteMemberIdx": 0}]
+            if client.owner is not None and data['fortnite']['show-owner'] is True and client.party.members.get(client.owner.id) is not None:
+                squad_assignments.append({"memberId": client.owner.id, "absoluteMemberIdx": 1})
+            elif data['fortnite']['show-whitelist'] is True:
+                num = 2
+                for whitelistuser in whitelist:
+                    if client.party.members.get(whitelistuser) is not None:
+                        squad_assignments.append({"memberId": client.owner.id, "absoluteMemberIdx": num})
+                        num += 1
+        else:
+            member = client.party.members.get(member_id)
+            if member is None:
+                raise fortnitepy.NotFound("This member is not a part of this party.")
+            squad_assignments = client.party.meta.squad_assignments
+            [squad_assignments.remove(i) for i in squad_assignments if i["memberId"] == member.id]
+        prop = client.party.meta.set_squad_assignments(squad_assignments)
+        await client.party.patch(updated=prop)
+
+    async def show(client: Type[fortnitepy.Client], member_id: Optional[str] = None) -> None:
+        if client.party.me.leader is False:
+            raise fortnitepy.Forbidden("You must be the party leader to perform this action.")
+        squad_assignments = client.party.meta.squad_assignments
+        squad_members = [member["memberId"] for member in squad_assignments]
+        member_indexes = [member["absoluteMemberIdx"] for member in squad_assignments]
+        available_indexes = [num for num in range(15) if num not in member_indexes]
+        if member_id is None: 
+            squad_assignments.extend([{"memberId": member_id, "absoluteMemberIdx": available_indexes[num]} for num,member_id in enumerate([i for i in client.party.members if i not in squad_members])])
+        else:
+            member = client.party.members.get(member_id)
+            if member is None:
+                raise fortnitepy.NotFound("This member is not a part of this party.")
+            if member.id not in squad_members:
+                squad_assignments.append({"memberId": member.id, "absoluteMemberIdx": available_indexes[0]})
+        prop = client.party.meta.set_squad_assignments(squad_assignments)
+        await client.party.patch(updated=prop)
+
 config_tags={
     "['fortnite']": [dict],
     "['fortnite']['email']": [str,"can_be_multiple"],
@@ -2160,6 +2219,8 @@ config_tags={
     "['fortnite']['playlist']": [str],
     "['fortnite']['banner']": [str],
     "['fortnite']['banner_color']": [str],
+    "['fortnite']['avatar_id']": [str],
+    "['fortnite']['avatar_color']": [str,"can_be_multiple"],
     "['fortnite']['level']": [int],
     "['fortnite']['tier']": [int],
     "['fortnite']['xpboost']": [int],
@@ -2186,6 +2247,9 @@ config_tags={
     "['fortnite']['inviteinterval']": [bool_,"select_bool"],
     "['fortnite']['interval']": [int],
     "['fortnite']['waitinterval']": [int],
+    "['fortnite']['hide-user']": [bool_,"select_bool"],
+    "['fortnite']['show-owner']": [bool_,"select_bool"],
+    "['fortnite']['show-whitelist']": [bool_,"select_bool"],
     "['fortnite']['blacklist']": [list,"can_be_multiple"],
     "['fortnite']['blacklist-declineinvite']": [bool_,"select_bool"],
     "['fortnite']['blacklist-autoblock']": [bool_,"select_bool"],
@@ -2289,6 +2353,7 @@ commands_tags={
     "['partymessage']": [str,"can_be_multiple"],
     "['sendall']": [str,"can_be_multiple"],
     "['status']": [str,"can_be_multiple"],
+    "['avatar']": [str,"can_be_multiple"],
     "['banner']": [str,"can_be_multiple"],
     "['level']": [str,"can_be_multiple"],
     "['bp']": [str,"can_be_multiple"],
@@ -2316,6 +2381,8 @@ commands_tags={
     "['chatban']": [str,"can_be_multiple"],
     "['promote']": [str,"can_be_multiple"],
     "['kick']": [str,"can_be_multiple"],
+    "['hide']": [str,"can_be_multiple"],
+    "['show']": [str,"can_be_multiple"],
     "['ready']": [str,"can_be_multiple"],
     "['unready']": [str,"can_be_multiple"],
     "['sitout']": [str,"can_be_multiple"],
@@ -4480,6 +4547,28 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l('error'))
 
+        elif args[0] in commands['avatar'].split(','):
+            try:
+                if rawcontent == '':
+                    await reply(message, client, f"[{commands['avatar']}] [ID]")
+                    continue
+                if len(args) > 4:
+                    background_colors = [args[2], args[3], args[4]]
+                elif len(args) == 2:
+                    background_colors = None
+                else:
+                    background_colors = eval(f"fortnitepy.KairosBackgroundColorPreset.{args[2]}")
+                avatar = fortnitepy.Avatar(asset=args[1], background_colors=background_colors)
+                client.set_avatar(avatar)
+                await reply(message, client, l('set_to', l('avatar'), f"{args[1]}, {background_colors}"))
+            except AttributeError:
+                if data['loglevel'] == 'debug':
+                    send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                await reply(message, client, l('color_must_be'))
+            except Exception:
+                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                await reply(message, client, l('error'))
+
         elif args[0] in commands['banner'].split(','):
             try:
                 await client.party.me.edit_and_keep(partial(client.party.me.set_banner,args[1],args[2],client.party.me.banner[2]))
@@ -4742,6 +4831,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                             continue
                         if len(result) == 1:
                             await reply(message, client, f"{convert_backend_type(result[0]['backendType'])}: {result[0]['name']} | {result[0]['id']}\n{result[0]['description']}\n{result[0]['rarity']}\n{result[0]['set']}")
+                            send(display_name, client, result[0]['id'])
                         else:
                             text = str()
                             for count, item in enumerate(result):
@@ -4751,7 +4841,8 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                             client.select[message.author.id] = {
                                 "exec": [
                                     """\
-                                    await reply(message, client, f"{convert_backend_type(item['backendType'])}: {item['name']} | {item['id']}\n{item['description']}\n{item['rarity']}\n{item['set']}")""" for item in result
+                                    await reply(message, client, f"{convert_backend_type(item['backendType'])}: {item['name']} | {item['id']}\n{item['description']}\n{item['rarity']}\n{item['set']}")
+                                    send(display_name, client, item['id'])""" for item in result
                                     ],
                                     "variable": [
                                         {"item": item} for item in result
@@ -4774,6 +4865,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                             continue
                         if len(result) == 1:
                             await reply(message, client, f"{convert_backend_type(result[0]['backendType'])}: {result[0]['name']} | {result[0]['id']}\n{result[0]['description']}\n{result[0]['rarity']}\n{result[0]['set']}")
+                            send(display_name,result[0]['id'])
                         else:
                             text = str()
                             for count, item in enumerate(result):
@@ -4783,7 +4875,8 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                             client.select[message.author.id] = {
                                 "exec": [
                                     """\
-                                    await reply(message, client, f"{convert_backend_type(item['backendType'])}: {item['name']} | {item['id']}\n{item['description']}\n{item['rarity']}\n{item['set']}")""" for item in result
+                                    await reply(message, client, f"{convert_backend_type(item['backendType'])}: {item['name']} | {item['id']}\n{item['description']}\n{item['rarity']}\n{item['set']}")
+                                    send(display_name, client, item['id'])""" for item in result
                                 ],
                                 "variable": [
                                     {"item": item} for item in result
@@ -5509,6 +5602,154 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l('error_while_kicking_user'))
+            except Exception:
+                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                await reply(message, client, l('error'))
+
+        elif args[0] in commands['hide'].split(','):
+            try:
+                if rawcontent == '':
+                    await hide(client)
+                    await reply(message, client, l('hide_all_user'))
+                else:
+                    if data['caseinsensitive'] is True:
+                        users = {str(member.display_name): member for member in client.party.members.copy().values() if content_ in jaconv.kata2hira(str(member.display_name).lower())}
+                    else:
+                        users = {str(member.display_name): member for member in client.party.members.copy().values() if content_ in str(member.display_name)}
+                    try:
+                        user=await client.fetch_profile(rawcontent)
+                        if user is not None:
+                            if client.party.members.get(user.id) is not None:
+                                users[str(user.display_name)] = user
+                                add_cache(client, user)
+                    except fortnitepy.HTTPException:
+                        if data['loglevel'] == 'debug':
+                            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                        await reply(message, client, l("error_while_requesting_userinfo"))
+                    if len(users) > 60:
+                        await reply(message, client, l('too_many_users', str(len(users))))
+                        continue
+                    if len(users) == 0:
+                        await reply(message, client, l('user_notfound'))
+                        continue
+                    if len(users) == 1:
+                        user=tuple(users.values())[0]
+                        if client.party.members.get(user.id) is None:
+                            await reply(message, client, l('user_not_in_party'))
+                            continue
+                        member=client.party.members.get(user.id)
+                        await hide(client, member.id)
+                        await reply(message, client, l('hide_user', f'{name(user)}'))
+                    else:
+                        client.select[message.author.id] = {
+                            "exec": [
+                                """\
+                try:
+                    if client.party.members.get(user.id) is None:
+                        await reply(message, client, l('user_not_in_party'))
+                        continue
+                    member=client.party.members.get(user.id)
+                    await hide(client, member.id)
+                    await reply(message, client, l('hide_user', f'{name(user)}'))
+                except fortnitepy.Forbidden:
+                    if data['loglevel'] == 'debug':
+                        send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                    await reply(message, client, l('not_party_leader'))
+                except fortnitepy.NotFound:
+                    if data['loglevel'] == 'debug':
+                        send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                    await reply(message, client, l('user_not_in_party'))""" for user in users.values()
+                            ],
+                            "variable": [
+                                {"user": user} for user in users.values()
+                            ]
+                        }
+                        text = str()
+                        for count, user in enumerate(users.values()):
+                            text += f"\n{count+1} {name(user)}"
+                        text += f"\n{l('enter_to_hide_user')}"
+            except fortnitepy.Forbidden:
+                if data['loglevel'] == 'debug':
+                    send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                await reply(message, client, l('not_party_leader'))
+            except fortnitepy.NotFound:
+                if data['loglevel'] == 'debug':
+                    send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                await reply(message, client, l('user_not_in_party'))
+            except Exception:
+                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                await reply(message, client, l('error'))
+
+        elif args[0] in commands['show'].split(','):
+            try:
+                if rawcontent == '':
+                    await show(client)
+                    await reply(message, client, l('show_all_user'))
+                else:
+                    if data['caseinsensitive'] is True:
+                        users = {str(member.display_name): member for member in client.party.members.copy().values() if content_ in jaconv.kata2hira(str(member.display_name).lower())}
+                    else:
+                        users = {str(member.display_name): member for member in client.party.members.copy().values() if content_ in str(member.display_name)}
+                    try:
+                        user=await client.fetch_profile(rawcontent)
+                        if user is not None:
+                            if client.party.members.get(user.id) is not None:
+                                users[str(user.display_name)] = user
+                                add_cache(client, user)
+                    except fortnitepy.HTTPException:
+                        if data['loglevel'] == 'debug':
+                            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                        await reply(message, client, l("error_while_requesting_userinfo"))
+                    if len(users) > 60:
+                        await reply(message, client, l('too_many_users', str(len(users))))
+                        continue
+                    if len(users) == 0:
+                        await reply(message, client, l('user_notfound'))
+                        continue
+                    if len(users) == 1:
+                        user=tuple(users.values())[0]
+                        if client.party.members.get(user.id) is None:
+                            await reply(message, client, l('user_not_in_party'))
+                            continue
+                        member=client.party.members.get(user.id)
+                        await show(client, member.id)
+                        await reply(message, client, l('show_user', f'{name(user)}'))
+                    else:
+                        client.select[message.author.id] = {
+                            "exec": [
+                                """\
+                try:
+                    if client.party.members.get(user.id) is None:
+                        await reply(message, client, l('user_not_in_party'))
+                        continue
+                    member=client.party.members.get(user.id)
+                    await show(client, member.id)
+                    await reply(message, client, l('show_user', f'{name(user)}'))
+                except fortnitepy.Forbidden:
+                    if data['loglevel'] == 'debug':
+                        send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                    await reply(message, client, l('not_party_leader'))
+                except fortnitepy.NotFound:
+                    if data['loglevel'] == 'debug':
+                        send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                    await reply(message, client, l('user_not_in_party'))""" for user in users.values()
+                            ],
+                            "variable": [
+                                {"user": user} for user in users.values()
+                            ]
+                        }
+                        text = str()
+                        for count, user in enumerate(users.values()):
+                            text += f"\n{count+1} {name(user)}"
+                        text += f"\n{l('enter_to_show_user')}"
+            except fortnitepy.Forbidden:
+                if data['loglevel'] == 'debug':
+                    send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                await reply(message, client, l('not_party_leader'))
+            except fortnitepy.NotFound:
+                if data['loglevel'] == 'debug':
+                    send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                await reply(message, client, l('user_not_in_party'))
             except Exception:
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l('error'))
@@ -7248,7 +7489,7 @@ async def run_app() -> None:
             webbrowser.open(f"http://{data['web']['ip']}:{data['web']['port']}")
         if os.getcwd().startswith('/app') or os.getcwd().startswith('/home/runner'):
             Thread(target=uptime).start()
-        send(l("bot"),l("web_running",f"http://{data['web']['ip']}:{data['web']['port']}"),add_p=lambda x:f'[{now_()}] {x}',add_d=lambda x:f'>>> {x}')
+        send(l("bot"),l("web_running",f"http://{data['web']['ip']}:{data['web']['port']}"),add_p=lambda x:f'[{now_()}] {x}')
 
 loop = asyncio.get_event_loop()
 if data.get('web',{}).get('enabled',True) is True or data.get('status',1)  == 0:
