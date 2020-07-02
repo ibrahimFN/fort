@@ -1717,14 +1717,12 @@ if True:
                 device_auth_detail = get_device_code(access_token)
                 send(l('bot'),l('get_code', email, device_auth_detail['verification_uri_complete']))
                 device_auth = device_code_auth(device_auth_detail["device_code"])
-                fortnite_access_token, fortnite_expires_at = get_fortnite_token(device_auth["access_token"])
                 if device_auth is None:
                     send(l('bot'),l('authorization_expired'))
                     if expires_at < datetime.datetime.utcnow():
                         access_token, expires_at = get_token()
                 else:
-                    if fortnite_expires_at < datetime.datetime.utcnow():
-                        fortnite_access_token, fortnite_expires_at = get_fortnite_token(device_auth["access_token"])
+                    fortnite_access_token, fortnite_expires_at = get_fortnite_token(device_auth["access_token"])
                     user = lookup_user(device_auth["in_app_id"], fortnite_access_token)
                     if user["email"].lower() == email.lower():
                         flag = True
@@ -2512,7 +2510,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
             return
         if message.author.bot is True and data['discord']['ignorebot'] is True:
             return
-        if "{name}" not in data['discord']['channelname'] and "{id}" not in data['discord']['channelname']:
+        if "{name}" not in data['discord']['channelname'] and "{id}" not in data['discord']['channelname'] and message.channel.name == data['discord']['channelname']:
             tasks = {}
             for client_ in loadedclients:
                 mes = AllMessage(content, message.author, client_, message)
@@ -2682,7 +2680,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
 
     if args[0] in commands['prev'].split(','):
         if client.prevmessage.get(message.author.id) is None:
-            client.prevmessage[message.author.id]='None'
+            client.prevmessage[message.author.id]=''
         content=client.prevmessage.get(message.author.id)
         if data['caseinsensitive'] is True:
             args = jaconv.kata2hira(content.lower()).split()
@@ -4473,6 +4471,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
             try:
                 await client.set_status(rawcontent)
                 await reply(message, client, l('set_to', l('status'), rawcontent))
+                await client.party.set_privacy(client.party.privacy)
             except IndexError:
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -6385,13 +6384,16 @@ if data.get("status",1) != 0:
                     delete_existing_device_auths=False,
                     **device_auth_details
                 ),
+                default_party_config=fortnitepy.DefaultPartyConfig(
+                    privacy=data['fortnite']['privacy']
+                ),
                 default_party_member_config=fortnitepy.DefaultPartyMemberConfig(
                     meta=[
                         partial(ClientPartyMember.set_outfit, data['fortnite']['cid'].replace('cid','CID',1)),
                         partial(ClientPartyMember.set_backpack, data['fortnite']['bid'].replace('bid','BID',1)),
                         partial(ClientPartyMember.set_pickaxe, data['fortnite']['pickaxe_id'].replace('pickaxe_id','Pickaxe_ID',1)),
                         partial(ClientPartyMember.set_battlepass_info, has_purchased=True, level=data['fortnite']['tier'], self_boost_xp=data['fortnite']['xpboost'], friend_boost_xp=data['fortnite']['friendxpboost']),
-                        partial(ClientPartyMember.set_banner, icon=data['fortnite']['banner'], color=data['fortnite']['banner_color'], season_level=data['fortnite']['level']),
+                        partial(ClientPartyMember.set_banner, icon=data['fortnite']['banner'], color=data['fortnite']['banner_color'], season_level=data['fortnite']['level'])
                     ]
                 ),
                 platform=fortnitepy.Platform(data['fortnite']['platform'].upper()),
