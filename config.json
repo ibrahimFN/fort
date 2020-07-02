@@ -12,6 +12,8 @@
 		"playlist": "Playlist_Tutorial_1",
 		"banner": "InfluencerBanner33",
 		"banner_color": "defaultcolor22",
+		"avatar_id": "cid_005_athena_commando_m_default",
+        	"avatar_color": "#ffffff,#ffffff,#ffffff",
 		"level": 9999,
 		"tier": 9999,
 		"xpboost": 9999,
@@ -38,6 +40,9 @@
 		"inviteinterval": true,
 		"interval": 10,
 		"waitinterval": 10,
+		"hide-user": false,
+     	  	"show-owner": true,
+       		"show-whitelist": true,
 		"blacklist": [
 			"Tfue",
 			"Ninja"
