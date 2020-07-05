@@ -12,6 +12,7 @@
     "off": "OFF",
     "booting": "Iniciando BOT...",
     "get_code": "Inicia sesión en: {0} \nLuego en:\n{1}\nHaga clic en confirmar para iniciar",
+    "get_code2": "Iniciando sesión en {0} \n<a href='https://www.epicgames.com'>https://www.epicgames.com</a>\nand open\n<a href='{1}'>{1}</a>\nhaga clic en confirmar",
     "authorization_expired": "Autorización expirada",
     "waiting_for_authorization": "Esperando autorización...",
     "logged_in_as": "Iniciando como {0}. Seguro? Y/N\n",
