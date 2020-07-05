@@ -12,6 +12,7 @@
     "off": "オフ",
     "booting": "ボットを起動中...",
     "get_code": "https://www.epicgames.com\nで{0}にログインし、\n{1}\nを開いて 確認 を押してください",
+    "get_code2": "<a href='https://www.epicgames.com'>https://www.epicgames.com</a>\nで{0}にログインし、\n<a href='{1}'>{1}</a>\nを開いて 確認 を押してください",
     "authorization_expired": "認証が期限切れです",
     "waiting_for_authorization": "認証を待っています...",
     "account_incorrect": "このアカウントは {0} ではありません",
