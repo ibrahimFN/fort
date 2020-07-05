@@ -70,6 +70,7 @@ try:
     import sanic.response
     import fortnitepy
     import requests
+    import aiohttp
     import discord
     import jaconv
 except ModuleNotFoundError as e:
@@ -1709,144 +1710,6 @@ if True:
                     cached_items[lang].append(item)
             return variants
 
-    def generate_device_auth_and_store(email: str) -> str:
-        access_token, expires_at = get_token()
-        while True:
-            flag = False
-            while True:
-                device_auth_detail = get_device_code(access_token)
-                send(l('bot'),l('get_code', email, device_auth_detail['verification_uri_complete']))
-                device_auth = device_code_auth(device_auth_detail["device_code"])
-                if device_auth is None:
-                    send(l('bot'),l('authorization_expired'))
-                    if expires_at < datetime.datetime.utcnow():
-                        access_token, expires_at = get_token()
-                else:
-                    fortnite_access_token, fortnite_expires_at = get_fortnite_token(device_auth["access_token"])
-                    user = lookup_user(device_auth["in_app_id"], fortnite_access_token)
-                    if user["email"].lower() == email.lower():
-                        flag = True
-                        break
-                    else:
-                        send(l('bot'),l('account_incorrect1', email))
-                        break
-            if flag == True:
-                break
-        exchange_code = exchange(device_auth["access_token"])
-        launcher_access_token, client_id = exchange_code_auth(exchange_code)
-        details = generate_device_auth(client_id, launcher_access_token)
-        store_device_auth_details(email.lower(), details)
-        return details
-                
-    def get_token() -> tuple:
-        res = requests.post(
-            oauth_url,
-            headers={
-                "Authorization": f"basic {launcher_token}"
-            },
-            data={
-                "grant_type": "client_credentials",
-                "token_type": "eg1"
-            }
-        )
-        data = res.json()
-        return data["access_token"], datetime.datetime.fromisoformat(data["expires_at"].replace("Z",""))
-
-    def get_fortnite_token(access_token: str) -> tuple:
-        exchange_code = exchange(access_token)
-        res = requests.post(
-            fortnite_token_url,
-            headers={
-                "Authorization": f"basic {fortnite_token}"
-            },
-            data={
-                "grant_type": "exchange_code",
-                "token_type": "eg1",
-                "exchange_code": exchange_code
-            }
-        )
-        data = res.json()
-        return data["access_token"], datetime.datetime.fromisoformat(data["expires_at"].replace("Z",""))
-
-    def get_device_code(access_token: str) -> dict:
-        res = requests.post(
-            device_auth_url,
-            headers={
-                "Authorization": f"bearer {access_token}"
-            }
-        )
-        return res.json()
-
-    def device_code_auth(device_code: str) -> Optional[dict]:
-        flag = False
-        while True:
-            time.sleep(5)
-            res = requests.post(
-                oauth_url,
-                headers={
-                    "Authorization": f"basic {launcher_token}"
-                },
-                data={
-                    "grant_type": "device_code",
-                    "device_code": device_code
-                }
-            )
-            device_auth = res.json()
-
-            if device_auth.get("errorCode") == "errors.com.epicgames.account.oauth.authorization_pending":
-                if not flag:
-                    send(l('bot'),l('waiting_for_authorization'))
-                    flag = True
-                pass
-            elif device_auth.get("errorCode") is not None:
-                return None
-            else:
-                return device_auth
-
-    def exchange_code_auth(exchange_code: str) -> tuple:
-        res = requests.post(
-            exchange_auth_url,
-            headers={
-                "Authorization": f"basic {launcher_token}"
-            },
-            data={
-                "grant_type": "exchange_code",
-                "exchange_code": exchange_code,
-                "token_type": "eg1"
-            }
-        )
-        data = res.json()
-        return data["access_token"], data["account_id"]
-
-    def exchange(access_token: str) -> str:
-        res = requests.get(
-            exchange_url,
-            headers={
-                "Authorization": f"bearer {access_token}"
-            }
-        )
-        return res.json()["code"]
-
-    def lookup_user(user_id: str, fortnite_access_token: str) -> dict:
-        res = requests.get(
-            user_lookup_url.format(user_id=user_id),
-            headers={
-                "Authorization": f"bearer {fortnite_access_token}"
-            }
-        )
-        data = res.json()
-        return data
-
-    def generate_device_auth(client_id: str, access_token: str) -> dict:
-        res = requests.post(
-            f"https://account-public-service-prod.ol.epicgames.com/account/api/public/account/{client_id}/deviceAuth",
-            headers={
-                "Authorization": f"Bearer {access_token}"
-            }
-        )
-        data = res.json()
-        return {"device_id": data["deviceId"], "account_id": data["accountId"], "secret": data["secret"]}
-
     def uptime() -> None:
         while True:
             requests.head(f"http://{data['web']['ip']}:{data['web']['port']}")
@@ -2118,6 +1981,154 @@ if True:
             if data['ingame-error'] is True:
                 await invitation.sender.send(l("error"))
             send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+
+    async def generate_device_auth_and_store(email: str) -> str:
+        global web_text
+        access_token,expires_at = await get_token()
+        while True:
+            flag = False
+            while True:
+                device_auth_details = await get_device_code(access_token)
+                send(l('bot'),l('get_code', email, device_auth_details['verification_uri_complete']))
+                web_text = l('get_code2', email, device_auth_details['verification_uri_complete'])
+                device_auth = await device_code_auth(device_auth_details["device_code"])
+                if device_auth is None:
+                    send(l('bot'),l('authorization_expired'))
+                    if expires_at < datetime.datetime.utcnow():
+                        access_token, expires_at = await get_token()
+                else:
+                    fortnite_access_token, fortnite_expires_at = await get_fortnite_token(device_auth["access_token"])
+                    user = await lookup_user(device_auth["in_app_id"], fortnite_access_token)
+                    if user["email"].lower() == email.lower():
+                        flag = True
+                        break
+                    else:
+                        send(l('bot'),l('account_incorrect1', email))
+                        break
+            if flag == True:
+                break
+        exchange_code = await exchange(device_auth["access_token"])
+        launcher_access_token, client_id = await exchange_code_auth(exchange_code)
+        details = await generate_device_auth(client_id, launcher_access_token)
+        store_device_auth_details(email.lower(), details)
+        return details
+
+    async def get_token() -> tuple:
+        async with aiohttp.ClientSession() as session:
+            data = await session.post(
+                oauth_url,
+                headers={
+                    "Authorization": f"basic {launcher_token}"
+                },
+                data={
+                    "grant_type": "client_credentials",
+                    "token_type": "eg1"
+                }
+            )
+            data = await data.json()
+            return data["access_token"], datetime.datetime.fromisoformat(data["expires_at"].replace("Z",""))
+
+    async def get_fortnite_token(access_token: str) -> tuple:
+        exchange_code = await exchange(access_token)
+        async with aiohttp.ClientSession() as session:
+            data = await session.post(
+                fortnite_token_url,
+                headers={
+                    "Authorization": f"basic {fortnite_token}"
+                },
+                data={
+                    "grant_type": "exchange_code",
+                    "token_type": "eg1",
+                    "exchange_code": exchange_code
+                }
+            )
+            data = await data.json()
+            return data["access_token"], datetime.datetime.fromisoformat(data["expires_at"].replace("Z",""))
+
+    async def get_device_code(access_token: str) -> dict:
+        async with aiohttp.ClientSession() as session:
+            data = await session.post(
+                device_auth_url,
+                headers={
+                    "Authorization": f"bearer {access_token}",
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            )
+            data = await data.json()
+            return data
+
+    async def device_code_auth(device_code: str) -> Optional[dict]:
+        async with aiohttp.ClientSession() as session:
+            flag = False
+            while True:
+                await asyncio.sleep(5)
+                data = await session.post(
+                    oauth_url,
+                    headers={
+                        "Authorization": f"basic {launcher_token}"
+                    },
+                    data={
+                        "grant_type": "device_code",
+                        "device_code": device_code
+                    }
+                )
+                data = await data.json()
+                if data.get("errorCode") == "errors.com.epicgames.account.oauth.authorization_pending":
+                    if not flag:
+                        send(l('bot'),l('waiting_for_authorization'))
+                        flag = True
+                    pass
+                elif data.get("errorCode") is not None:
+                    return None
+                else:
+                    return data
+
+    async def exchange_code_auth(exchange_code: str) -> tuple:
+        async with aiohttp.ClientSession() as session:
+            data = await session.post(
+                exchange_auth_url,
+                headers={
+                    "Authorization": f"basic {launcher_token}"
+                },
+                data={
+                    "grant_type": "exchange_code",
+                    "exchange_code": exchange_code,
+                    "token_type": "eg1"
+                }
+            )
+            data = await data.json()
+            return data["access_token"], data["account_id"]
+
+    async def exchange(access_token: str) -> str:
+        async with aiohttp.ClientSession() as session:
+            data = await session.get(
+                exchange_url,
+                headers={
+                    "Authorization": f"bearer {access_token}"
+                }
+            )
+            return await data.json()["code"]
+
+    async def lookup_user(user_id: str, fortnite_access_token: str) -> dict:
+        async with aiohttp.ClientSession() as session:
+            data = await session.get(
+                user_lookup_url.format(user_id=user_id),
+                headers={
+                    "Authorization": f"bearer {fortnite_access_token}"
+                }
+            )
+            return await data.json()
+
+    async def generate_device_auth(client_id: str, access_token: str) -> dict:
+        async with aiohttp.ClientSession() as session:
+            data = await session.post(
+                f"https://account-public-service-prod.ol.epicgames.com/account/api/public/account/{client_id}/deviceAuth",
+                headers={
+                    "Authorization": f"Bearer {access_token}"
+                }
+            )
+            data = await data.json()
+            return {"device_id": data["deviceId"], "account_id": data["accountId"], "secret": data["secret"]}
 
     async def aexec(code: str, variable: dict) -> Any:
         _ = lambda l: re.match(r"(\u0020|\u3000)*", l).end() * u"\u0020"
@@ -6360,172 +6371,9 @@ if data.get('discord',{}).get('enabled',False) is True:
 #========================================================================================================================
 #========================================================================================================================
 #========================================================================================================================
-
-Thread(target=dprint,args=()).start()
-if data.get("status",1) != 0:
-    Thread(target=get_item_info,args=()).start()
-
-    clients = []
-    for count, credential in enumerate(credentials.items()):
-        email = credential[0]
-        password = credential[1]
-        try:
-            device_auth_details = get_device_auth_details().get(email.lower(), {})
-            if not device_auth_details:
-                device_auth_details = generate_device_auth_and_store(email)
-            client = Client(
-                auth=fortnitepy.AdvancedAuth(
-                    email=email,
-                    password=password,
-                    prompt_exchange_code=False,
-                    prompt_authorization_code=False,
-                    prompt_code_if_throttled=True,
-                    prompt_code_if_invalid=True,
-                    delete_existing_device_auths=False,
-                    **device_auth_details
-                ),
-                default_party_config=fortnitepy.DefaultPartyConfig(
-                    privacy=data['fortnite']['privacy']
-                ),
-                default_party_member_config=fortnitepy.DefaultPartyMemberConfig(
-                    meta=[
-                        partial(ClientPartyMember.set_outfit, data['fortnite']['cid'].replace('cid','CID',1)),
-                        partial(ClientPartyMember.set_backpack, data['fortnite']['bid'].replace('bid','BID',1)),
-                        partial(ClientPartyMember.set_pickaxe, data['fortnite']['pickaxe_id'].replace('pickaxe_id','Pickaxe_ID',1)),
-                        partial(ClientPartyMember.set_battlepass_info, has_purchased=True, level=data['fortnite']['tier'], self_boost_xp=data['fortnite']['xpboost'], friend_boost_xp=data['fortnite']['friendxpboost']),
-                        partial(ClientPartyMember.set_banner, icon=data['fortnite']['banner'], color=data['fortnite']['banner_color'], season_level=data['fortnite']['level'])
-                    ]
-                ),
-                platform=fortnitepy.Platform(data['fortnite']['platform'].upper()),
-                status=data['fortnite']['status']
-            )
-        except ValueError:
-            send(l("bot"),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-            send(l("bot"),l('error_while_setting_client'),red,add_d=lambda x:f'>>> {x}')
-            continue
-        
-        client.email = email
-        client.eid=data['fortnite']['eid']
-        client.isready=False
-        client.booting=False
-        client.acceptinvite_interval=True
-        client.stopcheck=False
-        client.outfitlock=False
-        client.backpacklock=False
-        client.pickaxelock=False
-        client.emotelock=False
-        client.owner=None
-        client.prevoutfit=None
-        client.prevoutfitvariants=None
-        client.prevbackpack=None
-        client.prevbackpackvariants=None
-        client.prevpickaxe=None
-        client.prevpickaxevariants=None
-        client.prevmessage={}
-        client.select={}
-        client.invitelist=[]
-        client.whisper=data['fortnite']['whisper']
-        client.partychat=data['fortnite']['partychat']
-        client.discord=data['discord']['discord']
-        client.web=data['web']['web']
-        client.whisperperfect=data['fortnite']['disablewhisperperfectly']
-        client.partychatperfect=data['fortnite']['disablepartychatperfectly']
-        client.discordperfect=data['discord']['disablediscordperfectly']
-        client.joinmessageenable=data['fortnite']['joinmessageenable']
-        client.randommessageenable=data['fortnite']['randommessageenable']
-        client.outfitmimic=data['fortnite']['outfitmimic']
-        client.backpackmimic=data['fortnite']['backpackmimic']
-        client.pickaxemimic=data['fortnite']['pickaxemimic']
-        client.emotemimic=data['fortnite']['emotemimic']
-        client.acceptinvite=data['fortnite']['acceptinvite']
-        client.acceptfriend=data['fortnite']['acceptfriend']
-
-        clients.append(client)
-
-select_bool = select(
-    [
-        {"value": "True","display_value": l('bool_true')},
-        {"value": "False","display_value": l('bool_false')}
-    ]
-)
-select_bool_none = select(
-    [
-        {"value": "True","display_value": l('bool_true')},
-        {"value": "False","display_value": l('bool_false')},
-        {"value": "None","display_value": l('bool_none')}
-    ]
-)
-select_platform = select(
-    [
-        {"value": "WIN","display_value": "Windows"},
-        {"value": "MAC","display_value": "Mac"},
-        {"value": "PSN","display_value": "PlayStation"},
-        {"value": "XBL","display_value": "Xbox"},
-        {"value": "SWT","display_value": "Switch"},
-        {"value": "IOS","display_value": "IOS"},
-        {"value": "AND","display_value": "Android"}
-    ]
-)
-select_privacy = select(
-    [
-        {"value": "public","display_value": l('public')},
-        {"value": "friends_allow_friends_of_friends","display_value": l('friends_allow_friends_of_friends')},
-        {"value": "friends","display_value": l('friends')},
-        {"value": "private_allow_friends_of_friends","display_value": l('private_allow_friends_of_friends')},
-        {"value": "private","display_value": l('private')}
-    ]
-)
-select_loglevel = select(
-    [
-        {"value": "normal","display_value": l('normal')},
-        {"value": "info","display_value": l('info')},
-        {"value": "debug","display_value": l('debug')}
-    ]
-)
-select_lang = select(
-    [
-        {"value": re.sub(r"lang(\\|/)","",i).replace(".json",""),"display_value": re.sub(r"lang(\\|/)","",i).replace(".json","")} for i in glob("lang/*.json") if "_old.json" not in i
-    ]
-)
-select_ben_lang = select(
-    [
-        {"value": i,"display_value": i} for i in ["ar","de","en","es","es-419","fr","it","ja","ko","pl","pt-BR","ru","tr","zh-CN","zh-Hant"]
-    ]
-)
-
-for key,value in config_tags.items():
-    for count,tag in enumerate(value):
-        if tag == "can_be_multiple":
-            config_tags[key][count] = can_be_multiple
-        elif tag == "select_bool":
-            config_tags[key][count] = select_bool
-        elif tag == "select_bool_none":
-            config_tags[key][count] = select_bool_none
-        elif tag == "select_platform":
-            config_tags[key][count] = select_platform
-        elif tag == "select_privacy":
-            config_tags[key][count] = select_privacy
-        elif tag == "select_loglevel":
-            config_tags[key][count] = select_loglevel
-        elif tag == "select_lang":
-            config_tags[key][count] = select_lang
-        elif tag == "select_ben_lang":
-            config_tags[key][count] = select_ben_lang
-        elif tag == "red":
-            config_tags[key][count] = Red
-        elif tag == "fix_required":
-            config_tags[key][count] = FixRequired
-for key,value in commands_tags.items():
-    for count,tag in enumerate(value):
-        if tag == "can_be_multiple":
-            commands_tags[key][count] = can_be_multiple
-        elif tag == "red":
-            commands_tags[key][count] = Red
-        elif tag == "fix_required":
-            commands_tags[key][count] = FixRequired
-
 app=Sanic(__name__)
 app.secret_key = os.urandom(32)
+web_text = ""
 
 if True:
     env = Environment(loader=FileSystemLoader('./templates', encoding='utf8'), extensions=['jinja2.ext.do'])
@@ -6710,6 +6558,13 @@ if True:
                     else: 
                         flash_messages.append(l('invalid_password'))
                         return render_template("login.html", l=l, flash_messages=flash_messages)
+
+        @app.route("/text",methods=["GET"])
+        @auth.login_required
+        async def text(request: Request):
+            return sanic.response.json(
+                {"text": web_text}
+            )
 
         @app.route("/logout")
         @auth.login_required
@@ -7189,6 +7044,8 @@ if True:
         async def unauthorized(request: Request, *args, **kwargs):
             return sanic.response.redirect("/")
 
+loop = asyncio.get_event_loop()
+
 async def run_bot() -> None:
     global kill
     try:
@@ -7250,9 +7107,172 @@ async def run_app() -> None:
             Thread(target=uptime).start()
         send(l("bot"),l("web_running",f"http://{data['web']['ip']}:{data['web']['port']}"),add_p=lambda x:f'[{now_()}] {x}',add_d=lambda x:f'>>> {x}')
 
-loop = asyncio.get_event_loop()
 if data.get('web',{}).get('enabled',True) is True or data.get('status',1)  == 0:
     loop.create_task(run_app())
+
+Thread(target=dprint,args=()).start()
+if data.get("status",1) != 0:
+    Thread(target=get_item_info,args=()).start()
+
+    clients = []
+    for count, credential in enumerate(credentials.items()):
+        email = credential[0]
+        password = credential[1]
+        try:
+            device_auth_details = get_device_auth_details().get(email.lower(), {})
+            if not device_auth_details:
+                device_auth_details = loop.run_until_complete(generate_device_auth_and_store(email))
+            client = Client(
+                auth=fortnitepy.AdvancedAuth(
+                    email=email,
+                    password=password,
+                    prompt_exchange_code=False,
+                    prompt_authorization_code=False,
+                    prompt_code_if_throttled=True,
+                    prompt_code_if_invalid=True,
+                    delete_existing_device_auths=False,
+                    **device_auth_details
+                ),
+                default_party_config=fortnitepy.DefaultPartyConfig(
+                    privacy=data['fortnite']['privacy']
+                ),
+                default_party_member_config=fortnitepy.DefaultPartyMemberConfig(
+                    meta=[
+                        partial(ClientPartyMember.set_outfit, data['fortnite']['cid'].replace('cid','CID',1)),
+                        partial(ClientPartyMember.set_backpack, data['fortnite']['bid'].replace('bid','BID',1)),
+                        partial(ClientPartyMember.set_pickaxe, data['fortnite']['pickaxe_id'].replace('pickaxe_id','Pickaxe_ID',1)),
+                        partial(ClientPartyMember.set_battlepass_info, has_purchased=True, level=data['fortnite']['tier'], self_boost_xp=data['fortnite']['xpboost'], friend_boost_xp=data['fortnite']['friendxpboost']),
+                        partial(ClientPartyMember.set_banner, icon=data['fortnite']['banner'], color=data['fortnite']['banner_color'], season_level=data['fortnite']['level'])
+                    ]
+                ),
+                platform=fortnitepy.Platform(data['fortnite']['platform'].upper()),
+                status=data['fortnite']['status']
+            )
+        except ValueError:
+            send(l("bot"),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+            send(l("bot"),l('error_while_setting_client'),red,add_d=lambda x:f'>>> {x}')
+            continue
+        
+        client.email = email
+        client.eid=data['fortnite']['eid']
+        client.isready=False
+        client.booting=False
+        client.acceptinvite_interval=True
+        client.stopcheck=False
+        client.outfitlock=False
+        client.backpacklock=False
+        client.pickaxelock=False
+        client.emotelock=False
+        client.owner=None
+        client.prevoutfit=None
+        client.prevoutfitvariants=None
+        client.prevbackpack=None
+        client.prevbackpackvariants=None
+        client.prevpickaxe=None
+        client.prevpickaxevariants=None
+        client.prevmessage={}
+        client.select={}
+        client.invitelist=[]
+        client.whisper=data['fortnite']['whisper']
+        client.partychat=data['fortnite']['partychat']
+        client.discord=data['discord']['discord']
+        client.web=data['web']['web']
+        client.whisperperfect=data['fortnite']['disablewhisperperfectly']
+        client.partychatperfect=data['fortnite']['disablepartychatperfectly']
+        client.discordperfect=data['discord']['disablediscordperfectly']
+        client.joinmessageenable=data['fortnite']['joinmessageenable']
+        client.randommessageenable=data['fortnite']['randommessageenable']
+        client.outfitmimic=data['fortnite']['outfitmimic']
+        client.backpackmimic=data['fortnite']['backpackmimic']
+        client.pickaxemimic=data['fortnite']['pickaxemimic']
+        client.emotemimic=data['fortnite']['emotemimic']
+        client.acceptinvite=data['fortnite']['acceptinvite']
+        client.acceptfriend=data['fortnite']['acceptfriend']
+
+        clients.append(client)
+
+select_bool = select(
+    [
+        {"value": "True","display_value": l('bool_true')},
+        {"value": "False","display_value": l('bool_false')}
+    ]
+)
+select_bool_none = select(
+    [
+        {"value": "True","display_value": l('bool_true')},
+        {"value": "False","display_value": l('bool_false')},
+        {"value": "None","display_value": l('bool_none')}
+    ]
+)
+select_platform = select(
+    [
+        {"value": "WIN","display_value": "Windows"},
+        {"value": "MAC","display_value": "Mac"},
+        {"value": "PSN","display_value": "PlayStation"},
+        {"value": "XBL","display_value": "Xbox"},
+        {"value": "SWT","display_value": "Switch"},
+        {"value": "IOS","display_value": "IOS"},
+        {"value": "AND","display_value": "Android"}
+    ]
+)
+select_privacy = select(
+    [
+        {"value": "public","display_value": l('public')},
+        {"value": "friends_allow_friends_of_friends","display_value": l('friends_allow_friends_of_friends')},
+        {"value": "friends","display_value": l('friends')},
+        {"value": "private_allow_friends_of_friends","display_value": l('private_allow_friends_of_friends')},
+        {"value": "private","display_value": l('private')}
+    ]
+)
+select_loglevel = select(
+    [
+        {"value": "normal","display_value": l('normal')},
+        {"value": "info","display_value": l('info')},
+        {"value": "debug","display_value": l('debug')}
+    ]
+)
+select_lang = select(
+    [
+        {"value": re.sub(r"lang(\\|/)","",i).replace(".json",""),"display_value": re.sub(r"lang(\\|/)","",i).replace(".json","")} for i in glob("lang/*.json") if "_old.json" not in i
+    ]
+)
+select_ben_lang = select(
+    [
+        {"value": i,"display_value": i} for i in ["ar","de","en","es","es-419","fr","it","ja","ko","pl","pt-BR","ru","tr","zh-CN","zh-Hant"]
+    ]
+)
+
+for key,value in config_tags.items():
+    for count,tag in enumerate(value):
+        if tag == "can_be_multiple":
+            config_tags[key][count] = can_be_multiple
+        elif tag == "select_bool":
+            config_tags[key][count] = select_bool
+        elif tag == "select_bool_none":
+            config_tags[key][count] = select_bool_none
+        elif tag == "select_platform":
+            config_tags[key][count] = select_platform
+        elif tag == "select_privacy":
+            config_tags[key][count] = select_privacy
+        elif tag == "select_loglevel":
+            config_tags[key][count] = select_loglevel
+        elif tag == "select_lang":
+            config_tags[key][count] = select_lang
+        elif tag == "select_ben_lang":
+            config_tags[key][count] = select_ben_lang
+        elif tag == "red":
+            config_tags[key][count] = Red
+        elif tag == "fix_required":
+            config_tags[key][count] = FixRequired
+for key,value in commands_tags.items():
+    for count,tag in enumerate(value):
+        if tag == "can_be_multiple":
+            commands_tags[key][count] = can_be_multiple
+        elif tag == "red":
+            commands_tags[key][count] = Red
+        elif tag == "fix_required":
+            commands_tags[key][count] = FixRequired
+
 if data.get('status',1) != 0 and bot_ready:
     loop.create_task(run_bot())
 try:
