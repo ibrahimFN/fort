@@ -2510,7 +2510,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
             return
         if message.author.bot is True and data['discord']['ignorebot'] is True:
             return
-        if "{name}" not in data['discord']['channelname'] and "{id}" not in data['discord']['channelname'] and message.channel.name == data['discord']['channelname'].replace(" ","-").replace("--","-").replace(".","-").replace(",","-").lower():
+        if "{name}" not in data['discord']['channelname'] and "{id}" not in data['discord']['channelname'] and message.channel.name == data['discord']['channelname'].replace(" ","-").replace(".","-").replace(",","-").replace("--","-").lower():
             tasks = {}
             for client_ in loadedclients:
                 mes = AllMessage(content, message.author, client_, message)
@@ -2528,7 +2528,7 @@ async def process_command(message: Union[Type[fortnitepy.FriendMessage], Type[fo
                 if client.isready is False:
                     continue
                 
-                if message.channel.name == data['discord']['channelname'].format(name=clientname, id=client.user.id).replace(" ","-").replace("--","-").replace(".","-").replace(",","-").lower():
+                if message.channel.name == data['discord']['channelname'].format(name=clientname, id=client.user.id).replace(" ","-").replace(".","-").replace(",","-").replace("--","-").lower():
                     break
             else:
                 return
