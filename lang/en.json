@@ -12,6 +12,7 @@
     "off": "Off",
     "booting": "Booting bot...",
     "get_code": "Log in to {0} in\nhttps://www.epicgames.com\nand open\n{1}\nthen click Confirm",
+    "get_code2": "Log in to {0} in\n<a href='https://www.epicgames.com'>https://www.epicgames.com</a>\nand open\n<a href='{1}'>{1}</a>\nthen click Confirm",
     "authorization_expired": "Authorization is expired",
     "waiting_for_authorization": "Waiting for authorization...",
     "account_incorrect": "This account is not {0}",
