@@ -2,6 +2,7 @@
 git+https://github.com/xMistt/fortnitepy
 discord.py
 requests
+aiohttp
 crayons
 jaconv
 jinja2
