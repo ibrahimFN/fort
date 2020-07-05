@@ -2107,7 +2107,7 @@ if True:
                     "Authorization": f"bearer {access_token}"
                 }
             )
-            return await data.json()["code"]
+            return (await data.json())["code"]
 
     async def lookup_user(user_id: str, fortnite_access_token: str) -> dict:
         async with aiohttp.ClientSession() as session:
