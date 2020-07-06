@@ -1910,7 +1910,7 @@ if True:
         client=invitation.client
         try:
             await invitation.decline()
-            await invitation.sender.send(l("declined_invite_interval3"), str(data["fortnite"]["interval"]))
+            await invitation.sender.send(l("declined_invite_interval3", str(data["fortnite"]["interval"])))
             if data['loglevel'] == 'normal':
                 send(client.user.display_name,l("declined_invite_interval", str(invitation.sender.display_name), str(data["fortnite"]["interval"])),add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}')
             else:
