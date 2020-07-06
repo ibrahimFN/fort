@@ -21,6 +21,24 @@
     <title>{{l('main_page')}}</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
 </head>
+<script>
+    function update() {
+        const request = new XMLHttpRequest();
+        var text = ""
+        request.open("GET", "./text", true);
+        request.responseType = 'json';
+        request.send("");
+        request.onreadystatechange = function() {
+            if (this.readyState == 4) {
+                data = this.response
+                console.log(data)
+                document.getElementById("text_area").innerHTML = data["text"];
+            } 
+        }
+    }
+    update();
+    setInterval('update()',5000);
+</script>
 <body style="color: #DDDDDD">
     <p>
         {% if authenticated %}
@@ -54,6 +72,7 @@
                 <a href="/login">{{l('web_login')}}</a>
             </p>
         {% endif %}
+        <div id="text_area"></div>
     </p>
 </body>
 </html>
