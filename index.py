@@ -2107,7 +2107,8 @@ if True:
                     "Authorization": f"bearer {access_token}"
                 }
             )
-            return (await data.json())["code"]
+            data = await data.json()
+            return data["code"]
 
     async def lookup_user(user_id: str, fortnite_access_token: str) -> dict:
         async with aiohttp.ClientSession() as session:
@@ -2117,14 +2118,16 @@ if True:
                     "Authorization": f"bearer {fortnite_access_token}"
                 }
             )
-            return await data.json()
+            data = await data.json()
+            return data
 
     async def generate_device_auth(client_id: str, access_token: str) -> dict:
         async with aiohttp.ClientSession() as session:
             data = await session.post(
                 f"https://account-public-service-prod.ol.epicgames.com/account/api/public/account/{client_id}/deviceAuth",
                 headers={
-                    "Authorization": f"Bearer {access_token}"
+                    "Authorization": f"Bearer {access_token}",
+                    "Content-Type": "application/json"
                 }
             )
             data = await data.json()
