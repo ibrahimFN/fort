@@ -43,6 +43,7 @@
 		"hide-user": false,
      	  	"show-owner": true,
        		"show-whitelist": true,
+		"show-bot": true,
 		"blacklist": [
 			"Tfue",
 			"Ninja"
