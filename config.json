@@ -2,7 +2,6 @@
 {
     "fortnite": {
         "email": "",
-        "password": "",
         "owner": "",
         "platform": "WIN",
         "cid": "CID_429_Athena_Commando_F_NeonLines",
@@ -73,7 +72,10 @@
         "enabled": false,
         "token": "Discord Botのトークン",
         "owner": 123456789,
-        "channelname": "{name}-command-channel",
+        "channels": [
+            "{name}-command-channel",
+            "bot-command-channel"
+        ],
         "status": "ステータス",
         "discord": true,
         "disablediscordperfectly": false,
@@ -108,7 +110,6 @@
     "discord-log": false,
     "omit-over2000": true,
     "hide-email": true,
-    "hide-password": true,
     "hide-token": true,
     "hide-webhook": true,
     "webhook": "",
