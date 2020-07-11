@@ -13,7 +13,7 @@
 		"banner": "InfluencerBanner33",
 		"banner_color": "defaultcolor22",
 		"avatar_id": "cid_005_athena_commando_m_default",
-        "avatar_color": "#ffffff,#ffffff,#ffffff",
+		"avatar_color": "#ffffff,#ffffff,#ffffff",
 		"level": 9999,
 		"tier": 9999,
 		"xpboost": 9999,
@@ -29,13 +29,13 @@
 		"randommessage": "1,2,3,4,5",
 		"joinmessageenable": false,
 		"randommessageenable": false,
-        "joinemote": true,
+		"joinemote": true,
 		"outfitmimic": false,
 		"backpackmimic": false,
 		"pickaxemimic": false,
 		"emotemimic": false,
-        "mimic-ignorebot": true,
-        "mimic-ignoreblacklist": true,
+		"mimic-ignorebot": true,
+		"mimic-ignoreblacklist": true,
 		"acceptinvite": true,
 		"acceptfriend": true,
 		"addfriend": false,
@@ -44,9 +44,9 @@
 		"interval": 10,
 		"waitinterval": 10,
 		"hide-user": false,
-        "hide-blacklist": true,
-        "show-owner": true,
-        "show-whitelist": true,
+		"hide-blacklist": true,
+		"show-owner": true,
+		"show-whitelist": true,
 		"show-bot": true,
 		"blacklist": [
 			"Tfue",
@@ -65,11 +65,9 @@
 		"whitelist-declineinvite": true,
 		"whitelist-ignorelock": true,
 		"whitelist-ownercommand": false,
-        "whitelist-ignoreng": true,
-		"invitelist": [
-		],
-		"otherbotlist": [
-        	]
+		"whitelist-ignoreng": true,
+		"invitelist": [,
+		"otherbotlist": []
 	},
 	"discord": {
 		"enabled": false,
@@ -80,14 +78,12 @@
 		"discord": true,
 		"disablediscordperfectly": false,
 		"ignorebot": true,
-		"blacklist": [
-		],
+		"blacklist": [],
 		"blacklist-ignorecommand": true,
-		"whitelist": [
-		],
+		"whitelist": [],
 		"whitelist-ignorelock": true,
 		"whitelist-ownercommand": false,
-        "whitelist-ignoreng": true
+		"whitelist-ignoreng": true
 	},
 	"web": {
 		"enabled": true,
@@ -98,19 +94,19 @@
 		"web": true,
 		"log": false
 	},
-    "replies-matchmethod": "full",
-    "ng-words": [],
-    "ng-word-matchmethod": "contains",
-    "ng-word-kick": true,
-    "ng-word-chatban": true,
-    "ng-word-blacklist": false,
+	"replies-matchmethod": "full",
+	"ng-words": [],
+	"ng-word-matchmethod": "contains",
+	"ng-word-kick": true,
+	"ng-word-chatban": true,
+	"ng-word-blacklist": false,
 	"lang": "en",
 	"search-lang": "en",
 	"restart_in": null,
 	"no-logs": false,
 	"ingame-error": true,
 	"discord-log": false,
-    "omit-over2000": true,
+	"omit-over2000": true,
 	"hide-email": true,
 	"hide-password": true,
 	"hide-token": true,
@@ -118,6 +114,6 @@
 	"webhook": "",
 	"caseinsensitive": true,
 	"loglevel": "normal",
-    "debug": false,
-    "status": 0
+	"debug": false,
+	"status": 0
 }
