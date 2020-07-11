@@ -65,7 +65,7 @@
         "whitelist-ignorelock": true,
         "whitelist-ownercommand": false,
         "whitelist-ignoreng": true,
-        "invitelist": [,
+        "invitelist": [],
         "otherbotlist": []
     },
     "discord": {
