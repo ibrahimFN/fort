@@ -249,6 +249,7 @@ if True: #Classes
             self.eid = data['fortnite']['eid']
             self.isready = False
             self.booting = False
+            self.timer = None
             self.acceptinvite_interval = True
             self.stopcheck = False
             self.outfitlock = False
@@ -722,7 +723,10 @@ if True: #Classes
                     else:
                         self.add_cache(user)
                         self.invitelist.append(user.id)
-            await asyncio.gather(*[_(listuser) for listuser in data['fortnite']['invitelist']])
+            try:
+                await asyncio.gather(*[_(listuser) for listuser in data['fortnite']['invitelist']])
+            except Exception:
+                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             if data['loglevel'] == "debug":
                 send(display_name,f'invitelist {self.invitelist}',yellow,add_d=lambda x:f'```\n{x}\n```')
 
@@ -747,13 +751,20 @@ if True: #Classes
                     if not user:
                         send(display_name,l(f"{data_}_user_notfound",listuser),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
                     else:
+                        if data_ == "blacklist" and data["fortnite"]["blacklist-autoblock"]:
+                            try:
+                                await user.block()
+                            except Exception:
+                                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                         globals()[list_].append(user.id)
 
                 for list_,data_ in lists.items():
-                    await asyncio.gather(*[_(listuser) for listuser in data['fortnite'][list_]])
+                    try:
+                        await asyncio.gather(*[_(listuser) for listuser in data['fortnite'][list_]])
+                    except Exception:
+                        send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     if data['loglevel'] == "debug":
                         send(display_name,f"fortnite {data_}list {globals()[list_]}",yellow,add_d=lambda x:f'```\n{x}\n```')
-                await asyncio.gather(*[await user.block() for user in blacklist])
 
                 if data['fortnite']['acceptfriend']:
                     pendings = [i for i in self.pending_friends.values() if i.incoming]
