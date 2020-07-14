@@ -399,9 +399,7 @@ if True: #Classes
         async def change_asset(self, author_id: str, type_: str, id_: str, variants: Optional[dict] = {}, enlightenment: Optional[Union[tuple, list]] = []) -> None:
             if not enlightenment:
                 enlightenment = None
-            print(type_)
             if type_ == "Outfit":
-                print("outfit")
                 if self.outfitlock and self.lock_check(author_id):
                     return False
                 else:
@@ -416,7 +414,6 @@ if True: #Classes
                         if data['loglevel'] == 'debug':
                             send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             elif type_ == "Back Bling":
-                print("back bling")
                 if self.backpacklock and self.lock_check(author_id):
                     return False
                 else:
@@ -425,7 +422,6 @@ if True: #Classes
                         variants += variants_ 
                     await self.party.me.edit_and_keep(partial(self.party.me.set_backpack, asset=id_, variants=variants, enlightenment=enlightenment))
             elif type_ == "Pet":
-                print("pet")
                 if self.backpacklock and self.lock_check(author_id):
                     return False
                 else:
@@ -434,7 +430,6 @@ if True: #Classes
                         variants += variants_ 
                     await self.party.me.edit_and_keep(partial(self.party.me.set_pet, asset=id_, variants=variants))
             elif type_ == "Harvesting Tool":
-                print("harvesting tool")
                 if self.pickaxelock and self.lock_check(author_id):
                     return False
                 else:
@@ -444,7 +439,6 @@ if True: #Classes
                     await self.party.me.edit_and_keep(partial(self.party.me.set_pickaxe, asset=id_, variants=variants))
                     await self.party.me.set_emote("EID_IceKing")
             elif type_ == "Emote":
-                print("emote")
                 if self.emotelock and self.lock_check(author_id):
                     return False
                 else:
@@ -453,17 +447,15 @@ if True: #Classes
                     await self.party.me.set_emote(asset=id_)
                     self.eid = id_
             elif type_ == "Emoticon":
-                print("emoticon")
                 if self.emotelock and self.lock_check(author_id):
                     return False
                 else:
                     if member_asset(self.party.me, "emote") and member_asset(self.party.me, "emote").lower() == id_.lower():
                         await self.party.me.clear_emote()
                     id_ = f"/Game/Athena/Items/Cosmetics/Dances/Emoji/{id_}.{id_}"
-                    await client.party.me.set_emote(asset=id_)
+                    await self.party.me.set_emote(asset=id_)
                     self.eid = id_
             elif type_ == "Toy":
-                print("toy")
                 if self.emotelock and self.lock_check(author_id):
                     return False
                 else:
@@ -525,11 +517,11 @@ if True: #Classes
         async def party_member_outfit_change(self, member: fortnitepy.PartyMember) -> None:
             display_name = name(self.user)
             flag = False
-            if isinstance(client.outfitmimic,bool) and client.outfitmimic:
+            if isinstance(self.outfitmimic,bool) and self.outfitmimic:
                 if (member.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['mimic-ignorebot']):
                     return
                 flag = True
-            elif isinstance(client.outfitmimic,str) and member.id == client.outfitmimic:
+            elif isinstance(self.outfitmimic,str) and member.id == self.outfitmimic:
                 flag = True
             if flag:
                 if not member_asset(member,"outfit"):
@@ -539,6 +531,9 @@ if True: #Classes
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 else:
+                    display_name_ = self.is_most()
+                    if display_name_:
+                        send(display_name_,f"ID: {member_asset(member,'outfit')}")
                     try:
                         await self.change_asset(self.user.id, "Outfit", member_asset(member,"outfit"), member.outfit_variants, member.enlightenments)
                     except Exception:
@@ -548,11 +543,11 @@ if True: #Classes
         async def party_member_backpack_change(self, member: fortnitepy.PartyMember) -> None:
             display_name = name(self.user)
             flag = False
-            if isinstance(client.backpackmimic,bool) and client.backpackmimic:
+            if isinstance(self.backpackmimic,bool) and self.backpackmimic:
                 if (member.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['mimic-ignorebot']):
                     return
                 flag = True
-            elif isinstance(client.backpackmimic,str) and member.id == client.backpackmimic:
+            elif isinstance(self.backpackmimic,str) and member.id == self.backpackmimic:
                 flag = True
             if flag:
                 if not member_asset(member,"backpack"):
@@ -562,8 +557,12 @@ if True: #Classes
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 else:
+                    display_name_ = self.is_most()
+                    if display_name_:
+                        send(display_name_,f"ID: {member_asset(member,'backpack')}")
                     try:
-                        await self.change_asset(self.user.id, "Back Bling", member_asset(member,"backpack"), member.backpack_variants, member.enlightenments)
+                        type_ = convert_to_type(member_asset(member,'backpack'))
+                        await self.change_asset(self.user.id, type_, member_asset(member,"backpack"), member.backpack_variants, member.enlightenments)
                     except Exception:
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -571,11 +570,11 @@ if True: #Classes
         async def party_member_pickaxe_change(self, member: fortnitepy.PartyMember) -> None:
             display_name = name(self.user)
             flag = False
-            if isinstance(client.pickaxemimic,bool) and client.pickaxemimic:
+            if isinstance(self.pickaxemimic,bool) and self.pickaxemimic:
                 if (member.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['mimic-ignorebot']):
                     return
                 flag = True
-            elif isinstance(client.pickaxemimic,str) and member.id == client.pickaxemimic:
+            elif isinstance(self.pickaxemimic,str) and member.id == self.pickaxemimic:
                 flag = True
             if flag:
                 if not member_asset(member,"pickaxe"):
@@ -585,6 +584,9 @@ if True: #Classes
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 else:
+                    display_name_ = self.is_most()
+                    if display_name_:
+                        send(display_name_,f"ID: {member_asset(member,'pickaxe')}")
                     try:
                         await self.change_asset(self.user.id, "Harvesting Tool", member_asset(member,"pickaxe"), member.pickaxe_variants)
                     except Exception:
@@ -594,11 +596,11 @@ if True: #Classes
         async def party_member_emote_change(self, member: fortnitepy.PartyMember) -> None:
             display_name = name(self.user)
             flag = False
-            if isinstance(client.emotemimic,bool) and client.emotemimic:
+            if isinstance(self.emotemimic,bool) and self.emotemimic:
                 if (member.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['mimic-ignorebot']):
                     return
                 flag = True
-            elif isinstance(client.emotemimic,str) and member.id == client.emotemimic:
+            elif isinstance(self.emotemimic,str) and member.id == self.emotemimic:
                 flag = True
             if flag:
                 if not member_asset(member,"emote"):
@@ -608,8 +610,12 @@ if True: #Classes
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 else:
+                    display_name_ = self.is_most()
+                    if display_name_:
+                        send(display_name_,f"ID: {member_asset(member,'emote')}")
                     try:
-                        await self.change_asset(self.user.id, "Emote", member_asset(member,"emote"))
+                        type_ = convert_to_type(member_asset(member,"emote"))
+                        await self.change_asset(self.user.id, type_, member_asset(member,"emote"))
                     except Exception:
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -652,8 +658,8 @@ if True: #Classes
                 send(display_name,l("owner_notfound"),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
             else:
                 self.add_cache(owner)
-                owner = self.get_friend(owner.id)
-                if not owner:
+                friend = self.get_friend(owner.id)
+                if not friend:
                     if data['fortnite']['addfriend']:
                         send(display_name,l("not_friend_with_owner",commands["reload"]),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
                         try:
@@ -665,7 +671,7 @@ if True: #Classes
                         except Exception:
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 else:
-                    self.owner = owner
+                    self.owner = friend
                     send(display_name,f'{l("owner")}: {name(self.owner)}',green,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
             if self.owner:
                 await self.owner.send(l("click_invite"))
@@ -735,6 +741,33 @@ if True: #Classes
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     if data['loglevel'] == "debug":
                         send(display_name,f"fortnite {data_}list {globals()[list_]}",yellow,add_d=lambda x:f'```\n{x}\n```')
+
+                lists = [
+                    "outfitmimic",
+                    "backpackmimic",
+                    "pickaxemimic",
+                    "emotemimic"
+                ]
+                async def _(mimic: str) -> None:
+                    if isinstance(data['fortnite'][mimic],str):
+                        try:
+                            user = await self.fetch_profile(data['fortnite'][mimic])
+                        except fortnitepy.HTTPException:
+                            if data['loglevel'] == 'debug':
+                                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                            send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                        except Exception:
+                            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                        if not user:
+                            send(display_name,l(f"{mimic}_user_notfound",data['fortnite'][mimic]),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                        else:
+                            setattr(self,mimic,user.id)
+                            if data['loglevel'] == "debug":
+                                send(display_name,f"{mimic} {getattr(self,mimic)}",yellow,add_d=lambda x:f'```\n{x}\n```')
+                try:
+                    await asyncio.gather(*[_(mimic) for mimic in lists])
+                except Exception:
+                    send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}') 
 
                 if data['fortnite']['acceptfriend']:
                     pendings = [i for i in self.pending_friends.values() if i.incoming]
@@ -1074,45 +1107,26 @@ if True: #Classes
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
         async def event_party_member_outfit_change(self, member: fortnitepy.PartyMember, before: str, after: str) -> None:
-            display_name_ = self.is_most()
-            if data['loglevel'] != 'normal' and display_name_:
-                send(display_name_,f"ID: {after}")
             if after:
                 await self.party_member_outfit_change(member)
 
         async def event_party_member_backpack_change(self, member: fortnitepy.PartyMember, before: str, after: str) -> None:
-            display_name_ = self.is_most()
-            if data['loglevel'] != 'normal':
-                if display_name_:
-                    send(display_name_,f"ID: {after}")
             if after:
                 await self.party_member_backpack_change(member)
 
         async def event_party_member_pet_change(self, member: fortnitepy.PartyMember, before: str, after: str) -> None:
-            display_name_ = self.is_most()
-            if data['loglevel'] != 'normal' and display_name_:
-                send(display_name_,f"ID: {after}")
             if after:
                 await self.party_member_backpack_change(member)
 
         async def event_party_member_pickaxe_change(self, member: fortnitepy.PartyMember, before: str, after: str) -> None:
-            display_name_ = self.is_most()
-            if data['loglevel'] != 'normal' and display_name_:
-                send(display_name_,f"ID: {after}")
             if after:
                 await self.party_member_pickaxe_change(member)
 
         async def event_party_member_emote_change(self, member: fortnitepy.PartyMember, before: str, after: str) -> None:
-            display_name_ = self.is_most()
-            if data['loglevel'] != 'normal' and display_name_:
-                send(display_name_,f"ID: {after}")
             if after:
                 await self.party_member_emote_change(member)
 
         async def event_party_member_emoji_change(self, member: fortnitepy.PartyMember, before: str, after: str) -> None:
-            display_name_ = self.is_most()
-            if data['loglevel'] != 'normal' and display_name_:
-                send(display_name_,f"ID: {after}")
             if after:
                 await self.party_member_emote_change(member)
 
@@ -1188,74 +1202,76 @@ if True: #Functions
 
     def dprint() -> None:
         text_max = 1990
-        if data['discord-log']:
-            for num,log in enumerate(storedlogs.copy()):
-                try:
-                    username = list(log.keys())[0]
-                    content = list(log.values())[0]
-                    if len(content) > text_max:
-                        if data["omit-over2000"]:
-                            text = [content[i:i+text_max] for i in range(0, len(content), text_max)]
-                            for text_ in text:
-                                res=requests.post(
+        while True:
+            if data['discord-log']:
+                if data['skip-if-overflow'] and len(storedlogs) >= 50:
+                    storedlogs.clear()
+                for num,log in enumerate(storedlogs):
+                    try:
+                        username = list(log.keys())[0]
+                        content = list(log.values())[0]
+                        if len(content) > text_max:
+                            if data["omit-over2000"]:
+                                text = content[:text_max] + "..."
+                                res = requests.post(
                                     data['webhook'],
                                     json={
                                         'username': username,
-                                        'content': text_
+                                        'content': text
                                     }
                                 )
-                                if res.status_code == 429:
-                                    break
                             else:
-                                continue
-                            break
+                                text = [content[i:i+text_max] for i in range(0, len(content), text_max)]
+                                for text_ in text:
+                                    res = requests.post(
+                                        data['webhook'],
+                                        json={
+                                            'username': username,
+                                            'content': text_
+                                        }
+                                    )
+                                    if res.status_code == 429:
+                                        break
+                                else:
+                                    continue
+                                break
                         else:
-                            text = content[:text_max] + "..."
-                            res=requests.post(
+                            res = requests.post(
                                 data['webhook'],
                                 json={
                                     'username': username,
                                     'content': content
                                 }
                             )
-                    else:
-                        res=requests.post(
-                            data['webhook'],
-                            json={
-                                'username': username,
-                                'content': content
-                            }
-                        )
-                    if res.status_code == 204:
-                        storedlogs.pop(num)
-                    if res.status_code == 429:
-                        break
-                except TypeError:
-                    if data['loglevel'] =='debug':
-                        print(red(traceback.format_exc()))
-                    try:
-                        storedlogs.pop(num)
+                        if res.status_code == 204:
+                            storedlogs.pop(num)
+                        if res.status_code == 429:
+                            break
+                    except TypeError:
+                        if data['loglevel'] =='debug':
+                            print(red(traceback.format_exc()))
+                        try:
+                            storedlogs.pop(num)
+                        except Exception:
+                            pass
+                        continue
                     except Exception:
-                        pass
-                    continue
-                except Exception:
-                    print(red(traceback.format_exc()))
-                    print(red(f"{username}: {content} の送信中にエラーが発生しました"))
-                    continue
-            time.sleep(5)
+                        print(red(traceback.format_exc()))
+                        print(red(f"{username}: {content} の送信中にエラーが発生しました"))
+                        continue
+                time.sleep(5)
 
     def dstore(username: str, content: Any) -> None:
-        content = discord.utils.escape_markdown(content)
         if data['discord-log']:
             if data['hide-email']:
                 for email in data['fortnite']['email'].split(','):
                     content = content.replace(email,len(email)*"X")
             if data['hide-token']:
                 for token in data['discord']['token'].split(','):
-                    content=content.replace(token,len(token)*"X")
+                    content = content.replace(token,len(token)*"X")
             if data['hide-webhook']:
                 for webhook in data['webhook'].split(','):
-                    content=content.replace(webhook,len(webhook)*"X")
+                    content = content.replace(webhook,len(webhook)*"X")
             if len(storedlogs) > 0:
                 if list(storedlogs[len(storedlogs)-1].keys())[0] == username:
                     storedlogs[len(storedlogs)-1][username] += f'\n{content}'
@@ -1277,6 +1293,7 @@ if True: #Functions
                     print(color(content))
                 else:
                     print(color(add_p(content)))
+        content = discord.utils.escape_markdown(content)
         if not add_d:
             dstore(user_name,content)
         else:
@@ -1661,7 +1678,7 @@ if True: #Functions
                 result = future.result()
                 data_ = {}
                 if data["loglevel"] == "debug":
-                    send(l("bot"),f"Saving {lang} items")
+                    send(l("bot"),f"Saving {lang} items",yellow)
                 for item in result:
                     type_ = convert_backend_type(item["backendType"])
                     if type_ in ignoretype:
@@ -1673,7 +1690,7 @@ if True: #Functions
                     with open(f"items/{type_}_{lang}.json","w",encoding="utf-8") as f:
                         json.dump(items,f,ensure_ascii=False,indent=4)
                 if data["loglevel"] == "debug":
-                    send(l("bot"),f"Saved {lang} items")
+                    send(l("bot"),f"Saved {lang} items",yellow)
 
     def get_banner_data() -> dict:
         res = requests.get("https://benbotfn.tk/api/v1/exportAsset?path=FortniteGame/Content/Banners/BannerIcons")
@@ -3736,7 +3753,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
     elif args[0] in commands['level'].split(','):
         try:
             await client.party.me.edit_and_keep(partial(client.party.me.set_banner,client.party.me.banner[0],client.party.me.banner[1],int(args[1])))
-            await reply(message, client, l('level', args[1]))
+            await reply(message, client, l('set_to', l('level'), args[1]))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5421,12 +5438,10 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             if args[0] in commands[key].split(','):
                 try:
                     if args[1] in commands['true'].split(','):
-                        print(value[0])
                         setattr(client,value[0],True)
                         send(display_name,l('set_to', value[1], l('on')),add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
                         await reply(message, client, l('set_to', value[1], l('on')))
                     elif args[1] in commands['false'].split(','):
-                        print(value[0])
                         setattr(client,value[0],False)
                         send(display_name,l('set_to', value[1], l('off')),add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
                         await reply(message, client, l('set_to', value[1], l('off')))
@@ -5438,9 +5453,8 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                         try:
                             user = await client.fetch_profile(rawcontent)
                             if user:
-                                if client.is_blocked(user.id):
-                                    users[str(user.display_name)] = user
-                                    client.add_cache(user)
+                                users[str(user.display_name)] = user
+                                client.add_cache(user)
                         except fortnitepy.HTTPException:
                             if data['loglevel'] == 'debug':
                                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5453,7 +5467,6 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                             return
                         if len(users) == 1:
                             user = tuple(users.values())[0]
-                            print(value[0])
                             setattr(client,value[0],user.id)
                             send(display_name,l('set_to', value[1], l('off')),add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
                             await reply(message, client, l('set_to', value[1], name(user)))
@@ -5461,7 +5474,6 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                             client.select[message.author.id] = {
                                 "exec": [
                                     """\
-                                        print(value[0])
                                         setattr(client,value[0],user.id)
                                         send(display_name,l('set_to', value[1], l('off')),add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
                                         await reply(message, client, l('set_to', value[1], name(user)))""" for user in users.values()
@@ -5478,7 +5490,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 except IndexError:
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                    await reply(message, client, f"[{commands['randommessageenable']}] [[{commands['true']}] / [{commands['false']}]]")
+                    await reply(message, client, f"[{commands[key]}] [[{commands['true']}] / [{commands['false']}] / {l('name_or_id')}]")
                 except Exception:
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l('error'))
@@ -5505,12 +5517,10 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             if args[0] in commands[key].split(','):
                 try:
                     if args[1] in commands['true'].split(','):
-                        print(value[0])
                         setattr(client,value[0],True)
                         send(display_name,l('set_to', value[1], l('on')),add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
                         await reply(message, client, l('set_to', value[1], l('on')))
                     elif args[1] in commands['false'].split(','):
-                        print(value[0])
                         setattr(client,value[0],False)
                         send(display_name,l('set_to', value[1], l('off')),add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
                         await reply(message, client, l('set_to', value[1], l('off')))
@@ -5532,7 +5542,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     await reply(message, client, l('please_enter_valid_number'))
                     return
                 exec_ = client.select[message.author.id]["exec"][int(args[0])-1]
-                variable=globals()
+                variable = globals()
                 variable.update(locals())
                 if client.select[message.author.id].get("variable"):
                     variable.update(client.select[message.author.id]["variable"][int(args[0])-1])
@@ -5715,6 +5725,7 @@ config_tags={
     "['ingame-error']": [bool_,"select_bool"],
     "['discord-log']": [bool_,"select_bool"],
     "['omit-over2000']": [bool_,"select_bool"],
+    "['skip-if-overflow']": [bool_,"select_bool"],
     "['hide-email']": [bool_,"select_bool"],
     "['hide-token']": [bool_,"select_bool"],
     "['hide-webhook']": [bool_,"select_bool"],
