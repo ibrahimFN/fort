@@ -17,18 +17,32 @@ Write details in site which opened
 Press Save button
 You can write other details by reloading tab  
 
+# Repl.it
+https://repl.it  
+Click "sign up" on the top right  
+Click "+ new repl" on the top right, then open "Import From GitHub" tab  
+Copy
+https://github.com/gomashio1596/Fortnite-LobbyBot  
+and paste this to "Paste any repository URL"  
+Press "Import from GitHub"  
+Press "run▶" on the site which opened(Call this repl page) on top  
+Create account in [Uptimerobot](https://uptimerobot.com "Uptimerobot") 
+and press "Dashboard"  
+Press "\+ Monitor" and back to repl.it, then open "web" tab and copy URL  
+Go to uptimerobot, change "Monitor Type" to "HTTP(s)" and paste URL  
+Enter any name in "Friendly Name" and press "Create Monitor"  
+Write details in web page  
+You can write other details by reload tab  
+
 # Glitch
+Glitch is not recommended because can't make bot 24/7!
+
 https://glitch.com
 Click Sign in on the top right  
 https://glitch.com/~fortnite-lobbybot  
 Click project name and click Remix Project to remix  
 Click project name(your project) and click Make This Project Private to make project private  
-Create account in [Uptimerobot](https://uptimerobot.com "Uptimerobot")  
-and login and click Dashboard  
-Click \+ Monitor and click Share in Glitch and copy URL in Live App and go to uptimerobot,  
-Monitor Type set to HTTP(s) and paste in URL  
-Make any name in Friendly Name and click Create Monitor  
-Back to Glitch and click show on the top, and click In a New Window  
+Click Show and In a new Window  
 Write details in site which opened  
 You can write other details by reload tab  
 
@@ -36,93 +50,109 @@ You can write other details by reload tab
 ```
 Fortnite
 email                     : Email address for bot account. You can set multiple by split in ,
-password                  : Password for bot account. You can set multiple by split in ,
 owner                     : Owner's name or ID
 platform                  : Bot's platform. See below
-cid                       : Bot's defauld outfit ID
-bid                       : Bot's defauld back bling ID
-pickaxe_id                : Bot's defauld harvesting tool ID
-eid                       : Bot's defauld emote ID
-playlist                  : Bot's defauld playlist ID
-banner                    : Bot's defauld banner ID
-banner_color              : Bot's defauld banner color
-level                     : Bot's defauld level
-tier                      : Bot's defauld tier
-xpboost                   : Bot's defauld XP boost
-friendxpboost             : Bot's defauld friend XP boost
-status                    : Bot's defauld status
-privacy                   : Bot's defauld privacy. See below
-whisper                   : Cofig whether bot will accept command from whisper. true or false
-partychat                 : Cofig whether bot will accept command from partychat. true or false
+cid                       : Bot's default outfit ID
+bid                       : Bot's default back bling ID
+pickaxe_id                : Bot's default harvesting tool ID
+eid                       : Bot's default emote ID
+playlist                  : Bot's default playlist ID
+banner                    : Bot's default banner ID
+banner_color              : Bot's default banner color
+avatar_id                 : Bot's default avatar ID
+avatar_color              : Bot's default avatar color. See below
+level                     : Bot's default level
+tier                      : Bot's default tier
+xpboost                   : Bot's default XP boost
+friendxpboost             : Bot's default friend XP boost
+status                    : Bot's default status
+privacy                   : Bot's default privacy. See below
+whisper                   : Whether bot will accept command from whisper. true or false
+partychat                 : Whether bot will accept command from partychat. true or false
 disablewhisperperfectly   : Config for if whisper is disabled, whether decline command from owner too
 disablepartychatperfectly : Config for if partychat is disabled, whether decline command from owner too
-ignorebot                 : Config whether bot will ignore command from bots. true or false
-joinmessage               : Message on someone joined to the party. \n to line break
-randommessage             : Random message on someone joined to the party. \n to line break
-joinmessageenable         : Config whether bot will send message on someone joined to the party. true or false
-randommessageenable       : Config whether bot will send random message on someone joined to the party. true or false
-outfitmimic               : Config whether bot will mimic other player's outfit. true or false
-backpackmimic             : Config whether bot will mimic other player's backpack. true or false
-pickaxemimic              : Config whether bot will mimic other player's pickaxe. true or false
-emotemimic                : Config whether bot will mimic other player's emote. true or false
-acceptinvite              : Config whether bot will accept invite. Invite from owner will accepted every time. true or false
-acceptfriend              : Config whether bot will accept friend request. true or false or null
-addfriend                 : Config whether bot will send friend request to party member. true or false
-invite-ownerdecline       : Config whether bot will decline invite when owner in the party. true or false
-inviteinterval            : Config whether bot will decline invite for interval seconds after accepted invite true or false
+joinemote                 : Whether bot re dance emote when someone joined to the party. true or false
+ignorebot                 : Whether bot will ignore command from bots. true or false
+joinmessage               : Message when someone joined to the party. \n to line break
+randommessage             : Random message when someone joined to the party. \n to line break
+joinmessageenable         : Whether bot will send message when someone joined to the party. true or false
+randommessageenable       : Whether bot will send random message when someone joined to the party. true or false
+outfitmimic               : Whether bot will mimic other player's outfit. true or false or user's name or ID
+backpackmimic             : Whether bot will mimic other player's backpack. true or false or user's name or ID
+pickaxemimic              : Whether bot will mimic other player's pickaxe. true or false or user's name or ID
+emotemimic                : Whether bot will mimic other player's emote. true or false or user's name or ID
+mimic-ignorebot           : Whether bot won't mimic bot. true or false
+mimic-ignoreblacklist     : Whether bot won't mimic blacklisted user. true or false
+acceptinvite              : Whether bot will accept invite. Invite from owner will accepted every time. true or false
+acceptfriend              : Whether bot will accept friend request. true or false or null
+addfriend                 : Whether bot will send friend request to party member. true or false
+invite-ownerdecline       : Whether bot will decline invite when owner in the party. true or false
+inviteinterval            : Whether bot will decline invite for interval seconds after accepted invite. true or false
 interval                  : The number of seconds for decline invite after accepted invite
 waitinterval              : The number of seconds for decline invite for wait command
+hide-user                 : Whether bot will hide user joined to the party. true or false
+hide-blacklist            : Whether bot will hide blacklisted user joined to the party. true or false
+show-owner                : Whether bot will show owner when hide-user is true. true or false
+show-whitelist            : Whether bot will show whitelisted user when hide-user is true. true or false
+show-bot                  : Whether bot will show bot when hide-user is true. true or false
 blacklist                 : List for blacklist users. name or ID
-blacklist-declineinvite   : Config whether bot will decline invite from blacklisted users. true or false
-blacklist-autoblock       : Config whether bot will block blacklisted users. true or false
-blacklist-autokick        : Config whether bot will kick blacklisted users from the party. true or false
-blacklist-autochatban     : Config whether bot will chatban blacklisted users. true or false
-blacklist-ignorecommand   : Config whether bot will ignore command from blacklisted users. true or false
+blacklist-declineinvite   : Whether bot will decline invite from blacklisted users. true or false
+blacklist-autoblock       : Whether bot will block blacklisted users. true or false
+blacklist-autokick        : Whether bot will kick blacklisted users from the party. true or false
+blacklist-autochatban     : Whether bot will chatban blacklisted users. true or false
+blacklist-ignorecommand   : Whether bot will ignore command from blacklisted users. true or false
 whitelist                 : List of whitelist users. name or ID
-whitelist-allowinvite     : Config whether whitelisted users can invite bot any time. true or false
-whitelist-declineinvite   : Config whether bot will decline invite when whitelisted users in the party. true or false
-whitelist-ignorelock      : Config whether whitelisted users can ignore locks. true or false
-whitelist-ownercommand    : Config whether whitelisted users can use owner commands. true or false
+whitelist-allowinvite     : Whether whitelisted users can invite bot any time. true or false
+whitelist-declineinvite   : Whether bot will decline invite when whitelisted users in the party. true or false
+whitelist-ignorelock      : Whether whitelisted users can ignore locks. true or false
+whitelist-ownercommand    : Whether whitelisted users can use owner commands. true or false
+whitelist-ignoreng        : Whether whitelisted users can ignore NG words. true or false
 invitelist                : User list for inviteall command
 otherbotlist              : Other bots which ignore in ignorebot
 
 Discord
-enabled                   : Config whether will boot Discord Bot. true or false
+enabled                   : Whether will boot Discord Bot. true or false
 token                     : Token for Discord Bot
 owner                     : Owner's user ID
 channelname               : Channel name used for bot's command channel. See below
 status                    : Discord Bot's status
-discord                   : Config whether bot will accept command from Discord. true or false
+discord                   : Whether bot will accept command from Discord. true or false
 disablediscordperfectly   : Config for if discord is disabled, whether decline command from owner too. true or false
 blacklist                 : List of blacklist users. user ID
-blacklist-ignorecommand   : Config whether bot will ignore command from blacklisted users. true or false
+blacklist-ignorecommand   : Whether bot will ignore command from blacklisted users. true or false
 whitelist                 : List of whitelist users. user ID
-whitelist-ignorelock      : Config whether whitelisted users can ignore locks. true or false
-whitelist-ownercommand    : Config whether whitelisted users can use owner commands. true or false
+whitelist-ignorelock      : Whether whitelisted users can ignore locks. true or false
+whitelist-ownercommand    : Whether whitelisted users can use owner commands. true or false
+whitelist-ignoreng        : Whether whitelisted users can ignore NG words. true or false
 
 Web
-enabled                   : Config whether will boot web server. true or false
+enabled                   : Whether will boot web server. true or false
 ip                        : IP address for web server. See below
 port                      : Port for web server
 password                  : Password for web server
-login_required            : Config whether login required to access web server. true or false
-web                       : Config whether bot will accept command from web. true or false
-log                       : Config whether print web server access log
+login_required            : Whether login required to access web server. true or false
+web                       : Whether bot will accept command from web. true or false
+log                       : Whether print web server access log
 
+replies-matchmethod       : Match method for replies. See below
+ng-words                  : Texts set as NG words
+ng-word-matchmethod       : Match method for NG words
+ng-word-kick              : Whether bot will kick user which said NG words
+ng-word-chatban           : Whether bot will chatban user which said NG words
+ng-word-blacklist         : Whether bot will add user which said NG words to blacklist
 lang                      : Bot's lang
 search-lang               : Item search lang
 restart_in                : Time until restart bot
-no-logs                   : Config whether print logs in console. true or false
-ingame-error              : Config whether send errors to player. true or false
-discord-log               : Config whether send logs to Discord. true or false
-hide-email                : Config whether hide emails in Discord logs. true or false
-hide-password             : Config whether hide passwords in Discord logs. true or false
-hide-token                : Config whether hide token in Discord logs. true or false
-hide-webhook              : Config whether hide webhook url in Discord logs. true or false
+no-logs                   : Whether print logs in console. true or false
+ingame-error              : Whether send errors to player. true or false
+discord-log               : Whether send logs to Discord. true or false
+hide-email                : Whether hide emails in Discord logs. true or false
+hide-token                : Whether hide token in Discord logs. true or false
+hide-webhook              : Whether hide webhook url in Discord logs. true or false
 webhook                   : Discord's webhook url
-caseinsensitive           : Config whether make command not case insensitive true or false
+caseinsensitive           : Whether make command not case insensitive true or false
 loglevel                  : Log level. normal or info or debug
-debug                     : Config whether enable fortnitepy debug mode. true or false
+debug                     : Whether enable fortnitepy debug mode. true or false
 ```
 
 # List of commands
@@ -157,21 +187,21 @@ blockcount                                : Show block count
 friendlist                                : Show friend list
 pendinglist                               : Show friend request list
 blocklist                                 : Show block list
-outfitmimic                               : outfitmimic [true / false] Config whether bot will mimic other player's outfit
-backpackmimic                             : backpackmimic [true / false] Config whether bot will mimic other player's backpack
-pickaxemimic                              : pickaxemimic [true / false] Config whether bot will mimic other player's pickaxe
-emotemimic                                : emotemimic [true / false] Config whether bot will mimic other player's emote
-whisper                                   : whisper [true / false] Cofig whether bot will accept command from whisper
-partychat                                 : partychat [true / false] Cofig whether bot will accept command from party chat
-discord                                   : discord [true / false] Cofig whether bot will accept command from Discord
-web                                       : web [true / false] Config whether bot will accept command from web
+outfitmimic                               : outfitmimic [true / false / user name/user ID] Whether bot will mimic other player's outfit
+backpackmimic                             : backpackmimic [true / false / user name/user ID] Whether bot will mimic other player's backpack
+pickaxemimic                              : pickaxemimic [true / false / user name/user ID] Whether bot will mimic other player's pickaxe
+emotemimic                                : emotemimic [true / false / user name/user ID] Whether bot will mimic other player's emote
+whisper                                   : whisper [true / false] Whether bot will accept command from whisper
+partychat                                 : partychat [true / false] Whether bot will accept command from party chat
+discord                                   : discord [true / false] Whether bot will accept command from Discord
+web                                       : web [true / false] Whether bot will accept command from web
 disablewhisperperfectly                   : whisperperfect [true / false] Config for if whisper is disabled, whether decline command from owner too
 disablepartychatperfectly                 : partychatperfect [true / false] Config for if party chat is disabled, whether decline command from owner too
 disablediscordperfectly                   : discordperfect [true / false] Config for if Discord is disabled, whether decline command from owner too
-acceptinvite                              : acceptinvite [true / false] Config whether bot will accept party invite
-acceptfriend                              : acceptfriend [true / false] Config whether bot will accept friend request
-joinmessageenable                         : joinmessageenable [true / false] Config whether bot will send message on someone joined to the party
-randommessageenable                       : randommessageenable [true / false] Config whether bot will send random message on someone joined to the party
+acceptinvite                              : acceptinvite [true / false] Whether bot will accept party invite
+acceptfriend                              : acceptfriend [true / false] Whether bot will accept friend request
+joinmessageenable                         : joinmessageenable [true / false] Whether bot will send message on someone joined to the party
+randommessageenable                       : randommessageenable [true / false] Whether bot will send random message on someone joined to the party
 wait                                      : Decline invite for config's waitinterval seconds
 join                                      : join [user name/user ID] Join to user's party
 joinid                                    : joinid [party ID] Join to party
@@ -183,6 +213,7 @@ partymessage                              : partymessage [content] Send message 
 sendall                                   : sendall [content] Send same command to all bots
 status                                    : status [content] Set status
 banner                                    : banner [banner ID] [banner color] Set banner
+avatar                                    : avatar [CID] [color(optional)] Set avatar
 level                                     : level [level] Set level
 bp                                        : bp [tier] [XP boost] [friend XP boost] Set battlepass info
 privacy                                   : privacy [privacy_public / privacy_friends_allow_friends_of_friends / privacy_friends / privacy_private_allow_friends_of_friends / privacy_private] Set party's privacy
@@ -209,17 +240,20 @@ unblockfriend                             : unblockfriend [user name / user ID] 
 chatban                                   : chatban [user name / user ID] : [Reason(Optional)] Chatban user
 promote                                   : promote [user name / user ID] Promote party leader to user
 kick                                      : kick [user name / user ID] Kick user
+hide                                      : hide [user name / user ID(optional)] Hide user
+show                                      : show [user name / user ID(optional)] Show user
 ready                                     : Set to Ready
 unready                                   : Set to Not Ready
 sitout                                    : Set to Sitting Out
 match                                     : match [remaining(optional)] Set match state
 unmatch                                   : Cancel match state
 swap                                      : swap [user name / user ID] Swap position with user
-outfitlock                                : outfitlock [true / false] Config whether bot will change outfit
-backpacklock                              : backpacklock [true / false] Config whether bot will change backpack
-pickaxelock                               : pickaxelock [true / false] Config whether bot will change pickaxe
-emotelock                                 : emotelock [true / false] Config whether bot will change emote
+outfitlock                                : outfitlock [true / false] Whether bot will change outfit
+backpacklock                              : backpacklock [true / false] Whether bot will change backpack
+pickaxelock                               : pickaxelock [true / false] Whether bot will change pickaxe
+emotelock                                 : emotelock [true / false] Whether bot will change emote
 stop                                      : Stop emote/all command
+addeditems                                : Show all items which added in latest update
 alloutfit                                 : Show all outfits
 allbackpack                               : Show all backpacks
 allpet                                    : Show all pets
@@ -265,6 +299,35 @@ If you set multiple, add , like below
 ```
 
 # Other
+Avatar ID  
+Usable variables  
+```
+{bot}                           : Bot's current outfit
+```
+
+Color  
+Color name or three color codes  
+```
+TEAL
+SWEET_RED
+LIGHT_ORANGE
+GREEN
+LIGHT_BLUE
+DARK_BLUE
+PING
+RED
+GRAY
+ORANGE
+DARK_PURPLE
+LIME
+INDIGO
+```
+Example  
+```
+"avatar_color": "TEAL"
+"avatar_color": "#ff0000,#00ff00,#0000ff"
+```
+
 Platform  
 ```
 Windows     : WIN
@@ -310,6 +373,14 @@ IP
 Usable variables  
 ```
 {ip}                             : Default IP
+```
+
+Match method  
+```
+full     : Perfect matching
+contains : Contains it
+starts   : Stats with it
+ends     : Ends with it
 ```
 
 variant  
