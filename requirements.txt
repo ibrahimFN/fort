@@ -1,9 +1,8 @@
-#fortnitepy==2.1.1
-git+https://github.com/gomashio1596/fortnitepy
-discord.py
-requests
 aiohttp
 crayons
+discord.py
+fortnitepy
 jaconv
 jinja2
+requests
 sanic
