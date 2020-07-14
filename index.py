@@ -327,6 +327,24 @@ if True: #Classes
         async def status_loop(self) -> None:
             while True:
                 try:
+                    party = getattr(self,"party",None)
+                    if party:
+                        config = party.config
+                        party_id = party.id
+                        party_size = party.member_count
+                        party_max_size = config["max_size"]
+                    else:
+                        party_id = None
+                        party_size = None
+                        party_max_size = None
+                    var = {
+                        "friend_count": len(self.friends),
+                        "pending_count": len(self.pending_friends),
+                        "block_count": len(self.blocked_users),
+                        "display_name": self.user.display_name,
+                        "id": self.user.id,
+                        "party_size": 
+                    }
                     var = globals()
                     var.update({"client": self})
                     await self.set_status(data['fortnite']['status'].format(**var))
@@ -938,7 +956,7 @@ if True: #Classes
             if data['fortnite']['addfriend']:
                 for member in member.party.members.copy().keys():
                     try:
-                        if not self.has_friend(member):
+                        if not self.has_friend(member) and member.id != self.user.id:
                             await self.add_friend(member)
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
@@ -1000,7 +1018,7 @@ if True: #Classes
 
             if data['fortnite']['addfriend']:
                 for member in member.party.members.copy().keys():
-                    if not self.has_friend(member):
+                    if not self.has_friend(member) and member.id != self.user.id:
                         try:
                             await self.add_friend(member)
                         except fortnitepy.HTTPException:
