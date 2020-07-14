@@ -1517,10 +1517,11 @@ if True: #Functions
         set_default(['caseinsensitive'],False)
         set_default(['no-logs'],False)
         set_default(['discord-log'],False)
+        set_default(['omit-over2000'],False)
+        set_default(['skip-if-overflow'],False)
         set_default(['hide-email'],False)
         set_default(['hide-token'],False)
         set_default(['hide-webhook'],False)
-        set_default(['skip-if-overflow'],False)
         set_default(['loglevel'],'normal')
         if data.get("status",1) == 0:
             config_tags["['fortnite']['email']"].append("red")
