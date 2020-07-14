@@ -412,13 +412,13 @@ if True: #Classes
                     await invitation.sender.send(l("error_netcl_does_not_match"))
                 if data['loglevel'] == 'debug':
                     send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                send(client.user.display_name,l("error_netcl_does_not_match"),red,add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                send(client.user.display_name,l("error_netcl_does_not_match"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
             except fortnitepy.HTTPException:
                 if data['ingame-error']:
                     await invitation.sender.send(l("error_while_declining_invite"))
                 if data['loglevel'] == 'debug':
                     send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                send(client.user.display_name,l("error_while_declining_invite"),red,add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                send(client.user.display_name,l("error_while_declining_invite"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
             except Exception:
                 if data['ingame-error']:
                     await invitation.sender.send(l("error"))
@@ -437,13 +437,13 @@ if True: #Classes
                     await invitation.sender.send(l("error_netcl_does_not_match"))
                 if data['loglevel'] == 'debug':
                     send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                send(client.user.display_name,l("error_netcl_does_not_match"),red,add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                send(client.user.display_name,l("error_netcl_does_not_match"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
             except fortnitepy.HTTPException:
                 if data['ingame-error']:
                     await invitation.sender.send(l("error_while_declining_invite"))
                 if data['loglevel'] == 'debug':
                     send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                send(client.user.display_name,l("error_while_declining_invite"),red,add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                send(client.user.display_name,l("error_while_declining_invite"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
             except Exception:
                 if data['ingame-error']:
                     await invitation.sender.send(l("error"))
@@ -462,13 +462,13 @@ if True: #Classes
                     await invitation.sender.send(l("error_netcl_does_not_match"))
                 if data['loglevel'] == 'debug':
                     send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                send(client.user.display_name,l("error_netcl_does_not_match"),red,add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                send(client.user.display_name,l("error_netcl_does_not_match"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
             except fortnitepy.HTTPException:
                 if data['ingame-error']:
                     await invitation.sender.send(l("error_while_declining_invite"))
                 if data['loglevel'] == 'debug':
                     send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                send(client.user.display_name,l("error_while_declining_invite"),red,add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                send(client.user.display_name,l("error_while_declining_invite"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
             except Exception:
                 if data['ingame-error']:
                     await invitation.sender.send(l("error"))
@@ -487,13 +487,13 @@ if True: #Classes
                     await invitation.sender.send(l("error_netcl_does_not_match"))
                 if data['loglevel'] == 'debug':
                     send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                send(client.user.display_name,l("error_netcl_does_not_match"),red,add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                send(client.user.display_name,l("error_netcl_does_not_match"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
             except fortnitepy.HTTPException:
                 if data['ingame-error']:
                     await invitation.sender.send(l("error_while_declining_invite"))
                 if data['loglevel'] == 'debug':
                     send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                send(client.user.display_name,l("error_while_declining_invite"),red,add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                send(client.user.display_name,l("error_while_declining_invite"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
             except Exception:
                 if data['ingame-error']:
                     await invitation.sender.send(l("error"))
@@ -1617,6 +1617,7 @@ if True: #Functions
         set_default(['caseinsensitive'],False)
         set_default(['no-logs'],False)
         set_default(['discord-log'],False)
+        set_default(['search_max'],60)
         set_default(['omit-over2000'],False)
         set_default(['skip-if-overflow'],False)
         set_default(['hide-email'],False)
@@ -2962,7 +2963,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l('too_many_users', len(users)))
                 return
             if len(users) == 0:
@@ -3035,7 +3036,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
@@ -3108,7 +3109,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(l("bot"),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
@@ -3181,7 +3182,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(l("bot"),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l("too_many_users", str(len(users))))
                 return
             if len(users) == 0:
@@ -3254,7 +3255,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l("too_many_users", str(len(users))))
                 return
             if len(users) == 0:
@@ -3327,7 +3328,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l("too_many_users", str(len(users))))
                 return
             if len(users) == 0:
@@ -3400,7 +3401,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l("too_many_users", str(len(users))))
                 return
             if len(users) == 0:
@@ -3550,7 +3551,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
@@ -3673,7 +3674,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
@@ -3752,7 +3753,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
@@ -3942,7 +3943,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
@@ -3976,7 +3977,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
@@ -4018,7 +4019,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
@@ -4055,7 +4056,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
@@ -4100,7 +4101,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if not result:
                     await reply(message, client, l('item_notfound'))
                 else:
-                    if len(result) > 60:
+                    if len(result) > search_max:
                         await reply(message, client, l('too_many_items', str(len(result))))
                         return
                     if len(result) == 1:
@@ -4132,7 +4133,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if not result:
                     await reply(message, client, l('item_notfound'))
                 else:
-                    if len(result) > 60:
+                    if len(result) > search_max:
                         await reply(message, client, l('too_many_items', str(len(result))))
                         return
                     if len(result) == 1:
@@ -4246,7 +4247,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
@@ -4310,7 +4311,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
@@ -4387,7 +4388,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
@@ -4451,7 +4452,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
@@ -4515,7 +4516,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
@@ -4579,7 +4580,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
@@ -4644,7 +4645,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
@@ -4732,7 +4733,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
@@ -4814,7 +4815,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
@@ -4896,7 +4897,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 60:
+                if len(users) > search_max:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     return
                 if len(users) == 0:
@@ -4970,7 +4971,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l("error_while_requesting_userinfo"))
-                if len(users) > 60:
+                if len(users) > search_max:
                     await reply(message, client, l('too_many_users', str(len(users))))
                     return
                 if len(users) == 0:
@@ -5090,7 +5091,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l("error_while_requesting_userinfo"))
-            if len(users) > 60:
+            if len(users) > search_max:
                 await reply(message, client, l('too_many_users', str(len(users))))
                 return
             if len(users) == 0:
@@ -5220,7 +5221,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             if result is None:
                 await reply(message, client, l('item_notfound'))
             else:
-                if len(result) > 60:
+                if len(result) > search_max:
                     await reply(message, client, l('too_many_items', str(len(result))))
                     return
                 if len(result) == 1:
@@ -5275,7 +5276,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             if result is None:
                 await reply(message, client, l('item_notfound'))
             else:
-                if len(result) > 60:
+                if len(result) > search_max:
                     await reply(message, client, l('too_many_items', str(len(result))))
                     return
                 if len(result) == 1:
@@ -5329,7 +5330,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             if result is None:
                 await reply(message, client, l('item_notfound'))
             else:
-                if len(result) > 60:
+                if len(result) > search_max:
                     await reply(message, client, l('too_many_items', str(len(result))))
                     return
                 if len(result) == 1:
@@ -5572,7 +5573,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                             if data['loglevel'] == 'debug':
                                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                             await reply(message, client, l("error_while_requesting_userinfo"))
-                        if len(users) > 60:
+                        if len(users) > search_max:
                             await reply(message, client, l('too_many_users', str(len(users))))
                             return
                         if len(users) == 0:
@@ -5672,7 +5673,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             if not result and data["search-lang"] != "en":
                 result = await loop.run_in_executor(None, search_item, "en", "name", content, "Item")
             if result:
-                if len(result) > 60:
+                if len(result) > search_max:
                     await reply(message, client, l('too_many_items', str(len(result))))
                     return
                 if len(result) == 1:
@@ -5832,6 +5833,7 @@ config_tags={
     "['ng-word-chatban']": [bool_,"select_bool"],
     "['ng-word-blacklist']": [bool_,"select_bool"],
     "['restart_in']": [int],
+    "['search_max']": [int],
     "['lang']": [str,"select_lang"],
     "['search-lang']": [str,"select_ben_lang"],
     "['no-logs']": [bool_,"select_bool"],
@@ -6406,6 +6408,7 @@ for key in error_config:
     config_tags[key].append("fix_required")
 for key in error_commands:
     commands_tags[key].append("fix_required")
+search_max = data["search_max"]
 
 if data['debug']:
     logger = logging.getLogger('fortnitepy.auth')
