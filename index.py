@@ -342,8 +342,7 @@ if True: #Classes
                         "pending_count": len(self.pending_friends),
                         "block_count": len(self.blocked_users),
                         "display_name": self.user.display_name,
-                        "id": self.user.id,
-                        "party_size": 
+                        "id": self.user.id
                     }
                     var = globals()
                     var.update({"client": self})
