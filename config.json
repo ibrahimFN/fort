@@ -105,6 +105,7 @@
     "lang": "en",
     "search-lang": "en",
     "restart_in": null,
+    "search_max": 60,
     "no-logs": false,
     "ingame-error": true,
     "discord-log": false,
