@@ -5842,7 +5842,7 @@ commands_tags={
     "['pickaxelock']": [str,"can_be_multiple"],
     "['emotelock']": [str,"can_be_multiple"],
     "['stop']": [str,"can_be_multiple"],
-    "['skip-if-overflow']": [str,"can_be_multiple"],
+    "['addeditems']": [str,"can_be_multiple"],
     "['alloutfit']": [str,"can_be_multiple"],
     "['allbackpack']": [str,"can_be_multiple"],
     "['allpet']": [str,"can_be_multiple"],
