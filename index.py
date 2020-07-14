@@ -6614,7 +6614,6 @@ for key,value in commands_tags.items():
         elif tag == "fix_required":
             commands_tags[key][count] = FixRequired
 
-
 if True: #Web
     @app.route("/favicon.ico", methods=["GET"])
     async def favicon(request: Request):
@@ -7275,6 +7274,7 @@ if data.get("status",1) != 0:
             send(l("bot"),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             send(l("bot"),l('error_while_setting_client'),red,add_d=lambda x:f'>>> {x}')
             continue
+
         clients.append(client)
 
 if data.get('status',1) != 0 and bot_ready:
