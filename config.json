@@ -109,6 +109,7 @@
     "ingame-error": true,
     "discord-log": false,
     "omit-over2000": true,
+    "skip-if-overflow": true,
     "hide-email": true,
     "hide-token": true,
     "hide-webhook": true,
