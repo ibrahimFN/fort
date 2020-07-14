@@ -324,6 +324,16 @@ if True: #Classes
                 return name
             return None
 
+        async def status_loop(self) -> None:
+            while True:
+                try:
+                    var = globals()
+                    var.update({"client": self})
+                    await self.set_status(data['fortnite']['status'].format(**var))
+                except Exception:
+                    send(self.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                await asyncio.sleep(5)
+
         async def invitation_accept(self, invitation: fortnitepy.ReceivedPartyInvitation) -> None:
             try:
                 await invitation.accept()
@@ -523,6 +533,9 @@ if True: #Classes
                 flag = True
             elif isinstance(self.outfitmimic,str) and member.id == self.outfitmimic:
                 flag = True
+            display_name_ = self.is_most()
+            if display_name_ and not member_asset(member,"outfit"):
+                send(display_name_,f"ID: {member_asset(member,'outfit')}")
             if flag:
                 if not member_asset(member,"outfit"):
                     try:
@@ -531,9 +544,6 @@ if True: #Classes
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 else:
-                    display_name_ = self.is_most()
-                    if display_name_:
-                        send(display_name_,f"ID: {member_asset(member,'outfit')}")
                     try:
                         await self.change_asset(self.user.id, "Outfit", member_asset(member,"outfit"), member.outfit_variants, member.enlightenments)
                     except Exception:
@@ -549,6 +559,9 @@ if True: #Classes
                 flag = True
             elif isinstance(self.backpackmimic,str) and member.id == self.backpackmimic:
                 flag = True
+            display_name_ = self.is_most()
+            if display_name_ and not member_asset(member,"backpack"):
+                send(display_name_,f"ID: {member_asset(member,'backpack')}")
             if flag:
                 if not member_asset(member,"backpack"):
                     try:
@@ -557,9 +570,6 @@ if True: #Classes
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 else:
-                    display_name_ = self.is_most()
-                    if display_name_:
-                        send(display_name_,f"ID: {member_asset(member,'backpack')}")
                     try:
                         type_ = convert_to_type(member_asset(member,'backpack'))
                         await self.change_asset(self.user.id, type_, member_asset(member,"backpack"), member.backpack_variants, member.enlightenments)
@@ -576,6 +586,9 @@ if True: #Classes
                 flag = True
             elif isinstance(self.pickaxemimic,str) and member.id == self.pickaxemimic:
                 flag = True
+            display_name_ = self.is_most()
+            if display_name_ and not member_asset(member,"pickaxe"):
+                send(display_name_,f"ID: {member_asset(member,'pickaxe')}")
             if flag:
                 if not member_asset(member,"pickaxe"):
                     try:
@@ -584,9 +597,6 @@ if True: #Classes
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 else:
-                    display_name_ = self.is_most()
-                    if display_name_:
-                        send(display_name_,f"ID: {member_asset(member,'pickaxe')}")
                     try:
                         await self.change_asset(self.user.id, "Harvesting Tool", member_asset(member,"pickaxe"), member.pickaxe_variants)
                     except Exception:
@@ -602,6 +612,9 @@ if True: #Classes
                 flag = True
             elif isinstance(self.emotemimic,str) and member.id == self.emotemimic:
                 flag = True
+            display_name_ = self.is_most()
+            if display_name_ and not member_asset(member,"emote"):
+                send(display_name_,f"ID: {member_asset(member,'emote')}")
             if flag:
                 if not member_asset(member,"emote"):
                     try:
@@ -610,9 +623,6 @@ if True: #Classes
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 else:
-                    display_name_ = self.is_most()
-                    if display_name_:
-                        send(display_name_,f"ID: {member_asset(member,'emote')}")
                     try:
                         type_ = convert_to_type(member_asset(member,"emote"))
                         await self.change_asset(self.user.id, type_, member_asset(member,"emote"))
@@ -627,6 +637,7 @@ if True: #Classes
         async def event_ready(self) -> None:
             global first_boot
 
+            loop = asyncio.get_event_loop()
             display_name = name(self.user)
             send(display_name,f'{l("login")}: {display_name}',green,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
             self.isready = True
@@ -636,6 +647,7 @@ if True: #Classes
             self.add_cache(self.user)
             for user in [list(self.friends.values()) + list(self.pending_friends.values()) + list(self.blocked_users.values())]:
                 self.add_cache(user)
+            loop.create_task(self.status_loop())
             try:
                 if data['fortnite']['avatar_id'] == "{bot}":
                     self.set_avatar(fortnitepy.Avatar(asset=self.party.me.outfit, background_colors=data['fortnite']['avatar_color']))
@@ -1508,6 +1520,7 @@ if True: #Functions
         set_default(['hide-email'],False)
         set_default(['hide-token'],False)
         set_default(['hide-webhook'],False)
+        set_default(['skip-if-overflow'],False)
         set_default(['loglevel'],'normal')
         if data.get("status",1) == 0:
             config_tags["['fortnite']['email']"].append("red")
@@ -3723,7 +3736,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
 
     elif args[0] in commands['status'].split(','):
         try:
-            await client.set_status(rawcontent)
+            data['fortnite']['status'] = rawcontent
             await reply(message, client, l('set_to', l('status'), rawcontent))
             await client.party.set_privacy(client.party.privacy)
         except IndexError:
@@ -5828,6 +5841,7 @@ commands_tags={
     "['pickaxelock']": [str,"can_be_multiple"],
     "['emotelock']": [str,"can_be_multiple"],
     "['stop']": [str,"can_be_multiple"],
+    "['skip-if-overflow']": [str,"can_be_multiple"],
     "['alloutfit']": [str,"can_be_multiple"],
     "['allbackpack']": [str,"can_be_multiple"],
     "['allpet']": [str,"can_be_multiple"],
