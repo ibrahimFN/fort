@@ -372,6 +372,7 @@
     "config_ng-word-blacklist": "Add user that said NG words to blacklist",
     "config_lang": "Bot's lang",
     "config_restart_in": "Time until restart",
+    "config_search_max": "Max amout of search",
     "config_search-lang": "Item search lang",
     "config_no-logs": "Print logs in console",
     "config_ingame-error": "Send errors to player",

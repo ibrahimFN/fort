@@ -372,6 +372,7 @@
     "config_ng-word-blacklist": "NGワードを言ったユーザーをブラックリストに入れる",
     "config_lang": "ボットの言語",
     "config_restart_in": "再起動までの時間",
+    "config_search_max": "検索の最大数",
     "config_search-lang": "アイテム検索に使う言語",
     "config_no-logs": "コンソールにログを出すか",
     "config_ingame-error": "プレイヤーにエラーを送信するか",

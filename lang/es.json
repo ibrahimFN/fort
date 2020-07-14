@@ -392,6 +392,7 @@
     "enter_to_kick_user": "Expulsa seleccionando un número",
     "this_field_fix_required": "Este espacio necesita solución! {0}",
     "config_restart_in": "Tiempo hasta reiniciar",
+    "config_search_max": "Cantidad máxima de búsqueda",
     "config_search-lang": "Idioma de búsqueda de artículos",
     "get_code2": "Iniciando sesión en {0} \n<a href='https://www.epicgames.com'>https://www.epicgames.com</a>\nand open\n<a href='{1}'>{1}</a>\nhaga clic en confirmar"
 }
