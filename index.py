@@ -23,7 +23,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 try:
-    import aiohttp
     import asyncio
     from concurrent.futures import ThreadPoolExecutor, as_completed
     import datetime
@@ -54,6 +53,7 @@ except ModuleNotFoundError as e:
     sys.exit(1)
 
 try:
+    import aiohttp
     from crayons import cyan, green, magenta, red, yellow
     import discord
     import fortnitepy
