@@ -37,56 +37,104 @@
         num = num[num.length - 1].replace("clients", "")
         request.open("GET", "./clients_info/" + num, true);
         request.responseType = 'json';
-        request.send("");
-        request.onreadystatechange = function() {
-            if (this.readyState == 4) {
-                if (typeof this.response["error"] === "undefined") {
-                    text += '<h3>' + "{{l('party')}}" + " / " + this.response["party_id"] + '</h3>'
-                    if (this.response["members"].length > 1) {
-                        this.response["members"].forEach(function(member) {
-                            var parts = [member["outfit"], member["backpack"], member["pickaxe"], member["emote"]]
-                            if (member["leader"]) {
-                                text += '<h4>' + '<img src="/images/crown.png">' + member["display_name"] + " / " + member["id"] + '</h4>'
-                            } else {
-                                text += '<h4>' + member["display_name"] + " / " + member["id"] + '</h4>'
-                            }
-                            parts.forEach(function(part) {
-                                if (part == null) {
-                                    text += '<img src="/images/placeholder.png" style="width: 15vmin;" />\n';
-                                } else {
-                                    text += ('<img src="https://benbotfn.tk/cdn/images/' + part + '/icon.png" style="width: 15vmin;" />\n');
-                                }
-                            })
-                        })
-                    } else {
-                        var member = this.response
-                        var parts = [member["outfit"], member["backpack"], member["pickaxe"], member["emote"]]
-                        if (member["leader"]) {
-                            text += '<h4>' + '<img src="/images/crown.png" style="width: 4vmin;" />' + member["display_name"] + " / " + member["id"] + '</h4>' 
+
+        request.onload = function() {
+            if (typeof this.response["error"] === "undefined") {
+                var members = document.getElementById("members");
+                members.innerHTML = "";
+                var party_id = document.createElement("h3");
+                party_text = document.createTextNode("{{l('party')}}" + " / " + this.response["party_id"]);
+                party_id.appendChild(party_text);
+                members.insertBefore(party_id,members.parentNode.nextSibling)
+
+                var count = 0
+                if (this.response["members"].length > 1) {
+                    this.response["members"].forEach(function(member) {
+                        render_members(member);
+                        count++
+                    })
+                } else {
+                    render_members(this.response);
+                } 
+
+                function render_members(member) {
+                    var member_div = document.createElement("div");
+                    member_div.setAttribute("id","member_" + count);
+                    member_div.setAttribute("style","position: relative; left: 5vmin;");
+                    var display_name = document.createElement("div");
+                    display_name.setAttribute("id","display_name");
+                    display_name.setAttribute("style","position: relative;")
+
+                    var parts = [member["outfit"], member["backpack"], member["pickaxe"], member["contrail"], member["emote"]];
+                    if (member["leader"]) {
+                        var image = document.createElement("img");
+                        image.setAttribute("src","/images/crown.png");
+                        image.setAttribute("style","width: 2.5vmin; display: block;");
+                        display_name.insertBefore(image,members.parentNode.nextSibling);
+
+                        var image = document.createElement("img");
+                        if (member["banner"]) {
+                            image.setAttribute("src","https://benbotfn.tk/api/v1/exportAsset?path=" + member["banner"]["LargeImage"]["assetPath"]);
                         } else {
-                            text += '<h4>' + member["display_name"] + " / " + member["id"] + '</h4>'
+                            image.setAttribute("src","https://benbotfn.tk/api/v1/exportAsset?path=Game/UI/Foundation/Textures/Banner/Standard/T-Banners-Icons-Waves-L.T-Banners-Icons-Waves-L");
                         }
-                        parts.forEach(function(part) {
-                            if (part == null) {
-                                text += '<img src="/images/placeholder.png" style="width: 15vmin;" />\n';
-                            } else {
-                                text += ('<img src="https://benbotfn.tk/cdn/images/' + part + '/icon.png" style="width: 15vmin;" />\n');
-                            }
-                        })
+                        image.setAttribute("style","width: 2.5vmin; top: 5px;");
+                        display_name.insertBefore(image,members.parentNode.nextSibling);
+
+                        var span = document.createElement("span");
+                        span.setAttribute("style","position: absolute; left: -10px; top: 32px;");
+                        var text = document.createTextNode(String(member["level"]));
+                        span.appendChild(text);
+                        display_name.insertBefore(span,members.parentNode.nextSibling);
+
+                        var name_text = document.createTextNode(member["display_name"] + " / " + member["id"]);
+                        display_name.appendChild(name_text);
+                    } else {
+                        var image = document.createElement("img");
+                        if (member["banner"]) {
+                            image.setAttribute("src","https://benbotfn.tk/api/v1/exportAsset?path=" + member["banner"]["LargeImage"]["assetPath"]);
+                        } else {
+                            image.setAttribute("src","https://benbotfn.tk/api/v1/exportAsset?path=Game/UI/Foundation/Textures/Banner/Standard/T-Banners-Icons-Waves-L.T-Banners-Icons-Waves-L");
+                        }
+                        image.setAttribute("style","width: 2.5vmin; top: 5px;");
+                        display_name.insertBefore(image,members.parentNode.nextSibling);
+
+                        var span = document.createElement("span");
+                        span.setAttribute("style","position: absolute; left: -10px; top: 20px;");
+                        var text = document.createTextNode(String(member["level"]));
+                        span.appendChild(text);
+                        display_name.insertBefore(span,members.parentNode.nextSibling);
+
+                        var name_text = document.createTextNode(member["display_name"] + " / " + member["id"]);
+                        display_name.appendChild(name_text)
                     }
-                    document.getElementById("members").innerHTML = text; 
-                } else if (this.response["error"] == "account_not_exists") {
-                    document.getElementById("members").innerHTML = "{{l('account_not_exists')}}";
-                } else if (this.response["error"] == "account_not_loaded") {
-                    document.getElementById("members").innerHTML = "{{l('account_not_loaded')}}";
-                } else if (this.response["error"] == "party_moving") {
-                    document.getElementById("members").innerHTML = "{{l('party_moving')}}";
+                    member_div.insertBefore(display_name,members.parentNode.nextSibling);
+
+                    parts.forEach(function(part) {
+                        if (part != null) {
+                            var image = document.createElement("img");
+                            image.setAttribute("src","https://benbotfn.tk/cdn/images/" + part + "/icon.png");
+                            image.setAttribute("onerror","this.onerror=null; this.src='/images/placeholder.png'");
+                            image.setAttribute("style","width: 15vmin;");
+                            member_div.insertBefore(image,members.parentNode.nextSibling);
+                        }
+                    })
+
+                    members.insertBefore(member_div,members.parentNode.nextSibling);
                 }
-            } 
+            } else if (this.response["error"] == "account_not_exists") {
+                document.getElementById("members").innerHTML = "{{l('account_not_exists')}}";
+            } else if (this.response["error"] == "account_not_loaded") {
+                document.getElementById("members").innerHTML = "{{l('account_not_loaded')}}";
+            } else if (this.response["error"] == "party_moving") {
+                document.getElementById("members").innerHTML = "{{l('party_moving')}}";
+            }
         }
+
+        request.send("");
     }
     update();
-    setInterval('update()',5000);
+    setInterval('update()',1000);
 </script>
 <body style="color: #DDDDDD;">
     <h3>
@@ -94,7 +142,7 @@
     </h3>
     <p>{{l('command')}}</p>
     <form action="" method="post">
-        <textarea name="command" rows="5" placeholder="{{l('command')}}"></textarea>
+        <textarea name="command" rows="5" placeholder="{{l('command')}}" onkeypress="if (event.keyCode==13) {if(!event.shiftKey==true) {form.submit()}}"></textarea>
         <button type="submit">{{l('run')}}</button>
     </form>
     {% if len(flash_messages) > 0 %}
