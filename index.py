@@ -749,6 +749,11 @@ if True: #Classes
             except Exception:
                 if data['loglevel'] == 'debug':
                     send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+            try:
+                await client.party.set_privacy(data["fortnite"]["privacy"])
+            except Exception:
+                if data['loglevel'] == 'debug':
+                    send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
             owner = None
             try:
