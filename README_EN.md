@@ -143,6 +143,7 @@ ng-word-blacklist         : Whether bot will add user which said NG words to bla
 lang                      : Bot's lang
 search-lang               : Item search lang
 restart_in                : Time until restart bot
+search_max                : Max amout of search
 no-logs                   : Whether print logs in console. true or false
 ingame-error              : Whether send errors to player. true or false
 discord-log               : Whether send logs to Discord. true or false

@@ -145,6 +145,7 @@ ng-word-blacklist         : NGワードを発言したユーザーをブラッ�
 lang                      : ボットの言語
 search-lang               : アイテム検索に使う言語
 restart_in                : ボットが再起動するまでの時間
+search_max                : 検索の最大数
 no-logs                   : コンソールにログを出すかどうか true か false
 ingame-error              : プレイヤーにエラーを送信するかどうか true か false
 discord-log               : Discordにログを送信するかどうか true か false

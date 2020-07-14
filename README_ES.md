@@ -139,6 +139,8 @@ lang                      : Lenguaje del bot
 no-logs                   : Determina si se escribirán logs en la consola. true o false
 ingame-error              : Determina si el usuario puede recibir los errores. true o false
 discord-log               : Determina si se van a enviar los logs a discord. true o false
+restart_in                : Tiempo hasta reiniciar
+search_max                : Cantidad máxima de búsqueda
 hide-email                : Determina si se oculta el email en logs de Discord. true o false
 hide-token                : Determina si se oculta el token en los logs de Discord. true o false
 hide-webhook              : Determina si se oculta la URL del webhook en logs de Discord. true o false
