@@ -246,6 +246,7 @@ if True: #Classes
     class Client(fortnitepy.Client):
         def __init__(self, **kwargs: Any) -> None:
             self.email  =  email
+            self.status_ = data['fortnite']['status']
             self.eid = data['fortnite']['eid']
             self.isready = False
             self.booting = False
@@ -327,7 +328,7 @@ if True: #Classes
         async def status_loop(self) -> None:
             while True:
                 try:
-                    party = getattr(self,"party",None)
+                    """party = getattr(self,"party",None)
                     if party:
                         config = party.config
                         party_id = party.id
@@ -342,14 +343,17 @@ if True: #Classes
                         "pending_count": len(self.pending_friends),
                         "block_count": len(self.blocked_users),
                         "display_name": self.user.display_name,
-                        "id": self.user.id
-                    }
+                        "id": self.user.id,
+                        "party_id": party_id,
+                        "party_size": party_size,
+                        "party_max_size": party_max_size
+                    }"""
                     var = globals()
                     var.update({"client": self})
-                    await self.set_status(data['fortnite']['status'].format(**var))
+                    await self.set_status(self.status_.format(**var))
                 except Exception:
                     send(self.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                await asyncio.sleep(5)
+                await asyncio.sleep(30)
 
         async def invitation_accept(self, invitation: fortnitepy.ReceivedPartyInvitation) -> None:
             try:
@@ -401,6 +405,24 @@ if True: #Classes
                 send(self.user.display_name,l("declined_invite_from", str(invitation.sender.display_name)),add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
             else:
                 send(self.user.display_name,l("declined_invite_from2", f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}]", invitation.party.id),add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
+            try:
+                await invitation.decline()
+            except fortnitepy.PartyError:
+                if data['ingame-error']:
+                    await invitation.sender.send(l("error_netcl_does_not_match"))
+                if data['loglevel'] == 'debug':
+                    send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                send(client.user.display_name,l("error_netcl_does_not_match"),red,add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+            except fortnitepy.HTTPException:
+                if data['ingame-error']:
+                    await invitation.sender.send(l("error_while_declining_invite"))
+                if data['loglevel'] == 'debug':
+                    send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                send(client.user.display_name,l("error_while_declining_invite"),red,add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+            except Exception:
+                if data['ingame-error']:
+                    await invitation.sender.send(l("error"))
+                send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
         async def invitation_decline_interval(self, invitation: fortnitepy.ReceivedPartyInvitation) -> None:
             await invitation.sender.send(l("declined_invite_interval3", str(data["fortnite"]["interval"])))
@@ -408,6 +430,24 @@ if True: #Classes
                 send(self.user.display_name,l("declined_invite_interval", str(invitation.sender.display_name), str(data["fortnite"]["interval"])),add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
             else:
                 send(self.user.display_name,l("declined_invite_interval2", f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}]", invitation.party.id, str(data["fortnite"]["interval"])),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
+            try:
+                await invitation.decline()
+            except fortnitepy.PartyError:
+                if data['ingame-error']:
+                    await invitation.sender.send(l("error_netcl_does_not_match"))
+                if data['loglevel'] == 'debug':
+                    send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                send(client.user.display_name,l("error_netcl_does_not_match"),red,add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+            except fortnitepy.HTTPException:
+                if data['ingame-error']:
+                    await invitation.sender.send(l("error_while_declining_invite"))
+                if data['loglevel'] == 'debug':
+                    send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                send(client.user.display_name,l("error_while_declining_invite"),red,add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+            except Exception:
+                if data['ingame-error']:
+                    await invitation.sender.send(l("error"))
+                send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
         async def invitation_decline_owner(self, invitation: fortnitepy.ReceivedPartyInvitation) -> None:
             await invitation.sender.send(l("declined_invite_owner3"))
@@ -415,6 +455,24 @@ if True: #Classes
                 send(self.user.display_name,l("declined_invite_owner", str(invitation.sender.display_name)),add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
             else:
                 send(self.user.display_name,l("declined_invite_owner2", f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}]", invitation.party.id),add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
+            try:
+                await invitation.decline()
+            except fortnitepy.PartyError:
+                if data['ingame-error']:
+                    await invitation.sender.send(l("error_netcl_does_not_match"))
+                if data['loglevel'] == 'debug':
+                    send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                send(client.user.display_name,l("error_netcl_does_not_match"),red,add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+            except fortnitepy.HTTPException:
+                if data['ingame-error']:
+                    await invitation.sender.send(l("error_while_declining_invite"))
+                if data['loglevel'] == 'debug':
+                    send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                send(client.user.display_name,l("error_while_declining_invite"),red,add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+            except Exception:
+                if data['ingame-error']:
+                    await invitation.sender.send(l("error"))
+                send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
         async def invitation_decline_whitelist(self, invitation: fortnitepy.ReceivedPartyInvitation) -> None:
             await invitation.sender.send(l("declined_invite_whitelist3"))
@@ -422,6 +480,24 @@ if True: #Classes
                 send(self.user.display_name,l("declined_invite_whitelist", str(invitation.sender.display_name)),add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
             else:
                 send(self.user.display_name,l("declined_invite_whitelist2", f"{str(invitation.sender.display_name)} / {invitation.sender.id} [{platform_to_str(invitation.sender.platform)}]", invitation.party.id),add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
+            try:
+                await invitation.decline()
+            except fortnitepy.PartyError:
+                if data['ingame-error']:
+                    await invitation.sender.send(l("error_netcl_does_not_match"))
+                if data['loglevel'] == 'debug':
+                    send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                send(client.user.display_name,l("error_netcl_does_not_match"),red,add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+            except fortnitepy.HTTPException:
+                if data['ingame-error']:
+                    await invitation.sender.send(l("error_while_declining_invite"))
+                if data['loglevel'] == 'debug':
+                    send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                send(client.user.display_name,l("error_while_declining_invite"),red,add_p=lambda x:f'[{now_()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+            except Exception:
+                if data['ingame-error']:
+                    await invitation.sender.send(l("error"))
+                send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
         async def change_asset(self, author_id: str, type_: str, id_: str, variants: Optional[dict] = {}, enlightenment: Optional[Union[tuple, list]] = []) -> None:
             if not enlightenment:
@@ -516,7 +592,7 @@ if True: #Classes
                 member = self.party.members.get(member_id)
                 if not member:
                     raise fortnitepy.NotFound("This member is not a part of this party.")
-                squad_assignments = self.party.meta.squad_assignments
+                squad_assignments = getattr(self,"visual_members",self.party.meta.squad_assignments)
                 [squad_assignments.remove(i) for i in squad_assignments if i["memberId"] == member.id]
             self.visual_members = [{"memberId": i["memberId"], "absoluteMemberIdx": i["absoluteMemberIdx"]} for i in squad_assignments]
             prop = self.party.meta.set_squad_assignments(squad_assignments)
@@ -525,7 +601,7 @@ if True: #Classes
         async def show(self, member_id: Optional[str] = None) -> None:
             if not self.party.me.leader:
                 raise fortnitepy.Forbidden("You must be the party leader to perform this action.")
-            squad_assignments = self.party.meta.squad_assignments
+            squad_assignments = getattr(self,"visual_members",self.party.meta.squad_assignments)
             squad_members = [member["memberId"] for member in squad_assignments]
             member_indexes = [member["absoluteMemberIdx"] for member in squad_assignments]
             available_indexes = [num for num in range(15) if num not in member_indexes]
@@ -917,10 +993,16 @@ if True: #Classes
                 return
             self.add_cache(member)
             display_name = name(self.user)
-            display_name_ = self.is_most()
-            self.visual_members = self.party.meta.squad_assignments
+            display_name_ = self.is_most() 
+            
+            if member.id == self.user.id:
+                self.visual_members = self.party.meta.squad_assignments
             if self.party.leader.id == self.user.id:
                 try:
+                    if self.party.leader.id == self.user.id:
+                        await asyncio.sleep(1)
+                        prop = self.party.meta.set_squad_assignments(self.visual_members)
+                        await self.party.patch(updated=prop)
                     if data['fortnite']['hide-user']:
                         if (not (getattr(self.owner,"id",None) == member.id and data['fortnite']['show-owner'])
                             and not (member.id in whitelist and data['fortnite']['show-whitelist'])
@@ -955,7 +1037,7 @@ if True: #Classes
             if data['fortnite']['addfriend']:
                 for member in member.party.members.copy().keys():
                     try:
-                        if not self.has_friend(member) and member.id != self.user.id:
+                        if not self.has_friend(member) and member != self.user.id:
                             await self.add_friend(member)
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
@@ -1004,6 +1086,7 @@ if True: #Classes
             display_name_ = self.is_most()
             try:
                 if self.party.leader.id == self.user.id:
+                    await asyncio.sleep(1)
                     prop = self.party.meta.set_squad_assignments(self.visual_members)
                     await self.party.patch(updated=prop)
             except Exception:
@@ -2368,7 +2451,6 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 return
             send(name(message.author),content,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {name(message.author)} | {x}',add_d=lambda x:f'[{client.user.display_name}] {x}')
     
-    print(rawcontent)
     if not client.isready:
         return
     display_name = name(client.user)
@@ -2480,10 +2562,10 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             if rawcontent == "":
                 await reply(message, client, f"[{commands['exec']}] [{l('exec')}]")
                 return
-            variable=globals()
+            variable = globals()
             variable.update(locals())
-            args_=[i.replace("\\nn", "\n") for i in content.replace("\n", "\\nn").split()]
-            content_=" ".join(args_[1:])
+            args_ = content.split(" ")
+            content_ = " ".join(args_[1:])
             result = await aexec(content_, variable)
             await reply(message, client, str(result))
         except Exception as e:
@@ -3754,7 +3836,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
 
     elif args[0] in commands['status'].split(','):
         try:
-            data['fortnite']['status'] = rawcontent
+            client.status = rawcontent
             await reply(message, client, l('set_to', l('status'), rawcontent))
             await client.party.set_privacy(client.party.privacy)
         except IndexError:
@@ -5478,9 +5560,9 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                         await reply(message, client, l('set_to', value[1], l('off')))
                     else:
                         if data['caseinsensitive']:
-                            users = {str(user.display_name): user for user in cache_users.values() if content_ in jaconv.kata2hira(str(user.display_name).lower())}
+                            users = {str(user.display_name): user for user in client.party.members.values() if content_ in jaconv.kata2hira(str(user.display_name).lower())}
                         else:
-                            users = {str(user.display_name): user for user in cache_users.values() if content_ in str(user.display_name)}
+                            users = {str(user.display_name): user for user in client.party.members.values() if content_ in str(user.display_name)}
                         try:
                             user = await client.fetch_profile(rawcontent)
                             if user:
@@ -6376,11 +6458,11 @@ dclient.isready = False
 if True: #discord
     @dclient.event
     async def on_ready() -> None:
+        loop = asyncio.get_event_loop()
         dclient_user = name(dclient.user)
         send(dclient_user,f"{l('login')}: {dclient_user}",green,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}')
         dclient.isready = True
-        activity = discord.Game(name=data['discord']['status'])
-        await dclient.change_presence(activity=activity)
+        loop.create_task(status_loop())
 
         owner = dclient.get_user(int(data['discord']['owner']))
         if not owner:
@@ -6425,6 +6507,15 @@ if True: #discord
     async def on_message(message: discord.Message) -> None:
         await process_command(message)
 
+    async def status_loop() -> None:
+        while True:
+            try:
+                var = globals()
+                activity = discord.Game(name=data['discord']['status'].format(**var))
+                await dclient.change_presence(activity=activity)
+            except Exception:
+                send(dclient.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+            await asyncio.sleep(30)
 
 select_bool = select(
     [
@@ -7170,8 +7261,7 @@ if data.get("status",1) != 0:
                         partial(ClientPartyMember.set_banner, icon=data['fortnite']['banner'], color=data['fortnite']['banner_color'], season_level=data['fortnite']['level'])
                     ]
                 ),
-                platform=fortnitepy.Platform(data['fortnite']['platform'].upper()),
-                status=data['fortnite']['status']
+                platform=fortnitepy.Platform(data['fortnite']['platform'].upper())
             )
         except ValueError:
             send(l("bot"),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
