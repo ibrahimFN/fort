@@ -2246,8 +2246,8 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
     rawargs = content.split()
     rawcontent = ' '.join(rawargs[1:])
     rawcontent2 = ' '.join(rawargs[2:])
-    check_ownercommand = False
-    check_ng = False
+    check_ownercommand = True
+    check_ng = True
     if len(args) < 1:
         return
     if isinstance(message, fortnitepy.message.MessageBase):
@@ -2258,7 +2258,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             or (message.author.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['ignorebot'])):
             return
 
-        if (len(con) > 1
+        if ((len(con) > 1)
             and not (args[0] in commands['eval'].split(','))
             and not (args[0] in commands['exec'].split(','))):
             tasks = []
@@ -2300,12 +2300,12 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             rawcontent = message.author.id
             content_ = message.author.id
 
-        if ((getattr(client.owner,"id",None) != message.author.id)
-            and (message.author.id not in whitelist and data['fortnite']['whitelist-ownercommand'])):
-            check_ownercommand = True
-        if ((getattr(client.owner,"id",None) != message.author.id)
-            and (message.author.id not in whitelist and data['fortnite']['whitelist-ignoreng'])):
-            check_ng = True
+        if ((getattr(client.owner,"id",None) == message.author.id)
+            or (message.author.id in whitelist and data['fortnite']['whitelist-ownercommand'])):
+            check_ownercommand = False
+        if ((getattr(client.owner,"id",None) == message.author.id)
+            or (message.author.id in whitelist and data['fortnite']['whitelist-ignoreng'])):
+            check_ng = False
     elif isinstance(message, discord.Message):
         if ((not isinstance(message.channel, discord.TextChannel))
             or (message.author.id == dclient.user.id)
@@ -2357,9 +2357,12 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
 
         send(name(message.author),content,add_p=lambda x:f'[{now()}] [{client.user.display_name}({dclient.user})] {name(message.author)} | {x}',add_d=lambda x:f'[{client.user.display_name}({dclient.user})] {x}')
 
-        if ((getattr(dclient.owner,"id",None) != message.author.id)
-            and (message.author.id not in whitelist_ and data['discord']['whitelist-ownercommand'])):
-            check_ownercommand = True
+        if ((getattr(dclient.owner,"id",None) == message.author.id)
+            or (message.author.id in whitelist and data['discord']['whitelist-ownercommand'])):
+            check_ownercommand = False
+        if ((getattr(dclient.owner,"id",None) == message.author.id)
+            or (message.author.id in whitelist and data['discord']['whitelist-ignoreng'])):
+            check_ng = False
     elif isinstance(message, WebMessage):
         client = message.client
         if ((data['discord']['enabled'] and not dclient.isready)
@@ -2433,9 +2436,12 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 rawcontent = message.author.id
                 content_ = message.author.id
 
-            if ((getattr(client.owner,"id",None) != message.author.id)
-                and (message.author.id not in whitelist and data['fortnite']['whitelist-ownercommand'])):
-                check_ownercommand = True
+            if ((getattr(client.owner,"id",None) == message.author.id)
+                or (message.author.id in whitelist and data['fortnite']['whitelist-ownercommand'])):
+                check_ownercommand = False
+            if ((getattr(client.owner,"id",None) == message.author.id)
+                or (message.author.id in whitelist and data['fortnite']['whitelist-ignoreng'])):
+                check_ng = False
         elif isinstance(message.base, discord.message.Message):
             if ((message.author.id == dclient.user.id)
                 or (message.author.id in blacklist_ and data['discord']['blacklist-ignorecommand'])
@@ -2448,9 +2454,12 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     return
             send(name(message.author),content,add_p=lambda x:f'[{now()}] [{client.user.display_name}({dclient.user})] {name(message.author)} | {x}',add_d=lambda x:f'[{client.user.display_name}({dclient.user})] {x}')
 
-            if ((getattr(dclient.owner,"id",None) != message.author.id)
-                and (message.author.id not in whitelist_ and data['discord']['whitelist-ownercommand'])):
-                check_ownercommand = True
+            if ((getattr(dclient.owner,"id",None) == message.author.id)
+                or (message.author.id in whitelist and data['discord']['whitelist-ownercommand'])):
+                check_ownercommand = False
+            if ((getattr(dclient.owner,"id",None) == message.author.id)
+                or (message.author.id in whitelist and data['discord']['whitelist-ignoreng'])):
+                check_ng = False
         elif isinstance(message.base, WebMessage):
             if ((data['discord']['enabled'] and not dclient.isready)
                 or (not client.web)):
