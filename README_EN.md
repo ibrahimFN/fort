@@ -65,7 +65,7 @@ level                     : Bot's default level
 tier                      : Bot's default tier
 xpboost                   : Bot's default XP boost
 friendxpboost             : Bot's default friend XP boost
-status                    : Bot's default status
+status                    : Bot's default status. Can use variables. See below
 privacy                   : Bot's default privacy. See below
 whisper                   : Whether bot will accept command from whisper. true or false
 partychat                 : Whether bot will accept command from partychat. true or false
@@ -83,6 +83,10 @@ pickaxemimic              : Whether bot will mimic other player's pickaxe. true 
 emotemimic                : Whether bot will mimic other player's emote. true or false or user's name or ID
 mimic-ignorebot           : Whether bot won't mimic bot. true or false
 mimic-ignoreblacklist     : Whether bot won't mimic blacklisted user. true or false
+outfitlock                : Whether lock outfit. true or false
+backpacklock              : Whether lock backpack. true or false
+pickaxelock               : Whether lock pickaxe. true or false
+emotelock                 : Whether lock emote. true or false
 acceptinvite              : Whether bot will accept invite. Invite from owner will accepted every time. true or false
 acceptfriend              : Whether bot will accept friend request. true or false or null
 addfriend                 : Whether bot will send friend request to party member. true or false
@@ -115,7 +119,8 @@ enabled                   : Whether will boot Discord Bot. true or false
 token                     : Token for Discord Bot
 owner                     : Owner's user ID
 channelname               : Channel name used for bot's command channel. See below
-status                    : Discord Bot's status
+status                    : Discord Bot's status. Can use variables. See below
+status_type               : Discord Bot's status type. See below
 discord                   : Whether bot will accept command from Discord. true or false
 disablediscordperfectly   : Config for if discord is disabled, whether decline command from owner too. true or false
 blacklist                 : List of blacklist users. user ID
@@ -147,6 +152,8 @@ search_max                : Max amout of search
 no-logs                   : Whether print logs in console. true or false
 ingame-error              : Whether send errors to player. true or false
 discord-log               : Whether send logs to Discord. true or false
+omit-over2000             : Whether will omit texts over 2000 chars on discord log. true or false
+skip-if-overflow          : Skip discord logs if overflow. true or false
 hide-email                : Whether hide emails in Discord logs. true or false
 hide-token                : Whether hide token in Discord logs. true or false
 hide-webhook              : Whether hide webhook url in Discord logs. true or false
@@ -347,6 +354,48 @@ friends_allow_friends_of_friends : Friend(Allow friends of friends)
 friends                          : Friend
 private_allow_friends_of_friends : Private(Allow friends of friends)
 private                          : Private
+```
+
+Status  
+Usable variables  
+```
+friend_count                     : Bot's friend count
+pending_count                    : Bot's pending friend count
+block_count                      : Bot's block count
+display_name                     : Bot's display name
+id                               : Bot's ID
+party_id                         : Bot's party ID
+party_size                       : Bot's party memeber count
+party_max_size                   : Bot'S party's max member count
+all_friend_count                 : Total friend count of all bot
+all_pending_count                : Total pending friend count of all bot
+all_block_count                  : Total block count of all bot
+guild_count                      : Discord bot's guild count
+```
+Example  
+```
+Friend count: {friend_count}
+```
+
+Usable variables  
+```
+get_client_data(id)              : Get bot's info with specified ID
+Content
+friend_count                     : Bot's friend count
+pending_count                    : Bot's pending friend count
+block_count                      : Bot's block count
+display_name                     : Bot's display name
+id                               : Bot's ID
+party_id                         : Bot's party ID
+party_size                       : Bot's party memeber count
+party_max_size                   : Bot'S party's max member count
+
+get_guild_member_count(id)       : Get member count of guild with specified ID
+```
+Example  
+```
+Bot1's friend count: {get_client_data('Bot1ID')['friend_count']}
+Guild1's member count: {get_guild_member_count(Guild1ID)}
 ```
 
 Channel name  
