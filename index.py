@@ -4037,7 +4037,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['avatar']}] [ID]")
-                continue
+                return
             if len(args) > 4:
                 background_colors = [args[2], args[3], args[4]]
             elif len(args) == 2:
@@ -5712,7 +5712,16 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             if rawcontent == '':
                 await reply(message, client, f"[{commands[f'{convert_to_old_type(type_)}asset']}] [{l('assetpath')}]")
                 return
-            if await client.change_asset(message.author.id, type_, rawcontent) is False:
+            messages = [
+                "...NO",
+                "You...",
+                "It's bannable :)",
+                "Shut up"
+            ]
+            if rawcontent == "//" and type_ == "Emote":
+                await reply(message, client, random.choice(messages))
+                return
+            if not await client.change_asset(message.author.id, type_, rawcontent):
                 await reply(message, client, l('locked'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
@@ -6737,7 +6746,7 @@ if True: #discord
                 }
             )
         
-        activity = discord.Game(name=data['discord']['status'].format_map(var),type=data['discord']['status_type'])
+        activity = discord.Activity(name=data['discord']['status'].format_map(var),type=data['discord']['status_type'])
         await dclient.change_presence(activity=activity)
 
     async def status_loop() -> None:
