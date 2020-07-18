@@ -24,6 +24,7 @@ SOFTWARE.
 """
 try:
     import asyncio
+    from collections import defaultdict
     from concurrent.futures import ThreadPoolExecutor, as_completed
     import datetime
     from functools import partial, wraps
@@ -260,6 +261,7 @@ if True: #Classes
             self.owner = None
             self.prevmessage = {}
             self.select = {}
+            self.visual_members = []
             self.invitelist = []
             self.whisper = data['fortnite']['whisper']
             self.partychat = data['fortnite']['partychat']
@@ -274,6 +276,10 @@ if True: #Classes
             self.backpackmimic = data['fortnite']['backpackmimic']
             self.pickaxemimic = data['fortnite']['pickaxemimic']
             self.emotemimic = data['fortnite']['emotemimic']
+            self.outfitlock = data['fortnite']['outfitlock']
+            self.backpacklock = data['fortnite']['backpacklock']
+            self.pickaxelock = data['fortnite']['pickaxelock']
+            self.emotelock = data['fortnite']['emotelock']
             self.acceptinvite = data['fortnite']['acceptinvite']
             self.acceptfriend = data['fortnite']['acceptfriend']
 
@@ -325,32 +331,75 @@ if True: #Classes
                 return name
             return None
 
+        def get_client_data(self) -> defaultdict:
+            var = defaultdict(lambda: None)
+            if not self.isready:
+                return var
+            party = getattr(self,"party",None)
+            if party:
+                config = party.config
+                var.update(
+                    {
+                        "party_id": party.id,
+                        "party_size": party.member_count,
+                        "party_max_size": config["max_size"]
+                    }
+                )
+            var.update(
+                {
+                    "friend_count": len(self.friends),
+                    "pending_count": len(self.pending_friends),
+                    "block_count": len(self.blocked_users),
+                    "display_name": self.user.display_name,
+                    "id": self.user.id
+                }
+            )
+            return var
+
+        async def change_status(self) -> None:
+            var = defaultdict(lambda: None)
+
+            var.update(self.get_client_data())
+            var.update(
+                {
+                    "get_client_data": get_client_data,
+                    "all_friend_count": sum([len(client_.friends) for client_ in clients]),
+                    "all_pending_count": sum([len(client_.pending_friends) for client_ in clients]),
+                    "all_block_count": sum([len(client_.blocked_users) for client_ in clients])
+                }
+            )
+            
+            if data['discord']['enabled'] and dclient.isready:
+                var.update(
+                    {
+                        "guild_count": len(dclient.guilds),
+                        "get_guild_member_count": get_guild_member_count
+                    }
+                )
+
+            party = getattr(self,"party",None)
+            if party:
+                status = eval_format(self.status_,var)
+                self.status = status
+                status = self.party.construct_presence(status)
+                try:
+                    await self.send_status(status)
+                except Exception:
+                    if data['loglevel'] == 'debug':
+                        send(self.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+            else:
+                status = eval_format(self.status_,var)
+                self.status = status
+                try:
+                    await self.send_status(status)
+                except Exception:
+                    if data['loglevel'] == 'debug':
+                        send(self.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+
         async def status_loop(self) -> None:
             while True:
                 try:
-                    """party = getattr(self,"party",None)
-                    if party:
-                        config = party.config
-                        party_id = party.id
-                        party_size = party.member_count
-                        party_max_size = config["max_size"]
-                    else:
-                        party_id = None
-                        party_size = None
-                        party_max_size = None
-                    var = {
-                        "friend_count": len(self.friends),
-                        "pending_count": len(self.pending_friends),
-                        "block_count": len(self.blocked_users),
-                        "display_name": self.user.display_name,
-                        "id": self.user.id,
-                        "party_id": party_id,
-                        "party_size": party_size,
-                        "party_max_size": party_max_size
-                    }"""
-                    var = globals()
-                    var.update({"client": self})
-                    await self.set_status(self.status_.format(**var))
+                    await self.change_status()
                 except Exception:
                     send(self.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await asyncio.sleep(30)
@@ -393,7 +442,7 @@ if True: #Classes
                 except Exception:
                     pass
                 self.acceptinvite_interval = False
-                self.timer = Timer(data['fortnite']['interval'], self.inviteinterval, args=(self,))
+                self.timer = Timer(data['fortnite']['interval'], self.inviteinterval)
                 self.timer.start()
             if data['loglevel'] == 'normal':
                 send(name(self.user),l("accepted_invite_from", name(invitation.sender)),add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
@@ -572,10 +621,12 @@ if True: #Classes
         async def hide(self, member_id: Optional[str] = None) -> None:
             if not self.party.me.leader:
                 raise fortnitepy.Forbidden("You must be the party leader to perform this action.")
+            real_members = self.party.meta.squad_assignments
             if not member_id:
-                squad_assignments = [{"memberId": self.user.id, "absoluteMemberIdx": 0}]
-                num = 1
-                if self.owner and data['fortnite']['show-owner'] and self.party.members.get(self.owner.id):
+                num = 0
+                squad_assignments = [{"memberId": self.user.id, "absoluteMemberIdx": num}]
+                num += 1
+                if data['fortnite']['show-owner'] and self.party.members.get(getattr(self.owner,"id",None)):
                     squad_assignments.append({"memberId": self.owner.id, "absoluteMemberIdx": num})
                     num += 1
                 if data['fortnite']['show-whitelist']:
@@ -588,34 +639,59 @@ if True: #Classes
                         if self.party.members.get(botuser):
                             squad_assignments.append({"memberId": botuser, "absoluteMemberIdx": num})
                             num += 1
+                self.visual_members = squad_assignments
             else:
                 member = self.party.members.get(member_id)
                 if not member:
                     raise fortnitepy.NotFound("This member is not a part of this party.")
-                squad_assignments = getattr(self,"visual_members",self.party.meta.squad_assignments)
-                [squad_assignments.remove(i) for i in squad_assignments if i["memberId"] == member.id]
-            self.visual_members = [{"memberId": i["memberId"], "absoluteMemberIdx": i["absoluteMemberIdx"]} for i in squad_assignments]
+                squad_assignments = self.visual_members
+                for squad in squad_assignments:
+                    if squad["memberId"] == member.id:
+                        squad_assignments.remove(squad)
             prop = self.party.meta.set_squad_assignments(squad_assignments)
             await self.party.patch(updated=prop)
+            self.party.meta.set_squad_assignments(real_members)
 
         async def show(self, member_id: Optional[str] = None) -> None:
             if not self.party.me.leader:
                 raise fortnitepy.Forbidden("You must be the party leader to perform this action.")
-            squad_assignments = getattr(self,"visual_members",self.party.meta.squad_assignments)
-            squad_members = [member["memberId"] for member in squad_assignments]
-            member_indexes = [member["absoluteMemberIdx"] for member in squad_assignments]
-            available_indexes = [num for num in range(15) if num not in member_indexes]
-            if not member_id: 
-                squad_assignments.extend([{"memberId": member_id, "absoluteMemberIdx": available_indexes[num]} for num,member_id in enumerate([i for i in self.party.members if i not in squad_members])])
+            real_members = self.party.meta.squad_assignments
+            if not member_id:
+                member_indexes = [member.position for member in client.party.members.values() if isinstance(member.position,int)]
+                available_indexes = [num for num in range(15) if num not in member_indexes]
+
+                num = 0
+                squad_assignments = []
+                for member in client.party.members.values():
+                    if isinstance(member.position,int):
+                        squad_assignments.append(
+                            {
+                                "memberId": member.id,
+                                "absoluteMemberIdx": member.position
+                            }
+                        )
+                    else:
+                        squad_assignments.append(
+                            {
+                                "memberId": member.id,
+                                "absoluteMemberIdx": available_indexes[num]
+                            }
+                        )
+                        num += 1
             else:
+                squad_assignments = self.visual_members
+                squad_members = [member["memberId"] for member in squad_assignments]
+                member_indexes = [member["absoluteMemberIdx"] for member in squad_assignments]
+                available_indexes = [num for num in range(15) if num not in member_indexes]
                 member = self.party.members.get(member_id)
                 if not member:
                     raise fortnitepy.NotFound("This member is not a part of this party.")
                 if member.id not in squad_members:
                     squad_assignments.append({"memberId": member.id, "absoluteMemberIdx": available_indexes[0]})
-            self.visual_members = [{"memberId": i["memberId"], "absoluteMemberIdx": i["absoluteMemberIdx"]} for i in squad_assignments]
+            self.visual_members = squad_assignments
             prop = self.party.meta.set_squad_assignments(squad_assignments)
             await self.party.patch(updated=prop)
+            self.party.meta.set_squad_assignments(real_members)
 
         async def party_member_outfit_change(self, member: fortnitepy.PartyMember) -> None:
             display_name = name(self.user)
@@ -627,8 +703,8 @@ if True: #Classes
             elif isinstance(self.outfitmimic,str) and member.id == self.outfitmimic:
                 flag = True
             display_name_ = self.is_most()
-            if display_name_ and not member_asset(member,"outfit"):
-                send(display_name_,f"ID: {member_asset(member,'outfit')}")
+            if display_name_ and member_asset(member,"outfit"):
+                send(display_name_,f"CID: {member_asset(member,'outfit')}")
             if flag:
                 if not member_asset(member,"outfit"):
                     try:
@@ -653,8 +729,8 @@ if True: #Classes
             elif isinstance(self.backpackmimic,str) and member.id == self.backpackmimic:
                 flag = True
             display_name_ = self.is_most()
-            if display_name_ and not member_asset(member,"backpack"):
-                send(display_name_,f"ID: {member_asset(member,'backpack')}")
+            if display_name_ and member_asset(member,"backpack"):
+                send(display_name_,f"BID: {member_asset(member,'backpack')}")
             if flag:
                 if not member_asset(member,"backpack"):
                     try:
@@ -680,8 +756,8 @@ if True: #Classes
             elif isinstance(self.pickaxemimic,str) and member.id == self.pickaxemimic:
                 flag = True
             display_name_ = self.is_most()
-            if display_name_ and not member_asset(member,"pickaxe"):
-                send(display_name_,f"ID: {member_asset(member,'pickaxe')}")
+            if display_name_ and member_asset(member,"pickaxe"):
+                send(display_name_,f"Pickaxe_ID: {member_asset(member,'pickaxe')}")
             if flag:
                 if not member_asset(member,"pickaxe"):
                     try:
@@ -706,8 +782,8 @@ if True: #Classes
             elif isinstance(self.emotemimic,str) and member.id == self.emotemimic:
                 flag = True
             display_name_ = self.is_most()
-            if display_name_ and not member_asset(member,"emote"):
-                send(display_name_,f"ID: {member_asset(member,'emote')}")
+            if display_name_ and member_asset(member,"emote"):
+                send(display_name_,f"EID: {member_asset(member,'emote')}")
             if flag:
                 if not member_asset(member,"emote"):
                     try:
@@ -735,6 +811,11 @@ if True: #Classes
             send(display_name,f'{l("login")}: {display_name}',green,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
             self.isready = True
             self.booting = False
+            if not self.visual_members:
+                if self.party:
+                    self.visual_members = self.party.meta.squad_assignments
+                else:
+                    self.visual_members = [{"memberId": self.user.id, "absoluteMemberIdx": 0}]
             loadedclients.append(self)
             client_name[self.user.display_name] = self
             self.add_cache(self.user)
@@ -746,11 +827,6 @@ if True: #Classes
                     self.set_avatar(fortnitepy.Avatar(asset=self.party.me.outfit, background_colors=data['fortnite']['avatar_color']))
                 else:
                     self.set_avatar(fortnitepy.Avatar(asset=data['fortnite']['avatar_id'].format(bot=self.party.me.outfit), background_colors=data['fortnite']['avatar_color']))
-            except Exception:
-                if data['loglevel'] == 'debug':
-                    send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-            try:
-                await client.party.set_privacy(data["fortnite"]["privacy"])
             except Exception:
                 if data['loglevel'] == 'debug':
                     send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -994,29 +1070,42 @@ if True: #Classes
                 send(display_name,l("friend_remove",f'{name(friend)} [{platform_to_str(friend.platform)}]'),add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
 
         async def event_party_member_join(self, member: fortnitepy.PartyMember) -> None:
+            try:
+                if member.id == self.user.id:
+                    self.visual_members = self.party.meta.squad_assignments
+                else:
+                    self.visual_members.append({"memberId": member.id, "absoluteMemberIdx": member.position})
+            except Exception:
+                if data['loglevel'] == 'debug':
+                    send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             if not self.isready or not member:
                 return
             self.add_cache(member)
             display_name = name(self.user)
-            display_name_ = self.is_most() 
+            display_name_ = self.is_most()
+            loop = asyncio.get_event_loop()
+            loop.create_task(self.change_status())
             
-            if member.id == self.user.id:
-                self.visual_members = self.party.meta.squad_assignments
-            if self.party.leader.id == self.user.id:
+            if self.party.me.leader:
                 try:
-                    if self.party.leader.id == self.user.id:
-                        await asyncio.sleep(1)
-                        prop = self.party.meta.set_squad_assignments(self.visual_members)
-                        await self.party.patch(updated=prop)
+                    await asyncio.sleep(0.5)
                     if data['fortnite']['hide-user']:
                         if (not (getattr(self.owner,"id",None) == member.id and data['fortnite']['show-owner'])
                             and not (member.id in whitelist and data['fortnite']['show-whitelist'])
                             and not (member.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['show-bot'])
                             and member.id != self.user.id):
-                            await self.hide(member.id)
+                            for squad in self.visual_members:
+                                if squad["memberId"] == member.id:
+                                    self.visual_members.remove(squad)
                     elif data['fortnite']['hide-blacklist']:
                         if member.id in blacklist:
-                            await self.hide(member.id)
+                            for squad in self.visual_members:
+                                if squad["memberId"] == member.id:
+                                    self.visual_members.remove(squad)
+                    real_members = self.party.meta.squad_assignments
+                    prop = self.party.meta.set_squad_assignments(self.visual_members)
+                    await self.party.patch(updated=prop)
+                    self.party.meta.set_squad_assignments(real_members)
                 except Exception:
                     if data['loglevel'] == 'debug':
                         send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -1084,16 +1173,31 @@ if True: #Classes
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
         async def event_party_member_leave(self, member: fortnitepy.PartyMember) -> None:
+            try:
+                if member.id == self.user.id:
+                    self.visual_members = []
+                else:
+                    for squad in self.visual_members:
+                        if squad["memberId"] == member.id:
+                            self.visual_members.remove(squad)
+            except Exception:
+                if data['loglevel'] == 'debug':
+                    send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             if not self.isready or not member:
                 return
             self.add_cache(member)
             display_name = name(self.user)
             display_name_ = self.is_most()
+            loop = asyncio.get_event_loop()
+            loop.create_task(self.change_status())
+
             try:
-                if self.party.leader.id == self.user.id:
-                    await asyncio.sleep(1)
+                if self.party.me.leader:
+                    await asyncio.sleep(0.5)
+                    real_members = self.party.meta.squad_assignments
                     prop = self.party.meta.set_squad_assignments(self.visual_members)
                     await self.party.patch(updated=prop)
+                    self.party.meta.set_squad_assignments(real_members)
             except Exception:
                 if data['loglevel'] == 'debug':
                     send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -1105,7 +1209,7 @@ if True: #Classes
 
             if data['fortnite']['addfriend']:
                 for member in member.party.members.copy().keys():
-                    if not self.has_friend(member) and member.id != self.user.id:
+                    if not self.has_friend(member) and member != self.user.id:
                         try:
                             await self.add_friend(member)
                         except fortnitepy.HTTPException:
@@ -1141,11 +1245,30 @@ if True: #Classes
                     send(display_name,l("error_while_accepting_partyrequest"),red,add_d=lambda x:f'>>> {x}')
 
         async def event_party_member_kick(self, member: fortnitepy.PartyMember) -> None:
+            try:
+                if member.id == self.user.id:
+                    self.visual_members = []
+                else:
+                    for squad in self.visual_members:
+                        if squad["memberId"] == member.id:
+                            self.visual_members.remove(squad)
+            except Exception:
+                if data['loglevel'] == 'debug':
+                    send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             if not self.isready or not member:
                 return
             self.add_cache(member)
+            try:
+                if self.party.me.leader and member.id != self.user.id:
+                    await asyncio.sleep(0.5)
+                    real_members = self.party.meta.squad_assignments
+                    prop = self.party.meta.set_squad_assignments(self.visual_members)
+                    await self.party.patch(updated=prop)
+                    self.party.meta.set_squad_assignments(real_members)
+            except Exception:
+                if data['loglevel'] == 'debug':
+                    send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             display_name_ = self.is_most()
-            self.visual_members = [{"memberId": i["memberId"], "absoluteMemberIdx": i["absoluteMemberIdx"]} for i in self.party.meta.squad_assignments]
             if display_name_:
                 if data['loglevel'] == 'normal':
                     send(display_name_,l("party_member_kick",name(member.party.leader),name(member),member.party.member_count),magenta,add_p=lambda x:f'[{now()}] [{l("party")}] [{display_name_}] {x}')
@@ -1224,28 +1347,34 @@ if True: #Classes
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
         async def event_party_member_outfit_change(self, member: fortnitepy.PartyMember, before: str, after: str) -> None:
-            if after:
-                await self.party_member_outfit_change(member)
+            if not self.isready or not member:
+                return
+            await self.party_member_outfit_change(member)
 
         async def event_party_member_backpack_change(self, member: fortnitepy.PartyMember, before: str, after: str) -> None:
-            if after:
-                await self.party_member_backpack_change(member)
+            if not self.isready or not member:
+                return
+            await self.party_member_backpack_change(member)
 
         async def event_party_member_pet_change(self, member: fortnitepy.PartyMember, before: str, after: str) -> None:
-            if after:
-                await self.party_member_backpack_change(member)
+            if not self.isready or not member:
+                return
+            await self.party_member_backpack_change(member)
 
         async def event_party_member_pickaxe_change(self, member: fortnitepy.PartyMember, before: str, after: str) -> None:
-            if after:
-                await self.party_member_pickaxe_change(member)
+            if not self.isready or not member:
+                return
+            await self.party_member_pickaxe_change(member)
 
         async def event_party_member_emote_change(self, member: fortnitepy.PartyMember, before: str, after: str) -> None:
-            if after:
-                await self.party_member_emote_change(member)
+            if not self.isready or not member:
+                return
+            await self.party_member_emote_change(member)
 
         async def event_party_member_emoji_change(self, member: fortnitepy.PartyMember, before: str, after: str) -> None:
-            if after:
-                await self.party_member_emote_change(member)
+            if not self.isready or not member:
+                return
+            await self.party_member_emote_change(member)
 
         async def event_party_member_disconnect(self, member: fortnitepy.PartyMember) -> None:
             if not self.isready or not member:
@@ -1415,6 +1544,52 @@ if True: #Functions
             dstore(user_name,content)
         else:
             dstore(user_name,add_d(content))
+
+    def eval_format(text: str, variables: dict = {}) -> str:
+        for match in format_pattern.finditer(text):
+            match_text = match.group()
+            eval_text = match_text.replace("{","",1)[::-1].replace("}","",1)[::-1]
+            result = eval(eval_text,globals(),variables)
+            text = text.replace(match_text,str(result),1)
+        return text
+
+    def get_client_data(id_: str) -> defaultdict:
+        var = defaultdict(lambda: None)
+        for client in clients:
+            if not client.isready:
+                continue
+            if client.user.id == id_:
+                break
+        else:
+            return var
+        party = getattr(client,"party",None)
+        if party:
+            config = party.config
+            var.update(
+                {
+                    "party_id": party.id,
+                    "party_size": party.member_count,
+                    "party_max_size": config["max_size"]
+                }
+            )
+        var.update(
+            {
+                "friend_count": len(client.friends),
+                "pending_count": len(client.pending_friends),
+                "block_count": len(client.blocked_users),
+                "display_name": client.user.display_name,
+                "id": client.user.id
+            }
+        )
+        return var
+
+    def get_guild_member_count(id_: Union[str]) -> Optional[int]:
+        if isinstance(id_,str):
+            id_ = int(id_)
+        guild = dclient.get_guild(id_)
+        if not guild:
+            return None
+        return guild.member_count
 
     def platform_to_str(platform: fortnitepy.Platform) -> Optional[str]:
         converter = {
@@ -1612,8 +1787,18 @@ if True: #Functions
             else:
                 exec(f"data{text} = data{text2}")
         set_default(['fortnite'],{})
-        set_default(['fortnite','privacy'],'public',lambda x: eval(f"fortnitepy.PartyPrivacy.{x.upper()}"))
+        try:
+            set_default(['fortnite','privacy'],'public',lambda x: getattr(fortnitepy.PartyPrivacy,x.upper()))
+        except AttributeError:
+            send('ボット',traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+            error_config.append("['fortnite']['privacy']")
+        set_default(['fortnite','avatar_color'],'#ffffff,#ffffff,#ffffff')
         set_default(['discord','channels'],['{name}-command-channel'],lambda x: [i.replace(" ","-").replace(".","-").replace(",","-").replace("--","-").lower() for i in x])
+        try:
+            set_default(['discord','status_type'],'playing',lambda x: getattr(discord.ActivityType,x.lower()))
+        except AttributeError:
+            send('ボット',traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+            error_config.append("['discord']['status_type']")
         set_default(['web'],{})
         set_default(['web','ip'],'{ip}')
         set_default(['web','port'],8080)
@@ -1707,7 +1892,7 @@ if True: #Functions
             if not load_lang("en"):
                 return False
         
-        color = data['fortnite']['avatar_color'].split(',') if data['fortnite']['avatar_color'] is not None else ""
+        color = data['fortnite']['avatar_color'].split(',') if data['fortnite']['avatar_color'] else ""
         if len(color) > 2:
             background_colors = [color[0], color[1], color[2]]
         elif len(color) == 1:
@@ -1715,7 +1900,8 @@ if True: #Functions
                 background_colors = eval(f"fortnitepy.KairosBackgroundColorPreset.{color[0]}")
             except AttributeError:
                 send(l('bot'),l('color_must_be'))
-                return False
+                error_config.append("['fortnite']['avatar_color']")
+                background_colors = ["#ffffff","#ffffff","#ffffff"]
         else:
             background_colors = None
         data['fortnite']['avatar_color'] = background_colors
@@ -2384,6 +2570,8 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     await reply(message, client, '\n'.join(result))
             return
 
+        check_ownercommand = False
+        check_ng = False
         send(name(message.author),content,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {name(message.author)} | {x}',add_d=lambda x:f'[{client.user.display_name}] {x}')
     elif isinstance(message, AllMessage):
         client = message.client
@@ -2464,6 +2652,8 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             if ((data['discord']['enabled'] and not dclient.isready)
                 or (not client.web)):
                 return
+            check_ownercommand = False
+            check_ng = False
             send(name(message.author),content,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {name(message.author)} | {x}',add_d=lambda x:f'[{client.user.display_name}] {x}')
     
     if not client.isready:
@@ -2474,23 +2664,26 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
         for command in commands['ownercommands'].split(','):
             if args[0] in commands[command].split(","):
                 await reply(message, client, l("this_command_owneronly"))
+                print("this is owner only command")
                 return
 
     reply_flag = False
     for key,value in replies.items():
+        reply_flag_ = False
         if data["replies-matchmethod"] == "contains":
             if [k for k in key.split(',') if k in content]:
-                reply_flag = True
+                reply_flag_ = True
         elif data["replies-matchmethod"] == "full":
             if [k for k in key.split(',') if k == content]:
-                reply_flag = True
+                reply_flag_ = True
         elif data["replies-matchmethod"] == "starts":
             if [k for k in key.split(',') if content.startswith(k)]:
-                reply_flag = True
+                reply_flag_ = True
         elif data["replies-matchmethod"] == "ends":
             if [k for k in key.split(',') if content.endswith(k)]:
-                reply_flag = True
-        if reply_flag:
+                reply_flag_ = True
+        if reply_flag_:
+            reply_flag = True
             await reply(message, client, value)
 
     if check_ng:
@@ -2542,21 +2735,23 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
         return
 
     if args[0] in commands['prev'].split(','):
-        c = client.prevmessage.get(message.author.id,"")
-        mes = AllMessage(c, message.author, client, message)
-        task = loop.create_task(process_command(mes))
-        await task
-        result = task.result
-        if result:
-            await reply(message, client, result)
+        c = client.prevmessage.get(message.author.id)
+        if c:
+            mes = AllMessage(c, message.author, client, message)
+            task = loop.create_task(process_command(mes))
+            await task
+            result = mes.result
+            if result:
+                await reply(message, client, '\n'.join(result))
         return
+    client.prevmessage[message.author.id] = content
 
-    elif args[0] in commands['eval'].split(','):
+    if args[0] in commands['eval'].split(','):
         try:
             if rawcontent == "":
                 await reply(message, client, f"[{commands['eval']}] [{l('eval')}]")
                 return
-            variable=globals()
+            variable = globals()
             variable.update(locals())
             if rawcontent.startswith("await "):
                 if data['loglevel'] == "debug":
@@ -2791,7 +2986,6 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     client.owner = owner
                     send(display_name,f'{l("owner")}: {name(client.owner)}',green,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
             if client.owner:
-                await client.owner.send(l("click_invite"))
                 await client.owner.send(l("click_invite"))
 
             for blacklistuser in data['fortnite']['blacklist']:
@@ -3851,13 +4045,35 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
 
     elif args[0] in commands['status'].split(','):
         try:
-            client.status = rawcontent
+            client.status_ = rawcontent
+            await client.change_status()
             await reply(message, client, l('set_to', l('status'), rawcontent))
-            await client.party.set_privacy(client.party.privacy)
         except IndexError:
             if data['loglevel'] == 'debug':
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, f"[{commands['status']}] [{l('content')}]")
+        except Exception:
+            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+            await reply(message, client, l('error'))
+
+    elif args[0] in commands['avatar'].split(','):
+        try:
+            if rawcontent == '':
+                await reply(message, client, f"[{commands['avatar']}] [ID]")
+                return
+            if len(args) > 4:
+                background_colors = [args[2], args[3], args[4]]
+            elif len(args) == 2:
+                background_colors = None
+            else:
+                background_colors = getattr(fortnitepy.KairosBackgroundColorPreset, args[2])
+            avatar = fortnitepy.Avatar(asset=args[1], background_colors=background_colors)
+            client.set_avatar(avatar)
+            await reply(message, client, l('set_to', l('avatar'), f"{args[1]}, {background_colors}"))
+        except AttributeError:
+            if data['loglevel'] == 'debug':
+                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+            await reply(message, client, l('color_must_be'))
         except Exception:
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
@@ -5117,8 +5333,12 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if not member:
                     await reply(message, client, l('user_not_in_party'))
                     return
+                assignments = client.visual_members
                 await member.swap_position()
                 await reply(message, client, l('swap_user', f'{name(user)}'))
+                await asyncio.sleep(0.5)
+                prop = client.party.meta.set_squad_assignments(assignments)
+                await client.party.patch(updated=prop)
             else:
                 client.select[message.author.id] = {
                     "exec": [
@@ -5128,8 +5348,12 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             if not member:
                 await reply(message, client, l('user_not_in_party'))
                 return
+            assignments = client.visual_members
             await member.swap_position()
             await reply(message, client, l('swap_user', f'{name(user)}}'))
+            await asyncio.sleep(0.5)
+            prop = client.party.meta.set_squad_assignments(assignments)
+            await client.party.patch(updated=prop)
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5519,7 +5743,16 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             if rawcontent == '':
                 await reply(message, client, f"[{commands[f'{convert_to_old_type(type_)}asset']}] [{l('assetpath')}]")
                 return
-            if await client.change_asset(message.author.id, type_, rawcontent) is False:
+            messages = [
+                "...NO",
+                "You...",
+                "It's bannable :)",
+                "Stop it"
+            ]
+            if (rawcontent.startswith("/") and type_ == "Emote") and getattr(client.owner,"id",None) != message.author.id:
+                await reply(message, client, random.choice(messages))
+                return
+            if not await client.change_asset(message.author.id, type_, rawcontent):
                 await reply(message, client, l('locked'))
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
@@ -5607,7 +5840,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                                         await reply(message, client, l('set_to', value[1], name(user)))""" for user in users.values()
                                 ],
                                 "variable": [
-                                    {"user": user} for user in users.values()
+                                    {"user": user, "value": value} for user in users.values()
                                 ]
                             }
                             text = str()
@@ -5754,6 +5987,7 @@ blacklist = []
 blacklist_ = []
 otherbotlist = []
 storedlogs = []
+format_pattern = re.compile(r"""\{([a-zA-Z0-9\s_\(\)\[\]\.,"']*)\}""")
 
 config_tags={
     "['fortnite']": [dict],
@@ -5791,6 +6025,10 @@ config_tags={
     "['fortnite']['emotemimic']": [bool_,"select_bool"],
     "['fortnite']['mimic-ignorebot']": [bool_,"select_bool"],
     "['fortnite']['mimic-ignoreblacklist']": [bool_,"select_bool"],
+    "['fortnite']['outfitlock']": [bool_,"select_bool"],
+    "['fortnite']['backpacklock']": [bool_,"select_bool"],
+    "['fortnite']['pickaxelock']": [bool_,"select_bool"],
+    "['fortnite']['emotelock']": [bool_,"select_bool"],
     "['fortnite']['acceptinvite']": [bool_,"select_bool"],
     "['fortnite']['acceptfriend']": [bool_none,"select_bool_none"],
     "['fortnite']['addfriend']": [bool_,"select_bool"],
@@ -5823,6 +6061,7 @@ config_tags={
     "['discord']['owner']": [int],
     "['discord']['channels']": [list,"can_be_multiple"],
     "['discord']['status']": [str],
+    "['discord']['status_type']": [str,"select_status"],
     "['discord']['discord']": [bool_,"select_bool"],
     "['discord']['disablediscordperfectly']": [bool_,"select_bool"],
     "['discord']['ignorebot']": [bool_,"select_bool"],
@@ -6524,12 +6763,27 @@ if True: #discord
     async def on_message(message: discord.Message) -> None:
         await process_command(message)
 
+    async def change_status() -> None:
+        var = defaultdict(lambda: None)
+
+        var.update(
+                {
+                    "get_client_data": get_client_data,
+                    "all_friend_count": sum([len(client_.friends) for client_ in clients]),
+                    "all_pending_count": sum([len(client_.pending_friends) for client_ in clients]),
+                    "all_block_count": sum([len(client_.blocked_users) for client_ in clients]),
+                    "guild_count": len(dclient.guilds),
+                    "get_guild_member_count": get_guild_member_count
+                }
+            )
+        
+        activity = discord.Activity(name=data['discord']['status'].format_map(var),type=data['discord']['status_type'])
+        await dclient.change_presence(activity=activity)
+
     async def status_loop() -> None:
         while True:
             try:
-                var = globals()
-                activity = discord.Game(name=data['discord']['status'].format(**var))
-                await dclient.change_presence(activity=activity)
+                await change_status()
             except Exception:
                 send(dclient.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await asyncio.sleep(30)
@@ -6560,16 +6814,17 @@ select_platform = select(
 )
 select_privacy = select(
     [
-        {"value": "public","display_value": l('public')},
-        {"value": "friends_allow_friends_of_friends","display_value": l('friends_allow_friends_of_friends')},
-        {"value": "friends","display_value": l('friends')},
-        {"value": "private_allow_friends_of_friends","display_value": l('private_allow_friends_of_friends')},
-        {"value": "private","display_value": l('private')}
+        {"value": i,"display_value": l(i)} for i in ["public","friends_allow_friends_of_friends","friends","private_allow_friends_of_friends","private"]
+    ]
+)
+select_status = select(
+    [
+        {"value": i,"display_value": l(i)} for i in ["playing","listening","watching"]
     ]
 )
 select_matchmethod = select(
     [
-        {"value": i,"display_value": i} for i in ["full","contains","starts","ends"]
+        {"value": i,"display_value": l(i)} for i in ["full","contains","starts","ends"]
     ]
 )
 select_loglevel = select(
@@ -6602,6 +6857,8 @@ for key,value in config_tags.items():
             config_tags[key][count] = select_platform
         elif tag == "select_privacy":
             config_tags[key][count] = select_privacy
+        elif tag == "select_status":
+            config_tags[key][count] = select_status
         elif tag == "select_loglevel":
             config_tags[key][count] = select_loglevel
         elif tag == "select_lang":
@@ -6622,6 +6879,7 @@ for key,value in commands_tags.items():
             commands_tags[key][count] = Red
         elif tag == "fix_required":
             commands_tags[key][count] = FixRequired
+
 
 if True: #Web
     @app.route("/favicon.ico", methods=["GET"])
@@ -7091,7 +7349,7 @@ if True: #Web
         @auth.login_required
         async def clients_viewer(request: Request, num: str):
             num = int(num)
-            client = clients[num] if len(clients[num:num+1]) == 1 else None
+            client = clients[num] if clients[num:num+1] else None
 
             if not client:
                 sanic.exceptions.abort(404)
@@ -7283,7 +7541,6 @@ if data.get("status",1) != 0:
             send(l("bot"),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             send(l("bot"),l('error_while_setting_client'),red,add_d=lambda x:f'>>> {x}')
             continue
-
         clients.append(client)
 
 if data.get('status',1) != 0 and bot_ready:

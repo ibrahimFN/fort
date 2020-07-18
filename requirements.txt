@@ -1,7 +1,8 @@
 aiohttp
 crayons
 discord.py
-fortnitepy
+#fortnitepy
+git+https://github.com/gomashio1596/fortnitepy
 jaconv
 jinja2
 requests

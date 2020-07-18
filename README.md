@@ -67,7 +67,7 @@ level                     : ボットの初期レベル
 tier                      : ボットの初期ティア
 xpboost                   : ボットの初期XPブースト
 friendxpboost             : ボットの初期フレンドXPブースト
-status                    : ボットの初期ステータス
+status                    : ボットの初期ステータス。 変数が使えます。 後述
 privacy                   : ボットの初期のプライバシー。 後述
 whisper                   : ボットが囁きからコマンドを受け付けるかどうか。 true か false
 partychat                 : ボットがパーティーチャットからコマンドを受け付けるかどうか。 true か false
@@ -85,6 +85,10 @@ pickaxemimic              : 他人の収集ツールを真似るかどうか。 
 emotemimic                : 他人のエモートを真似るかどうか。 true か false か ユーザーの名前またはID
 mimic-ignorebot           : ボットユーザーは真似ないかどうか。 true か false
 mimic-ignoreblacklist     : ブラックリストのユーザーは真似ないかどうか。 true か false
+outfitlock                : コスチュームをロックするかどうか。 true か false
+backpacklock              : バックアクセサリーをロックするかどうか。 true か false
+pickaxelock               : 収集ツールをロックするかどうか。 true か false
+emotelock                 : エモートをロックするかどうか。 true か false
 acceptinvite              : ボットが招待を承諾するかどうか。 所有者からの招待は常に承諾 true か false
 acceptfriend              : ボットがフレンド申請を承諾するかどうか。 true か false か null
 addfriend                 : ボットがパーティーメンバーにフレンド申請を送るかどうか。 true か false
@@ -117,24 +121,25 @@ enabled                   : Discord Botを起動するかどうか true か fals
 token                     : Discord Botのトークン
 owner                     : 所有者のユーザーID
 channels                  : ボットのコマンドチャンネルとして使用するチャンネルのチャンネル名 後述
-status                    : Discord Botのステータス
-discord                   : ボットがDiscordからコマンドを受け付けるかどうか true か false
+status                    : Discord Botのステータス。 変数が使えます。 後述
+status_type               : Discord Botのステータスの種類。 後述
+discord                   : ボットがDiscordからコマンドを受け付けるかどうか。 true か false
 disablediscordperfectly   : Discordが無効の場合、所有者も使えなくするかどうか
 blacklist                 : ブラックリストに指定するユーザーのリスト ユーザーID
-blacklist-ignorecommand   : ブラックリストのユーザーからのコマンドを無視するかどうか true か false
+blacklist-ignorecommand   : ブラックリストのユーザーからのコマンドを無視するかどうか。 true か false
 whitelist                 : ホワイトリストに指定するユーザーのリスト ユーザーID
-whitelist-ignorelock      : ホワイトリストのユーザーがスキンロック等を無視できるかどうか true か false
-whitelist-ownercommand    : ホワイトリストのユーザーが所有者コマンドを使えるかどうか true か false
+whitelist-ignorelock      : ホワイトリストのユーザーがスキンロック等を無視できるかどうか。 true か false
+whitelist-ownercommand    : ホワイトリストのユーザーが所有者コマンドを使えるかどうか。 true か false
 whitelist-ignoreng        : ホワイトリストのユーザーがNGワードを無視できるかどうか。 true か false
 
 Web
-enabled                   : ウェブサーバーを起動するかどうか true か false
+enabled                   : ウェブサーバーを起動するかどうか。 true か false
 ip                        : ウェブサーバーのIPアドレス 後述
 port                      : ウェブサーバーのポート番号
 password                  : ウェブサーバーのパスワード
-login_required            : ウェブサーバーにアクアスするのにパスワードが必要かどうか true か false
-web                       : ウェブからのコマンドを受け付けるかどうか true か false
-log                       : ウェブサーバーのアクセスログを出すかどうか true か false
+login_required            : ウェブサーバーにアクアスするのにパスワードが必要かどうか。 true か false
+web                       : ウェブからのコマンドを受け付けるかどうか。 true か false
+log                       : ウェブサーバーのアクセスログを出すかどうか。 true か false
 
 replies-matchmethod       : repliesのマッチ方式。 後述
 ng-words                  : NGワードに指定する言葉
@@ -146,16 +151,18 @@ lang                      : ボットの言語
 search-lang               : アイテム検索に使う言語
 restart_in                : ボットが再起動するまでの時間
 search_max                : 検索の最大数
-no-logs                   : コンソールにログを出すかどうか true か false
-ingame-error              : プレイヤーにエラーを送信するかどうか true か false
-discord-log               : Discordにログを送信するかどうか true か false
-hide-email                : Discordのログでメールアドレスを隠すかどうか true か false
-hide-token                : Discordのログでトークンを隠すかどうか true か false
-hide-webhook              : Discordのログでwebhookのurlを隠すかどうか true か false
+no-logs                   : コンソールにログを出すかどうか。 true か false
+ingame-error              : プレイヤーにエラーを送信するかどうか。 true か false
+discord-log               : Discordにログを送信するかどうか。 true か false
+omit-over2000             : Discordのログで2000文字を超過した場合に2000文字以上を切り捨てるかどうか。 true か false
+skip-if-overflow          : Discordのログであまりにもログ送信が遅れた場合、溜まったログを削除するかどうか。 true か false
+hide-email                : Discordのログでメールアドレスを隠すかどうか。 true か false
+hide-token                : Discordのログでトークンを隠すかどうか。 true か false
+hide-webhook              : Discordのログでwebhookのurlを隠すかどうか。 true か false
 webhook                   : Discordのwebhookのurl
-caseinsensitive           : コマンドを大文字小文字、平仮名片仮名を区別しないかどうか true か false
+caseinsensitive           : コマンドを大文字小文字、平仮名片仮名を区別しないかどうか。 true か false
 loglevel                  : ログにどのくらいの情報を流すか normal か info か debug
-debug                     : Fortnitepyのデバッグモードをオンにするかどうか true か false
+debug                     : Fortnitepyのデバッグモードをオンにするかどうか。 true か false
 ```
 
 # コマンド一覧
@@ -351,6 +358,48 @@ friends_allow_friends_of_friends : フレンド(フレンドのフレンドを�
 friends                          : フレンド
 private_allow_friends_of_friends : プライベート(フレンドのフレンドを許可)
 private                          : プライベート
+```
+
+ステータス  
+使用可能な変数  
+```
+friend_count                     : ボットのフレンド数
+pending_count                    : ボットの保留中のフレンド申請数
+block_count                      : ボットのブロック数
+display_name                     : ボットのディスプレイネーム
+id                               : ボットのID
+party_id                         : ボットのパーティーのID
+party_size                       : ボットのパーティーの人数
+party_max_size                   : ボットのパーティーの最大人数
+all_friend_count                 : 全てのボットのフレンド数の合計
+all_pending_count                : 全てのボットの保留中のフレンド申請数の合計
+all_block_count                  : 全てのボットのブロック数の合計
+guild_count                      : Discord botの参加しているサーバーの数
+```
+例  
+```
+フレンド数: {friend_count}
+```
+
+使用可能な関数  
+```
+get_client_data(id)              : 指定したIDのボットの情報を取得する
+内容
+friend_count                     : ボットのフレンド数
+pending_count                    : ボットの保留中のフレンド申請数
+block_count                      : ボットのブロック数
+display_name                     : ボットのディスプレイネーム
+id                               : ボットのID
+party_id                         : ボットのパーティーのID
+party_size                       : ボットのパーティーの人数
+party_max_size                   : ボットのパーティーの最大人数
+
+get_guild_member_count(id)       : 指定したIDのDiscordサーバーのメンバー数を取得する
+```
+例  
+```
+ボット1のフレンド数: {get_client_data('Bot1ID')['friend_count']}
+サーバー1のメンバー数: {get_guild_member_count(Guild1ID)}
 ```
 
 チャンネル名  
