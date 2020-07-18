@@ -5749,7 +5749,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 "It's bannable :)",
                 "Stop it"
             ]
-            if (rawcontent.startswith("/") and type_ == "Emote") and getattr(client.owner,"id",None) != message.author.id:
+            if (False not in [True if i == "/" else False for i in rawcontent] and type_ == "Emote"):# and getattr(client.owner,"id",None) != message.author.id:
                 await reply(message, client, random.choice(messages))
                 return
             if not await client.change_asset(message.author.id, type_, rawcontent):
