@@ -621,6 +621,7 @@ if True: #Classes
         async def hide(self, member_id: Optional[str] = None) -> None:
             if not self.party.me.leader:
                 raise fortnitepy.Forbidden("You must be the party leader to perform this action.")
+            real_members = self.party.meta.squad_assignments
             if not member_id:
                 num = 0
                 squad_assignments = [{"memberId": self.user.id, "absoluteMemberIdx": num}]
@@ -649,10 +650,12 @@ if True: #Classes
                         squad_assignments.remove(squad)
             prop = self.party.meta.set_squad_assignments(squad_assignments)
             await self.party.patch(updated=prop)
+            self.party.meta.set_squad_assignments(real_members)
 
         async def show(self, member_id: Optional[str] = None) -> None:
             if not self.party.me.leader:
                 raise fortnitepy.Forbidden("You must be the party leader to perform this action.")
+            real_members = self.party.meta.squad_assignments
             if not member_id:
                 member_indexes = [member.position for member in client.party.members.values() if isinstance(member.position,int)]
                 available_indexes = [num for num in range(15) if num not in member_indexes]
@@ -688,6 +691,7 @@ if True: #Classes
             self.visual_members = squad_assignments
             prop = self.party.meta.set_squad_assignments(squad_assignments)
             await self.party.patch(updated=prop)
+            self.party.meta.set_squad_assignments(real_members)
 
         async def party_member_outfit_change(self, member: fortnitepy.PartyMember) -> None:
             display_name = name(self.user)
@@ -699,8 +703,8 @@ if True: #Classes
             elif isinstance(self.outfitmimic,str) and member.id == self.outfitmimic:
                 flag = True
             display_name_ = self.is_most()
-            if display_name_ and not member_asset(member,"outfit"):
-                send(display_name_,f"ID: {member_asset(member,'outfit')}")
+            if display_name_ and member_asset(member,"outfit"):
+                send(display_name_,f"CID: {member_asset(member,'outfit')}")
             if flag:
                 if not member_asset(member,"outfit"):
                     try:
@@ -725,8 +729,8 @@ if True: #Classes
             elif isinstance(self.backpackmimic,str) and member.id == self.backpackmimic:
                 flag = True
             display_name_ = self.is_most()
-            if display_name_ and not member_asset(member,"backpack"):
-                send(display_name_,f"ID: {member_asset(member,'backpack')}")
+            if display_name_ and member_asset(member,"backpack"):
+                send(display_name_,f"BID: {member_asset(member,'backpack')}")
             if flag:
                 if not member_asset(member,"backpack"):
                     try:
@@ -752,8 +756,8 @@ if True: #Classes
             elif isinstance(self.pickaxemimic,str) and member.id == self.pickaxemimic:
                 flag = True
             display_name_ = self.is_most()
-            if display_name_ and not member_asset(member,"pickaxe"):
-                send(display_name_,f"ID: {member_asset(member,'pickaxe')}")
+            if display_name_ and member_asset(member,"pickaxe"):
+                send(display_name_,f"Pickaxe_ID: {member_asset(member,'pickaxe')}")
             if flag:
                 if not member_asset(member,"pickaxe"):
                     try:
@@ -778,8 +782,8 @@ if True: #Classes
             elif isinstance(self.emotemimic,str) and member.id == self.emotemimic:
                 flag = True
             display_name_ = self.is_most()
-            if display_name_ and not member_asset(member,"emote"):
-                send(display_name_,f"ID: {member_asset(member,'emote')}")
+            if display_name_ and member_asset(member,"emote"):
+                send(display_name_,f"EID: {member_asset(member,'emote')}")
             if flag:
                 if not member_asset(member,"emote"):
                     try:
@@ -807,6 +811,11 @@ if True: #Classes
             send(display_name,f'{l("login")}: {display_name}',green,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
             self.isready = True
             self.booting = False
+            if not self.visual_members:
+                if self.party:
+                    self.visual_members = self.party.meta.squad_assignments
+                else:
+                    self.visual_members = [{"memberId": self.user.id, "absoluteMemberIdx": 0}]
             loadedclients.append(self)
             client_name[self.user.display_name] = self
             self.add_cache(self.user)
@@ -1093,8 +1102,10 @@ if True: #Classes
                             for squad in self.visual_members:
                                 if squad["memberId"] == member.id:
                                     self.visual_members.remove(squad)
+                    real_members = self.party.meta.squad_assignments
                     prop = self.party.meta.set_squad_assignments(self.visual_members)
                     await self.party.patch(updated=prop)
+                    self.party.meta.set_squad_assignments(real_members)
                 except Exception:
                     if data['loglevel'] == 'debug':
                         send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -1182,9 +1193,11 @@ if True: #Classes
 
             try:
                 if self.party.me.leader:
-                    await asyncio.sleep(1)
+                    await asyncio.sleep(0.5)
+                    real_members = self.party.meta.squad_assignments
                     prop = self.party.meta.set_squad_assignments(self.visual_members)
                     await self.party.patch(updated=prop)
+                    self.party.meta.set_squad_assignments(real_members)
             except Exception:
                 if data['loglevel'] == 'debug':
                     send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -1245,6 +1258,16 @@ if True: #Classes
             if not self.isready or not member:
                 return
             self.add_cache(member)
+            try:
+                if self.party.me.leader and member.id != self.user.id:
+                    await asyncio.sleep(0.5)
+                    real_members = self.party.meta.squad_assignments
+                    prop = self.party.meta.set_squad_assignments(self.visual_members)
+                    await self.party.patch(updated=prop)
+                    self.party.meta.set_squad_assignments(real_members)
+            except Exception:
+                if data['loglevel'] == 'debug':
+                    send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             display_name_ = self.is_most()
             if display_name_:
                 if data['loglevel'] == 'normal':
@@ -5310,8 +5333,12 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if not member:
                     await reply(message, client, l('user_not_in_party'))
                     return
+                assignments = client.visual_members
                 await member.swap_position()
                 await reply(message, client, l('swap_user', f'{name(user)}'))
+                await asyncio.sleep(0.5)
+                prop = client.party.meta.set_squad_assignments(assignments)
+                await client.party.patch(updated=prop)
             else:
                 client.select[message.author.id] = {
                     "exec": [
@@ -5321,8 +5348,12 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             if not member:
                 await reply(message, client, l('user_not_in_party'))
                 return
+            assignments = client.visual_members
             await member.swap_position()
             await reply(message, client, l('swap_user', f'{name(user)}}'))
+            await asyncio.sleep(0.5)
+            prop = client.party.meta.set_squad_assignments(assignments)
+            await client.party.patch(updated=prop)
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5716,9 +5747,9 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 "...NO",
                 "You...",
                 "It's bannable :)",
-                "Shut up"
+                "Stop it"
             ]
-            if rawcontent == "//" and type_ == "Emote":
+            if (rawcontent.startswith("/") and type_ == "Emote") and getattr(client.owner,"id",None) != message.author.id:
                 await reply(message, client, random.choice(messages))
                 return
             if not await client.change_asset(message.author.id, type_, rawcontent):
@@ -5809,7 +5840,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                                         await reply(message, client, l('set_to', value[1], name(user)))""" for user in users.values()
                                 ],
                                 "variable": [
-                                    {"user": user} for user in users.values()
+                                    {"user": user, "value": value} for user in users.values()
                                 ]
                             }
                             text = str()
