@@ -60,7 +60,7 @@ level                     : Nivel por defecto del bot
 tier                      : Tier por defecto del bot
 xpboost                   : Potenciador de PE por defecto del bot
 friendxpboost             : Potenciador de amigo por defecto del bot
-status                    : Estado del bot por defecto
+status                    : Estado del bot por defecto. Puedes utilizar variables. Revisa abajo
 privacy                   : Privacidad del grupo por defecto del bot. Revise abajo para más información
 whisper                   : Determina si el bot acepta comandos por susurro. true o false
 partychat                 : Dtermina si el bot acepta comandos por chat de sala. true o false
@@ -78,6 +78,10 @@ pickaxemimic              : Determina si el bot cambiará el pico a otro que cam
 emotemimic                : Determina si el bot imitará el emote de otro jugador. true o false o nombre de usuario o el ID
 mimic-ignorebot           : Determina si el bot no imitará otros bots. true o false
 mimic-ignoreblacklist     : Determina si el bot imitará miembros de la lista negra. true o false
+outfitlock                : Si se bloquea la skin actual. true o false
+backpacklock              : Si se bloquea la mochila actual. true o false
+pickaxelock               : Si se bloquea el pico. true o false
+emotelock                 : Si se bloquea el emote. true o false
 acceptinvite              : Determina si el bot acepta invitaciones de grupo. Invitaciones del owner serán aceptadas siempre. true o false
 acceptfriend              : Determina si el bot aceptará peticiones de amistad. true, false o null
 addfriend                 : Determina si el bot enviará petición de amistad a todos los miembros de la sala. true o false
@@ -110,7 +114,7 @@ enabled                   : Determina si se inicia el bot de Discord. true o fal
 token                     : Token para el bot de Discord
 owner                     : ID del owner en Discord
 channelname               : Nombre del canal para aceptar comandos. Revise abajo para más información
-status                    : Estado del bot de Discord
+status                    : Estado del bot de Discord. Puedes usar variables. Revisa abajo
 discord                   : Determina si el bot aceptará comandos en Discord. true o false
 disablediscordperfectly   : Configuración por si discord está desactivado, si rechazará comandos de owner también. true o false
 blacklist                 : Miembros de la Lista negra. ID de usuario
@@ -139,6 +143,8 @@ lang                      : Lenguaje del bot
 no-logs                   : Determina si se escribirán logs en la consola. true o false
 ingame-error              : Determina si el usuario puede recibir los errores. true o false
 discord-log               : Determina si se van a enviar los logs a discord. true o false
+omit-over2000             : Determina si se omitirán textos de más de 2000 carácteres en los logs de discord. true o false
+skip-if-overflow          : Omitir logs de discord si se desbordan. true o false
 restart_in                : Tiempo hasta reiniciar
 search_max                : Cantidad máxima de búsqueda
 hide-email                : Determina si se oculta el email en logs de Discord. true o false
@@ -341,6 +347,48 @@ friends_allow_friends_of_friends : Amigos(Permite amigos de amigos)
 friends                          : Amigos
 private_allow_friends_of_friends : Privado(Permite amigos de amigos)
 private                          : Privado
+```
+
+# Status  
+Variables utilizables
+```
+friend_count                     : Número de amigos del bot
+pending_count                    : Número de amigos pendientes del bot
+block_count                      : Número de usuarios bloqueados del bot
+display_name                     : Nombre de usuario del bot
+id                               : ID del bot
+party_id                         : ID de la sala del bot
+party_size                       : Número de miembros de la sala del bot
+party_max_size                   : Número de miembros máximos de la sala del bot
+all_friend_count                 : Número de amigos totales de todos los bots
+all_pending_count                : Número de solicitudes pendientes de todos los bots
+all_block_count                  : Número de usuarios bloqueados de todos los bots
+guild_count                      : Número de servidores
+```
+Ejemplo 
+```
+Número de amigos: {friend_count}
+```
+
+Variables utilizables
+```
+get_client_data(id)              : Consigue información del bot con el ID seleccionado
+Contenido
+friend_count                     : Número de amigos del bot
+pending_count                    : Número de amigos pendientes del bot
+block_count                      : Número de bloqueados del bot
+display_name                     : Nombre de usuario del bot
+id                               : ID del bot
+party_id                         : ID de la sala del bot
+party_size                       : Número de miembros de la sala del bot
+party_max_size                   : Número de miembros máximos de la sala del bot
+
+get_guild_member_count(id)       : Consigue el número de miembros por id de servidor
+```
+Ejemplo
+```
+Número de amigos del bot 1: {get_client_data('Bot1ID')['friend_count']}
+Miembros del servidor 1: {get_guild_member_count(Guild1ID)}
 ```
 
 Nombre del canal
