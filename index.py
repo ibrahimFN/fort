@@ -285,6 +285,13 @@ if True: #Classes
 
             super().__init__(**kwargs)
 
+        def get_cache_user(self, user: str) -> Optional[fortnitepy.User]:
+            if self.is_id(user):
+                users = {i.id: i for i in cache_users.values()}
+            else:
+                users = cache_users
+            return users.get(user)
+
         def add_cache(self, user: fortnitepy.user.UserBase) -> None:
             try:
                 if isinstance(user, fortnitepy.user.UserBase) and user.id:
@@ -639,7 +646,6 @@ if True: #Classes
                         if self.party.members.get(botuser):
                             squad_assignments.append({"memberId": botuser, "absoluteMemberIdx": num})
                             num += 1
-                self.visual_members = squad_assignments
             else:
                 member = self.party.members.get(member_id)
                 if not member:
@@ -648,6 +654,7 @@ if True: #Classes
                 for squad in squad_assignments:
                     if squad["memberId"] == member.id:
                         squad_assignments.remove(squad)
+            self.visual_members = squad_assignments
             prop = self.party.meta.set_squad_assignments(squad_assignments)
             await self.party.patch(updated=prop)
             self.party.meta.set_squad_assignments(real_members)
@@ -809,6 +816,10 @@ if True: #Classes
             loop = asyncio.get_event_loop()
             display_name = name(self.user)
             send(display_name,f'{l("login")}: {display_name}',green,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
+            flag = False
+            if first_boot:
+                first_boot = False
+                flag = True
             self.isready = True
             self.booting = False
             if not self.visual_members:
@@ -831,23 +842,24 @@ if True: #Classes
                 if data['loglevel'] == 'debug':
                     send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
-            owner = None
-            try:
-                owner = await self.fetch_profile(data['fortnite']['owner'])
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
+            owner = self.get_user(data['fortnite']['owner']) or self.get_cache_user(data['fortnite']['owner'])
+            if not owner:
+                try:
+                    owner = await self.fetch_profile(data['fortnite']['owner'])
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                    send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                except Exception:
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
-            except Exception:
-                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             if not owner:
                 send(display_name,l("owner_notfound"),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
             else:
                 self.add_cache(owner)
                 friend = self.get_friend(owner.id)
                 if not friend:
-                    if data['fortnite']['addfriend']:
-                        send(display_name,l("not_friend_with_owner",commands["reload"]),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                    send(display_name,l("not_friend_with_owner",commands["reload"]),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                    if data['fortnite']['addfriend'] and not self.is_pending(owner.id):
                         try:
                             await self.add_friend(owner.id)
                         except fortnitepy.HTTPException:
@@ -863,28 +875,30 @@ if True: #Classes
                 await self.owner.send(l("click_invite"))
 
             async def _(listuser: str) -> None:
-                try:
-                    user = await self.fetch_profile(listuser)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                    send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                user = self.get_user(listuser) or self.get_cache_user(listuser)
+                if not user:
+                    try:
+                        user = await self.fetch_profile(listuser)
+                    except fortnitepy.HTTPException:
+                        if data['loglevel'] == 'debug':
+                            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                        send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
                 if not user:
                     send(display_name,l("invitelist_user_notfound",listuser),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
                 else:
+                    self.add_cache(user)
                     friend = self.get_friend(user.id)
-                    if friend is None and user.id != self.user.id:
-                        if data['fortnite']['addfriend']:
+                    if not friend:
+                        send(display_name,l("not_friend_with_inviteuser",listuser,commands["reload"]),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                        if data['fortnite']['addfriend'] and not self.is_pending(user.id) and user.id != self.user.id:
                             try:
-                                await self.add_friend(friend.id)
+                                await self.add_friend(user.id)
                             except fortnitepy.HTTPException:
                                 if data['loglevel'] == 'debug':
                                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                                 send(display_name,l("error_while_sending_friendrequest"),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
-                        send(display_name,l("not_friend_with_inviteuser",listuser,commands["reload"]),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
                     else:
-                        self.add_cache(user)
-                        self.invitelist.append(user.id)
+                        self.invitelist.append(friend.id)
             try:
                 await asyncio.gather(*[_(listuser) for listuser in data['fortnite']['invitelist']])
             except Exception:
@@ -892,27 +906,53 @@ if True: #Classes
             if data['loglevel'] == "debug":
                 send(display_name,f'invitelist {self.invitelist}',yellow,add_d=lambda x:f'```\n{x}\n```')
 
-            if first_boot:
-                first_boot = False
+            if data['fortnite']['acceptfriend']:
+                pendings = [i for i in self.pending_friends.values() if i.incoming]
+                async def _(pending: fortnitepy.IncomingPendingFriend) -> None:
+                    if self.acceptfriend is True:
+                        try:
+                            await pending.accept()
+                        except fortnitepy.HTTPException:
+                            if data['loglevel'] == 'debug':
+                                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                            try:
+                                await pending.decline()
+                            except fortnitepy.HTTPException:
+                                if data['loglevel'] == 'debug':
+                                    send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                    elif self.acceptfriend is False:
+                        try:
+                            await pending.decline()
+                        except fortnitepy.HTTPException:
+                            if data['loglevel'] == 'debug':
+                                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                try:
+                    await asyncio.gather(*[_(pending) for pending in pendings])
+                except Exception:
+                    data["discord"]["enabled"] = False
+                    send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
+            if flag:
                 lists = {
                     "blacklist": "blacklist",
                     "whitelist": "whitelist",
                     "otherbotlist": "botlist"
                 }
                 async def _(listuser: str) -> None:
-                    try:
-                        user = await self.fetch_profile(listuser)
-                    except fortnitepy.HTTPException:
-                        if data['loglevel'] == 'debug':
+                    user = self.get_user(listuser) or self.get_cache_user(listuser)
+                    if not user:
+                        try:
+                            user = await self.fetch_profile(listuser)
+                        except fortnitepy.HTTPException:
+                            if data['loglevel'] == 'debug':
+                                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                            send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                        except Exception:
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                        send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
-                    except Exception:
-                        send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                    self.add_cache(user)
                     if not user:
                         send(display_name,l(f"{data_}_user_notfound",listuser),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
                     else:
+                        self.add_cache(user)
                         if data_ == "blacklist" and data["fortnite"]["blacklist-autoblock"]:
                             try:
                                 await user.block()
@@ -936,45 +976,27 @@ if True: #Classes
                 ]
                 async def _(mimic: str) -> None:
                     if isinstance(data['fortnite'][mimic],str):
-                        try:
-                            user = await self.fetch_profile(data['fortnite'][mimic])
-                        except fortnitepy.HTTPException:
-                            if data['loglevel'] == 'debug':
+                        user = self.get_user(mimic) or self.get_cache_user(mimic)
+                        if not user:
+                            try:
+                                user = await self.fetch_profile(data['fortnite'][mimic])
+                            except fortnitepy.HTTPException:
+                                if data['loglevel'] == 'debug':
+                                    send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                                send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                            except Exception:
                                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                            send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
-                        except Exception:
-                            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                         if not user:
                             send(display_name,l(f"{mimic}_user_notfound",data['fortnite'][mimic]),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
                         else:
+                            self.add_cache(user)
                             setattr(self,mimic,user.id)
                             if data['loglevel'] == "debug":
                                 send(display_name,f"{mimic} {getattr(self,mimic)}",yellow,add_d=lambda x:f'```\n{x}\n```')
                 try:
                     await asyncio.gather(*[_(mimic) for mimic in lists])
                 except Exception:
-                    send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}') 
-
-                if data['fortnite']['acceptfriend']:
-                    pendings = [i for i in self.pending_friends.values() if i.incoming]
-                    for pending in pendings:
-                        if self.acceptfriend is True:
-                            try:
-                                await pending.accept()
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                                try:
-                                    await pending.decline()
-                                except fortnitepy.HTTPException:
-                                    if data['loglevel'] == 'debug':
-                                        send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                        elif self.acceptfriend is False:
-                            try:
-                                await pending.decline()
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                    send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 
                 if data['discord']['enabled']:
                     try:
@@ -1087,28 +1109,31 @@ if True: #Classes
             loop.create_task(self.change_status())
             
             if self.party.me.leader:
-                try:
-                    await asyncio.sleep(0.5)
-                    if data['fortnite']['hide-user']:
-                        if (not (getattr(self.owner,"id",None) == member.id and data['fortnite']['show-owner'])
-                            and not (member.id in whitelist and data['fortnite']['show-whitelist'])
-                            and not (member.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['show-bot'])
-                            and member.id != self.user.id):
-                            for squad in self.visual_members:
-                                if squad["memberId"] == member.id:
-                                    self.visual_members.remove(squad)
-                    elif data['fortnite']['hide-blacklist']:
-                        if member.id in blacklist:
-                            for squad in self.visual_members:
-                                if squad["memberId"] == member.id:
-                                    self.visual_members.remove(squad)
-                    real_members = self.party.meta.squad_assignments
-                    prop = self.party.meta.set_squad_assignments(self.visual_members)
-                    await self.party.patch(updated=prop)
-                    self.party.meta.set_squad_assignments(real_members)
-                except Exception:
-                    if data['loglevel'] == 'debug':
-                        send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                async def _() -> None:
+                    try:
+                        await asyncio.sleep(0.5)
+                        if data['fortnite']['hide-user']:
+                            if (not (getattr(self.owner,"id",None) == member.id and data['fortnite']['show-owner'])
+                                and not (member.id in whitelist and data['fortnite']['show-whitelist'])
+                                and not (member.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['show-bot'])
+                                and member.id != self.user.id):
+                                for squad in self.visual_members:
+                                    if squad["memberId"] == member.id:
+                                        self.visual_members.remove(squad)
+                        elif data['fortnite']['hide-blacklist']:
+                            if member.id in blacklist:
+                                for squad in self.visual_members:
+                                    if squad["memberId"] == member.id:
+                                        self.visual_members.remove(squad)
+                        real_members = self.party.meta.squad_assignments
+                        prop = self.party.meta.set_squad_assignments(self.visual_members)
+                        await self.party.patch(updated=prop)
+                        await asyncio.sleep(2)
+                        self.party.meta.set_squad_assignments(real_members)
+                    except Exception:
+                        if data['loglevel'] == 'debug':
+                            send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                loop.create_task(_())
             if display_name_:
                 if data['loglevel'] == 'normal':
                     send(display_name_,l('party_member_joined',name(member),member.party.member_count),magenta,add_p=lambda x:f'[{now()}] [{l("party")}] [{display_name_}] {x}')
@@ -1131,7 +1156,7 @@ if True: #Classes
             if data['fortnite']['addfriend']:
                 for member in member.party.members.copy().keys():
                     try:
-                        if not self.has_friend(member) and member != self.user.id:
+                        if not self.has_friend(member) and not self.is_pending(member) and not self.is_blocked(member) and member != self.user.id:
                             await self.add_friend(member)
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
@@ -1191,16 +1216,19 @@ if True: #Classes
             loop = asyncio.get_event_loop()
             loop.create_task(self.change_status())
 
-            try:
-                if self.party.me.leader:
-                    await asyncio.sleep(0.5)
-                    real_members = self.party.meta.squad_assignments
-                    prop = self.party.meta.set_squad_assignments(self.visual_members)
-                    await self.party.patch(updated=prop)
-                    self.party.meta.set_squad_assignments(real_members)
-            except Exception:
-                if data['loglevel'] == 'debug':
-                    send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+            if self.party.me.leader:
+                async def _() -> None:
+                    try:
+                        await asyncio.sleep(0.5)
+                        real_members = self.party.meta.squad_assignments
+                        prop = self.party.meta.set_squad_assignments(self.visual_members)
+                        await self.party.patch(updated=prop)
+                        await asyncio.sleep(2)
+                        self.party.meta.set_squad_assignments(real_members)
+                    except Exception:
+                        if data['loglevel'] == 'debug':
+                            send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                loop.create_task(_())
             if display_name_:
                 if data['loglevel'] == 'normal':
                     send(display_name_,l("party_member_left",name(member),member.party.member_count),magenta,lambda x:f'[{now()}] [{l("party")}] [{display_name_}] {x}')
@@ -1209,7 +1237,7 @@ if True: #Classes
 
             if data['fortnite']['addfriend']:
                 for member in member.party.members.copy().keys():
-                    if not self.has_friend(member) and member != self.user.id:
+                    if not self.has_friend(member) and not self.is_pending(member) and not self.is_blocked(member) and member != self.user.id:
                         try:
                             await self.add_friend(member)
                         except fortnitepy.HTTPException:
@@ -1258,16 +1286,19 @@ if True: #Classes
             if not self.isready or not member:
                 return
             self.add_cache(member)
-            try:
-                if self.party.me.leader and member.id != self.user.id:
-                    await asyncio.sleep(0.5)
-                    real_members = self.party.meta.squad_assignments
-                    prop = self.party.meta.set_squad_assignments(self.visual_members)
-                    await self.party.patch(updated=prop)
-                    self.party.meta.set_squad_assignments(real_members)
-            except Exception:
-                if data['loglevel'] == 'debug':
-                    send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+            if self.party.me.leader and member.id != self.user.id:
+                async def _() -> None:
+                    try:
+                        await asyncio.sleep(0.5)
+                        real_members = self.party.meta.squad_assignments
+                        prop = self.party.meta.set_squad_assignments(self.visual_members)
+                        await self.party.patch(updated=prop)
+                        await asyncio.sleep(2)
+                        self.party.meta.set_squad_assignments(real_members)
+                    except Exception:
+                        if data['loglevel'] == 'debug':
+                            send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                loop.create_task(_())
             display_name_ = self.is_most()
             if display_name_:
                 if data['loglevel'] == 'normal':
@@ -1931,7 +1962,7 @@ if True: #Functions
                 exec(f"commands{text} = {func}(commands{text2})")
             else:
                 exec(f"commands{text} = commands{text2}")
-        set_default_("ownercommands","")
+        set_default_("usercommands","")
 
         if error_commands:
             send(l('bot'),f'{l("load_failed_keyerror", "commands.json")}\n{l("is_missing", ", ".join(error_commands))}',red,add_d=lambda x:f'>>> {x}')
@@ -1939,15 +1970,13 @@ if True: #Functions
             commands = {k.lower(): jaconv.kata2hira(v.lower()) for k,v in commands.items()}
 
         flag = True
-        for command in commands['ownercommands'].split(','):
-            if not commands.get(command):
-                if flag:
-                    error_commands.append("['ownercommands']")
-                    flag = False
-                send(l('bot'),l('failed_ownercommand'),red,add_d=lambda x:f'>>> {x}')
-                send(l('bot'),l('is_missing',command),red,add_d=lambda x:f'>>> {x}')
-        if not flag:
-            send(l('bot'),l('failed_ownercommand'),red,add_d=lambda x:f'>>> {x}')
+        commands['ownercommands'] = []
+        for command in (list(commands_tags.keys()) + ["cid_","bid_","petcarrier_","pickaxe_id_","eid_","emoji_","toy_","item-search"]):
+            command = command.replace("['","",1).replace("']","",1)
+            if command in ["usercommands","true","false","me","privacy_public","privacy_friends_allow_friends_of_friends","privacy_friends","privacy_private_allow_friends_of_friends","privacy_private","info_party"]:
+                continue
+            if command not in [i.lower() for i in commands['usercommands'].split(',')]:
+                commands['ownercommands'].append(command)
 
         try:
             replies = load_json("replies.json")
@@ -2660,11 +2689,17 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
         return
     display_name = name(client.user)
 
+    do_itemsearch = True
     if check_ownercommand:
-        for command in commands['ownercommands'].split(','):
-            if args[0] in commands[command].split(","):
+        for command in commands['ownercommands']:
+            if command in ("cid_", "bid_", "petcarrier_", "pickaxe_id_", "eid_", "emoji_", "toy_"):
+                if args[0].startswith(command):
+                    await reply(message, client, l("this_command_owneronly"))
+                    return
+            elif command == "item-search":
+                do_itemsearch = False
+            elif args[0] in commands[command].split(","):
                 await reply(message, client, l("this_command_owneronly"))
-                print("this is owner only command")
                 return
 
     reply_flag = False
@@ -2957,23 +2992,25 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(name(client.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
-            owner = None
-            try:
-                owner = await client.fetch_profile(data['fortnite']['owner'])
-            except fortnitepy.HTTPException:
-                if data['loglevel'] == 'debug':
+            owner = client.get_user(data['fortnite']['owner']) or client.get_cache_user(data['fortnite']['owner'])
+            if not owner:
+                try:
+                    owner = await client.fetch_profile(data['fortnite']['owner'])
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
+                        send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                    send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                except Exception:
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
-            except Exception:
-                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             if not owner:
                 send(display_name,l("owner_notfound"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
             else:
                 client.add_cache(owner)
-                owner = client.get_friend(owner.id)
-                if not owner:
-                    if data['fortnite']['addfriend']:
-                        send(display_name,l("not_friend_with_owner",commands["reload"]),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                friend = client.get_friend(owner.id)
+                if not friend:
+                    client.owner = None
+                    send(display_name,l("not_friend_with_owner",commands["reload"]),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                    if data['fortnite']['addfriend'] and not client.is_pending(owner.id):
                         try:
                             await client.add_friend(owner.id)
                         except fortnitepy.HTTPException:
@@ -2983,98 +3020,112 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                         except Exception:
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 else:
-                    client.owner = owner
+                    client.owner = friend
                     send(display_name,f'{l("owner")}: {name(client.owner)}',green,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
             if client.owner:
                 await client.owner.send(l("click_invite"))
 
-            for blacklistuser in data['fortnite']['blacklist']:
-                try:
-                    user = await client.fetch_profile(blacklistuser)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                    send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
-                except Exception:
-                    send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                client.add_cache(user)
+            lists = {
+                "blacklist": "blacklist",
+                "whitelist": "whitelist",
+                "otherbotlist": "botlist"
+            }
+            async def _(listuser: str) -> None:
+                user = client.get_user(listuser) or client.get_cache_user(listuser)
                 if not user:
-                    send(display_name,l("blacklist_user_notfound",blacklistuser),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                    try:
+                        user = await client.fetch_profile(listuser)
+                    except fortnitepy.HTTPException:
+                        if data['loglevel'] == 'debug':
+                            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                        send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                    except Exception:
+                        send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                if not user:
+                    send(display_name,l(f"{data_}_user_notfound",listuser),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
                 else:
-                    blacklist.append(user.id)
-                    if data['fortnite']['blacklist-autoblock']:
+                    client.add_cache(user)
+                    if data_ == "blacklist" and data["fortnite"]["blacklist-autoblock"]:
                         try:
                             await user.block()
                         except Exception:
+                            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                    globals()[list_].append(user.id)
+
+            for list_,data_ in lists.items():
+                try:
+                    await asyncio.gather(*[_(listuser) for listuser in data['fortnite'][list_]])
+                except Exception:
+                    send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                if data['loglevel'] == "debug":
+                    send(display_name,f"fortnite {data_}list {globals()[list_]}",yellow,add_d=lambda x:f'```\n{x}\n```')
+
+            lists = [
+                "outfitmimic",
+                "backpackmimic",
+                "pickaxemimic",
+                "emotemimic"
+            ]
+            async def _(mimic: str) -> None:
+                if isinstance(data['fortnite'][mimic],str):
+                    user = client.get_user(mimic) or client.get_cache_user(mimic)
+                    if not user:
+                        try:
+                            user = await client.fetch_profile(data['fortnite'][mimic])
+                        except fortnitepy.HTTPException:
                             if data['loglevel'] == 'debug':
                                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-            if data['loglevel'] == "debug":
-                send(display_name,f'blacklist: {blacklist}',yellow,add_d=lambda x:f'```\n{x}\n```')
+                            send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                        except Exception:
+                            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                    if not user:
+                        send(display_name,l(f"{mimic}_user_notfound",data['fortnite'][mimic]),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                    else:
+                        client.add_cache(user)
+                        setattr(client,mimic,user.id)
+                        if data['loglevel'] == "debug":
+                            send(display_name,f"{mimic} {getattr(client,mimic)}",yellow,add_d=lambda x:f'```\n{x}\n```')
+            try:
+                await asyncio.gather(*[_(mimic) for mimic in lists])
+            except Exception:
+                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
-            for whitelistuser in data['fortnite']['whitelist']:
-                try:
-                    user = await client.fetch_profile(whitelistuser)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                    send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
-                client.add_cache(user)
+            async def _(listuser: str) -> None:
+                user = self.get_user(listuser) or self.get_cache_user(listuser)
                 if not user:
-                    send(display_name,l("whitelist_user_notfound",whitelistuser),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
-                else:
-                    whitelist.append(user.id)
-            if data['loglevel'] == "debug":
-                send(display_name,f'whitelist {whitelist}',yellow,add_d=lambda x:f'```\n{x}\n```')
-
-            for otherbotlistuser in data['fortnite']['otherbotlist']:
-                try:
-                    user = await client.fetch_profile(otherbotlistuser)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                    send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
-                client.add_cache(user)
+                    try:
+                        user = await self.fetch_profile(listuser)
+                    except fortnitepy.HTTPException:
+                        if data['loglevel'] == 'debug':
+                            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                        send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
                 if not user:
-                    send(display_name,l("botlist_user_notfound",otherbotlistuser),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                    send(display_name,l("invitelist_user_notfound",listuser),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
                 else:
-                    otherbotlist.append(user.id)
-            if data['loglevel'] == "debug":
-                send(display_name,f'botlist {otherbotlist}',yellow,add_d=lambda x:f'```\n{x}\n```')
-
-            for invitelistuser in data['fortnite']['invitelist']:
-                try:
-                    user = await client.fetch_profile(invitelistuser)
-                except fortnitepy.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                    send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
-                if not user:
-                    send(display_name,l("invitelist_user_notfound",invitelistuser),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
-                else:
-                    friend = client.get_friend(user.id)
-                    if not friend and user.id != client.user.id:
-                        if data['fortnite']['addfriend']:
+                    self.add_cache(user)
+                    friend = self.get_friend(user.id)
+                    if not friend:
+                        send(display_name,l("not_friend_with_inviteuser",listuser,commands["reload"]),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                        if data['fortnite']['addfriend'] and not self.is_pending(user.id) and user.id != self.user.id:
                             try:
-                                await client.add_friend(friend.id)
+                                await self.add_friend(user.id)
                             except fortnitepy.HTTPException:
                                 if data['loglevel'] == 'debug':
                                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                                send(display_name,l("error_while_sending_friendrequest"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
-                        send(display_name,l("not_friend_with_inviteuser",invitelistuser,commands["reload"]),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                                send(display_name,l("error_while_sending_friendrequest"),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
                     else:
-                        client.add_cache(user)
-                        client.invitelist.append(user.id)
+                        self.invitelist.append(friend.id)
+            try:
+                await asyncio.gather(*[_(listuser) for listuser in data['fortnite']['invitelist']])
+            except Exception:
+                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             if data['loglevel'] == "debug":
-                send(display_name,f'invitelist {client.invitelist}',yellow,add_d=lambda x:f'```\n{x}\n```')
+                send(display_name,f'invitelist {self.invitelist}',yellow,add_d=lambda x:f'```\n{x}\n```')
 
             if data['fortnite']['acceptfriend']:
-                pendings = []
-                for pending in client.pending_friends.copy().values():
-                    client.add_cache(pending)
-                    if pending.incoming:
-                        pendings.append(pending)
-                for pending in pendings:
-                    if client.acceptfriend is True:
+                pendings = [i for i in self.pending_friends.values() if i.incoming]
+                async def _(pending: fortnitepy.IncomingPendingFriend) -> None:
+                    if self.acceptfriend is True:
                         try:
                             await pending.accept()
                         except fortnitepy.HTTPException:
@@ -3085,69 +3136,60 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                             except fortnitepy.HTTPException:
                                 if data['loglevel'] == 'debug':
                                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                    else:
+                    elif self.acceptfriend is False:
                         try:
                             await pending.decline()
                         except fortnitepy.HTTPException:
                             if data['loglevel'] == 'debug':
                                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                try:
+                    await asyncio.gather(*[_(pending) for pending in pendings])
+                except Exception:
+                    data["discord"]["enabled"] = False
+                    send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
-                if data['discord']['enabled']:
-                    dclient_user = name(dclient.user)
-                    activity = discord.Game(name=data['discord']['status'])
-                    await dclient.change_presence(activity=activity)
+            if data['discord']['enabled'] and dclient.isready:
+                dclient_user = name(dclient.user)
 
-                    for blacklistuser in data['discord']['blacklist']:
-                        blacklistuser = int(blacklistuser)
-                        user = dclient.get_user(blacklistuser)
-                        if not user:
-                            try:
-                                user = await dclient.fetch_user(blacklistuser)
-                            except discord.NotFound:
-                                if data['loglevel'] == "debug":
-                                    send(dclient_user,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                                user = None
-                        if not user:
-                            send(dclient_user,l('discord_blacklist_user_notfound', blacklistuser),red,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}',add_d=lambda x:f'>>> {x}')
-                        else:
-                            blacklist_.append(user.id)
-                    if data['loglevel'] == "debug":
-                        send(dclient_user,blacklist_,yellow,add_d=lambda x:f'```\n{x}\n```')
-
-                    for whitelistuser in data['discord']['whitelist']:
-                        whitelistuser = int(whitelistuser)
-                        user = dclient.get_user(whitelistuser)
-                        if not user:
-                            try:
-                                user = await dclient.fetch_user(whitelistuser)
-                            except discord.NotFound:
-                                if data['loglevel'] == "debug":
-                                    send(dclient_user,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                                user = None
-                        if not user:
-                            send(dclient_user,l('discord_whitelist_user_notfound', whitelistuser),red,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}',add_d=lambda x:f'>>> {x}')
-                        else:
-                            whitelist_.append(user.id)
-                    if data['loglevel'] == "debug":
-                        send(dclient_user,whitelist_,yellow,add_d=lambda x:f'```\n{x}\n```')
-
+                owner = dclient.get_user(int(data['discord']['owner']))
+                if not owner:
+                    try:
+                        owner = await dclient.fetch_user(int(data['discord']['owner']))
+                    except discord.NotFound:
+                        if data['loglevel'] == "debug":
+                            send(dclient_user,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                    except discord.HTTPException:
+                        if data['loglevel'] == 'debug':
+                            send(dclient_user,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                        send(dclient_user,l('error_while_requesting_userinfo'),red,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}',add_d=lambda x:f'>>> {x}')
+                if not owner:
                     dclient.owner = None
-                    owner = dclient.get_user(int(data['discord']['owner']))
-                    if not owner:
+                    send(dclient_user,l('discord_owner_notfound'),red,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}',add_d=lambda x:f'>>> {x}')
+                else:
+                    dclient.owner = owner
+                    send(dclient_user,f"{l('owner')}: {name(dclient.owner)}",green,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}')
+
+                lists = {
+                    "blacklist_": "blacklist",
+                    "whitelist_": "whitelist"
+                }
+                async def _(listuser: str) -> None:
+                    listuser = int(listuser)
+                    user = dclient.get_user(listuser)
+                    if not user:
                         try:
-                            owner = await dclient.fetch_user(int(data['discord']['owner']))
+                            user = await dclient.fetch_user(listuser)
                         except discord.NotFound:
                             if data['loglevel'] == "debug":
                                 send(dclient_user,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                        except discord.HTTPException:
-                            if data['loglevel'] == 'debug':
-                                send(dclient_user,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                            send(dclient_user,l('error_while_requesting_userinfo'),red,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}',add_d=lambda x:f'>>> {x}')
-                    if not owner:
-                        send(dclient_user,l('discord_owner_notfound'),red,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}',add_d=lambda x:f'>>> {x}')
-                    else:
-                        dclient.owner = owner
-                        send(dclient_user,f"{l('owner')}: {name(dclient.owner)}",green,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}')
+                            send(dclient_user,l(f'discord_{data_}_user_notfound', listuser),red,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}',add_d=lambda x:f'>>> {x}')
+                            return
+                    globals()[list_].append(user.id)
+
+                for list_,data_ in lists.items():
+                    await asyncio.gather(*[_(listuser) for listuser in data['discord'][data_]])
+                    if data['loglevel'] == "debug":
+                        send(dclient_user,f"discord {data_}list {globals()[list_]}",yellow,add_d=lambda x:f'```\n{x}\n```')
         except Exception:
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
@@ -5333,12 +5375,16 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if not member:
                     await reply(message, client, l('user_not_in_party'))
                     return
+                real_members = client.party.meta.squad_assignments
                 assignments = client.visual_members
                 await member.swap_position()
                 await reply(message, client, l('swap_user', f'{name(user)}'))
-                await asyncio.sleep(0.5)
-                prop = client.party.meta.set_squad_assignments(assignments)
-                await client.party.patch(updated=prop)
+                if client.party.me.leader:
+                    await asyncio.sleep(0.5)
+                    prop = client.party.meta.set_squad_assignments(assignments)
+                    await client.party.patch(updated=prop)
+                    await asyncio.sleep(2)
+                    client.party.meta.set_squad_assignments(real_members)
             else:
                 client.select[message.author.id] = {
                     "exec": [
@@ -5348,12 +5394,15 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             if not member:
                 await reply(message, client, l('user_not_in_party'))
                 return
+            real_members = client.party.meta.squad_assignments
             assignments = client.visual_members
             await member.swap_position()
             await reply(message, client, l('swap_user', f'{name(user)}}'))
-            await asyncio.sleep(0.5)
-            prop = client.party.meta.set_squad_assignments(assignments)
-            await client.party.patch(updated=prop)
+            if client.party.me.leader:
+                await asyncio.sleep(0.5)
+                prop = client.party.meta.set_squad_assignments(assignments)
+                await client.party.patch(updated=prop)
+                client.party.meta.set_squad_assignments(real_members)
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5749,7 +5798,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 "It's bannable :)",
                 "Stop it"
             ]
-            if (False not in [True if i == "/" else False for i in rawcontent] and type_ == "Emote"):# and getattr(client.owner,"id",None) != message.author.id:
+            if (False not in [True if i == "/" else False for i in rawcontent] and type_ == "Emote") and getattr(client.owner,"id",None) != message.author.id:
                 await reply(message, client, random.choice(messages))
                 return
             if not await client.change_asset(message.author.id, type_, rawcontent):
@@ -5916,45 +5965,46 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l('error'))
         else:
-            result = await loop.run_in_executor(None, search_item, data["search-lang"], "name", content, "Item")
-            if not result and data["search-lang"] != "en":
-                result = await loop.run_in_executor(None, search_item, "en", "name", content, "Item")
-            if result:
-                if len(result) > search_max:
-                    await reply(message, client, l('too_many_items', str(len(result))))
-                    return
-                if len(result) == 1:
-                    if await client.change_asset(message.author.id, convert_backend_type(result[0]["backendType"]), result[0]['id']) is True:
-                        if data['loglevel'] == 'normal':
-                            await reply(message, client, f"{result[0]['shortDescription']}: {result[0]['name']}")
+            if do_itemsearch:
+                result = await loop.run_in_executor(None, search_item, data["search-lang"], "name", content, "Item")
+                if not result and data["search-lang"] != "en":
+                    result = await loop.run_in_executor(None, search_item, "en", "name", content, "Item")
+                if result:
+                    if len(result) > search_max:
+                        await reply(message, client, l('too_many_items', str(len(result))))
+                        return
+                    if len(result) == 1:
+                        if await client.change_asset(message.author.id, convert_backend_type(result[0]["backendType"]), result[0]['id']) is True:
+                            if data['loglevel'] == 'normal':
+                                await reply(message, client, f"{result[0]['shortDescription']}: {result[0]['name']}")
+                            else:
+                                await reply(message, client, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}")
                         else:
-                            await reply(message, client, f"{result[0]['shortDescription']}: {result[0]['name']} | {result[0]['id']}")
+                            await reply(message, client, l('locked'))
                     else:
-                        await reply(message, client, l('locked'))
-                else:
-                    text = str()
-                    for count, item in enumerate(result):
-                        if data['loglevel'] == 'normal':
-                            text += f"\n{count+1} {item['shortDescription']}: {item['name']}"
-                        else:
-                            text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
-                    text += f"\n{l('enter_to_change_asset')}"
-                    await reply(message, client, text)
-                    client.select[message.author.id] = {
-                        "exec": [
-                            """\
-                                if await client.change_asset(message.author.id, convert_backend_type(item["backendType"]), item['id']) is True:
-                                    if data['loglevel'] == 'normal':
-                                        await reply(message, client, f"{item['shortDescription']}: {item['name']}")
+                        text = str()
+                        for count, item in enumerate(result):
+                            if data['loglevel'] == 'normal':
+                                text += f"\n{count+1} {item['shortDescription']}: {item['name']}"
+                            else:
+                                text += f"\n{count+1} {item['shortDescription']}: {item['name']} | {item['id']}"
+                        text += f"\n{l('enter_to_change_asset')}"
+                        await reply(message, client, text)
+                        client.select[message.author.id] = {
+                            "exec": [
+                                """\
+                                    if await client.change_asset(message.author.id, convert_backend_type(item["backendType"]), item['id']) is True:
+                                        if data['loglevel'] == 'normal':
+                                            await reply(message, client, f"{item['shortDescription']}: {item['name']}")
+                                        else:
+                                            await reply(message, client, f"{item['shortDescription']}: {item['name']} | {item['id']}")
                                     else:
-                                        await reply(message, client, f"{item['shortDescription']}: {item['name']} | {item['id']}")
-                                else:
-                                    await reply(message, client, l('locked'))""" for item in result
-                        ],
-                        "variable": [
-                            {"item": item} for item in result
-                        ]
-                    }
+                                        await reply(message, client, l('locked'))""" for item in result
+                            ],
+                            "variable": [
+                                {"item": item} for item in result
+                            ]
+                        }
 
 #========================================================================================================================
 #========================================================================================================================
@@ -6103,7 +6153,7 @@ config_tags={
     "['debug']": [bool_,"select_bool"]
 }
 commands_tags={
-    "['ownercommands']": [str,"can_be_multiple"],
+    "['usercommands']": [str,"can_be_multiple"],
     "['true']": [str,"can_be_multiple"],
     "['false']": [str,"can_be_multiple"],
     "['me']": [str,"can_be_multiple"],

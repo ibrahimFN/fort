@@ -18,6 +18,8 @@ Press Save button
 You can write other details by reloading tab  
 
 # Repl.it
+Repl.it can't make project private, it means there's a possibility to other people see emails!  
+
 https://repl.it  
 Click "sign up" on the top right  
 Click "+ new repl" on the top right, then open "Import From GitHub" tab  
@@ -165,10 +167,12 @@ debug                     : Whether enable fortnitepy debug mode. true or false
 
 # List of commands
 All command can set multiple by split in ,  
+All commands can be used by owner only by default  
 Also enter item name to change item to it  
+You can set items by entering item IDs  
 
 ```
-ownercommands                             : Set owner only commands
+usercommands                              : Set commands that can used by users too. Can use commands listed by here, in addition [ "cid_","bid_","petcarrier_","pickaxe_id_","eid_","emoji_","toy_","item-search"] can use
 true                                      : String which use as true in command
 false                                     : String which use as false in command
 me                                        : String which use as message's sender in command

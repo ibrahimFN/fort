@@ -232,9 +232,11 @@ CheckUpdate("templates/replies_editor.html", githuburl)
 CheckUpdate("templates/images/crown.png", githuburl)
 CheckUpdate("templates/images/icon.png", githuburl)
 CheckUpdate("templates/images/placeholder.png", githuburl)
-if not os.getcwd().startswith('/app'):
+if not os.getcwd().startswith('/app') and not os.getcwd().startswith('/home/runner'):
     CheckUpdate("Check update.bat", githuburl)
     CheckUpdate("INSTALL IFNOTWORK.bat", githuburl)
+else:
+    CheckUpdate("pyproject.toml", githuburl)
 
 if CheckUpdate("README.md", githuburl):
     print("README.mdの更新を確認しました。新機能の説明、内容の修正などがある可能性があるので確認してください")

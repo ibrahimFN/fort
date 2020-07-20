@@ -1,5 +1,5 @@
 {
-    "ownercommands": "eval,exec,restart,relogin,reload",
+    "usercommands": "cid,bid,percarrier,pickaxe_id,eid,emoji_id,toy_id,id,outfit,backpack,pet,pickaxe,emote,emoji,toy,item,cid_,bid_,percarrier_,pickaxe_id_,eid_,emoji_,toy_,item-search",
     "true": "true,on,accept",
     "false": "false,off,decline",
     "me": "me",

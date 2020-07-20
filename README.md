@@ -17,6 +17,8 @@ RUN.batを実行する
 タブを再読み込みすることで他の設定もできます  
 
 # Repl.it
+Repl.itではプロジェクトをプライベートにすることができないため、メールアドレスが他人に見られる可能性があります!  
+
 https://repl.it  
 の右上の"sign up"を押してログインする  
 右上の"+ new repl"を押して、"Import From GitHub"タブを開く  
@@ -33,7 +35,7 @@ webページでconfigの設定をする
 タブを再読み込みすることで他の設定もできます  
 
 # Glitch
-Glitchは24時間起動をすることができなくなったので推奨されません!
+Glitchは24時間起動をすることができなくなったので推奨されません!  
 
 https://glitch.com  
 の右上のSign inを押してGlitchアカウントを作る  
@@ -167,11 +169,12 @@ debug                     : Fortnitepyのデバッグモードをオンにする
 
 # コマンド一覧
 コマンド名はcommands.json内の表記  
+全てのコマンドはデフォルトでは所有者しか使用できない  
 全て , で区切ることで複数設定可  
 アイテム名を打つことでそのアイテムにすることもできる  
 
 ```
-ownercommands                             : 所有者しか使えないコマンドを指定する
+usercommands                              : ユーザーも使えるコマンドを指定する。  ここにあるコマンドに加え["cid_","bid_","petcarrier_","pickaxe_id_","eid_","emoji_","toy_","item-search"]が使用できる
 true                                      : コマンドの true として扱う文字列
 false                                     : コマンドの false として扱う文字列
 me                                        : コマンドの送り主として扱う文字列
