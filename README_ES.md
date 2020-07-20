@@ -14,6 +14,8 @@ Ejecuta RUN.bat
 Escribe los detalles en el sitio que fue abierto
 Puedes aplicar los detalles refrescando la página  
 # Repl.it
+En repl.it los proyectos son públicos. Es posible que cualquier persona pueda ver las credenciales!!
+
 https://repl.it  
 Haz click en: "sign up" encima de todo
 Haz click en "+ new repl" arriba a la derecha, y abre "Import From GitHub"  
@@ -158,10 +160,12 @@ debug                     : Determina si se activa el debug de fortnitepy. true 
 
 # Lista de Comandos
 Todos los comandos se pueden dividir con ,  
+Todos los comandos son de owner por defecto
 También puedes cambiar a otro item solo con escribir su nombre  
+Puedes poner ítems poniendo sus IDs
 
 ```
-ownercommands                             : Configura comnaods de owner
+usercommands                              : Establece los comandos que pueden ser utilizados por usuarios. Puedes usar los comandos listados aquí, por defecto [ "cid_","bid_","petcarrier_","pickaxe_id_","eid_","emoji_","toy_","item-search"] pueden usarse
 true                                      : Variable que actua de verdadero
 false                                     : Variable que actua de falso
 me                                        : Función que se reconoce como el que envía el mensaje
