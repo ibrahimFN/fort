@@ -45,7 +45,7 @@
                 var party_id = document.createElement("h3");
                 party_text = document.createTextNode("{{l('party')}}" + " / " + this.response["party_id"]);
                 party_id.appendChild(party_text);
-                members.insertBefore(party_id,members.parentNode.nextSibling)
+                members.appendChild(party_id);
 
                 var count = 0
                 if (this.response["members"].length > 1) {
@@ -70,7 +70,7 @@
                         var image = document.createElement("img");
                         image.setAttribute("src","/images/crown.png");
                         image.setAttribute("style","width: 2.5vmin; display: block;");
-                        display_name.insertBefore(image,members.parentNode.nextSibling);
+                        display_name.appendChild(image);
 
                         var image = document.createElement("img");
                         if (member["banner"]) {
@@ -79,13 +79,13 @@
                             image.setAttribute("src","https://benbotfn.tk/api/v1/exportAsset?path=Game/UI/Foundation/Textures/Banner/Standard/T-Banners-Icons-Waves-L.T-Banners-Icons-Waves-L");
                         }
                         image.setAttribute("style","width: 2.5vmin; top: 5px;");
-                        display_name.insertBefore(image,members.parentNode.nextSibling);
+                        display_name.appendChild(image);
 
                         var span = document.createElement("span");
                         span.setAttribute("style","position: absolute; left: -10px; top: 32px;");
                         var text = document.createTextNode(String(member["level"]));
                         span.appendChild(text);
-                        display_name.insertBefore(span,members.parentNode.nextSibling);
+                        display_name.appendChild(span);
 
                         var name_text = document.createTextNode(member["display_name"] + " / " + member["id"]);
                         display_name.appendChild(name_text);
@@ -97,18 +97,18 @@
                             image.setAttribute("src","https://benbotfn.tk/api/v1/exportAsset?path=Game/UI/Foundation/Textures/Banner/Standard/T-Banners-Icons-Waves-L.T-Banners-Icons-Waves-L");
                         }
                         image.setAttribute("style","width: 2.5vmin; top: 5px;");
-                        display_name.insertBefore(image,members.parentNode.nextSibling);
+                        display_name.appendChild(image);
 
                         var span = document.createElement("span");
                         span.setAttribute("style","position: absolute; left: -10px; top: 20px;");
                         var text = document.createTextNode(String(member["level"]));
                         span.appendChild(text);
-                        display_name.insertBefore(span,members.parentNode.nextSibling);
+                        display_name.appendChild(span)
 
                         var name_text = document.createTextNode(member["display_name"] + " / " + member["id"]);
                         display_name.appendChild(name_text)
                     }
-                    member_div.insertBefore(display_name,members.parentNode.nextSibling);
+                    member_div.appendChild(display_name);
 
                     parts.forEach(function(part) {
                         if (part != null) {
@@ -116,11 +116,11 @@
                             image.setAttribute("src","https://benbotfn.tk/cdn/images/" + part + "/icon.png");
                             image.setAttribute("onerror","this.onerror=null; this.src='/images/placeholder.png'");
                             image.setAttribute("style","width: 15vmin;");
-                            member_div.insertBefore(image,members.parentNode.nextSibling);
+                            member_div.appendChild(image)
                         }
                     })
 
-                    members.insertBefore(member_div,members.parentNode.nextSibling);
+                    members.appendChild(member_div);
                 }
             } else if (this.response["error"] == "account_not_exists") {
                 document.getElementById("members").innerHTML = "{{l('account_not_exists')}}";
