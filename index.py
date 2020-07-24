@@ -2397,11 +2397,20 @@ if True: #Asynchronous functions
             if "errors.com.epicgames.account.oauth.exchange_code_not_found" in e.args[0]:
                 send(l("bot"),l("exchange_code_error"),red,add_p=lambda x:f'[{now()}] {x}',add_d=lambda x:f'>>> {x}')
             elif "Invalid device auth details passed." in e.args[0]:
-                email = e.args[0].split("-")[0].strip()
-                details = get_device_auth_details()
-                details.pop(email.lower())
+                some_detail = e.args[0].split("-")[0].strip()
+                device_auth_details = get_device_auth_details()
+                for email,details in device_auth_details.items():
+                    for detail in details.values():
+                        if detail == some_detail:
+                            break
+                    else:
+                        continue
+                    break
+                else:
+                    email = some_detail
+                device_auth_details.pop(email.lower())
                 with open(filename, 'w') as f:
-                    json.dump(details, f)
+                    json.dump(device_auth_details, f)
                 restart()
             else:
                 send(l("bot"),l("login_failed"),red,add_p=lambda x:f'[{now()}] {x}',add_d=lambda x:f'>>> {x}')
