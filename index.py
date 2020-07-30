@@ -664,12 +664,12 @@ if True: #Classes
                 raise fortnitepy.Forbidden("You must be the party leader to perform this action.")
             real_members = self.party.meta.squad_assignments
             if not member_id:
-                member_indexes = [member.position for member in client.party.members.values() if isinstance(member.position,int)]
+                member_indexes = [member.position for member in self.party.members.values() if isinstance(member.position,int)]
                 available_indexes = [num for num in range(15) if num not in member_indexes]
 
                 num = 0
                 squad_assignments = []
-                for member in client.party.members.values():
+                for member in self.party.members.values():
                     if isinstance(member.position,int):
                         squad_assignments.append(
                             {
