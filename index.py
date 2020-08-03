@@ -27,7 +27,6 @@ try:
     from collections import defaultdict
     from concurrent.futures import ThreadPoolExecutor, as_completed
     import datetime
-    from enum import Enum
     from functools import partial, wraps
     from glob import glob
     import json
@@ -85,48 +84,6 @@ else:
         asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 if True: #Classes
-    class PartyPrivacy(Enum):
-        PUBLIC = {
-            'partyType': 'Public',
-            'inviteRestriction': 'AnyMember',
-            'onlyLeaderFriendsCanJoin': False,
-            'presencePermission': 'Anyone',
-            'invitePermission': 'Anyone',
-            'acceptingMembers': True,
-        }
-        FRIENDS_ALLOW_FRIENDS_OF_FRIENDS = {
-            'partyType': 'FriendsOnly',
-            'inviteRestriction': 'LeaderOnly',
-            'onlyLeaderFriendsCanJoin': False,
-            'presencePermission': 'Anyone',
-            'invitePermission': 'Anyone',
-            'acceptingMembers': True,
-        }
-        FRIENDS = {
-            'partyType': 'FriendsOnly',
-            'inviteRestriction': 'LeaderOnly',
-            'onlyLeaderFriendsCanJoin': True,
-            'presencePermission': 'Leader',
-            'invitePermission': 'Leader',
-            'acceptingMembers': False,
-        }
-        PRIVATE_ALLOW_FRIENDS_OF_FRIENDS = {
-            'partyType': 'Private',
-            'inviteRestriction': 'LeaderOnly',
-            'onlyLeaderFriendsCanJoin': False,
-            'presencePermission': 'Noone',
-            'invitePermission': 'Anyone',
-            'acceptingMembers': False,
-        }
-        PRIVATE = {
-            'partyType': 'Private',
-            'inviteRestriction': 'LeaderOnly',
-            'onlyLeaderFriendsCanJoin': True,
-            'presencePermission': 'Noone',
-            'invitePermission': 'Leader',
-            'acceptingMembers': False,
-        }
-
     class bool_:
         @classmethod
         def create(cls, content: str) -> bool:
@@ -147,9 +104,6 @@ if True: #Classes
         pass
 
     class FixRequired:
-        pass
-
-    class CanLinebreak:
         pass
 
     class LoginManager:
@@ -291,12 +245,10 @@ if True: #Classes
         pass
 
     class Client(fortnitepy.Client):
-        def __init__(self, emote: str, **kwargs: Any) -> None:
+        def __init__(self, **kwargs: Any) -> None:
             self.email  =  email
             self.status_ = data['fortnite']['status']
-            self.eid = emote
-            self.boot_time = None
-            self.booted_utc = None
+            self.eid = data['fortnite']['eid']
             self.isready = False
             self.booting = False
             self.timer = None
@@ -306,7 +258,7 @@ if True: #Classes
             self.backpacklock = False
             self.pickaxelock = False
             self.emotelock = False
-            self.owner = []
+            self.owner = None
             self.prevmessage = {}
             self.select = {}
             self.visual_members = []
@@ -362,13 +314,11 @@ if True: #Classes
             self.acceptinvite_interval = True 
 
         def lock_check(self, author_id: str) -> bool:
-            if author_id in [client.user.id for client in loadedclients]:
-                return False
-            elif author_id in [owner.id for owner in self.owner]:
+            if getattr(self.owner,"id",None) == author_id:
                 return False
             elif data['fortnite']['whitelist-ignorelock'] and author_id in whitelist:
                 return False
-            elif author_id in [owner.id for owner in dclient.owner]:
+            elif getattr(dclient.owner,"id",None) == author_id:
                 return False
             elif data['discord']['whitelist-ignorelock'] and author_id in whitelist_:
                 return False
@@ -408,8 +358,7 @@ if True: #Classes
                     "pending_count": len(self.pending_friends),
                     "block_count": len(self.blocked_users),
                     "display_name": self.user.display_name,
-                    "id": self.user.id,
-                    "boot_time": int(time.time() - self.boot_time)
+                    "id": self.user.id
                 }
             )
             return var
@@ -606,7 +555,7 @@ if True: #Classes
                     await invitation.sender.send(l("error"))
                 send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
-        async def change_asset(self, author_id: str, type_: str, id_: str, variants: Optional[list] = [], enlightenment: Optional[Union[tuple, list]] = []) -> None:
+        async def change_asset(self, author_id: str, type_: str, id_: str, variants: Optional[dict] = {}, enlightenment: Optional[Union[tuple, list]] = []) -> None:
             if not enlightenment:
                 enlightenment = None
             if type_ == "Outfit":
@@ -654,21 +603,8 @@ if True: #Classes
                 else:
                     if member_asset(self.party.me, "emote") and member_asset(self.party.me, "emote").lower() == id_.lower():
                         await self.party.me.clear_emote()
-                    if "holidaycracker" in id_.lower():
-                        if id_ != '' and '.' not in id_:
-                            id_ = ("AthenaDanceItemDefinition'/Game/Athena/Items/"
-                                 "Cosmetics/Dances/HolidayCracker/{0}.{0}'".format(id_))
-                        await self.party.me.set_emote(asset=id_)
-                        self.eid = id_
-                    elif id_.lower().endswith("papayacomms"):
-                        if id_ != '' and '.' not in id_:
-                            id_ = ("AthenaDanceItemDefinition'/Game/Athena/Items/"
-                                 "Cosmetics/Dances/PapayaComms/{0}.{0}'".format(id_))
-                        await self.party.me.set_emote(asset=id_)
-                        self.eid = id_
-                    else:
-                        await self.party.me.set_emote(asset=id_)
-                        self.eid = id_
+                    await self.party.me.set_emote(asset=id_)
+                    self.eid = id_
             elif type_ == "Emoticon":
                 if self.emotelock and self.lock_check(author_id):
                     return False
@@ -689,18 +625,6 @@ if True: #Classes
                     self.eid = id_
             return True
 
-        async def disable_voice(self) -> None:
-            if not self.party.me.leader:
-                raise fortnitepy.Forbidden("You must be the party leader to perform this action.")
-            prop = self.party.meta.set_voicechat_implementation('None')
-            await client.party.patch(updated=prop)
-
-        async def enable_voice(self) -> None:
-            if not self.party.me.leader:
-                raise fortnitepy.Forbidden("You must be the party leader to perform this action.")
-            prop = self.party.meta.set_voicechat_implementation('VivoxVoiceChat')
-            await client.party.patch(updated=prop)
-
         async def hide(self, member_id: Optional[str] = None) -> None:
             if not self.party.me.leader:
                 raise fortnitepy.Forbidden("You must be the party leader to perform this action.")
@@ -709,11 +633,9 @@ if True: #Classes
                 num = 0
                 squad_assignments = [{"memberId": self.user.id, "absoluteMemberIdx": num}]
                 num += 1
-                if data['fortnite']['show-owner']:
-                    for owner in self.owner:
-                        if self.party.members.get(owner.id):
-                            squad_assignments.append({"memberId": owner.id, "absoluteMemberIdx": num})
-                            num += 1
+                if data['fortnite']['show-owner'] and self.party.members.get(getattr(self.owner,"id",None)):
+                    squad_assignments.append({"memberId": self.owner.id, "absoluteMemberIdx": num})
+                    num += 1
                 if data['fortnite']['show-whitelist']:
                     for whitelistuser in whitelist:
                         if self.party.members.get(whitelistuser):
@@ -742,12 +664,12 @@ if True: #Classes
                 raise fortnitepy.Forbidden("You must be the party leader to perform this action.")
             real_members = self.party.meta.squad_assignments
             if not member_id:
-                member_indexes = [member.position for member in self.party.members.values() if isinstance(member.position,int)]
+                member_indexes = [member.position for member in client.party.members.values() if isinstance(member.position,int)]
                 available_indexes = [num for num in range(15) if num not in member_indexes]
 
                 num = 0
                 squad_assignments = []
-                for member in self.party.members.values():
+                for member in client.party.members.values():
                     if isinstance(member.position,int):
                         squad_assignments.append(
                             {
@@ -892,8 +814,6 @@ if True: #Classes
             global first_boot
 
             loop = asyncio.get_event_loop()
-            self.boot_time = time.time()
-            self.booted_utc = datetime.datetime.utcnow()
             display_name = name(self.user)
             send(display_name,f'{l("login")}: {display_name}',green,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
             flag = False
@@ -922,40 +842,37 @@ if True: #Classes
                 if data['loglevel'] == 'debug':
                     send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
-            self.owner = []
-            for owner in data['fortnite']['owner']:
-                user = self.get_user(owner) or self.get_cache_user(owner)
-                if not user:
-                    try:
-                        user = await self.fetch_profile(owner)
-                    except fortnitepy.HTTPException:
-                        if data['loglevel'] == 'debug':
-                            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                        send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
-                    except Exception:
+            owner = self.get_user(data['fortnite']['owner']) or self.get_cache_user(data['fortnite']['owner'])
+            if not owner:
+                try:
+                    owner = await self.fetch_profile(data['fortnite']['owner'])
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                if not user:
-                    send(display_name,l("owner_notfound",owner),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
-                else:
-                    self.add_cache(user)
-                    friend = self.get_friend(user.id)
-                    if not friend:
-                        send(display_name,l("not_friend_with_owner",commands["reload"]),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
-                        if data['fortnite']['addfriend'] and not self.is_pending(user.id):
-                            try:
-                                await self.add_friend(user.id)
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                                send(display_name,l("error_while_sending_friendrequest"),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
-                            except Exception:
+                    send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                except Exception:
+                    send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+            if not owner:
+                send(display_name,l("owner_notfound"),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+            else:
+                self.add_cache(owner)
+                friend = self.get_friend(owner.id)
+                if not friend:
+                    send(display_name,l("not_friend_with_owner",commands["reload"]),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                    if data['fortnite']['addfriend'] and not self.is_pending(owner.id):
+                        try:
+                            await self.add_friend(owner.id)
+                        except fortnitepy.HTTPException:
+                            if data['loglevel'] == 'debug':
                                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                    else:
-                        self.owner.append(friend)
-                        send(display_name,f'{l("owner")}: {name(friend)}',green,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
-            if self.owner and data['fortnite']['click_invite']:
-                for owner in self.owner:
-                    await owner.send(l("click_invite"))
+                            send(display_name,l("error_while_sending_friendrequest"),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                        except Exception:
+                            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                else:
+                    self.owner = friend
+                    send(display_name,f'{l("owner")}: {name(self.owner)}',green,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
+            if self.owner:
+                await self.owner.send(l("click_invite"))
 
             async def _(listuser: str) -> None:
                 user = self.get_user(listuser) or self.get_cache_user(listuser)
@@ -1090,11 +1007,9 @@ if True: #Classes
 
         async def event_close(self) -> None:
             self.isready = False
-            self.boot_time = None
             send(name(self.user),f'{l("closing")}: {self.user.display_name}',green,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
 
         async def event_restart(self) -> None:
-            self.boot_time = time.time()
             send(name(self.user),l("relogin", self.user.display_name),green,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
 
         async def event_party_invite(self, invitation: fortnitepy.ReceivedPartyInvitation) -> None:
@@ -1104,7 +1019,7 @@ if True: #Classes
             self.add_cache(invitation.sender)
             if invitation.sender.id in blacklist and data['fortnite']['blacklist-declineinvite']:
                 return
-            if invitation.sender.id in [owner.id for owner in self.owner]:
+            if invitation.sender.id == getattr(self.owner,"id",None):
                 await self.invitation_accept(invitation)
                 return
             if invitation.sender.id in whitelist and data['fortnite']['whitelist-allowinvite']:
@@ -1114,8 +1029,8 @@ if True: #Classes
                 send(display_name,l("invite_from",name(invitation.sender)),add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
             else:
                 send(display_name,l("invite_from2",f'{name(invitation.sender)} [{platform_to_str(invitation.sender.platform)}]',invitation.party.id),add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
-            for owner in self.owner:
-                if owner.id in self.party.members.keys() and data['fortnite']['invite-ownerdecline']:
+            if self.owner:
+                if self.owner.id in self.party.members.keys() and data['fortnite']['invite-ownerdecline']:
                     await self.invitation_decline_owner(invitation)
                     return
             if True in [memberid in whitelist for memberid in self.party.members.keys()] and data['fortnite']['whitelist-declineinvite']:
@@ -1193,13 +1108,12 @@ if True: #Classes
             loop = asyncio.get_event_loop()
             loop.create_task(self.change_status())
             
-            if self.party.me.leader and (data['fortnite']['hide-user'] or data['fortnite']['hide-blacklist']):
+            if self.party.me.leader:
                 async def _() -> None:
-                    nonlocal member
                     try:
                         await asyncio.sleep(0.5)
                         if data['fortnite']['hide-user']:
-                            if (not member.id in [owner.id for owner in self.owner] and data['fortnite']['show-owner']
+                            if (not (getattr(self.owner,"id",None) == member.id and data['fortnite']['show-owner'])
                                 and not (member.id in whitelist and data['fortnite']['show-whitelist'])
                                 and not (member.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['show-bot'])
                                 and member.id != self.user.id):
@@ -1214,7 +1128,6 @@ if True: #Classes
                         real_members = self.party.meta.squad_assignments
                         prop = self.party.meta.set_squad_assignments(self.visual_members)
                         await self.party.patch(updated=prop)
-                        self.party.meta.set_squad_assignments(real_members)
                         await asyncio.sleep(2)
                         self.party.meta.set_squad_assignments(real_members)
                     except Exception:
@@ -1241,10 +1154,10 @@ if True: #Classes
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             
             if data['fortnite']['addfriend']:
-                for member_ in member.party.members.copy().keys():
+                for member in member.party.members.copy().keys():
                     try:
-                        if not self.has_friend(member_) and not self.is_pending(member_) and not self.is_blocked(member_) and member_ != self.user.id:
-                            await self.add_friend(member_)
+                        if not self.has_friend(member) and not self.is_pending(member) and not self.is_blocked(member) and member != self.user.id:
+                            await self.add_friend(member)
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -1279,9 +1192,7 @@ if True: #Classes
             if self.party.leader.id == self.user.id:
                 try:
                     await self.party.set_playlist(data['fortnite']['playlist'])
-                    await self.party.set_privacy(data['fortnite']['privacy'].value)
-                    if data["fortnite"]["disable_voice"]:
-                        await self.disable_voice()
+                    await self.party.set_privacy(data['fortnite']['privacy'])
                 except fortnitepy.Forbidden:
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -1305,15 +1216,13 @@ if True: #Classes
             loop = asyncio.get_event_loop()
             loop.create_task(self.change_status())
 
-            if self.party.me.leader and (data['fortnite']['hide-user'] or data['fortnite']['hide-blacklist']):
+            if self.party.me.leader:
                 async def _() -> None:
-                    nonlocal member
                     try:
                         await asyncio.sleep(0.5)
                         real_members = self.party.meta.squad_assignments
                         prop = self.party.meta.set_squad_assignments(self.visual_members)
                         await self.party.patch(updated=prop)
-                        self.party.meta.set_squad_assignments(real_members)
                         await asyncio.sleep(2)
                         self.party.meta.set_squad_assignments(real_members)
                     except Exception:
@@ -1377,15 +1286,13 @@ if True: #Classes
             if not self.isready or not member:
                 return
             self.add_cache(member)
-            if self.party.me.leader and member.id != self.user.id and (data['fortnite']['hide-user'] or data['fortnite']['hide-blacklist']):
+            if self.party.me.leader and member.id != self.user.id:
                 async def _() -> None:
-                    nonlocal member
                     try:
                         await asyncio.sleep(0.5)
                         real_members = self.party.meta.squad_assignments
                         prop = self.party.meta.set_squad_assignments(self.visual_members)
                         await self.party.patch(updated=prop)
-                        self.party.meta.set_squad_assignments(real_members)
                         await asyncio.sleep(2)
                         self.party.meta.set_squad_assignments(real_members)
                     except Exception:
@@ -1422,9 +1329,7 @@ if True: #Classes
             if new_leader.id == self.user.id:
                 try:
                     await self.party.set_playlist(data['fortnite']['playlist'])
-                    await client.party.set_privacy(data['fortnite']['privacy'].value)
-                    if data["fortnite"]["disable_voice"]:
-                        await self.disable_voice()
+                    await self.party.set_privacy(data['fortnite']['privacy'])
                     for member in self.party.members.copy().values():
                         if member.id in blacklist:
                             if data['fortnite']['blacklist-autokick']:
@@ -1636,7 +1541,7 @@ if True: #Functions
     def dstore(username: str, content: Any) -> None:
         if data['discord-log']:
             if data['hide-email']:
-                for email in data['fortnite']['email']:
+                for email in data['fortnite']['email'].split(','):
                     content = content.replace(email,len(email)*"X")
             if data['hide-token']:
                 for token in data['discord']['token'].split(','):
@@ -1671,21 +1576,6 @@ if True: #Functions
         else:
             dstore(user_name,add_d(content))
 
-    def split_ignore(text: str, ignore: Optional[str] = None) -> list:
-        temp = ""
-        text_list = []
-        for char in text:
-            if char.split() != []:
-                temp += char
-            elif char != ignore:
-                if temp != "":
-                    text_list.append(temp)
-                    temp = ""
-                text_list.append("")
-        if temp != "":
-            text_list.append(temp)
-        return text_list
-    
     def eval_format(text: str, variables: dict = {}) -> str:
         for match in format_pattern.finditer(text):
             match_text = match.group()
@@ -1728,7 +1618,7 @@ if True: #Functions
         if isinstance(id_,str):
             id_ = int(id_)
         guild = dclient.get_guild(id_)
-        if guild is None:
+        if not guild:
             return None
         return guild.member_count
 
@@ -1745,55 +1635,55 @@ if True: #Functions
         return converter.get(platform)
 
     def convert_to_type(text: str) -> Optional[str]:
-        if True in [text.lower() in commands[key] for key in outfit_keys] or text.lower().startswith("cid_"):
+        if True in [text.lower() in commands[key].split(",") for key in outfit_keys] or text.lower().startswith("cid_"):
             return "Outfit"
-        elif True in [text.lower() in commands[key] for key in backpack_keys] or text.lower().startswith("bid_"):
+        elif True in [text.lower() in commands[key].split(",") for key in backpack_keys] or text.lower().startswith("bid_"):
             return "Back Bling"
-        elif True in [text.lower() in commands[key] for key in pet_keys] or text.lower().startswith("petcarrier_"):
+        elif True in [text.lower() in commands[key].split(",") for key in pet_keys] or text.lower().startswith("petcarrier_"):
             return "Pet"
-        elif True in [text.lower() in commands[key] for key in pickaxe_keys] or text.lower().startswith("pickaxe_id"):
+        elif True in [text.lower() in commands[key].split(",") for key in pickaxe_keys] or text.lower().startswith("pickaxe_id"):
             return "Harvesting Tool"
-        elif True in [text.lower() in commands[key] for key in emote_keys] or text.lower().startswith("eid_"):
+        elif True in [text.lower() in commands[key].split(",") for key in emote_keys] or text.lower().startswith("eid_"):
             return "Emote"
-        elif True in [text.lower() in commands[key] for key in emoji_keys] or text.lower().startswith("emoji_"):
+        elif True in [text.lower() in commands[key].split(",") for key in emoji_keys] or text.lower().startswith("emoji_"):
             return "Emoticon"
-        elif True in [text.lower() in commands[key] for key in toy_keys] or text.lower().startswith("toy_"):
+        elif True in [text.lower() in commands[key].split(",") for key in toy_keys] or text.lower().startswith("toy_"):
             return "Toy"
-        elif True in [text.lower() in commands[key] for key in item_keys]:
+        elif True in [text.lower() in commands[key].split(",") for key in item_keys]:
             return "Item"
 
     def convert_to_asset(text: str) -> Optional[str]:
-        if True in [text.lower() in commands[key] for key in outfit_keys] or text.lower().startswith("cid_"):
+        if True in [text.lower() in commands[key].split(",") for key in outfit_keys] or text.lower().startswith("cid_"):
             return "outfit"
-        elif True in [text.lower() in commands[key] for key in backpack_keys] or text.lower().startswith("bid_"):
+        elif True in [text.lower() in commands[key].split(",") for key in backpack_keys] or text.lower().startswith("bid_"):
             return "backpack"
-        elif True in [text.lower() in commands[key] for key in pet_keys] or text.lower().startswith("petcarrier_"):
+        elif True in [text.lower() in commands[key].split(",") for key in pet_keys] or text.lower().startswith("petcarrier_"):
             return "backpack"
-        elif True in [text.lower() in commands[key] for key in pickaxe_keys] or text.lower().startswith("pickaxe_id"):
+        elif True in [text.lower() in commands[key].split(",") for key in pickaxe_keys] or text.lower().startswith("pickaxe_id"):
             return "pickaxe"
-        elif True in [text.lower() in commands[key] for key in emote_keys] or text.lower().startswith("eid_"):
+        elif True in [text.lower() in commands[key].split(",") for key in emote_keys] or text.lower().startswith("eid_"):
             return "emote"
-        elif True in [text.lower() in commands[key] for key in emoji_keys] or text.lower().startswith("emoji_"):
+        elif True in [text.lower() in commands[key].split(",") for key in emoji_keys] or text.lower().startswith("emoji_"):
             return "emote"
-        elif True in [text.lower() in commands[key] for key in toy_keys] or text.lower().startswith("toy_"):
+        elif True in [text.lower() in commands[key].split(",") for key in toy_keys] or text.lower().startswith("toy_"):
             return "emote"
 
     def convert_to_id(text: str) -> Optional[str]:
-        if True in [text.lower() in commands[key] for key in outfit_keys] or text.lower().startswith("cid_"):
+        if True in [text.lower() in commands[key].split(",") for key in outfit_keys] or text.lower().startswith("cid_"):
             return "cid"
-        elif True in [text.lower() in commands[key] for key in backpack_keys] or text.lower().startswith("bid_"):
+        elif True in [text.lower() in commands[key].split(",") for key in backpack_keys] or text.lower().startswith("bid_"):
             return "bid"
-        elif True in [text.lower() in commands[key] for key in pet_keys] or text.lower().startswith("petcarrier_"):
+        elif True in [text.lower() in commands[key].split(",") for key in pet_keys] or text.lower().startswith("petcarrier_"):
             return "petcarrier"
-        elif True in [text.lower() in commands[key] for key in pickaxe_keys] or text.lower().startswith("pickaxe_id"):
+        elif True in [text.lower() in commands[key].split(",") for key in pickaxe_keys] or text.lower().startswith("pickaxe_id"):
             return "pickaxe_id"
-        elif True in [text.lower() in commands[key] for key in emote_keys] or text.lower().startswith("eid_"):
+        elif True in [text.lower() in commands[key].split(",") for key in emote_keys] or text.lower().startswith("eid_"):
             return "eid"
-        elif True in [text.lower() in commands[key] for key in emoji_keys] or text.lower().startswith("emoji_"):
+        elif True in [text.lower() in commands[key].split(",") for key in emoji_keys] or text.lower().startswith("emoji_"):
             return "emoji_id"
-        elif True in [text.lower() in commands[key] for key in toy_keys] or text.lower().startswith("toy_"):
+        elif True in [text.lower() in commands[key].split(",") for key in toy_keys] or text.lower().startswith("toy_"):
             return "toy_id"
-        elif True in [text.lower() in commands[key] for key in item_keys]:
+        elif True in [text.lower() in commands[key].split(",") for key in item_keys]:
             return "id"
 
     def convert_to_old_type(text: str) -> Optional[str]:
@@ -1891,63 +1781,25 @@ if True: #Functions
             return False
         if data.get('loglevel','normal') == 'debug':
             send('ボット',f'\n{json.dumps(data,ensure_ascii=False,indent=4)}\n',yellow,add_d=lambda x:f'\n```{x}```\n')
-        for key,tags in config_tags.items():
+        for key in config_tags.keys():
             try:
-                value = eval(f"data{key}")
+                eval(f"data{key}")
             except KeyError:
                 error_config.append(key)
-            else:
-                if isinstance(value,dict):
-                    continue
-                if bool_ in tags:
-                    if not isinstance(value,bool):
-                        error_config.append(key)
-                elif bool_none in tags:
-                    if not isinstance(value,(bool,None.__class__)):
-                        error_config.append(key)
-                elif "can_be_multiple" in tags:
-                    if not isinstance(value,list):
-                        if str in tags:
-                            try:
-                                exec(f"data{key} = value.split(',')")
-                            except Exception:
-                                if data.get('loglevel','normal') == 'debug':
-                                    send('ボット',traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                            error_config.append(key)
-                        elif int in tags:
-                            try:
-                                exec(f"data{key} = [value]")
-                            except Exception:
-                                if data.get('loglevel','normal') == 'debug':
-                                    send('ボット',traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                            error_config.append(key)
-                else:
-                    if not isinstance(value,tags[0]):
-                        error_config.append(key)
-                        try:
-                            exec(f"data{key} = tags[0](value)")
-                        except Exception:
-                            if data.get('loglevel','normal') == 'debug':
-                                send('ボット',traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+
         checks = [
-            ['fortnite','owner'],
             ['fortnite','blacklist'],
             ['fortnite','whitelist'],
             ['fortnite','invitelist'],
             ['fortnite','otherbotlist'],
-            ['discord','owner'],
             ['discord','blacklist'],
             ['discord','whitelist']
         ]
         for check in checks:
             k,k2 = check
-            try:
-                for value in data.get(k,{}).get(k2,[]).copy():
-                    if len(str(value)) == 0:
-                        data.get(k,{}).get(k2,[]).remove(value)
-            except Exception:
-                if data.get('loglevel','normal') == 'debug':
-                    send('ボット',traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+            for value in data.get(k,{}).get(k2,[]).copy():
+                if len(str(value)) == 0:
+                    data.get(k,{}).get(k2,[]).remove(value)
         with open("config.json", 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
         
@@ -1967,7 +1819,7 @@ if True: #Functions
                 exec(f"data{text} = data{text2}")
         set_default(['fortnite'],{})
         try:
-            set_default(['fortnite','privacy'],'public',lambda x: getattr(PartyPrivacy,x.upper()))
+            set_default(['fortnite','privacy'],'public',lambda x: getattr(fortnitepy.PartyPrivacy,x.upper()))
         except AttributeError:
             send('ボット',traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             error_config.append("['fortnite']['privacy']")
@@ -2037,6 +1889,8 @@ if True: #Functions
                 send('Bot','Failed to download item data because API is dawning. Please try again later',red,add_d=lambda x:f'>>> {x}')
             else:
                 os.makedirs("items/", exist_ok=True)
+                langs = [data['search-lang'],"en"] if data['search-lang'] != "en" else [data['search-lang']]
+                Thread(target=store_item_data,args=(langs,)).start()
 
         def load_lang(lang: str) -> None:
             global localize
@@ -2055,7 +1909,7 @@ if True: #Functions
             for key in localize_keys:
                 try:
                     eval(f"localize['{key}']")
-                except KeyError as e:
+                except KeyError:
                     send('ボット',traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     send('ボット',f'{lang}.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください\n{e} がありません',red,add_d=lambda x:f'>>> {x}')
                     send('Bot',f'Failed to load {lang}.json file. Make sure key name is correct\n{e} is missing',add_d=lambda x:f'>>> {x}')
@@ -2075,7 +1929,7 @@ if True: #Functions
         elif len(color) == 1:
             try:
                 background_colors = eval(f"fortnitepy.KairosBackgroundColorPreset.{color[0]}")
-            except (AttributeError, SyntaxError):
+            except AttributeError:
                 send(l('bot'),l('color_must_be'))
                 error_config.append("['fortnite']['avatar_color']")
                 background_colors = ["#ffffff","#ffffff","#ffffff"]
@@ -2095,21 +1949,11 @@ if True: #Functions
             return False
         if data['loglevel'] == 'debug':
             send(l('bot'),f'\n{json.dumps(commands,ensure_ascii=False,indent=4)}\n',yellow,add_d=lambda x:f'\n```{x}```\n')
-        for key,tags in commands_tags.items():
+        for key in commands_tags.keys():
             try:
-                value = eval(f"commands{key}")
+                eval(f"commands{key}")
             except KeyError:
                 error_commands.append(key)
-            else:
-                if not isinstance(value,list):
-                    try:
-                        exec(f"commands{key} = value.split(',')")
-                    except Exception:
-                        if data["loglevel"] == 'debug':
-                            send('ボット',traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                    error_commands.append(key)
-        with open("commands.json", 'w', encoding='utf-8') as f:
-            json.dump(commands, f, ensure_ascii=False, indent=4)
 
         def set_default_(key: str, default: Any, func: Optional[Callable] = None) -> None:
             text = f"['{key}']"
@@ -2123,24 +1967,16 @@ if True: #Functions
         if error_commands:
             send(l('bot'),f'{l("load_failed_keyerror", "commands.json")}\n{l("is_missing", ", ".join(error_commands))}',red,add_d=lambda x:f'>>> {x}')
         if data['caseinsensitive']:
-            commands = {k.lower(): [jaconv.kata2hira(c.lower()) for c in v] for k,v in commands.items()}
+            commands = {k.lower(): jaconv.kata2hira(v.lower()) for k,v in commands.items()}
 
         flag = True
         commands['ownercommands'] = []
-        if "{all}" in commands['usercommands']:
-            for command in (list(commands_tags.keys()) + ["cid_","bid_","petcarrier_","pickaxe_id_","eid_","emoji_","toy_","item-search"]):
-                command = command.replace("['","",1).replace("']","",1)
-                if command in ["usercommands","true","false","me","privacy_public","privacy_friends_allow_friends_of_friends","privacy_friends","privacy_private_allow_friends_of_friends","privacy_private","info_party"]:
-                    continue
-                if command in [i.lower() for i in commands['usercommands']]:
-                    commands['ownercommands'].append(command)
-        else:
-            for command in (list(commands_tags.keys()) + ["cid_","bid_","petcarrier_","pickaxe_id_","eid_","emoji_","toy_","item-search"]):
-                command = command.replace("['","",1).replace("']","",1)
-                if command in ["usercommands","true","false","me","privacy_public","privacy_friends_allow_friends_of_friends","privacy_friends","privacy_private_allow_friends_of_friends","privacy_private","info_party"]:
-                    continue
-                if command not in [i.lower() for i in commands['usercommands']]:
-                    commands['ownercommands'].append(command)
+        for command in (list(commands_tags.keys()) + ["cid_","bid_","petcarrier_","pickaxe_id_","eid_","emoji_","toy_","item-search"]):
+            command = command.replace("['","",1).replace("']","",1)
+            if command in ["usercommands","true","false","me","privacy_public","privacy_friends_allow_friends_of_friends","privacy_friends","privacy_private_allow_friends_of_friends","privacy_private","info_party"]:
+                continue
+            if command not in [i.lower() for i in commands['usercommands'].split(',')]:
+                commands['ownercommands'].append(command)
 
         try:
             replies = load_json("replies.json")
@@ -2161,6 +1997,15 @@ if True: #Functions
         return None
 
     def store_item_data(langs: list) -> None:
+        ignoretype = [
+            "Contrail",
+            "Glider",
+            "Wrap",
+            "Loading Screen",
+            "Music",
+            "Spray",
+            "Battle Bus"
+        ]
         with ThreadPoolExecutor() as executor:
             futures = {executor.submit(get_item_data,lang): lang for lang in langs}
             for future in as_completed(futures):
@@ -2181,6 +2026,17 @@ if True: #Functions
                         json.dump(items,f,ensure_ascii=False,indent=4)
                 if data["loglevel"] == "debug":
                     send(l("bot"),f"Saved {lang} items",yellow)
+
+    def get_banner_data() -> dict:
+        res = requests.get("https://benbotfn.tk/api/v1/exportAsset?path=FortniteGame/Content/Banners/BannerIcons")
+        if res.status_code == 200:
+            return res.json()
+        return None
+    
+    def store_banner_data() -> None:
+        data = get_banner_data()
+        with open("items/banners.json","w",encoding="utf-8") as f:
+            json.dump(data,f,indent=4,ensure_ascii=False)
 
     def partymember_backpack(member: fortnitepy.party.PartyMemberBase) -> str:
         asset = member.meta.backpack
@@ -2312,17 +2168,6 @@ if True: #Functions
                     cache_items[lang].append(item)
             return variants
 
-    def get_banner_data() -> dict:
-        res = requests.get("https://benbotfn.tk/api/v1/exportAsset?path=FortniteGame/Content/Banners/BannerIcons")
-        if res.status_code == 200:
-            return res.json()
-        return None
-    
-    def store_banner_data() -> None:
-        data = get_banner_data()
-        with open("items/banners.json","w",encoding="utf-8") as f:
-            json.dump(data,f,indent=4,ensure_ascii=False)
-
     def search_banner(id_: str) -> Optional[dict]:
         data_ = load_json("items/banners.json")
         data_ = {k.lower():v for k,v in data_.items()}
@@ -2344,7 +2189,7 @@ if True: #Asynchronous functions
                 for txt in text:
                     if len(txt) > 1990:
                         text = [txt[i:i+1990] for i in range(0, len(txt), 1990)]
-                        for t in text:
+                        for t in txt:
                             await message.channel.send(t)
                     else:
                         await message.channel.send(content)
@@ -2359,7 +2204,6 @@ if True: #Asynchronous functions
         def _(text) -> str:
             return re.match(r"(\u0020|\u3000)*", text).end() * u"\u0020"
         scode = code.split('\n')
-        print(scode)
         delete = len(_(scode[0]))
         lines = [i.replace(u"\u0020", "", delete) for i in scode]
         exc = (
@@ -2553,20 +2397,11 @@ if True: #Asynchronous functions
             if "errors.com.epicgames.account.oauth.exchange_code_not_found" in e.args[0]:
                 send(l("bot"),l("exchange_code_error"),red,add_p=lambda x:f'[{now()}] {x}',add_d=lambda x:f'>>> {x}')
             elif "Invalid device auth details passed." in e.args[0]:
-                some_detail = e.args[0].split("-")[0].strip()
-                device_auth_details = get_device_auth_details()
-                for email,details in device_auth_details.items():
-                    for detail in details.values():
-                        if detail == some_detail:
-                            break
-                    else:
-                        continue
-                    break
-                else:
-                    email = some_detail
-                device_auth_details.pop(email.lower())
+                email = e.args[0].split("-")[0].strip()
+                details = get_device_auth_details()
+                details.pop(email.lower())
                 with open(filename, 'w') as f:
-                    json.dump(device_auth_details, f)
+                    json.dump(details, f)
                 restart()
             else:
                 send(l("bot"),l("login_failed"),red,add_p=lambda x:f'[{now()}] {x}',add_d=lambda x:f'>>> {x}')
@@ -2639,8 +2474,8 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             return
 
         if ((len(con) > 1)
-            and not (args[0] in commands['eval'])
-            and not (args[0] in commands['exec'])):
+            and not (args[0] in commands['eval'].split(','))
+            and not (args[0] in commands['exec'].split(','))):
             tasks = []
             for c in con:
                 mes = AllMessage(c, message.author, client, message)
@@ -2657,7 +2492,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             if not client.whisper:
                 if client.whisperperfect:
                     return
-                elif message.author.id not in [owner.id for owner in client.owner] and message.author.id not in whitelist:
+                elif message.author.id != getattr(client.owner,"id",None) and message.author.id not in whitelist:
                     return
             if data['loglevel'] == 'normal':
                 send(name(message.author),content,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {name(message.author)} | {x}',add_d=lambda x:f'[{client.user.display_name}] {x}')
@@ -2667,7 +2502,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             if not client.partychat:
                 if client.partychatperfect:
                     return
-                elif message.author.id not in [owner.id for owner in client.owner] and message.author.id not in whitelist:
+                elif message.author.id != getattr(client.owner,"id",None) and message.author.id not in whitelist:
                     return
             display_name_ = client.is_most()
             if display_name_:
@@ -2676,14 +2511,14 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 else:
                     send(f'{name(message.author)} [{platform_to_str(message.author.platform)}/{message.author.input}]',content,add_p=lambda x:f'[{now()}] [{l("party")}/{client.party.id}] [{display_name_}] {name(message.author)} [{platform_to_str(message.author.platform)}/{message.author.input}] | {x}',add_d=lambda x:f'[{l("party")}/{client.party.id}] [{display_name_}] {x}')
 
-        if content_ in commands['me']:
+        if rawcontent in commands['me'].split(','):
             rawcontent = message.author.id
             content_ = message.author.id
 
-        if ((message.author.id in [owner.id for owner in client.owner])
+        if ((getattr(client.owner,"id",None) == message.author.id)
             or (message.author.id in whitelist and data['fortnite']['whitelist-ownercommand'])):
             check_ownercommand = False
-        if ((message.author.id in [owner.id for owner in client.owner])
+        if ((getattr(client.owner,"id",None) == message.author.id)
             or (message.author.id in whitelist and data['fortnite']['whitelist-ignoreng'])):
             check_ng = False
     elif isinstance(message, discord.Message):
@@ -2717,12 +2552,12 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
         if not client.discord:
             if client.discordperfect:
                 return
-            elif message.author.id not in [owner.id for owner in client.owner] and message.author.id not in whitelist_:
+            elif message.author.id != getattr(dclient.owner,"id",None) and message.author.id not in whitelist_:
                 return
 
         if (len(con) > 1
-            and not (args[0] in commands['eval'])
-            and not (args[0] in commands['exec'])):
+            and not (args[0] in commands['eval'].split(','))
+            and not (args[0] in commands['exec'].split(','))):
             tasks = []
             for c in con:
                 mes = AllMessage(c, message.author, client, message)
@@ -2737,11 +2572,11 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
 
         send(name(message.author),content,add_p=lambda x:f'[{now()}] [{client.user.display_name}({dclient.user})] {name(message.author)} | {x}',add_d=lambda x:f'[{client.user.display_name}({dclient.user})] {x}')
 
-        if ((message.author.id in [owner.id for owner in dclient.owner])
-            or (message.author.id in whitelist_ and data['discord']['whitelist-ownercommand'])):
+        if ((getattr(dclient.owner,"id",None) == message.author.id)
+            or (message.author.id in whitelist and data['discord']['whitelist-ownercommand'])):
             check_ownercommand = False
-        if ((message.author.id in [owner.id for owner in dclient.owner])
-            or (message.author.id in whitelist_ and data['discord']['whitelist-ignoreng'])):
+        if ((getattr(dclient.owner,"id",None) == message.author.id)
+            or (message.author.id in whitelist and data['discord']['whitelist-ignoreng'])):
             check_ng = False
     elif isinstance(message, WebMessage):
         client = message.client
@@ -2750,8 +2585,8 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             return
 
         if (len(con) > 1
-            and not (args[0] in commands['eval'])
-            and not (args[0] in commands['exec'])):
+            and not (args[0] in commands['eval'].split(','))
+            and not (args[0] in commands['exec'].split(','))):
             tasks = []
             for c in con:
                 mes = AllMessage(c, message.author, client, message)
@@ -2773,8 +2608,8 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             return
 
         if (len(con) > 1
-            and not (args[0] in commands['eval'])
-            and not (args[0] in commands['exec'])):
+            and not (args[0] in commands['eval'].split(','))
+            and not (args[0] in commands['exec'].split(','))):
             tasks = []
             for c in con:
                 mes = AllMessage(c, message.author, client, message)
@@ -2796,7 +2631,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if not client.whisper:
                     if client.whisperperfect:
                         return
-                    elif message.author.id not in [owner.id for owner in client.owner] and message.author.id not in whitelist:
+                    elif message.author.id != getattr(client.owner,"id",None) and message.author.id not in whitelist:
                         return
                 if data['loglevel'] == 'normal':
                     send(name(message.author),content,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {name(message.author)} | {x}',add_d=lambda x:f'[{client.user.display_name}] {x}')
@@ -2806,7 +2641,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if not client.partychat:
                     if client.partychatperfect:
                         return
-                    elif message.author.id not in [owner.id for owner in client.owner] and message.author.id not in whitelist:
+                    elif message.author.id != getattr(client.owner,"id",None) and message.author.id not in whitelist:
                         return
                 display_name = client.is_most()
                 if display_name:
@@ -2814,14 +2649,14 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                         send(name(message.author),content,add_p=lambda x:f'[{now()}] [{l("party")}] [{display_name}] {name(message.author)} | {x}',add_d=lambda x:f'[{l("party")}] [{display_name}] {x}')
                     else:
                         send(f'{name(message.author)} [{platform_to_str(message.author.platform)}/{message.author.input}]',content,add_p=lambda x:f'[{now()}] [{l("party")}/{client.party.id}] [{display_name}] {name(message.author)} [{platform_to_str(message.author.platform)}/{message.author.input}] | {x}',add_d=lambda x:f'[{l("party")}/{client.party.id}] [{display_name}] {x}')
-            if rawcontent in commands['me']:
+            if rawcontent in commands['me'].split(','):
                 rawcontent = message.author.id
                 content_ = message.author.id
 
-            if ((message.author.id in [owner.id for owner in client.owner])
+            if ((getattr(client.owner,"id",None) == message.author.id)
                 or (message.author.id in whitelist and data['fortnite']['whitelist-ownercommand'])):
                 check_ownercommand = False
-            if ((message.author.id in [owner.id for owner in client.owner])
+            if ((getattr(client.owner,"id",None) == message.author.id)
                 or (message.author.id in whitelist and data['fortnite']['whitelist-ignoreng'])):
                 check_ng = False
         elif isinstance(message.base, discord.message.Message):
@@ -2832,15 +2667,15 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             if not client.discord:
                 if client.discordperfect:
                     return
-                elif message.author.id not in [owner.id for owner in dclient.owner] and message.author.id not in whitelist_:
+                elif message.author.id != getattr(dclient.owner,"id",None) and message.author.id not in whitelist_:
                     return
             send(name(message.author),content,add_p=lambda x:f'[{now()}] [{client.user.display_name}({dclient.user})] {name(message.author)} | {x}',add_d=lambda x:f'[{client.user.display_name}({dclient.user})] {x}')
 
-            if ((message.author.id in [owner.id for owner in dclient.owner])
-                or (message.author.id in whitelist_ and data['discord']['whitelist-ownercommand'])):
+            if ((getattr(dclient.owner,"id",None) == message.author.id)
+                or (message.author.id in whitelist and data['discord']['whitelist-ownercommand'])):
                 check_ownercommand = False
-            if ((message.author.id in [owner.id for owner in dclient.owner])
-                or (message.author.id in whitelist_ and data['discord']['whitelist-ignoreng'])):
+            if ((getattr(dclient.owner,"id",None) == message.author.id)
+                or (message.author.id in whitelist and data['discord']['whitelist-ignoreng'])):
                 check_ng = False
         elif isinstance(message.base, WebMessage):
             if ((data['discord']['enabled'] and not dclient.isready)
@@ -2863,14 +2698,13 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     return
             elif command == "item-search":
                 do_itemsearch = False
-            elif args[0] in commands[command]:
+            elif args[0] in commands[command].split(","):
                 await reply(message, client, l("this_command_owneronly"))
                 return
 
     reply_flag = False
     for key,value in replies.items():
         reply_flag_ = False
-
         if data["replies-matchmethod"] == "contains":
             if [k for k in key.split(',') if k in content]:
                 reply_flag_ = True
@@ -2935,7 +2769,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
     if reply_flag:
         return
 
-    if args[0] in commands['prev']:
+    if args[0] in commands['prev'].split(','):
         c = client.prevmessage.get(message.author.id)
         if c:
             mes = AllMessage(c, message.author, client, message)
@@ -2947,7 +2781,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
         return
     client.prevmessage[message.author.id] = content
 
-    if args[0] in commands['eval']:
+    if args[0] in commands['eval'].split(','):
         try:
             if rawcontent == "":
                 await reply(message, client, f"[{commands['eval']}] [{l('eval')}]")
@@ -2958,33 +2792,33 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == "debug":
                     send(display_name,f"await eval({rawcontent.replace('await ','',1)})",yellow,add_d=lambda x:f'```\n{x}\n```')
                 result = await eval(rawcontent.replace("await ","",1), variable)
-                send(display_name,str(result))
                 await reply(message, client, str(result))
             else:
                 if data['loglevel'] == "debug":
                     send(display_name,f"eval {rawcontent}",yellow,add_d=lambda x:f'```\n{x}\n```')
                 result = eval(rawcontent, variable)
-                send(display_name,str(result))
                 await reply(message, client, str(result))
         except Exception:
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, f"{l('error')}\n{traceback.format_exc()}")
 
-    elif args[0] in commands['exec']:
+    elif args[0] in commands['exec'].split(','):
         try:
             if rawcontent == "":
                 await reply(message, client, f"[{commands['exec']}] [{l('exec')}]")
                 return
             variable = globals()
             variable.update(locals())
-            result = await aexec(content.replace(f"{args[0]} ","",1), variable)
+            args_ = content.split(" ")
+            content_ = " ".join(args_[1:])
+            result = await aexec(content_, variable)
             await reply(message, client, str(result))
         except Exception as e:
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, f"{l('error')}\n{traceback.format_exc()}")
 
     if data['discord']['enabled']:
-        if args[0] in commands['addblacklist_discord']:
+        if args[0] in commands['addblacklist_discord'].split(','):
             try:
                 if rawcontent == '' or not args[1].isdigit():
                     await reply(message, client, f"[{commands['addblacklist_discord']}] [{l('userid')}]")
@@ -3015,7 +2849,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l('error'))
 
-        elif args[0] in commands['removeblacklist_discord']:
+        elif args[0] in commands['removeblacklist_discord'].split(','):
             try:
                 if rawcontent == '' or not args[1].isdigit():
                     await reply(message, client, f"[{commands['removeblacklist_discord']}] [{l('userid')}]")
@@ -3047,7 +2881,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l('error'))
 
-        elif args[0] in commands['addwhitelist_discord']:
+        elif args[0] in commands['addwhitelist_discord'].split(','):
             try:
                 if rawcontent == '' or not args[1].isdigit():
                     await reply(message, client, f"[{commands['addwhitelist_discord']}] [{l('userid')}]")
@@ -3078,7 +2912,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l('error'))
 
-        elif args[0] in commands['removewhitelist_discord']:
+        elif args[0] in commands['removewhitelist_discord'].split(','):
             try:
                 if rawcontent == '' or not args[1].isdigit():
                     await reply(message, client, f"[{commands['removewhitelist_discord']}] [{l('userid')}]")
@@ -3109,13 +2943,13 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 await reply(message, client, l('error'))
 
-    if args[0] in commands['restart']:
+    if args[0] in commands['restart'].split(','):
         try:
             if not client.acceptinvite:
                 if isinstance(message, fortnitepy.message.MessageBase) or isinstance(getattr(message,"base",None), fortnitepy.message.MessageBase):
-                    if (not (message.author.id in [owner.id for owner in client.owner])
+                    if (not (message.author.id == getattr(client.owner,"id",None))
                         and not (message.author.id in whitelist and data['fortnite']['whitelist-ownercommand'])
-                        and not (message.author.id in [owner.id for owner in dclient.owner])
+                        and not (message.author.id == getattr(dclient.owner,"id",None))
                         and not (message.author.id in whitelist_ and data['discord']['whitelist-ownercommand'])):
                         await reply(message, client, l('invite_is_decline'))
                         return
@@ -3125,13 +2959,13 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['relogin']:
+    elif args[0] in commands['relogin'].split(','):
         try:
             if client.acceptinvite is False:
                 if isinstance(message, fortnitepy.message.MessageBase) or isinstance(getattr(message,"base",None), fortnitepy.message.MessageBase):
-                    if (not (message.author.id in [owner.id for owner in client.owner])
+                    if (not (message.author.id == getattr(client.owner,"id",None))
                         and not (message.author.id in whitelist and data['fortnite']['whitelist-ownercommand'])
-                        and not (message.author.id in [owner.id for owner in dclient.owner])
+                        and not (message.author.id == getattr(dclient.owner,"id",None))
                         and not (message.author.id in whitelist_ and data['discord']['whitelist-ownercommand'])):
                         await reply(message, client, l('invite_is_decline'))
                         return
@@ -3141,7 +2975,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['reload']:
+    elif args[0] in commands['reload'].split(','):
         success = load_config(client)
         try:
             if success:
@@ -3158,40 +2992,38 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(name(client.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
-            client.owner = []
-            for owner in data['fortnite']['owner']:
-                user = client.get_user(owner) or client.get_cache_user(owner)
-                if not user:
-                    try:
-                        user = await client.fetch_profile(owner)
-                    except fortnitepy.HTTPException:
-                        if data['loglevel'] == 'debug':
-                            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                        send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
-                    except Exception:
+            owner = client.get_user(data['fortnite']['owner']) or client.get_cache_user(data['fortnite']['owner'])
+            if not owner:
+                try:
+                    owner = await client.fetch_profile(data['fortnite']['owner'])
+                except fortnitepy.HTTPException:
+                    if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                if not user:
-                    send(display_name,l("owner_notfound",owner),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
-                else:
-                    client.add_cache(user)
-                    friend = client.get_friend(user.id)
-                    if not friend:
-                        send(display_name,l("not_friend_with_owner",commands["reload"]),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
-                        if data['fortnite']['addfriend'] and not client.is_pending(user.id):
-                            try:
-                                await client.add_friend(user.id)
-                            except fortnitepy.HTTPException:
-                                if data['loglevel'] == 'debug':
-                                    send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                                send(display_name,l("error_while_sending_friendrequest"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
-                            except Exception:
+                    send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                except Exception:
+                    send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+            if not owner:
+                send(display_name,l("owner_notfound"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+            else:
+                client.add_cache(owner)
+                friend = client.get_friend(owner.id)
+                if not friend:
+                    client.owner = None
+                    send(display_name,l("not_friend_with_owner",commands["reload"]),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                    if data['fortnite']['addfriend'] and not client.is_pending(owner.id):
+                        try:
+                            await client.add_friend(owner.id)
+                        except fortnitepy.HTTPException:
+                            if data['loglevel'] == 'debug':
                                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                    else:
-                        client.owner.append(friend)
-                        send(display_name,f'{l("owner")}: {name(friend)}',green,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
-            if client.owner and data['fortnite']['click_invite']:
-                for owner in client.owner:
-                    await owner.send(l("click_invite"))
+                            send(display_name,l("error_while_sending_friendrequest"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                        except Exception:
+                            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                else:
+                    client.owner = friend
+                    send(display_name,f'{l("owner")}: {name(client.owner)}',green,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
+            if client.owner:
+                await client.owner.send(l("click_invite"))
 
             lists = {
                 "blacklist": "blacklist",
@@ -3259,41 +3091,41 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
             async def _(listuser: str) -> None:
-                user = client.get_user(listuser) or client.get_cache_user(listuser)
+                user = self.get_user(listuser) or self.get_cache_user(listuser)
                 if not user:
                     try:
-                        user = await client.fetch_profile(listuser)
+                        user = await self.fetch_profile(listuser)
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                        send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                        send(display_name,l("error_while_requesting_userinfo"),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
                 if not user:
-                    send(display_name,l("invitelist_user_notfound",listuser),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                    send(display_name,l("invitelist_user_notfound",listuser),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
                 else:
-                    client.add_cache(user)
-                    friend = client.get_friend(user.id)
+                    self.add_cache(user)
+                    friend = self.get_friend(user.id)
                     if not friend:
-                        send(display_name,l("not_friend_with_inviteuser",listuser,commands["reload"]),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
-                        if data['fortnite']['addfriend'] and not client.is_pending(user.id) and user.id != client.user.id:
+                        send(display_name,l("not_friend_with_inviteuser",listuser,commands["reload"]),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                        if data['fortnite']['addfriend'] and not self.is_pending(user.id) and user.id != self.user.id:
                             try:
-                                await client.add_friend(user.id)
+                                await self.add_friend(user.id)
                             except fortnitepy.HTTPException:
                                 if data['loglevel'] == 'debug':
                                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                                send(display_name,l("error_while_sending_friendrequest"),red,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
+                                send(display_name,l("error_while_sending_friendrequest"),red,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}',add_d=lambda x:f'>>> {x}')
                     else:
-                        client.invitelist.append(friend.id)
+                        self.invitelist.append(friend.id)
             try:
                 await asyncio.gather(*[_(listuser) for listuser in data['fortnite']['invitelist']])
             except Exception:
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             if data['loglevel'] == "debug":
-                send(display_name,f'invitelist {client.invitelist}',yellow,add_d=lambda x:f'```\n{x}\n```')
+                send(display_name,f'invitelist {self.invitelist}',yellow,add_d=lambda x:f'```\n{x}\n```')
 
             if data['fortnite']['acceptfriend']:
-                pendings = [i for i in client.pending_friends.values() if i.incoming]
+                pendings = [i for i in self.pending_friends.values() if i.incoming]
                 async def _(pending: fortnitepy.IncomingPendingFriend) -> None:
-                    if client.acceptfriend is True:
+                    if self.acceptfriend is True:
                         try:
                             await pending.accept()
                         except fortnitepy.HTTPException:
@@ -3304,7 +3136,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                             except fortnitepy.HTTPException:
                                 if data['loglevel'] == 'debug':
                                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                    elif client.acceptfriend is False:
+                    elif self.acceptfriend is False:
                         try:
                             await pending.decline()
                         except fortnitepy.HTTPException:
@@ -3319,24 +3151,23 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             if data['discord']['enabled'] and dclient.isready:
                 dclient_user = name(dclient.user)
 
-                dclient.owner = []
-                for owner in data['discord']['owner']:
-                    user = dclient.get_user(int(data['discord']['owner']))
-                    if not user:
-                        try:
-                            user = await dclient.fetch_user(int(data['discord']['owner']))
-                        except discord.NotFound:
-                            if data['loglevel'] == "debug":
-                                send(dclient_user,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                        except discord.HTTPException:
-                            if data['loglevel'] == 'debug':
-                                send(dclient_user,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                            send(dclient_user,l('error_while_requesting_userinfo'),red,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}',add_d=lambda x:f'>>> {x}')
-                    if not user:
-                        send(dclient_user,l('discord_owner_notfound',owner),red,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}',add_d=lambda x:f'>>> {x}')
-                    else:
-                        dclient.owner.append(user)
-                        send(dclient_user,f"{l('owner')}: {name(dclient.owner)}",green,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}')
+                owner = dclient.get_user(int(data['discord']['owner']))
+                if not owner:
+                    try:
+                        owner = await dclient.fetch_user(int(data['discord']['owner']))
+                    except discord.NotFound:
+                        if data['loglevel'] == "debug":
+                            send(dclient_user,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                    except discord.HTTPException:
+                        if data['loglevel'] == 'debug':
+                            send(dclient_user,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                        send(dclient_user,l('error_while_requesting_userinfo'),red,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}',add_d=lambda x:f'>>> {x}')
+                if not owner:
+                    dclient.owner = None
+                    send(dclient_user,l('discord_owner_notfound'),red,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}',add_d=lambda x:f'>>> {x}')
+                else:
+                    dclient.owner = owner
+                    send(dclient_user,f"{l('owner')}: {name(dclient.owner)}",green,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}')
 
                 lists = {
                     "blacklist_": "blacklist",
@@ -3363,7 +3194,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['addblacklist']:
+    elif args[0] in commands['addblacklist'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['addblacklist']}] [{l('name_or_id')}]")
@@ -3436,7 +3267,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['removeblacklist']:
+    elif args[0] in commands['removeblacklist'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['removeblacklist']}] [{l('name_or_id')}]")
@@ -3509,7 +3340,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['addwhitelist']:
+    elif args[0] in commands['addwhitelist'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['addwhitelist']}] [{l('name_or_id')}]")
@@ -3582,7 +3413,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['removewhitelist']:
+    elif args[0] in commands['removewhitelist'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['removewhitelist']}] [{l('name_or_id')}]")
@@ -3655,7 +3486,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['addinvitelist']:
+    elif args[0] in commands['addinvitelist'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['addinvitelist']}] [{l('name_or_id')}]")
@@ -3728,7 +3559,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['removeinvitelist']:
+    elif args[0] in commands['removeinvitelist'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['removeinvitelist']}] [{l('name_or_id')}]")
@@ -3801,7 +3632,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['get']:
+    elif args[0] in commands['get'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['get']}] [{l('name_or_id')}]")
@@ -3862,7 +3693,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['friendcount']:
+    elif args[0] in commands['friendcount'].split(','):
         try:
             send(display_name,f"{l('friendcount')}: {len(client.friends)}",add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
             await reply(message, client, f"{l('friendcount')}: {len(client.friends)}")
@@ -3870,7 +3701,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['pendingcount']:
+    elif args[0] in commands['pendingcount'].split(','):
         try:
             outgoing = [i for i in client.pending_friends.values() if i.outgoing]
             incoming = [i for i in client.pending_friends.values() if i.incoming]
@@ -3880,7 +3711,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['blockcount']:
+    elif args[0] in commands['blockcount'].split(','):
         try:
             send(display_name,f"{l('blockcount')}: {len(client.blocked_users)}",add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
             await reply(message, client, f"{l('blockcount')}: {len(client.blocked_users)}")
@@ -3888,7 +3719,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['friendlist']:
+    elif args[0] in commands['friendlist'].split(','):
         try:
             text = ''
             for friend in client.friends.values():
@@ -3900,7 +3731,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['pendinglist']:
+    elif args[0] in commands['pendinglist'].split(','):
         try:
             outgoing = ''
             incoming = ''
@@ -3916,7 +3747,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['blocklist']:
+    elif args[0] in commands['blocklist'].split(','):
         try:
             text = ''
             for block in client.blocked_users.values():
@@ -3928,13 +3759,13 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['wait']:
+    elif args[0] in commands['wait'].split(','):
         try:
             if not client.acceptinvite:
                 if isinstance(message, fortnitepy.message.MessageBase) or isinstance(getattr(message,"base",None), fortnitepy.message.MessageBase):
-                    if (not (message.author.id in [owner.id for owner in client.owner])
+                    if (not (message.author.id == getattr(client.owner,"id",None))
                         and not (message.author.id in whitelist and data['fortnite']['whitelist-ownercommand'])
-                        and not (message.author.id in [owner.id for owner in dclient.owner])
+                        and not (message.author.id == getattr(dclient.owner,"id",None))
                         and not (message.author.id in whitelist_ and data['discord']['whitelist-ownercommand'])):
                         await reply(message, client, l('invite_is_decline'))
                         return
@@ -3951,7 +3782,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['join']:
+    elif args[0] in commands['join'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['join']}] [{l('name_or_id')}]")
@@ -4039,7 +3870,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['joinid']:
+    elif args[0] in commands['joinid'].split(','):
         try:
             await client.join_to_party(party_id=args[1])
         except fortnitepy.PartyError:
@@ -4062,7 +3893,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['leave']:
+    elif args[0] in commands['leave'].split(','):
         try:
             await client.party.me.leave()
             await reply(message, client, l('party_leave', client.party.id))
@@ -4074,7 +3905,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['invite']:
+    elif args[0] in commands['invite'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['invite']}] [{l('name_or_id')}]")
@@ -4148,14 +3979,14 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['inviteall']:
+    elif args[0] in commands['inviteall'].split(','):
         try:
             [loop.create_task(client.party.invite(inviteuser)) for inviteuser in client.invitelist]
         except Exception:
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['message']:
+    elif args[0] in commands['message'].split(','):
         try:
             text = rawcontent.split(' : ')
             if data['caseinsensitive']:
@@ -4223,7 +4054,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['partymessage']:
+    elif args[0] in commands['partymessage'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['partymessage']}] [{l('content')}]")
@@ -4234,7 +4065,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['sendall']:
+    elif args[0] in commands['sendall'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['sendall']}] [{l('content')}]")
@@ -4254,7 +4085,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['status']:
+    elif args[0] in commands['status'].split(','):
         try:
             client.status_ = rawcontent
             await client.change_status()
@@ -4267,7 +4098,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['avatar']:
+    elif args[0] in commands['avatar'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['avatar']}] [ID]")
@@ -4289,7 +4120,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['banner']:
+    elif args[0] in commands['banner'].split(','):
         try:
             await client.party.me.edit_and_keep(partial(client.party.me.set_banner,args[1],args[2],client.party.me.banner[2]))
             await reply(message, client, l('set_to', l('banner'), f"{args[1]}, {args[2]}"))
@@ -4305,7 +4136,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['level']:
+    elif args[0] in commands['level'].split(','):
         try:
             await client.party.me.edit_and_keep(partial(client.party.me.set_banner,client.party.me.banner[0],client.party.me.banner[1],int(args[1])))
             await reply(message, client, l('set_to', l('level'), args[1]))
@@ -4325,7 +4156,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['bp']:
+    elif args[0] in commands['bp'].split(','):
         try:
             await client.party.me.edit_and_keep(partial(client.party.me.set_battlepass_info,True,args[1],args[2],args[3]))
             await reply(message, client, l('set_to', l('bpinfo'), f"{l('tier')}: {args[1]}, {l('xpboost')}: {args[2]}, {l('friendxpboost')}: {args[3]}"))
@@ -4341,7 +4172,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['privacy']:
+    elif args[0] in commands['privacy'].split(','):
         try:
             privacies = [
                 "privacy_public",
@@ -4351,11 +4182,9 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 "privacy_private"
             ]
             for privacy in privacies:
-                if args[1] in commands[privacy]:
-                    priv = getattr(PartyPrivacy,privacy.replace("privacy_","",1).upper()).value
-                    await client.party.set_privacy(priv)
+                if args[1] in commands[privacy].split(','):
+                    await client.party.set_privacy(getattr(fortnitepy.PartyPrivacy,privacy.replace("privacy_","",1).upper()))
                     await reply(message, client, l('set_to', l('privacy'), l(privacy.replace("privacy_","",1))))
-                    break
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -4368,7 +4197,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error')) 
 
-    elif args[0] in commands['getuser']:
+    elif args[0] in commands['getuser'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['getuser']}] [{l('name_or_id')}]")
@@ -4401,7 +4230,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['getfriend']:
+    elif args[0] in commands['getfriend'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['getfriend']}] [{l('name_or_id')}]")
@@ -4435,8 +4264,6 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     text += f'\n{str(friend.display_name)} / {friend.id}'
                 else:
                     text += f'\n{friend.nickname}({str(friend.display_name)}) / {friend.id}'
-                if friend.last_presence and friend.last_presence.avatar:
-                    text += f"\n{l('avatar')}: {friend.last_presence.avatar.asset}"
                 if friend.last_logout:
                     text += "\n{1}: {0.year}/{0.month}/{0.day} {0.hour}:{0.minute}:{0.second}".format(friend.last_logout, l('lastlogin'))
             send(display_name,text)
@@ -4445,7 +4272,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['getpending']:
+    elif args[0] in commands['getpending'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['getpending']}] [{l('name_or_id')}]")
@@ -4482,7 +4309,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['getblock']:
+    elif args[0] in commands['getblock'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['getblock']}] [{l('name_or_id')}]")
@@ -4519,9 +4346,9 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['info']:
+    elif args[0] in commands['info'].split(','):
         try:
-            if args[1] in commands['info_party']:
+            if args[1] in commands['info_party'].split(','):
                 text = str()
                 text += f"{client.party.id}\n{l('member_count')}: {client.party.member_count}\n{client.party.playlist_info[0]}"
                 for member in client.party.members.copy().values():
@@ -4535,7 +4362,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if data['loglevel'] == 'debug':
                     send(display_name,json.dumps(client.party.meta.schema,indent=4),yellow,add_d=lambda x:f'```\n{x}\n```')
             
-            elif True in [args[1] in commands[key] for key in ("cid", "bid", "petcarrier", "pickaxe_id", "eid", "emoji_id", "toy_id", "id")]:
+            elif True in [args[1] in commands[key].split(',') for key in ("cid", "bid", "petcarrier", "pickaxe_id", "eid", "emoji_id", "toy_id", "id")]:
                 type_ = convert_to_type(args[1])
                 if rawcontent2 == '':
                     await reply(message, client, f"[{commands[convert_to_old_type(type_)]}] [ID]")
@@ -4567,7 +4394,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                                 ]
                             }
 
-            elif True in  [args[1] in commands[key] for key in ("outfit", "backpack", "pet", "pickaxe", "emote", "emoji", "toy", "item")]:
+            elif True in  [args[1] in commands[key].split(',') for key in ("outfit", "backpack", "pet", "pickaxe", "emote", "emoji", "toy", "item")]:
                 type_ = convert_to_type(args[1])
                 if rawcontent2 == '':
                     await reply(message, client, f"[{commands[convert_to_old_type(type_)]}] [{l('itemname')}]")
@@ -4606,14 +4433,14 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['pending']:
+    elif args[0] in commands['pending'].split(','):
         try:
             pendings = []
             for pending in client.pending_friends.values():
                 client.add_cache(pending)
                 if pending.incoming:
                     pendings.append(pending)
-            if args[1] in commands['true']:
+            if args[1] in commands['true'].split(','):
                 for pending in pendings:
                     try:
                         await pending.accept()
@@ -4627,7 +4454,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                         await reply(message, client, l('error'))
                         return
-            elif args[1] in commands['false']:
+            elif args[1] in commands['false'].split(','):
                 for pending in pendings:
                     try:
                         await pending.decline()
@@ -4649,7 +4476,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['removepending']:
+    elif args[0] in commands['removepending'].split(','):
         try:
             pendings = []
             for pending in client.pending_friends.values():
@@ -4673,7 +4500,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['addfriend']:
+    elif args[0] in commands['addfriend'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['addfriend']}] [{l('name_or_id')}]")
@@ -4737,7 +4564,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['removefriend']:
+    elif args[0] in commands['removefriend'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['removefriend']}] [{l('name_or_id')}]")
@@ -4801,7 +4628,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['removeallfriend']:
+    elif args[0] in commands['removeallfriend'].split(','):
         try:
             friend_count = len(client.friends)
             await client.remove_all_friends()
@@ -4814,66 +4641,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['remove_offline_for']:
-        try:
-            kwargs = {}
-            kwargs["days"] = int(args[1])
-            kwargs["hours"] = int(args[2]) if args[2:3] else 0
-            kwargs["minutes"] = int(args[3]) if args[3:4] else 0
-            offline_for = datetime.timedelta(**kwargs)
-            event = asyncio.Event(loop=loop)
-            removed = []  
-
-            async def _(friend: fortnitepy.Friend):
-                last_logout = None
-                if friend.last_logout:
-                    last_logout = friend.last_logout
-                elif friend.created_at > client.booted_utc:
-                    last_logout = await friend.fetch_last_logout()
-                if last_logout and ((datetime.datetime.utcnow() - last_logout) > offline_for):
-                    await event.wait()
-                    try:
-                        await friend.remove()
-                    except fortnitepy.HTTPException as e:
-                        if e.message_code != "errors.com.epicgames.common.throttled":
-                            raise
-                        if "Operation access is limited by throttling policy" not in e.message:
-                            raise
-                        event.set()
-                        await asyncio.sleep(int(e.message_vars[0]) + 1)
-                        await friend.remove()
-                        event.clear()
-                    removed.append(friend)
-            max_worker = 5
-            worker = 0
-            def dec(*args):
-                nonlocal worker
-                worker -= 1
-                
-            tasks = []
-            val = len(client.friends)
-            for num,friend in enumerate(client.friends.copy().values()):
-                if worker >= max_worker:
-                    await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
-                worker += 1
-                task = loop.create_task(_(friend))
-                task.add_done_callback(dec)
-                tasks.append(task)
-            await asyncio.gather(*tasks)
-            await reply(message, client, l('remove_allfriend',len(removed)))
-        except fortnitepy.HTTPException:
-            if data['loglevel'] == 'debug':
-                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-            await reply(message, client, l('error_while_removing_friend'))
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-            await reply(message, client, f"[{commands['remove_offline_for']}] [{l('day')}] [{l('hour')}]({l('optional')}) [{l('minute')}]({l('optional')})")
-        except Exception:
-            send(name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-            await reply(message, client, l('error'))
-
-    elif args[0] in commands['acceptpending']:
+    elif args[0] in commands['acceptpending'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['acceptpending']}] [{l('name_or_id')}]")
@@ -4937,7 +4705,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['declinepending']:
+    elif args[0] in commands['declinepending'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['declinepending']}] [{l('name_or_id')}]")
@@ -5001,7 +4769,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['blockfriend']:
+    elif args[0] in commands['blockfriend'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['blockfriend']}] [{l('name_or_id')}]")
@@ -5065,7 +4833,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['unblockfriend']:
+    elif args[0] in commands['unblockfriend'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['unblockfriend']}] [{l('name_or_id')}]")
@@ -5129,32 +4897,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['voice']:
-        try:
-            if args[1] in commands['true']:
-                client.voice = True
-                await client.enable_voice()
-                send(display_name,l('set_to', 'voice', l('on')),add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
-                await reply(message, client, l('set_to', 'voice', l('on')))
-            elif args[1] in commands['false']:
-                client.voice = False
-                await client.disable_voice()
-                send(display_name,l('set_to', 'voice', l('off')),add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
-                await reply(message, client, l('set_to', 'voice', l('off')))
-        except IndexError:
-            if data['loglevel'] == 'debug':
-                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-            await reply(message, client, f"[{commands[key]}] [[{commands['true']}] / [{commands['false']}]]")
-        except fortnitepy.Forbidden:
-            if data['loglevel'] == 'debug':
-                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-            await reply(message, client, l('not_party_leader'))
-        except Exception:
-            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-            await reply(message, client, l('error'))
-        return
-
-    elif args[0] in commands['chatban']:
+    elif args[0] in commands['chatban'].split(','):
         try:
             reason = rawcontent.split(' : ')
             if rawcontent == '':
@@ -5208,7 +4951,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-            await reply(message, client, l('not_party_leader'))
+            await reply(message, client, l('nor_party_leader'))
         except fortnitepy.NotFound:
             if data['loglevel'] == 'debug':
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5230,7 +4973,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
         except fortnitepy.Forbidden:
             if data['loglevel'] == 'debug':
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-            await reply(message, client, l('not_party_leader'))
+            await reply(message, client, l('nor_party_leader'))
         except fortnitepy.NotFound:
             if data['loglevel'] == 'debug':
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5243,7 +4986,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['promote']:
+    elif args[0] in commands['promote'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['promote']}] [{l('name_or_id')}]")
@@ -5325,7 +5068,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['kick']:
+    elif args[0] in commands['kick'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['kick']}] [{l('name_or_id')}]")
@@ -5406,7 +5149,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['hide']:
+    elif args[0] in commands['hide'].split(','):
         try:
             if rawcontent == '':
                 await client.hide()
@@ -5480,7 +5223,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['show']:
+    elif args[0] in commands['show'].split(','):
         try:
             if rawcontent == '':
                 await client.show()
@@ -5554,7 +5297,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['ready']:
+    elif args[0] in commands['ready'].split(','):
         try:
             await client.party.me.set_ready(fortnitepy.ReadyState.READY)
             await reply(message, client, l('set_to', l('readystate'), l('ready')))
@@ -5562,7 +5305,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['unready']:
+    elif args[0] in commands['unready'].split(','):
         try:
             await client.party.me.set_ready(fortnitepy.ReadyState.NOT_READY)
             await reply(message, client, l('set_to', l('readystate'), l('unready')))
@@ -5570,7 +5313,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['sitout']:
+    elif args[0] in commands['sitout'].split(','):
         try:
             await client.party.me.set_ready(fortnitepy.ReadyState.SITTING_OUT)
             await reply(message, client, l('set_to', l('readystate'), l('sitout')))
@@ -5581,7 +5324,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['match']:
+    elif args[0] in commands['match'].split(','):
         try:
             await client.party.me.set_in_match(players_left=int(args[1]) if args[1:2] else 100)
             await reply(message, client, l('set_to', l('matchstate'), l('remaining', args[1] if args[1:2] else "100")))
@@ -5593,7 +5336,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['unmatch']:
+    elif args[0] in commands['unmatch'].split(','):
         try:
             await client.party.me.clear_in_match()
             await reply(message, client, l('set_to', l('matchstate'), l('off')))
@@ -5601,7 +5344,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['swap']:
+    elif args[0] in commands['swap'].split(','):
         try:
             if rawcontent == '':
                 await reply(message, client, f"[{commands['swap']}] [{l('name_or_id')}]")
@@ -5681,7 +5424,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['stop']:
+    elif args[0] in commands['stop'].split(','):
         try:
             client.stopcheck = True
             if await client.change_asset(message.author.id, "Emote", ""):
@@ -5692,7 +5435,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['setenlightenment']:
+    elif args[0] in commands['setenlightenment'].split(','):
         try:
             if await client.change_asset(message.author.id, "Outfit", client.party.me.outfit, client.party.me.outfit_variants,(args[1],args[2])) is True:
                 await reply(message, client, l('set_to', 'enlightenment', f'{args[1]}, {args[2]}'))
@@ -5710,70 +5453,33 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['addeditems']:
+    elif args[0] in commands['addeditems'].split(','):
         try:
             async with aiohttp.ClientSession() as session:
                 res = await session.get("https://benbotfn.tk/api/v1/newCosmetics")
                 res = await res.json()
-            flag = False
             items = res["items"]
             for item in items:
                 if client.stopcheck:
                     client.stopcheck = False
                     break
-                if item["backendType"] in ignoretype:
+                if convert_backend_type(item["backendType"]) in ignoretype:
                     continue
-                if await client.change_asset(message.author.id, convert_backend_type(item["backendType"]), item["id"]):
-                    if data['loglevel'] == 'normal':
-                        await reply(message, client, f"{item['shortDescription']}: {item['name']}")
-                    else:
-                        await reply(message, client, f"{item['shortDescription']}: {item['name']} | {item['id']}")
-                    await asyncio.sleep(5)
+                await client.change_asset(message.author.id, convert_backend_type(item["backendType"]), item["id"])
+                await asyncio.sleep(5)
             else:
                 await reply(message, client, l('all_end', l('addeditem')))
         except Exception:
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['shopitems']:
-        try:
-            store = await client.fetch_item_shop()
-            items = []
-            for item in (store.featured_items
-                         + store.daily_items
-                         + store.special_featured_items
-                         + store.special_daily_items):
-                for grant in item.grants:
-                    if convert_backend_type(grant["type"]) in ignoretype:
-                        continue
-                    item = {
-                        "id": grant["asset"],
-                        "type": convert_to_asset(convert_to_old_type(convert_backend_type(grant["type"]))),
-                        "backendType": grant["type"]
-                    }
-                    items.append(item)
-            for item in items:
-                if client.stopcheck:
-                    client.stopcheck = False
-                    break
-                if item["backendType"] in ignoretype:
-                    continue
-                if await client.change_asset(message.author.id, convert_backend_type(item["backendType"]), item["id"]):
-                    if data['loglevel'] == 'normal':
-                        await reply(message, client, f"{item['shortDescription']}: {item['name']}")
-                    else:
-                        await reply(message, client, f"{item['shortDescription']}: {item['name']} | {item['id']}")
-                    await asyncio.sleep(5)
-            else:
-                await reply(message, client, l('all_end', l('shopitem')))
-        except Exception:
-            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-            await reply(message, client, l('error'))
-
-    elif True in [args[0] in commands[key] for key in ("alloutfit", "allbackpack", "allpet", "allpickaxe", "allemote", "allemoji", "alltoy")]:
+    elif True in [args[0] in commands[key].split(',') for key in ("alloutfit", "allbackpack", "allpet", "allpickaxe", "allemote", "allemoji", "alltoy")]:
         type_ = convert_to_type(args[0])
         try:
-            if getattr(client,f"{convert_to_old_type(type_)}lock") and client.lock_check(message.author.id):
+            flag = False
+            if getattr(client,f"{convert_to_old_type(type_)}lock"):
+                flag = client.lock_check(message.author.id)
+            if flag:
                 await reply(message, client, l('locked'))
                 return
             with open(f'items/{type_}_{data["search-lang"]}.json', 'r', encoding='utf-8') as f:
@@ -5790,7 +5496,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif True in [args[0] in commands[key] for key in ("cid", "bid", "petcarrier", "pickaxe_id", "eid", "emoji_id", "toy_id", "id")]:
+    elif True in [args[0] in commands[key].split(',') for key in ("cid", "bid", "petcarrier", "pickaxe_id", "eid", "emoji_id", "toy_id", "id")]:
         type_ = convert_to_type(args[0])
         if rawcontent == '':
             await reply(message, client, f"[{commands[convert_to_old_type(type_)]}] [ID]")
@@ -5845,7 +5551,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif True in [args[0] in commands[key] for key in ("outfit", "backpack", "pet", "pickaxe", "emote", "emoji", "toy", "item")]:
+    elif True in [args[0] in commands[key].split(',') for key in ("outfit", "backpack", "pet", "pickaxe", "emote", "emoji", "toy", "item")]:
         type_ = convert_to_type(args[0])
         if rawcontent == '':
             await reply(message, client, f"[{commands[convert_to_old_type(type_)]}] [{l('itemname')}]")
@@ -5900,7 +5606,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['set']:
+    elif args[0] in commands['set'].split(','):
         if rawcontent == '':
             await reply(message, client, f"[{commands['set']}] [{l('setname')}]")
             return
@@ -5954,9 +5660,9 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['setstyle']:
+    elif args[0] in commands['setstyle'].split(','):
         try:
-            if True not in [args[1] in commands[key] for key in ("outfit", "backpack", "pickaxe")]:
+            if True not in [args[1] in commands[key].split(',') for key in ("outfit", "backpack", "pickaxe")]:
                 await reply(message, client, f"[{commands['setstyle']}] [[{commands['outfit']}] / [{commands['backpack']}] / [{commands['pickaxe']}]]")
                 return
             type_ = convert_to_asset(args[1])
@@ -5982,9 +5688,9 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['addstyle']:
+    elif args[0] in commands['addstyle'].split(','):
         try:
-            if True not in [args[1] in commands[key] for key in ("outfit", "backpack", "pickaxe")]:
+            if True not in [args[1] in commands[key].split(',') for key in ("outfit", "backpack", "pickaxe")]:
                 await reply(message, client, f"[{commands['addstyle']}] [[{commands['outfit']}] / [{commands['backpack']}] / [{commands['pickaxe']}]]")
                 return
             type_ = convert_to_asset(args[1])
@@ -6011,9 +5717,9 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['setvariant']:
+    elif args[0] in commands['setvariant'].split(','):
         try:
-            if True not in [args[1] in commands[key] for key in ("outfit", "backpack", "pet", "pickaxe")]:
+            if True not in [args[1] in commands[key].split(',') for key in ("outfit", "backpack", "pet", "pickaxe")]:
                 await reply(message, client, f"[{commands['setvariant']}] [[{commands['outfit']}] / [{commands['backpack']}] / [{commands['pet']}] / [{commands['pickaxe']}]]")
                 return
             variantdict={}
@@ -6045,9 +5751,9 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
-    elif args[0] in commands['addvariant']:
+    elif args[0] in commands['addvariant'].split(','):
         try:
-            if True not in [args[1] in commands[key] for key in ("outfit", "backpack", "pet", "pickaxe")]:
+            if True not in [args[1] in commands[key].split(',') for key in ("outfit", "backpack", "pet", "pickaxe")]:
                 await reply(message, client, f"[{commands['addvariant']}] [[{commands['outfit']}] / [{commands['backpack']}] / [{commands['pet']}] / [{commands['pickaxe']}]]")
                 return
             variantdict={}
@@ -6078,6 +5784,31 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
         except Exception:
             if data['loglevel'] == 'debug':
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+            await reply(message, client, l('error'))
+
+    elif True in [args[0] in commands[key].split(',') for key in ("outfitasset", "backpackasset", "pickaxeasset", "emoteasset")]:
+        type_ = convert_to_type(args[0])
+        try:
+            if rawcontent == '':
+                await reply(message, client, f"[{commands[f'{convert_to_old_type(type_)}asset']}] [{l('assetpath')}]")
+                return
+            messages = [
+                "...NO",
+                "You...",
+                "It's bannable :)",
+                "Stop it"
+            ]
+            if (False not in [True if i == "/" else False for i in rawcontent] and type_ == "Emote") and getattr(client.owner,"id",None) != message.author.id:
+                await reply(message, client, random.choice(messages))
+                return
+            if not await client.change_asset(message.author.id, type_, rawcontent):
+                await reply(message, client, l('locked'))
+        except fortnitepy.HTTPException:
+            if data['loglevel'] == 'debug':
+                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+            await reply(message, client, l('error_while_changing_asset'))
+        except Exception:
+            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
 
     elif True in [args[0].lower().startswith(id_) for id_ in ("cid_", "bid_", "petcarrier_", "pickaxe_id_", "eid_", "emoji_", "toy_")]:
@@ -6114,13 +5845,13 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             "emotemimic": ["emotemimic", l('mimic', l("emote"))]
         }
         for key,value in keys.items():
-            if args[0] in commands[key]:
+            if args[0] in commands[key].split(','):
                 try:
-                    if args[1] in commands['true']:
+                    if args[1] in commands['true'].split(','):
                         setattr(client,value[0],True)
                         send(display_name,l('set_to', value[1], l('on')),add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
                         await reply(message, client, l('set_to', value[1], l('on')))
-                    elif args[1] in commands['false']:
+                    elif args[1] in commands['false'].split(','):
                         setattr(client,value[0],False)
                         send(display_name,l('set_to', value[1], l('off')),add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
                         await reply(message, client, l('set_to', value[1], l('off')))
@@ -6193,20 +5924,20 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             "randommessageenable": ["randommessageenable", l('join_', l('randommessage'))]
         }
         for key,value in keys.items():
-            if args[0] in commands[key]:
+            if args[0] in commands[key].split(','):
                 try:
-                    if args[1] in commands['true']:
+                    if args[1] in commands['true'].split(','):
                         setattr(client,value[0],True)
                         send(display_name,l('set_to', value[1], l('on')),add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
                         await reply(message, client, l('set_to', value[1], l('on')))
-                    elif args[1] in commands['false']:
+                    elif args[1] in commands['false'].split(','):
                         setattr(client,value[0],False)
                         send(display_name,l('set_to', value[1], l('off')),add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
                         await reply(message, client, l('set_to', value[1], l('off')))
                 except IndexError:
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                    await reply(message, client, f"[{commands[key]}] [[{commands['true']}] / [{commands['false']}]]")
+                    await reply(message, client, f"[{commands['randommessageenable']}] [[{commands['true']}] / [{commands['false']}]]")
                 except Exception:
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     await reply(message, client, l('error'))
@@ -6311,20 +6042,17 @@ format_pattern = re.compile(r"""\{([a-zA-Z0-9\s_\(\)\[\]\.,"']*)\}""")
 config_tags={
     "['fortnite']": [dict],
     "['fortnite']['email']": [str,"can_be_multiple"],
-    "['fortnite']['owner']": [str,"can_be_multiple"],
+    "['fortnite']['owner']": [str],
     "['fortnite']['platform']": [str,"select_platform"],
-    "['fortnite']['outfit']": [str],
-    "['fortnite']['outfit_style']": [str],
-    "['fortnite']['backpack']": [str],
-    "['fortnite']['backpack_style']": [str],
-    "['fortnite']['pickaxe']": [str],
-    "['fortnite']['pickaxe_style']": [str],
-    "['fortnite']['emote']": [str],
+    "['fortnite']['cid']": [str],
+    "['fortnite']['bid']": [str],
+    "['fortnite']['pickaxe_id']": [str],
+    "['fortnite']['eid']": [str],
     "['fortnite']['playlist']": [str],
     "['fortnite']['banner']": [str],
     "['fortnite']['banner_color']": [str],
     "['fortnite']['avatar_id']": [str],
-    "['fortnite']['avatar_color']": [str,"can_linebreak"],
+    "['fortnite']['avatar_color']": [str,"can_be_multiple"],
     "['fortnite']['level']": [int],
     "['fortnite']['tier']": [int],
     "['fortnite']['xpboost']": [int],
@@ -6336,13 +6064,11 @@ config_tags={
     "['fortnite']['disablewhisperperfectly']": [bool_,"select_bool"],
     "['fortnite']['disablepartychatperfectly']": [bool_,"select_bool"],
     "['fortnite']['ignorebot']": [bool_,"select_bool"],
-    "['fortnite']['joinmessage']": [str,"can_linebreak"],
+    "['fortnite']['joinmessage']": [str],
     "['fortnite']['randommessage']": [str,"can_be_multiple"],
     "['fortnite']['joinmessageenable']": [bool_,"select_bool"],
     "['fortnite']['randommessageenable']": [bool_,"select_bool"],
     "['fortnite']['joinemote']": [bool_,"select_bool"],
-    "['fortnite']['click_invite']": [bool_,"select_bool"],
-    "['fortnite']['disable_voice']": [bool_,"select_bool"],
     "['fortnite']['outfitmimic']": [bool_,"select_bool"],
     "['fortnite']['backpackmimic']": [bool_,"select_bool"],
     "['fortnite']['pickaxemimic']": [bool_,"select_bool"],
@@ -6365,33 +6091,33 @@ config_tags={
     "['fortnite']['show-owner']": [bool_,"select_bool"],
     "['fortnite']['show-whitelist']": [bool_,"select_bool"],
     "['fortnite']['show-bot']": [bool_,"select_bool"],
-    "['fortnite']['blacklist']": [str,"can_be_multiple"],
+    "['fortnite']['blacklist']": [list,"can_be_multiple"],
     "['fortnite']['blacklist-declineinvite']": [bool_,"select_bool"],
     "['fortnite']['blacklist-autoblock']": [bool_,"select_bool"],
     "['fortnite']['blacklist-autokick']": [bool_,"select_bool"],
     "['fortnite']['blacklist-autochatban']": [bool_,"select_bool"],
     "['fortnite']['blacklist-ignorecommand']": [bool_,"select_bool"],
-    "['fortnite']['whitelist']": [str,"can_be_multiple"],
+    "['fortnite']['whitelist']": [list,"can_be_multiple"],
     "['fortnite']['whitelist-allowinvite']": [bool_,"select_bool"],
     "['fortnite']['whitelist-declineinvite']": [bool_,"select_bool"],
     "['fortnite']['whitelist-ignorelock']": [bool_,"select_bool"],
     "['fortnite']['whitelist-ownercommand']": [bool_,"select_bool"],
     "['fortnite']['whitelist-ignoreng']": [bool_,"select_bool"],
-    "['fortnite']['invitelist']": [str,"can_be_multiple"],
-    "['fortnite']['otherbotlist']": [str,"can_be_multiple"],
+    "['fortnite']['invitelist']": [list,"can_be_multiple"],
+    "['fortnite']['otherbotlist']": [list,"can_be_multiple"],
     "['discord']": [dict],
     "['discord']['enabled']": [bool_,"select_bool"],
     "['discord']['token']": [str],
-    "['discord']['owner']": [int,"can_be_multiple"],
-    "['discord']['channels']": [str,"can_be_multiple"],
+    "['discord']['owner']": [int],
+    "['discord']['channels']": [list,"can_be_multiple"],
     "['discord']['status']": [str],
     "['discord']['status_type']": [str,"select_status"],
     "['discord']['discord']": [bool_,"select_bool"],
     "['discord']['disablediscordperfectly']": [bool_,"select_bool"],
     "['discord']['ignorebot']": [bool_,"select_bool"],
-    "['discord']['blacklist']": [str,"can_be_multiple"],
+    "['discord']['blacklist']": [list,"can_be_multiple"],
     "['discord']['blacklist-ignorecommand']": [bool_,"select_bool"],
-    "['discord']['whitelist']": [str,"can_be_multiple"],
+    "['discord']['whitelist']": [list,"can_be_multiple"],
     "['discord']['whitelist-ignorelock']": [bool_,"select_bool"],
     "['discord']['whitelist-ownercommand']": [bool_,"select_bool"],
     "['discord']['whitelist-ignoreng']": [bool_,"select_bool"],
@@ -6404,7 +6130,7 @@ config_tags={
     "['web']['web']": [bool_,"select_bool"],
     "['web']['log']": [bool_,"select_bool"],
     "['replies-matchmethod']": [str,"select_matchmethod"],
-    "['ng-words']": [str,"can_be_multiple"],
+    "['ng-words']": [list,"can_be_multiple"],
     "['ng-word-matchmethod']": [str,"select_matchmethod"],
     "['ng-word-kick']": [bool_,"select_bool"],
     "['ng-word-chatban']": [bool_,"select_bool"],
@@ -6500,12 +6226,10 @@ commands_tags={
     "['addfriend']": [str,"can_be_multiple"],
     "['removefriend']": [str,"can_be_multiple"],
     "['removeallfriend']": [str,"can_be_multiple"],
-    "['remove_offline_for']": [str,"can_be_multiple"],
     "['acceptpending']": [str,"can_be_multiple"],
     "['declinepending']": [str,"can_be_multiple"],
     "['blockfriend']": [str,"can_be_multiple"],
     "['unblockfriend']": [str,"can_be_multiple"],
-    "['voice']": [str,"can_be_multiple"],
     "['chatban']": [str,"can_be_multiple"],
     "['promote']": [str,"can_be_multiple"],
     "['kick']": [str,"can_be_multiple"],
@@ -6523,7 +6247,6 @@ commands_tags={
     "['emotelock']": [str,"can_be_multiple"],
     "['stop']": [str,"can_be_multiple"],
     "['addeditems']": [str,"can_be_multiple"],
-    "['shopitems']": [str,"can_be_multiple"],
     "['alloutfit']": [str,"can_be_multiple"],
     "['allbackpack']": [str,"can_be_multiple"],
     "['allpet']": [str,"can_be_multiple"],
@@ -6552,7 +6275,11 @@ commands_tags={
     "['addvariant']": [str,"can_be_multiple"],
     "['setstyle']": [str,"can_be_multiple"],
     "['addstyle']": [str,"can_be_multiple"],
-    "['setenlightenment']": [str,"can_be_multiple"]
+    "['setenlightenment']": [str,"can_be_multiple"],
+    "['outfitasset']": [str,"can_be_multiple"],
+    "['backpackasset']": [str,"can_be_multiple"],
+    "['pickaxeasset']": [str,"can_be_multiple"],
+    "['emoteasset']": [str,"can_be_multiple"]
 }
 localize_keys = [
     'bot',
@@ -6705,9 +6432,7 @@ localize_keys = [
     'blockcount',
     'set_to',
     'mimic',
-    'enter_to_mimic_user',
     'addeditem',
-    'shopitem',
     'outfit',
     'backpack',
     'pet',
@@ -6761,9 +6486,6 @@ localize_keys = [
     'enter_to_send_friendrequest',
     'remove_friend',
     'remove_allfriend',
-    'day',
-    'hour',
-    'minute',
     'enter_to_remove_friend',
     'enter_to_accept_pending',
     'enter_to_decline_pending',
@@ -6778,7 +6500,6 @@ localize_keys = [
     'chatban_user',
     'already_chatban',
     'enter_to_chatban_user',
-    'voice',
     'promote_user',
     'already_party_leader',
     'enter_to_promote_user',
@@ -6811,13 +6532,6 @@ localize_keys = [
     'assetpath',
     'set_playlist',
     'please_enter_valid_number',
-    'playing',
-    'listening',
-    'watching',
-    'full',
-    'contains',
-    'starts',
-    'ends',
     'web',
     'web_running',
     'web_login',
@@ -6854,13 +6568,10 @@ localize_keys = [
     'config_fortnite_email',
     'config_fortnite_owner',
     'config_fortnite_platform',
-    'config_fortnite_outfit',
-    'config_fortnite_outfit_style',
-    'config_fortnite_backpack',
-    'config_fortnite_backpack_style',
-    'config_fortnite_pickaxe',
-    'config_fortnite_pickaxe_style',
-    'config_fortnite_emote',
+    'config_fortnite_cid',
+    'config_fortnite_bid',
+    'config_fortnite_pickaxe_id',
+    'config_fortnite_eid',
     'config_fortnite_playlist',
     'config_fortnite_banner',
     'config_fortnite_banner_color',
@@ -6882,18 +6593,12 @@ localize_keys = [
     'config_fortnite_randommessage',
     'config_fortnite_randommessageenable',
     'config_fortnite_joinemote',
-    'config_fortnite_click_invite',
-    'config_fortnite_disable_voice',
     'config_fortnite_outfitmimic',
     'config_fortnite_backpackmimic',
     'config_fortnite_pickaxemimic',
     'config_fortnite_emotemimic',
     'config_fortnite_mimic-ignorebot',
     'config_fortnite_mimic-ignoreblacklist',
-    'config_fortnite_outfitlock',
-    'config_fortnite_backpacklock',
-    'config_fortnite_pickaxelock',
-    'config_fortnite_emotelock',
     'config_fortnite_acceptinvite',
     'config_fortnite_acceptfriend',
     'config_fortnite_addfriend',
@@ -6925,7 +6630,6 @@ localize_keys = [
     'config_discord_owner',
     'config_discord_channels',
     'config_discord_status',
-    'config_discord_status_type',
     'config_discord_discord',
     'config_discord_disablediscordperfectly',
     'config_discord_ignorebot',
@@ -6950,13 +6654,11 @@ localize_keys = [
     'config_ng-word-blacklist',
     'config_lang',
     'config_restart_in',
-    'config_search_max',
     'config_search-lang',
     'config_no-logs',
     'config_ingame-error',
     'config_discord-log',
     'config_omit-over2000',
-    'config_skip-if-overflow',
     'config_hide-email',
     'config_hide-token',
     'config_hide-webhook',
@@ -6975,11 +6677,11 @@ localize_keys = [
 error_config = []
 error_commands = []
 
-outfit_keys = ("cid", "outfit", "outfitmimic", "outfitlock", "alloutfit")
-backpack_keys = ("bid", "backpack", "backpackmimic", "backpacklock", "allbackpack")
+outfit_keys = ("cid", "outfit", "outfitmimic", "outfitlock", "alloutfit", "outfitasset")
+backpack_keys = ("bid", "backpack", "backpackmimic", "backpacklock", "allbackpack", "backpackasset")
 pet_keys = ("petcarrier", "pet", "allpet")
-pickaxe_keys = ("pickaxe_id", "pickaxe", "pickaxemimic", "pickaxelock", "allpickaxe")
-emote_keys = ("eid", "emote", "emotemimic", "emotelock", "allemote")
+pickaxe_keys = ("pickaxe_id", "pickaxe", "pickaxemimic", "pickaxelock", "allpickaxe", "pickaxeasset")
+emote_keys = ("eid", "emote", "emotemimic", "emotelock", "allemote", "emoteasset")
 emoji_keys = ("emoji_id", "emoji", "allemoji")
 toy_keys = ("toy_id", "toy", "alltoy")
 item_keys = ("id", "item")
@@ -7058,37 +6760,32 @@ if True:
     send(l('bot'),l("booting"))
 
 dclient = discord.Client()
-dclient.owner = []
 dclient.isready = False
-dclient.boot_time = None
 if True: #discord
     @dclient.event
     async def on_ready() -> None:
         loop = asyncio.get_event_loop()
-        dclient.boot_time = time.time()
         dclient_user = name(dclient.user)
         send(dclient_user,f"{l('login')}: {dclient_user}",green,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}')
         dclient.isready = True
         loop.create_task(status_loop())
 
-        dclient.owner = []
-        for owner in data['discord']['owner']:
-            user = dclient.get_user(owner)
-            if not user:
-                try:
-                    user = await dclient.fetch_user(owner)
-                except discord.NotFound:
-                    if data['loglevel'] == "debug":
-                        send(dclient_user,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                except discord.HTTPException:
-                    if data['loglevel'] == 'debug':
-                        send(dclient_user,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                    send(dclient_user,l('error_while_requesting_userinfo'),red,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}',add_d=lambda x:f'>>> {x}')
-            if not user:
-                send(dclient_user,l('discord_owner_notfound',owner),red,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}',add_d=lambda x:f'>>> {x}')
-            else:
-                dclient.owner.append(user)
-                send(dclient_user,f"{l('owner')}: {name(user)}",green,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}')
+        owner = dclient.get_user(int(data['discord']['owner']))
+        if not owner:
+            try:
+                owner = await dclient.fetch_user(int(data['discord']['owner']))
+            except discord.NotFound:
+                if data['loglevel'] == "debug":
+                    send(dclient_user,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+            except discord.HTTPException:
+                if data['loglevel'] == 'debug':
+                    send(dclient_user,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                send(dclient_user,l('error_while_requesting_userinfo'),red,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}',add_d=lambda x:f'>>> {x}')
+        if not owner:
+            send(dclient_user,l('discord_owner_notfound'),red,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}',add_d=lambda x:f'>>> {x}')
+        else:
+            dclient.owner = owner
+            send(dclient_user,f"{l('owner')}: {name(dclient.owner)}",green,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}')
 
         lists = {
             "blacklist_": "blacklist",
@@ -7126,12 +6823,11 @@ if True: #discord
                     "all_pending_count": sum([len(client_.pending_friends) for client_ in clients]),
                     "all_block_count": sum([len(client_.blocked_users) for client_ in clients]),
                     "guild_count": len(dclient.guilds),
-                    "get_guild_member_count": get_guild_member_count,
-                    "boot_time": int(time.time() - dclient.boot_time)
+                    "get_guild_member_count": get_guild_member_count
                 }
             )
         
-        activity = discord.Activity(name=eval_format(data['discord']['status'],var),type=data['discord']['status_type'])
+        activity = discord.Activity(name=data['discord']['status'].format_map(var),type=data['discord']['status_type'])
         await dclient.change_presence(activity=activity)
 
     async def status_loop() -> None:
@@ -7199,27 +6895,41 @@ select_ben_lang = select(
     ]
 )
 
-converter = {
-    "can_be_multiple": CanBeMultiple,
-    "can_linebreak": CanLinebreak,
-    "select_bool": select_bool,
-    "select_bool_none": select_bool_none,
-    "select_platform": select_platform,
-    "select_privacy" :select_privacy,
-    "select_status": select_status,
-    "select_loglevel": select_loglevel,
-    "select_lang": select_lang,
-    "select_ben_lang": select_ben_lang,
-    "select_matchmethod": select_matchmethod,
-    "red": Red,
-    "fix_required": FixRequired
-}
 for key,value in config_tags.items():
     for count,tag in enumerate(value):
-        config_tags[key][count] = converter.get(tag,tag)
+        if tag == "can_be_multiple":
+            config_tags[key][count] = CanBeMultiple
+        elif tag == "select_bool":
+            config_tags[key][count] = select_bool
+        elif tag == "select_bool_none":
+            config_tags[key][count] = select_bool_none
+        elif tag == "select_platform":
+            config_tags[key][count] = select_platform
+        elif tag == "select_privacy":
+            config_tags[key][count] = select_privacy
+        elif tag == "select_status":
+            config_tags[key][count] = select_status
+        elif tag == "select_loglevel":
+            config_tags[key][count] = select_loglevel
+        elif tag == "select_lang":
+            config_tags[key][count] = select_lang
+        elif tag == "select_ben_lang":
+            config_tags[key][count] = select_ben_lang
+        elif tag == "select_matchmethod":
+            config_tags[key][count] = select_matchmethod
+        elif tag == "red":
+            config_tags[key][count] = Red
+        elif tag == "fix_required":
+            config_tags[key][count] = FixRequired
 for key,value in commands_tags.items():
     for count,tag in enumerate(value):
-        commands_tags[key][count] = converter.get(tag,tag)
+        if tag == "can_be_multiple":
+            commands_tags[key][count] = CanBeMultiple
+        elif tag == "red":
+            commands_tags[key][count] = Red
+        elif tag == "fix_required":
+            commands_tags[key][count] = FixRequired
+
 
 if True: #Web
     @app.route("/favicon.ico", methods=["GET"])
@@ -7254,13 +6964,11 @@ if True: #Web
                     len=len,
                     type=type,
                     can_be_multiple=CanBeMultiple,
-                    can_linebreak=CanLinebreak,
                     select=select,
                     str=str,
                     int=int,
                     bool=bool,
                     list=list,
-                    map=map,
                     red=Red,
                     fix_required=FixRequired,
                     flash_messages=flash_messages,
@@ -7288,9 +6996,9 @@ if True: #Web
                             flag = True
                         if CanBeMultiple in tags:
                             if str in tags:
+                                corrected[key] = ",".join([i for i in re.split(r'\n|\r',value) if i]) if value else ""
+                            elif list in tags:
                                 corrected[key] = re.split(r'\r\n|\n',value) if value else []
-                            elif int in tags:
-                                corrected[key] = [int(i) for i in re.split(r'\r\n|\n',value)] if value else []
                         elif str in tags:
                             corrected[key] = value.replace(r"\\n",r"\n").replace(r"\n","\n") if value else ""
                         elif int in tags:
@@ -7314,9 +7022,9 @@ if True: #Web
                             flag = True
                         if CanBeMultiple in tags:
                             if str in tags:
-                                corrected[key][key2] = re.split(r'\r\n|\n',value2) if value2 else []
-                            elif int in tags:
-                                corrected[key][key2]  = [int(i) for i in re.split(r'\r\n|\n',value2)] if value2 else []
+                                corrected[key][key2] = ",".join([i for i in re.split(r'\n|\r',value2) if i]) if value2 else ""
+                            elif list in tags:
+                                corrected[key][key2]  = re.split(r'\r\n|\n',value2) if value2 else []
                         elif str in tags:
                             corrected[key][key2]  = value2.replace(r"\\n",r"\n").replace(r"\n","\n") if value2 else ""
                         elif int in tags:
@@ -7334,13 +7042,11 @@ if True: #Web
                         len=len,
                         type=type,
                         can_be_multiple=CanBeMultiple,
-                        can_linebreak=CanLinebreak,
                         select=select,
                         str=str,
                         int=int,
                         bool=bool,
                         list=list,
-                        map=map,
                         red=Red,
                         fix_required=FixRequired,
                         flash_messages=flash_messages,
@@ -7415,13 +7121,11 @@ if True: #Web
                     len=len,
                     type=type,
                     can_be_multiple=CanBeMultiple,
-                    can_linebreak=CanLinebreak,
                     select=select,
                     str=str,
                     int=int,
                     bool=bool,
                     list=list,
-                    map=map,
                     red=Red,
                     fix_required=FixRequired,
                     flash_messages=flash_messages,
@@ -7449,9 +7153,9 @@ if True: #Web
                             flag = True
                         if CanBeMultiple in tags:
                             if str in tags:
+                                corrected[key] = ",".join([i for i in re.split(r'\n|\r',value) if i]) if value else ""
+                            elif list in tags:
                                 corrected[key] = re.split(r'\r\n|\n',value) if value else []
-                            elif int in tags:
-                                corrected[key] = [int(i) for i in re.split(r'\r\n|\n',value)] if value else []
                         elif str in tags:
                             corrected[key] = value.replace(r"\\n",r"\n").replace(r"\n","\n") if value else ""
                         elif int in tags:
@@ -7475,9 +7179,9 @@ if True: #Web
                             flag = True
                         if CanBeMultiple in tags:
                             if str in tags:
-                                corrected[key][key2] = re.split(r'\r\n|\n',value2) if value2 else []
-                            elif int in tags:
-                                corrected[key][key2]  = [int(i) for i in re.split(r'\r\n|\n',value2)] if value2 else []
+                                corrected[key][key2] = ",".join([i for i in re.split(r'\n|\r',value2) if i]) if value2 else ""
+                            elif list in tags:
+                                corrected[key][key2]  = re.split(r'\r\n|\n',value2) if value2 else []
                         elif str in tags:
                             corrected[key][key2]  = value2.replace(r"\\n",r"\n").replace(r"\n","\n") if value2 else ""
                         elif int in tags:
@@ -7495,13 +7199,11 @@ if True: #Web
                         len=len,
                         type=type,
                         can_be_multiple=CanBeMultiple,
-                        can_linebreak=CanLinebreak,
                         select=select,
                         str=str,
                         int=int,
                         bool=bool,
                         list=list,
-                        map=map,
                         red=Red,
                         fix_required=FixRequired,
                         flash_messages=flash_messages,
@@ -7526,13 +7228,11 @@ if True: #Web
                             split=str.split,
                             type=type,
                             can_be_multiple=CanBeMultiple,
-                            can_linebreak=CanLinebreak,
                             select=select,
                             str=str,
                             int=int,
                             bool=bool,
                             list=list,
-                            map=map,
                             red=Red,
                             fix_required=FixRequired,
                             flash_messages=flash_messages,
@@ -7586,7 +7286,9 @@ if True: #Web
                         if FixRequired in tags and value == corrected.get(key):
                             flash_messages_red.append(l('this_field_fix_required', key))
                             flag = True
-                        corrected[key] = re.split(r'\r\n|\n',value) if value else []
+                        if CanBeMultiple in tags:
+                            if str in tags:
+                                corrected[key] = ",".join([i for i in re.split(r'\n|\r',value) if i]) if value else ""
                 if flag:
                     return render_template(
                         "commands_editor.html",
@@ -7857,27 +7559,11 @@ if data.get('web',{}).get('enabled',True) is True or data.get('status',1)  == 0:
     loop.create_task(run_app())
 
 Thread(target=dprint,args=(),daemon=True).start()
-Thread(target=store_banner_data).start()
 if data.get("status",1) != 0:
-    langs = [data["search-lang"],data["sub-search-lang"]]
-    #store_item_data(langs)
-    items = {}
-    styles = {}
-    with ThreadPoolExecutor() as executor:
-        items_futures = {executor.submit(search_item,lang,mode,data['fortnite'][type_.split(',')[0]],",".join(convert_to_new_type(i) for i in type_.split(','))): type_.split(',')[0] for lang in langs for mode in ("name","id") for type_ in ("outfit","backpack,pet","pickaxe","emote,emoji,toy")}
-    for future,type_ in items_futures.items():
-        result = future.result()
-        if result and not items.get(type_):
-            items[type_] = result[0]
-    with ThreadPoolExecutor() as executor:
-        styles_futures = {executor.submit(search_style,data["search-lang"],items.get(type_.split(',')[0],{}).get("id"),",".join(convert_to_new_type(i) for i in type_.split(','))): type_.split(',')[0] for type_ in ("outfit","backpack,pet","pickaxe") if data["fortnite"][f"{type_.split(',')[0]}_style"]}
-    for future,type_ in styles_futures.items():
-        result = future.result()
-        if result and not styles.get(type_):
-            variants = [i["variants"] for i in result if data["fortnite"][f"{type_}_style"] in i["name"]]
-            if variants:
-                styles[type_] = variants[0]
-    for email in data["fortnite"]["email"]:
+    langs = [data["search-lang"],"en"] if data["search-lang"] != "en" else ["en"]
+    Thread(target=store_item_data,args=(langs,)).start()
+    Thread(target=store_banner_data).start()
+    for email in data["fortnite"]["email"].split(','):
         email = email.strip()
         try:
             device_auth_details = get_device_auth_details().get(email.lower(), {})
@@ -7892,15 +7578,14 @@ if data.get("status",1) != 0:
                 ),
                 default_party_member_config=fortnitepy.DefaultPartyMemberConfig(
                     meta=[
-                        partial(ClientPartyMember.set_outfit, items.get("outfit",{}).get("id",data["fortnite"]["outfit"]), variants=styles.get("outfit")),
-                        partial(ClientPartyMember.set_backpack, items.get("backpack",{}).get("id",data["fortnite"]["backpack"]), variants=styles.get("backpack")),
-                        partial(ClientPartyMember.set_pickaxe, items.get("pickaxe",{}).get("id",data["fortnite"]["pickaxe"]), variants=styles.get("pickaxe")),
+                        partial(ClientPartyMember.set_outfit, data['fortnite']['cid'].replace('cid','CID',1)),
+                        partial(ClientPartyMember.set_backpack, data['fortnite']['bid'].replace('bid','BID',1)),
+                        partial(ClientPartyMember.set_pickaxe, data['fortnite']['pickaxe_id'].replace('pickaxe_id','Pickaxe_ID',1)),
                         partial(ClientPartyMember.set_battlepass_info, has_purchased=True, level=data['fortnite']['tier'], self_boost_xp=data['fortnite']['xpboost'], friend_boost_xp=data['fortnite']['friendxpboost']),
                         partial(ClientPartyMember.set_banner, icon=data['fortnite']['banner'], color=data['fortnite']['banner_color'], season_level=data['fortnite']['level'])
                     ]
                 ),
-                platform=fortnitepy.Platform(data['fortnite']['platform'].upper()),
-                emote=items.get("emote",{}).get("id",data["fortnite"]["emote"])
+                platform=fortnitepy.Platform(data['fortnite']['platform'].upper())
             )
         except ValueError:
             send(l("bot"),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
