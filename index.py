@@ -1813,7 +1813,7 @@ if True: #Functions
         converter = {
             "outfit": "Outfit",
             "backpack": "Back Bling",
-            "pet": "pet",
+            "pet": "Pet",
             "pickaxe": "Harvesting Tool",
             "emote": "Emote",
             "emoji": "Emoticon",
@@ -1908,19 +1908,19 @@ if True: #Functions
                 elif "can_be_multiple" in tags:
                     if not isinstance(value,list):
                         if str in tags:
+                            error_config.append(key)
                             try:
                                 exec(f"data{key} = value.split(',')")
                             except Exception:
                                 if data.get('loglevel','normal') == 'debug':
                                     send('ボット',traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                            error_config.append(key)
                         elif int in tags:
+                            error_config.append(key)
                             try:
                                 exec(f"data{key} = [value]")
                             except Exception:
                                 if data.get('loglevel','normal') == 'debug':
-                                    send('ボット',traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                            error_config.append(key)
+                                    send('ボット',traceback.format_exc(),red,add_d=lambda x:f'>>> {x}') 
                 else:
                     if not isinstance(value,tags[0]):
                         error_config.append(key)
@@ -1954,18 +1954,28 @@ if True: #Functions
         def set_default(keys: list, default: Any, func: Optional[Callable] = None) -> None:
             text = ""
             text2 = ""
-            for nest,key in enumerate(keys):
+            for nest,key in enumerate(keys,1):
                 text += f"['{key}']"
                 if nest == len(keys):
-                    text2 += f".get('{key}','{default}')"
+                    if isinstance(default,str):
+                        text2 += f".get('''{key}''','''{default}''')"
+                    else:
+                        text2 += f".get('''{key}''',{default})"
                 else:
-                    text2 += f"['{key}']"
+                    text2 += f"['''{key}''']"
             if func:
                 var = func(eval(f"data{text2}"))
                 exec(f"data{text} = var")
             else:
                 exec(f"data{text} = data{text2}")
         set_default(['fortnite'],{})
+        set_default(['fortnite','outfit'],"")
+        set_default(['fortnite','outfit_style'],"")
+        set_default(['fortnite','backpack'],"")
+        set_default(['fortnite','backpack_style'],"")
+        set_default(['fortnite','pickaxe'],"")
+        set_default(['fortnite','pickaxe_style'],"")
+        set_default(['fortnite','emote'],"")
         try:
             set_default(['fortnite','privacy'],'public',lambda x: getattr(PartyPrivacy,x.upper()))
         except AttributeError:
