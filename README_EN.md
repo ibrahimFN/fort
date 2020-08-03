@@ -54,10 +54,13 @@ Fortnite
 email                     : Email address for bot account. You can set multiple by split in ,
 owner                     : Owner's name or ID
 platform                  : Bot's platform. See below
-cid                       : Bot's default outfit ID
-bid                       : Bot's default back bling ID
-pickaxe_id                : Bot's default harvesting tool ID
-eid                       : Bot's default emote ID
+outfit                    : Bot's default outfit. Name or ID
+outfit_style              : Bot's default outfit style
+backpack                  : Bot's default back bling. Name or ID
+backpack_style            : Bot's default back bling style
+pickaxe                   : Bot's default harvesting tool. Name or ID
+pickaxe_style             : Bot's default harvesting tool style
+emote                     : Bot's default emote. Name or ID
 playlist                  : Bot's default playlist ID
 banner                    : Bot's default banner ID
 banner_color              : Bot's default banner color
@@ -74,6 +77,8 @@ partychat                 : Whether bot will accept command from partychat. true
 disablewhisperperfectly   : Config for if whisper is disabled, whether decline command from owner too
 disablepartychatperfectly : Config for if partychat is disabled, whether decline command from owner too
 joinemote                 : Whether bot re dance emote when someone joined to the party. true or false
+click_invite              : Whether bot will send 'Click here to invite'
+disable_voice             : Whether disable voice chat of party
 ignorebot                 : Whether bot will ignore command from bots. true or false
 joinmessage               : Message when someone joined to the party. \n to line break
 randommessage             : Random message when someone joined to the party. \n to line break
@@ -245,10 +250,12 @@ removepending                             : Cancel all friend request which bot 
 addfriend                                 : addfriend [user name / user ID] Send friend request to user
 removefriend                              : removefriend [user name / user ID] Remove user from friend
 removeallfriend                           : Remove all friends
+remove_offline_for                        : remove_offline_for [day] [hour(optional)] [minute(optional)] Remove friends which offline for more than specified time
 acceptpending                             : acceptpending [user name / user ID] Accept friend request from user
 declinepending                            : declinepending [user name / user ID] Decline friend request from user
 blockfriend                               : blockfriend[user name / user ID] Block user
 unblockfriend                             : unblockfriend [user name / user ID] Unblock user
+voice                                     : voice [true / false] Enable voice chat
 chatban                                   : chatban [user name / user ID] : [Reason(Optional)] Chatban user
 promote                                   : promote [user name / user ID] Promote party leader to user
 kick                                      : kick [user name / user ID] Kick user
@@ -266,6 +273,7 @@ pickaxelock                               : pickaxelock [true / false] Whether b
 emotelock                                 : emotelock [true / false] Whether bot will change emote
 stop                                      : Stop emote/all command
 addeditems                                : Show all items which added in latest update
+shopitems                                 : Show all items which in item shop
 alloutfit                                 : Show all outfits
 allbackpack                               : Show all backpacks
 allpet                                    : Show all pets
@@ -421,6 +429,13 @@ and bot's name is
 ```
 Test Bot1
 Test Bot2
+```
+
+Status type  
+```
+playing                          : Playing       
+listening                        : Listening
+watching                         : Watching
 ```
 
 IP
