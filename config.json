@@ -1,13 +1,16 @@
   
 {
     "fortnite": {
-        "email": "",
-        "owner": "",
+        "email": [],
+        "owner": [],
         "platform": "WIN",
-        "cid": "CID_429_Athena_Commando_F_NeonLines",
-        "bid": "BID_284_NeonLines",
-        "pickaxe_id": "Pickaxe_ID_071_StreetRacer",
-        "eid": "EID_ElectroShuffle_V2",
+        "outift": "CID_429_Athena_Commando_F_NeonLines",
+        "outfit_style": "",
+        "backpack": "BID_284_NeonLines",
+        "backpack_style": "",
+        "pickaxe": "Pickaxe_ID_071_StreetRacer",
+        "pickaxe_style": "",
+        "emote": "EID_ElectroShuffle_V2",
         "playlist": "Playlist_Tutorial_1",
         "banner": "InfluencerBanner33",
         "banner_color": "defaultcolor22",
@@ -25,10 +28,18 @@
         "disablepartychatperfectly": false,
         "ignorebot": true,
         "joinmessage": "メッセージ\n改行",
-        "randommessage": "1,2,3,4,5",
+        "randommessage": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+        ],
         "joinmessageenable": false,
         "randommessageenable": false,
         "joinemote": true,
+        "click_invite": true,
+        "disable_voice": false,
         "outfitmimic": false,
         "backpackmimic": false,
         "pickaxemimic": false,
@@ -75,7 +86,9 @@
     "discord": {
         "enabled": false,
         "token": "Discord Botのトークン",
-        "owner": 123456789,
+        "owner": [
+            123456789
+        ],
         "channels": [
             "{name}-command-channel",
             "bot-command-channel"
