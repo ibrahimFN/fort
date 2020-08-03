@@ -67,7 +67,7 @@
                         {% endif %}
                         {% if can_be_multiple in tags %}
                             {% if str in tags %}
-                                <textarea name="['{{key}}']" rows="3">{{"\n".join(value.split(","))}}</textarea>
+                                <textarea name="['{{key}}']" rows="3">{{"\n".join(value)}}</textarea>
                             {% endif %}
                         {% endif %}
                     </div>
