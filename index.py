@@ -4541,8 +4541,8 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     await reply(message, client, f"[{commands[convert_to_old_type(type_)]}] [ID]")
                     return
                 result = await loop.run_in_executor(None, search_item, data["search-lang"], "id", rawcontent2, type_)
-                if not result and data["search-lang"] != "en":
-                    result = await loop.run_in_executor(None, search_item, "en", "id", rawcontent2, type_)
+                if not result and data["sub-search-lang"] != data["search-lang"]:
+                    result = await loop.run_in_executor(None, search_item, data["sub-search-lang"], "id", rawcontent2, type_)
                 if not result:
                     await reply(message, client, l('item_notfound'))
                 else:
@@ -4573,8 +4573,8 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     await reply(message, client, f"[{commands[convert_to_old_type(type_)]}] [{l('itemname')}]")
                     return
                 result = await loop.run_in_executor(None, search_item, data["search-lang"], "name", rawcontent2, type_)
-                if not result and data["search-lang"] != "en":
-                    result = await loop.run_in_executor(None, search_item, "en", "name", rawcontent2, type_)
+                if not result and data["sub-search-lang"] != data["search-lang"]:
+                    result = await loop.run_in_executor(None, search_item, data["sub-search-lang"], "name", rawcontent2, type_)
                 if not result:
                     await reply(message, client, l('item_notfound'))
                 else:
@@ -5797,8 +5797,8 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             return
         try:
             result = await loop.run_in_executor(None, search_item, data["search-lang"], "id", rawcontent, type_)
-            if result is None and data["search-lang"] != "en":
-                result = await loop.run_in_executor(None, search_item, "en", "id", rawcontent, type_)
+            if result is None and data["sub-search-lang"] != data["search-lang"]:
+                result = await loop.run_in_executor(None, search_item, data["sub-search-lang"], "id", rawcontent, type_)
             if result is None:
                 await reply(message, client, l('item_notfound'))
             else:
@@ -5852,8 +5852,8 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             return
         try:
             result = await loop.run_in_executor(None, search_item, data["search-lang"], "name", rawcontent, type_)
-            if result is None and data["search-lang"] != "en":
-                result = await loop.run_in_executor(None, search_item, "en", "name", rawcontent, type_)
+            if result is None and data["sub-search-lang"] != data["search-lang"]:
+                result = await loop.run_in_executor(None, search_item, data["sub-search-lang"], "name", rawcontent, type_)
             if result is None:
                 await reply(message, client, l('item_notfound'))
             else:
@@ -5906,8 +5906,8 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             return
         try:
             result = await loop.run_in_executor(None, search_item, data["search-lang"], "set", rawcontent)
-            if result is None and data["search-lang"] != "en":
-                result = await loop.run_in_executor(None, search_item, "en", "set", rawcontent)
+            if result is None and data["sub-search-lang"] != data["search-lang"]:
+                result = await loop.run_in_executor(None, search_item, data["sub-search-lang"], "set", rawcontent)
             if result is None:
                 await reply(message, client, l('item_notfound'))
             else:
@@ -6236,8 +6236,8 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
         else:
             if do_itemsearch:
                 result = await loop.run_in_executor(None, search_item, data["search-lang"], "name", content, "Item")
-                if not result and data["search-lang"] != "en":
-                    result = await loop.run_in_executor(None, search_item, "en", "name", content, "Item")
+                if not result and data["sub-search-lang"] != data["search-lang"]:
+                    result = await loop.run_in_executor(None, search_item, data["sub-search-lang"], "name", content, "Item")
                 if result:
                     if len(result) > search_max:
                         await reply(message, client, l('too_many_items', str(len(result))))
@@ -6413,6 +6413,7 @@ config_tags={
     "['search_max']": [int],
     "['lang']": [str,"select_lang"],
     "['search-lang']": [str,"select_ben_lang"],
+    "['sub-search-lang']": [str,"select_ben_lang"],
     "['no-logs']": [bool_,"select_bool"],
     "['ingame-error']": [bool_,"select_bool"],
     "['discord-log']": [bool_,"select_bool"],
@@ -7859,8 +7860,13 @@ if data.get('web',{}).get('enabled',True) is True or data.get('status',1)  == 0:
 Thread(target=dprint,args=(),daemon=True).start()
 Thread(target=store_banner_data).start()
 if data.get("status",1) != 0:
-    langs = [data["search-lang"],data["sub-search-lang"]]
-    #store_item_data(langs)
+    langs = [
+        data["search-lang"],
+        data["sub-search-lang"] 
+    ] if data["sub-search-lang"] and data["sub-search-lang"] != data["search-lang"] else [
+        data["search-lang"]
+    ]
+    store_item_data(langs)
     items = {}
     styles = {}
     with ThreadPoolExecutor() as executor:
