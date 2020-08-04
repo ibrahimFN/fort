@@ -66,11 +66,7 @@
                             <span>{{'&nbsp;'|safe*((nest - 1)*4)}}{{l('config_' + key)}}</span>
                         {% endif %}
                         {% if can_be_multiple in tags %}
-                            {% if str in tags %}
-                                <textarea name="['{{key}}']" rows="5">{{"\n".join(value.split(","))}}</textarea>
-                            {% elif list in tags %}
-                                <textarea name="['{{key}}']" rows="5">{{"\n".join(value)}}</textarea>
-                            {% endif %}
+                            <textarea name="['{{key}}']['{{key2}}']" rows="5">{{"\n".join(map(str, value))}}</textarea>
                         {% elif type(tags[1]) == select %}
                             <select name="['{{key}}']">
                                 {% for tag in tags[1].content %}
@@ -103,14 +99,10 @@
                                 <span>{{'&nbsp;'|safe*((nest - 1)*4)}}{{l('config_' + key + '_' + key2)}}</span>
                             {% endif %}
                             {% if can_be_multiple in tags %}
+                                <textarea name="['{{key}}']['{{key2}}']" rows="5">{{"\n".join(map(str, value2))}}</textarea>
+                            {% elif can_linebreak in tags %}
                                 {% if str in tags %}
-                                    <textarea name="['{{key}}']['{{key2}}']" rows="5">{{"\n".join(value2.split(","))}}</textarea>
-                                {% elif list in tags %}
-                                    {% set v = [] %}
-                                    {% for val in value2 %}
-                                        {% do v.append(str(val)) %}
-                                    {% endfor %}
-                                    <textarea name="['{{key}}']['{{key2}}']" rows="5">{{"\n".join(v)}}</textarea>
+                                    <textarea name="['{{key}}']['{{key2}}']" rows="5">{{value2}}</textarea>
                                 {% endif %}
                             {% elif type(tags[1]) == select %}
                                 <select name="['{{key}}']['{{key2}}']">

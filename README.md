@@ -56,10 +56,13 @@ Fortnite
 email                     : ボット用アカウントのメールアドレス。 , で区切ることで複数設定可
 owner                     : 所有者として設定したいユーザーの名前またはID
 platform                  : ボットのプラットフォーム。 後述
-cid                       : ボットの初期コスチュームID
-bid                       : ボットの初期バックアクセサリーのID
-pickaxe_id                : ボットの初期収集ツールのID
-eid                       : ボットの初期エモートのID
+outfit                    : ボットの初期コスチューム。名前かID
+outfit_style              : ボットの初期コスチュームのスタイル
+backpack                  : ボットの初期バックアクセサリー。名前かID
+backpack_style            : ボットの初期バックアクセサリーのスタイル
+pickaxe                   : ボットの初期収集ツール。名前かID
+pickaxe_style             : ボットの初期収集ツールのスタイル
+emote                     : ボットの初期エモート。名前かID
 playlist                  : ボットの初期プレイリストのID
 banner                    : ボットの初期バナーのID
 banner_color              : ボットの初期バナーの色ID
@@ -76,6 +79,8 @@ partychat                 : ボットがパーティーチャットからコマ�
 disablewhisperperfectly   : 囁きが無効の場合、所有者も使えなくするかどうか
 disablepartychatperfectly : パーティーチャットが無効の場合、所有者も使えなくするかどうか
 joinemote                 : ボットのパーティーに誰かが参加した時にエモートを踊りなおすかどうか。 true か false
+click_invite              : 'ここをクリックして招待'を送信するかどうか。 true か false
+disable_voice             : パーティーのボイスチャットを無効化するかどうか。 true か false
 ignorebot                 : ボットからのコマンドを無視するかどうか。 true か false
 joinmessage               : ボットのパーティーに誰かが参加した時のメッセージ。 \n で改行
 randommessage             : ボットのパーティーに誰かが参加した時のランダムメッセージ。 , で区切る \n で改行
@@ -168,9 +173,10 @@ debug                     : Fortnitepyのデバッグモードをオンにする
 ```
 
 # コマンド一覧
-コマンド名はcommands.json内の表記  
-全てのコマンドはデフォルトでは所有者しか使用できない  
+ここに書かれているコマンド名は、ただの識別名  
+全てのコマンドの発動ワードはcommands.json(コマンドエディター)を用いて変更できる  
 全て , で区切ることで複数設定可  
+全てのコマンドはデフォルトでは所有者しか使用できない  
 アイテム名を打つことでそのアイテムにすることもできる  
 
 ```
@@ -247,10 +253,12 @@ removepending                             : 自分が送ったフレンド申請
 addfriend                                 : addfriend [ユーザー名 / ユーザーID] ユーザーにフレンド申請を送信する
 removefriend                              : removefriend [ユーザー名 / ユーザーID] ユーザーをフレンドから削除する
 removeallfriend                           : removeallfriend 全てのフレンドを削除する
+remove_offline_for                        : remove_offline_for [日] [時間(任意)] [分(任意)] 指定した時間以上オフラインのフレンドを削除する
 acceptpending                             : acceptpending [ユーザー名 / ユーザーID] ユーザーからのフレンド申請を承諾する
 declinepending                            : declinepending [ユーザー名 / ユーザーID] ユーザーからのフレンド申請を拒否する
 blockfriend                               : blockfriend[ユーザー名 / ユーザーID] ユーザーをブロックする
 unblockfriend                             : unblockfriend [ユーザー名 / ユーザーID] ユーザーをブロック解除する
+voice                                     : voice [true / false] パーティーのボイスチャットを有効にするか。それ以前に参加していたメンバーには効果がありません
 chatban                                   : chatban [ユーザー名 / ユーザーID] : [理由(任意)] ユーザーをチャットバンする
 promote                                   : promote [ユーザー名 / ユーザーID] ユーザーにパーティーリーダーを譲渡する
 kick                                      : kick [ユーザー名 / ユーザーID] ユーザーをキックする
@@ -268,6 +276,7 @@ pickaxelock                               : pickaxelock [true / false] ツルハ
 emotelock                                 : emotelock [true / false] エモートの変更をするかどうか
 stop                                      : エモート/all系コマンドの表示を停止する
 addeditems                                : アップデートで追加されたすべてのアイテムを表示する
+shopitems                                 : アイテムショップのアイテムをすべて表示する
 alloutfit                                 : 全てのコスチュームを表示する
 allbackpack                               : 全てのバックアクセサリーを表示する
 allpet                                    : 全てのペットを表示する
@@ -408,8 +417,15 @@ get_guild_member_count(id)       : 指定したIDのDiscordサーバーのメン
 チャンネル名  
 使用可能な変数  
 ```
-{name} : ボットのディスプレイネーム
-{id}   : ボットのID
+{name}                           : ボットのディスプレイネーム
+{id}                             : ボットのID
+```
+
+ステータスの種類  
+```
+playing                          : プレイ中       
+listening                        : 再生中
+watching                         : 視聴中
 ```
 
 デフォルトの  
