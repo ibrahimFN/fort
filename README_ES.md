@@ -49,10 +49,12 @@ Fortnite
 email                     : Dirección de correo electrónico para el bot. Puedes poner varios dividiendolos con  ,
 owner                     : Nombre del Owner o el ID
 platform                  : Plataforma del Bot. Revise abajo para información
-cid                       : ID de Outfit por defecto del bot
-bid                       : ID de la Mochila por defecto del bot
-pickaxe_id                : ID del pico por defecto del bot
-eid                       : ID del emote por defecto del bot
+outfit                    : Skin por defecto del bot. Nombre o ID
+outfit_style              : Estilo de skin por defecto del bot
+backpack                  : Mochila por defecto del bot. Nombre o ID
+backpack_style            : Estilo de mochila por defecto del bot
+pickaxe                   : Pico por defecto del bot. Nombre o ID
+pickaxe_style             : Estilo del pico por defecto del bot
 playlist                  : ID de playlist por defecto del bot
 banner                    : ID del banner por defecto del bot
 banner_color              : Color del banner por defecto del bot
@@ -69,6 +71,8 @@ partychat                 : Dtermina si el bot acepta comandos por chat de sala.
 disablewhisperperfectly   : Configuración por si el susurro ya está desactivado, para rechazar comandos de owner también
 disablepartychatperfectly : Configuración por si el chat de sala ya está desactivado, para rechazar comandos de owner también
 joinemote                 : Determina si el bot hará de neuvo el emote actual cuando alguien se una a la sala. true o false
+click_invite              : Determina si el bot enviará 'Click here to invite'
+disable_voice             : Determina si se desactiva el chat de voz. true o false
 ignorebot                 : Determina si el bot ignorará otros bots. true o false
 joinmessage               : Mensaje enviado cuando alguien entra a la sala. \n para salto de linea
 randommessage             : Mensaje al azar para cuando alguien entra a la sala. \n para salto de linea
@@ -238,10 +242,12 @@ removepending                             : Cancela todas las solicitudes enviad
 addfriend                                 : addfriend [user name / user ID] Envía una solicitud de amistad al usuario
 removefriend                              : removefriend [user name / user ID] Quita un usuario de amigos
 removeallfriend                           : Elimina a todos los amigos
+remove_offline_for                        : remove_offline_for [días] [horas(opcional)] [minutos(opcional)] Elimina amigos cuando están desconectados por más del tiempo especificado
 acceptpending                             : acceptpending [user name / user ID] Acepta la solicitud pendiente de un usuario
 declinepending                            : declinepending [user name / user ID] Rechaza la solicitud pendiente de un usuario
 blockfriend                               : blockfriend[user name / user ID] Bloquea un usuario
 unblockfriend                             : unblockfriend [user name / user ID] Desbloquea un usuario
+voice                                     : voice [true / false] Activa o desactiva el chat de voz
 chatban                                   : chatban [user name / user ID] : [Razón(Opcional)] Banea del chat a un usuario
 promote                                   : promote [user name / user ID] Da líder al usuario
 kick                                      : kick [user name / user ID] Expulsa un usuario
@@ -259,6 +265,7 @@ pickaxelock                               : pickaxelock [true / false] Determina
 emotelock                                 : emotelock [true / false] Determina si el bot bloquea el cambio de emote
 stop                                      : Detiene el emote/todo el comando
 addeditems                                : Muestra todos los items agregados en la última actualización
+shopitems                                 : Muestra todos los ítems de la tienda
 alloutfit                                 : Muestra todas las skins
 allbackpack                               : Muestra todas las mochilas
 allpet                                    : Muestra todas las mascotas

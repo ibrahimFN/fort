@@ -78,7 +78,7 @@ disablewhisperperfectly   : Config for if whisper is disabled, whether decline c
 disablepartychatperfectly : Config for if partychat is disabled, whether decline command from owner too
 joinemote                 : Whether bot re dance emote when someone joined to the party. true or false
 click_invite              : Whether bot will send 'Click here to invite'
-disable_voice             : Whether disable voice chat of party
+disable_voice             : Whether disable voice chat of party. true or false
 ignorebot                 : Whether bot will ignore command from bots. true or false
 joinmessage               : Message when someone joined to the party. \n to line break
 randommessage             : Random message when someone joined to the party. \n to line break

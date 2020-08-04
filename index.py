@@ -2929,14 +2929,14 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             if member and client.party.me.leader:
                 if data["ng-word-kick"]:
                     try:
-                        await message.author.kick()
+                        await member.kick()
                     except Exception as e:
                         if data["loglevel"] == "debug":
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                             await reply(message, client, f"{l('error')}\n{traceback.format_exc()}")
                 elif data["ng-word-chatban"]:
                     try:
-                        await message.author.chatban()
+                        await member.chatban()
                     except Exception as e:
                         if data["loglevel"] == "debug":
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5769,10 +5769,15 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if item["backendType"] in ignoretype:
                     continue
                 if await client.change_asset(message.author.id, convert_backend_type(item["backendType"]), item["id"]):
-                    if data['loglevel'] == 'normal':
-                        await reply(message, client, f"{item['shortDescription']}: {item['name']}")
+                    i = await loop.run_in_executor(None,search_item,data["search-lang"],"id",item["id"],convert_backend_type(item["backendType"]))
+                    if i:
+                        i = i[0]
+                        if data['loglevel'] == 'normal':
+                            await reply(message, client, f"{i['shortDescription']}: {i['name']}")
+                        else:
+                            await reply(message, client, f"{i['shortDescription']}: {i['name']} | {i['id']}")
                     else:
-                        await reply(message, client, f"{item['shortDescription']}: {item['name']} | {item['id']}")
+                        await reply(message, client, item["id"])
                     await asyncio.sleep(5)
             else:
                 await reply(message, client, l('all_end', l('shopitem')))
