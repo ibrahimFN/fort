@@ -26,6 +26,7 @@ try:
     import asyncio
     from collections import defaultdict
     from concurrent.futures import ThreadPoolExecutor, as_completed
+    import copy
     import datetime
     from enum import Enum
     from functools import partial, wraps
@@ -1891,7 +1892,7 @@ if True: #Functions
             return False
         if data.get('loglevel','normal') == 'debug':
             send('ボット',f'\n{json.dumps(data,ensure_ascii=False,indent=4)}\n',yellow,add_d=lambda x:f'\n```{x}```\n')
-        for key,tags in config_tags.items():
+        for key,tags in config_tags_raw.items():
             try:
                 value = eval(f"data{key}")
             except KeyError:
@@ -2011,22 +2012,26 @@ if True: #Functions
         else:
             data['web']['ip'] = data['web']['ip'].format(ip=socket.gethostbyname(socket.gethostname()))
         if client:
-            client.eid=data['fortnite']['eid']
-            client.whisper=data['fortnite']['whisper']
-            client.partychat=data['fortnite']['partychat']
-            client.discord=data['discord']['discord']
-            client.web=data['web']['web']
-            client.whisperperfect=data['fortnite']['disablewhisperperfectly']
-            client.partychatperfect=data['fortnite']['disablepartychatperfectly']
-            client.discordperfect=data['discord']['disablediscordperfectly']
-            client.joinmessageenable=data['fortnite']['joinmessageenable']
-            client.randommessageenable=data['fortnite']['randommessageenable']
-            client.outfitmimic=data['fortnite']['outfitmimic']
-            client.backpackmimic=data['fortnite']['backpackmimic']
-            client.pickaxemimic=data['fortnite']['pickaxemimic']
-            client.emotemimic=data['fortnite']['emotemimic']
-            client.acceptinvite=data['fortnite']['acceptinvite']
-            client.acceptfriend=data['fortnite']['acceptfriend']
+            client.status_ = data['fortnite']['status']
+            client.whisper = data['fortnite']['whisper']
+            client.partychat = data['fortnite']['partychat']
+            client.discord = data['discord']['discord']
+            client.web = data['web']['web']
+            client.whisperperfect = data['fortnite']['disablewhisperperfectly']
+            client.partychatperfect = data['fortnite']['disablepartychatperfectly']
+            client.discordperfect = data['discord']['disablediscordperfectly']
+            client.joinmessageenable = data['fortnite']['joinmessageenable']
+            client.randommessageenable = data['fortnite']['randommessageenable']
+            client.outfitmimic = data['fortnite']['outfitmimic']
+            client.backpackmimic = data['fortnite']['backpackmimic']
+            client.pickaxemimic = data['fortnite']['pickaxemimic']
+            client.emotemimic = data['fortnite']['emotemimic']
+            client.outfitlock = data['fortnite']['outfitlock']
+            client.backpacklock = data['fortnite']['backpacklock']
+            client.pickaxelock = data['fortnite']['pickaxelock']
+            client.emotelock = data['fortnite']['emotelock']
+            client.acceptinvite = data['fortnite']['acceptinvite']
+            client.acceptfriend = data['fortnite']['acceptfriend']
         
         if error_config:
             send('ボット',f'config.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。アップデート後の場合は、最新のconfig.jsonファイルを確認してください\n{", ".join(error_config)} がありません',red,add_d=lambda x:f'>>> {x}')
@@ -2710,7 +2715,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 tasks[client_] = [task, mes]
             await asyncio.gather(*[i[0] for i in tasks.values()])
             for client_,list_ in tasks.items():
-                result = list_[1].result[client_.user.id]
+                result = list_[1].result.get(client_.user.id)
                 if result:
                     results = '\n'.join(result)
                     await reply(message, client_, f"[{name(client_.user)}] {results}")
@@ -3331,10 +3336,10 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
 
                 dclient.owner = []
                 for owner in data['discord']['owner']:
-                    user = dclient.get_user(int(data['discord']['owner']))
+                    user = dclient.get_user(owner)
                     if not user:
                         try:
-                            user = await dclient.fetch_user(int(data['discord']['owner']))
+                            user = await dclient.fetch_user(owner)
                         except discord.NotFound:
                             if data['loglevel'] == "debug":
                                 send(dclient_user,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -3346,7 +3351,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                         send(dclient_user,l('discord_owner_notfound',owner),red,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}',add_d=lambda x:f'>>> {x}')
                     else:
                         dclient.owner.append(user)
-                        send(dclient_user,f"{l('owner')}: {name(dclient.owner)}",green,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}')
+                        send(dclient_user,f"{l('owner')}: {name(user)}",green,add_p=lambda x:f'[{now()}] [{dclient_user}] {x}')
 
                 lists = {
                     "blacklist_": "blacklist",
@@ -6442,6 +6447,7 @@ config_tags={
     "['loglevel']": [str,"select_loglevel"],
     "['debug']": [bool_,"select_bool"]
 }
+config_tags_raw = copy.deepcopy(config_tags)
 commands_tags={
     "['usercommands']": [str,"can_be_multiple"],
     "['true']": [str,"can_be_multiple"],
