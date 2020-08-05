@@ -123,7 +123,7 @@
     "lang": "en",
     "search-lang": "en",
     "sub-search-lang": "en",
-    "restart_in": null,
+    "restart_in": 0,
     "search_max": 60,
     "no-logs": false,
     "ingame-error": true,
