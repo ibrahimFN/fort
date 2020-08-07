@@ -66,7 +66,7 @@
                             <span>{{'&nbsp;'|safe*((nest - 1)*4)}}{{l('config_' + key)}}</span>
                         {% endif %}
                         {% if can_be_multiple in tags %}
-                            <textarea name="['{{key}}']['{{key2}}']" rows="5">{{"\n".join(map(str, value))}}</textarea>
+                            <textarea name="['{{key}}']" rows="5">{{"\n".join(map(str, value))}}</textarea>
                         {% elif type(tags[1]) == select %}
                             <select name="['{{key}}']">
                                 {% for tag in tags[1].content %}
