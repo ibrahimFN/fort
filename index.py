@@ -1261,7 +1261,7 @@ if True: #Classes
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             if self.randommessageenable:
                 try:
-                    randommessage = random.choice(data['fortnite']['randommessage'].split(','))
+                    randommessage = random.choice(data['fortnite']['randommessage'])
                     send(display_name,f'{l("random_message")}: {randommessage}',add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
                     await self.party.send(randommessage)
                 except Exception:
