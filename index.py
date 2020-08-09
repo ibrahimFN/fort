@@ -2374,7 +2374,6 @@ if True: #Asynchronous functions
         def _(text) -> str:
             return re.match(r"(\u0020|\u3000)*", text).end() * u"\u0020"
         scode = code.split('\n')
-        print(scode)
         delete = len(_(scode[0]))
         lines = [i.replace(u"\u0020", "", delete) for i in scode]
         exc = (
