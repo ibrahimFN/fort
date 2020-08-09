@@ -2801,12 +2801,16 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     await reply(message, client, '\n'.join(result))
             return
 
-        if isinstance(message.base, fortnitepy.message.MessageBase):
+        base = message.base
+        while isinstance(base, AllMessage):
+            base = base.base
+                         
+        if isinstance(base, fortnitepy.message.MessageBase):
             client.add_cache(message.author)
             if ((message.author.id in blacklist and data['fortnite']['blacklist-ignorecommand'])
                 or (message.author.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['ignorebot'])):
                 return
-            if isinstance(message.base, fortnitepy.FriendMessage):
+            if isinstance(base, fortnitepy.FriendMessage):
                 if not client.whisper:
                     if client.whisperperfect:
                         return
@@ -2816,7 +2820,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     send(name(message.author),content,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {name(message.author)} | {x}',add_d=lambda x:f'[{client.user.display_name}] {x}')
                 else:
                     send(f'{name(message.author)} [{platform_to_str(message.author.platform)}]',content,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {name(message.author)} | {x}',add_d=lambda x:f'[{client.user.display_name}] {x}')
-            elif isinstance(message.base, fortnitepy.PartyMessage):
+            elif isinstance(base, fortnitepy.PartyMessage):
                 if not client.partychat:
                     if client.partychatperfect:
                         return
@@ -2838,7 +2842,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             if ((message.author.id in [owner.id for owner in client.owner])
                 or (message.author.id in whitelist and data['fortnite']['whitelist-ignoreng'])):
                 check_ng = False
-        elif isinstance(message.base, discord.message.Message):
+        elif isinstance(base, discord.message.Message):
             if ((message.author.id == dclient.user.id)
                 or (message.author.id in blacklist_ and data['discord']['blacklist-ignorecommand'])
                 or (message.author.bot and data['discord']['ignorebot'])):
@@ -2856,7 +2860,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             if ((message.author.id in [owner.id for owner in dclient.owner])
                 or (message.author.id in whitelist_ and data['discord']['whitelist-ignoreng'])):
                 check_ng = False
-        elif isinstance(message.base, WebMessage):
+        elif isinstance(base, WebMessage):
             if ((data['discord']['enabled'] and not dclient.isready)
                 or (not client.web)):
                 return
