@@ -2037,6 +2037,7 @@ if True: #Functions
             send('ボット',f'config.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。アップデート後の場合は、最新のconfig.jsonファイルを確認してください\n{", ".join(error_config)} がありません',red,add_d=lambda x:f'>>> {x}')
             send('Bot',f'Failed to load config.json file. Make sure key name is correct. If this after update, plase check latest config.json file\n{", ".join(error_config)} is missing',red,add_d=lambda x:f'>>> {x}')
         else:
+            os.makedirs("items/", exist_ok=True)
             flag = False
             try:
                 res = requests.get('https://benbotfn.tk/api/v1/cosmetics/br/DOWN_CHECK')
@@ -2044,14 +2045,6 @@ if True: #Functions
                 flag = True
                 if data['loglevel'] == 'debug':
                     send('ボット',traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-            else:
-                if res.status_code == 503:
-                    flag = True
-            if flag:
-                send('ボット','APIがダウンしているため、アイテムデータをダウンロードできませんでした。しばらく待ってからもう一度起動してみてください',red,add_d=lambda x:f'>>> {x}')
-                send('Bot','Failed to download item data because API is dawning. Please try again later',red,add_d=lambda x:f'>>> {x}')
-            else:
-                os.makedirs("items/", exist_ok=True)
 
         def load_lang(lang: str) -> None:
             global localize
@@ -7884,13 +7877,16 @@ if data.get('web',{}).get('enabled',True) is True or data.get('status',1)  == 0:
 Thread(target=dprint,args=(),daemon=True).start()
 Thread(target=store_banner_data).start()
 if data.get("status",1) != 0:
-    langs = [
-        data["search-lang"],
-        data["sub-search-lang"] 
-    ] if data["sub-search-lang"] and data["sub-search-lang"] != data["search-lang"] else [
-        data["search-lang"]
-    ]
-    store_item_data(langs)
+    try:
+        langs = [
+            data["search-lang"],
+            data["sub-search-lang"] 
+        ] if data["sub-search-lang"] and data["sub-search-lang"] != data["search-lang"] else [
+            data["search-lang"]
+        ]
+        store_item_data(langs)
+    except Exception:
+        send(l('bot'),l('api_downing'),red)
     items = {}
     styles = {}
     with ThreadPoolExecutor() as executor:
