@@ -24,28 +24,28 @@ SOFTWARE.
 """
 try:
     import asyncio
-    from collections import defaultdict
-    from concurrent.futures import ThreadPoolExecutor, as_completed
     import copy
     import datetime
-    from enum import Enum
-    from functools import partial, wraps
-    from glob import glob
     import json
     import logging
     import os
     import platform
     import random
     import re
-    import string
     import socket
+    import string
     import sys
-    from threading import Thread, Timer
     import time
     import traceback
-    from typing import Optional, Union, Type, Any, List, Callable
     import unicodedata
     import webbrowser
+    from collections import defaultdict
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    from enum import Enum
+    from functools import partial, wraps
+    from glob import glob
+    from threading import Thread, Timer
+    from typing import Any, Callable, List, Optional, Type, Union
 except ModuleNotFoundError as e:
     import traceback
     print(traceback.format_exc())
@@ -57,17 +57,18 @@ except ModuleNotFoundError as e:
 
 try:
     import aiohttp
-    from crayons import cyan, green, magenta, red, yellow
     import discord
     import fortnitepy
-    from fortnitepy import ClientPartyMember
     import jaconv
-    from jinja2 import Environment, FileSystemLoader
-    from sanic.request import Request
-    from sanic import Sanic
+    import requests
     import sanic.exceptions
     import sanic.response
-    import requests
+    from aioconsole import ainput
+    from crayons import cyan, green, magenta, red, yellow
+    from fortnitepy import ClientPartyMember
+    from jinja2 import Environment, FileSystemLoader
+    from sanic import Sanic
+    from sanic.request import Request
 except ModuleNotFoundError as e:
     print(traceback.format_exc())
     print(f'Python {platform.python_version()}\n')
@@ -607,16 +608,14 @@ if True: #Classes
                     await invitation.sender.send(l("error"))
                 send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
-        async def change_asset(self, author_id: str, type_: str, id_: str, variants: Optional[list] = [], enlightenment: Optional[Union[tuple, list]] = []) -> None:
-            if not enlightenment:
-                enlightenment = None
+        async def change_asset(self, author_id: str, type_: str, id_: str, variants: Optional[list] = None, enlightenment: Optional[Union[tuple, list]] = None) -> None:
             if type_ == "Outfit":
                 if self.outfitlock and self.lock_check(author_id):
                     return False
                 else:
                     if 'banner' in id_:
                         variants_ = self.party.me.create_variants(item="AthenaCharacter", profile_banner='ProfileBanner')
-                        variants += variants_ 
+                        variants = variants_ + (variants or [])
                     await self.party.me.edit_and_keep(partial(self.party.me.set_outfit, asset=id_, variants=variants, enlightenment=enlightenment))
                     try:
                         if data['fortnite']['avatar_id'] == "{bot}":
@@ -781,6 +780,8 @@ if True: #Classes
 
         async def party_member_outfit_change(self, member: fortnitepy.PartyMember) -> None:
             display_name = name(self.user)
+            if member.id == self.user.id:
+                return
             flag = False
             if isinstance(self.outfitmimic,bool) and self.outfitmimic:
                 if (member.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['mimic-ignorebot']):
@@ -807,6 +808,8 @@ if True: #Classes
 
         async def party_member_backpack_change(self, member: fortnitepy.PartyMember) -> None:
             display_name = name(self.user)
+            if member.id == self.user.id:
+                return
             flag = False
             if isinstance(self.backpackmimic,bool) and self.backpackmimic:
                 if (member.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['mimic-ignorebot']):
@@ -834,6 +837,8 @@ if True: #Classes
 
         async def party_member_pickaxe_change(self, member: fortnitepy.PartyMember) -> None:
             display_name = name(self.user)
+            if member.id == self.user.id:
+                return
             flag = False
             if isinstance(self.pickaxemimic,bool) and self.pickaxemimic:
                 if (member.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['mimic-ignorebot']):
@@ -860,6 +865,8 @@ if True: #Classes
 
         async def party_member_emote_change(self, member: fortnitepy.PartyMember) -> None:
             display_name = name(self.user)
+            if member.id == self.user.id:
+                return
             flag = False
             if isinstance(self.emotemimic,bool) and self.emotemimic:
                 if (member.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['mimic-ignorebot']):
@@ -2036,15 +2043,7 @@ if True: #Functions
         if error_config:
             send('ボット',f'config.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください。アップデート後の場合は、最新のconfig.jsonファイルを確認してください\n{", ".join(error_config)} がありません',red,add_d=lambda x:f'>>> {x}')
             send('Bot',f'Failed to load config.json file. Make sure key name is correct. If this after update, plase check latest config.json file\n{", ".join(error_config)} is missing',red,add_d=lambda x:f'>>> {x}')
-        else:
-            os.makedirs("items/", exist_ok=True)
-            flag = False
-            try:
-                res = requests.get('https://benbotfn.tk/api/v1/cosmetics/br/DOWN_CHECK')
-            except Exception:
-                flag = True
-                if data['loglevel'] == 'debug':
-                    send('ボット',traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+        os.makedirs("items/", exist_ok=True)
 
         def load_lang(lang: str) -> None:
             global localize
@@ -2060,14 +2059,6 @@ if True: #Functions
                 send('ボット',f'{data["lang"]}.json ファイルが存在しません',red,add_d=lambda x:f'>>> {x}')
                 send('Bot',f'{data["lang"]}.json file does not exist',red,add_d=lambda x:f'>>> {x}')
                 return False
-            for key in localize_keys:
-                try:
-                    eval(f"localize['{key}']")
-                except KeyError as e:
-                    send('ボット',traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                    send('ボット',f'{lang}.json ファイルの読み込みに失敗しました。キーの名前が間違っていないか確認してください\n{e} がありません',red,add_d=lambda x:f'>>> {x}')
-                    send('Bot',f'Failed to load {lang}.json file. Make sure key name is correct\n{e} is missing',add_d=lambda x:f'>>> {x}')
-                    return False
             return True
  
         if os.path.isfile(f"lang/{data['lang']}.json"):
@@ -2394,30 +2385,40 @@ if True: #Asynchronous functions
 
     async def generate_device_auth_and_store(email: str) -> str:
         global web_text
-        access_token,expires_at = await get_token()
+
         while True:
-            flag = False
-            while True:
-                device_auth_details = await get_device_code(access_token)
-                send(l('bot'),l('get_code', email, device_auth_details['verification_uri_complete']))
-                web_text = l('get_code2', email, device_auth_details['verification_uri_complete'])
-                device_auth = await device_code_auth(device_auth_details["device_code"])
-                if not device_auth:
-                    send(l('bot'),l('authorization_expired'))
-                    if expires_at < datetime.datetime.utcnow():
-                        access_token, expires_at = await get_token()
+            send(l('bot'),l('get_code', email))
+            web_text = l('get_code2', email)
+            response = await ainput("Data: \n")
+            if "redirectUrl" in response:
+                response = json.loads(response)
+                if "?code" not in response["redirectUrl"]:
+                    send(l('bot'),l('unauthorized'))
+                    continue
+                code = response["redirectUrl"].split("?code=")[1]
+            else:
+                if "https://accounts.epicgames.com/fnauth" in response:
+                    if "?code" not in response:
+                        send(l('bot'),l('unauthorized'))
+                        continue
+                    code = response.split("?code=")[1]
                 else:
-                    fortnite_access_token, fortnite_expires_at = await get_fortnite_token(device_auth["access_token"])
-                    user = await lookup_user(device_auth["in_app_id"], fortnite_access_token)
-                    if user["email"].lower() == email.lower():
-                        flag = True
-                        break
-                    else:
-                        send(l('bot'),l('account_incorrect', email))
-                        break
-            if flag == True:
+                    code = response
+            data = await authorization_code_auth(code)
+            try:
+                access_token = data["access_token"]
+                in_app_id = data["in_app_id"]
+            except KeyError:
+                send(l('bot'),l('authorization_expired'))
+                continue
+            fortnite_access_token, fortnite_expires_at = await get_fortnite_token(access_token)
+            user = await lookup_user(in_app_id, fortnite_access_token)
+            if user["email"].lower() == email.lower():
                 break
-        exchange_code = await exchange(device_auth["access_token"])
+            else:
+                send(l('bot'),l('account_incorrect', user["email"], email))
+                continue
+        exchange_code = await exchange(access_token)
         launcher_access_token, client_id = await exchange_code_auth(exchange_code)
         details = await generate_device_auth(client_id, launcher_access_token)
         store_device_auth_details(email.lower(), details)
@@ -2456,43 +2457,20 @@ if True: #Asynchronous functions
             data = await data.json()
             return data["access_token"], datetime.datetime.fromisoformat(data["expires_at"].replace("Z",""))
 
-    async def get_device_code(access_token: str) -> dict:
+    async def authorization_code_auth(authorization_code: str) -> Optional[tuple]:
         async with aiohttp.ClientSession() as session:
             data = await session.post(
-                device_auth_url,
+                oauth_url,
                 headers={
-                    "Authorization": f"bearer {access_token}",
-                    "Content-Type": "application/x-www-form-urlencoded"
+                    "Authorization": f"basic {launcher_token}"
+                },
+                data={
+                    "grant_type": "authorization_code",
+                    "code": authorization_code,
+                    "token_type": "eg1"
                 }
             )
-            data = await data.json()
-            return data
-
-    async def device_code_auth(device_code: str) -> Optional[dict]:
-        async with aiohttp.ClientSession() as session:
-            flag = False
-            while True:
-                await asyncio.sleep(5)
-                data = await session.post(
-                    oauth_url,
-                    headers={
-                        "Authorization": f"basic {launcher_token}"
-                    },
-                    data={
-                        "grant_type": "device_code",
-                        "device_code": device_code
-                    }
-                )
-                data = await data.json()
-                if data.get("errorCode") == "errors.com.epicgames.account.oauth.authorization_pending":
-                    if not flag:
-                        send(l('bot'),l('waiting_for_authorization'))
-                        flag = True
-                    pass
-                elif data.get("errorCode"):
-                    return None
-                else:
-                    return data
+            return await data.json()
 
     async def exchange_code_auth(exchange_code: str) -> tuple:
         async with aiohttp.ClientSession() as session:
@@ -2797,7 +2775,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
         base = message.base
         while isinstance(base, AllMessage):
             base = base.base
-                         
+
         if isinstance(base, fortnitepy.message.MessageBase):
             client.add_cache(message.author)
             if ((message.author.id in blacklist and data['fortnite']['blacklist-ignorecommand'])
@@ -4832,6 +4810,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             kwargs["hours"] = int(args[2]) if args[2:3] else 0
             kwargs["minutes"] = int(args[3]) if args[3:4] else 0
             offline_for = datetime.timedelta(**kwargs)
+            utcnow = datetime.datetime.utcnow()
             event = asyncio.Event(loop=loop)
             removed = []  
 
@@ -4841,8 +4820,9 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     last_logout = friend.last_logout
                 elif friend.created_at > client.booted_utc:
                     last_logout = await friend.fetch_last_logout()
-                if last_logout and ((datetime.datetime.utcnow() - last_logout) > offline_for):
-                    await event.wait()
+                if last_logout and ((utcnow - last_logout) > offline_for): 
+                    if event.is_set():
+                        await event.wait()
                     try:
                         await friend.remove()
                     except fortnitepy.HTTPException as e:
@@ -4872,6 +4852,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 tasks.append(task)
             await asyncio.gather(*tasks)
             await reply(message, client, l('remove_allfriend',len(removed)))
+            await asyncio.sleep(2)
         except fortnitepy.HTTPException:
             if data['loglevel'] == 'debug':
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -6322,7 +6303,7 @@ blacklist = []
 blacklist_ = []
 otherbotlist = []
 storedlogs = []
-format_pattern = re.compile(r"""\{([a-zA-Z0-9\s_\(\)\[\]\.,"']*)\}""")
+format_pattern = re.compile(r"""\{([a-zA-Z0-9\s_\(\)\[\]\.,"'!\?=]*)\}""")
 
 config_tags={
     "['fortnite']": [dict],
@@ -6572,424 +6553,6 @@ commands_tags={
     "['addstyle']": [str,"can_be_multiple"],
     "['setenlightenment']": [str,"can_be_multiple"]
 }
-localize_keys = [
-    'bot',
-    'lobbybot',
-    'credit',
-    'library',
-    'loglevel',
-    'normal',
-    'info',
-    'debug',
-    'debug_is_on',
-    'on',
-    'off',
-    'booting',
-    'get_code',
-    'authorization_expired',
-    'waiting_for_authorization',
-    'account_incorrect',
-    'login',
-    'all_login',
-    'relogin',
-    'closing',
-    'owner',
-    'party',
-    'userid',
-    'name_or_id',
-    'partyid',
-    'content',
-    'number',
-    'eval',
-    'exec',
-    'invite_is_decline',
-    'restarting',
-    'relogining',
-    'success',
-    'accepted_invite_from',
-    'accepted_invite_from2',
-    'declined_invite_from',
-    'declined_invite_from2',
-    'declined_invite_interval',
-    'declined_invite_interval2',
-    'declined_invite_interval3',
-    'declined_invite_owner',
-    'declined_invite_owner2',
-    'declined_invite_owner3',
-    'declined_invite_whitelist',
-    'declined_invite_whitelist2',
-    'declined_invite_whitelist3',
-    'party_member_joined',
-    'party_member_left',
-    'party_member_request',
-    'party_member_kick',
-    'party_member_promote',
-    'party_member_update',
-    'party_member_disconnect',
-    'party_member_chatban',
-    'party_member_chatban2',
-    'party_update',
-    'random_message',
-    'click_invite',
-    'inviteaccept',
-    'inviteinterval',
-    'invite_from',
-    'invite_from2',
-    'friend_request_to',
-    'friend_request_from',
-    'friend_request_decline',
-    'friend_accept',
-    'friend_add',
-    'friend_remove',
-    'this_command_owneronly',
-    'failed_ownercommand',
-    'error_while_accepting_partyrequest',
-    'error_while_declining_partyrequest',
-    'error_while_accepting_friendrequest',
-    'error_while_declining_friendrequest',
-    'error_while_sending_friendrequest',
-    'error_while_removing_friendrequest',
-    'error_while_removing_friend',
-    'error_while_accepting_invite',
-    'error_while_declining_invite',
-    'error_while_blocking_user',
-    'error_while_unblocking_user',
-    'error_while_requesting_userinfo',
-    'error_while_joining_to_party',
-    'error_while_leaving_party',
-    'error_while_sending_partyinvite',
-    'error_while_changing_asset',
-    'error_while_changing_bpinfo',
-    'error_while_promoting_party_leader',
-    'error_while_kicking_user',
-    'error_while_swapping_user',
-    'error_while_setting_client',
-    'error_already_member_of_party',
-    'error_netcl_does_not_match',
-    'error_private_party',
-    'login_failed',
-    'failed_to_load_account',
-    'exchange_code_error',
-    'password_reset_error',
-    'api_downing',
-    'api_downing2',
-    'not_enough_password',
-    'owner_notfound',
-    'discord_owner_notfound',
-    'blacklist_user_notfound',
-    'whitelist_user_notfound',
-    'discord_blacklist_user_notfound',
-    'discord_whitelist_user_notfound',
-    'botlist_user_notfound',
-    'invitelist_user_notfound',
-    'not_friend_with_owner',
-    'not_friend_with_inviteuser',
-    'not_friend_with_user',
-    'nor_pending_with_user',
-    'not_party_leader',
-    'load_failed_keyerror',
-    'load_failed_json',
-    'load_failed_notfound',
-    'is_missing',
-    'too_many_users',
-    'too_many_items',
-    'user_notfound',
-    'user_not_in_party',
-    'party_full_or_already_or_offline',
-    'party_full_or_already',
-    'party_notfound',
-    'party_private',
-    'not_available',
-    'must_be_int',
-    'item_notfound',
-    'error',
-    'add_to_list',
-    'already_list',
-    'remove_from_list',
-    'not_list',
-    'enter_to_add_to_list',
-    'enter_to_remove_from_list',
-    'blacklist',
-    'whitelist',
-    'discord_blacklist',
-    'discord_whitelist',
-    'invitelist',
-    'botlist',
-    'enter_to_get_userinfo',
-    'friendcount',
-    'pendingcount',
-    'outbound',
-    'inbound',
-    'blockcount',
-    'set_to',
-    'mimic',
-    'enter_to_mimic_user',
-    'addeditem',
-    'shopitem',
-    'outfit',
-    'backpack',
-    'pet',
-    'pickaxe',
-    'emote',
-    'emoji',
-    'toy',
-    'command_from',
-    'whisper',
-    'partychat',
-    'discord',
-    'disable_perfect',
-    'invite',
-    'accept',
-    'decline',
-    'friend_request',
-    'join_',
-    'message',
-    'randommessage',
-    'decline_invite_for',
-    'enter_to_join_party',
-    'party_leave',
-    'user_invited',
-    'enter_to_invite_user',
-    'user_sent',
-    'enter_to_send',
-    'party_sent',
-    'status',
-    'avatar',
-    'color_must_be',
-    'banner',
-    'bannerid',
-    'color',
-    'level',
-    'bpinfo',
-    'tier',
-    'xpboost',
-    'friendxpboost',
-    'privacy',
-    'public',
-    'friends_allow_friends_of_friends',
-    'friends',
-    'private_allow_friends_of_friends',
-    'private',
-    'lastlogin',
-    'member_count',
-    'enter_to_show_info',
-    'itemname',
-    'remove_pending',
-    'already_friend',
-    'enter_to_send_friendrequest',
-    'remove_friend',
-    'remove_allfriend',
-    'day',
-    'hour',
-    'minute',
-    'enter_to_remove_friend',
-    'enter_to_accept_pending',
-    'enter_to_decline_pending',
-    'already_block',
-    'block_user',
-    'enter_to_block_user',
-    'not_block',
-    'unblock_user',
-    'enter_to_unblock_user',
-    'optional',
-    'reason',
-    'chatban_user',
-    'already_chatban',
-    'enter_to_chatban_user',
-    'voice',
-    'promote_user',
-    'already_party_leader',
-    'enter_to_promote_user',
-    'kick_user',
-    'cant_kick_yourself',
-    'enter_to_kick_user',
-    'hide_user',
-    'hide_all_user',
-    'enter_to_hide_user',
-    'show_user',
-    'show_all_user',
-    'enter_to_show_user',
-    'readystate',
-    'ready',
-    'unready',
-    'sitout',
-    'matchstate',
-    'remaining',
-    'remaining_must_be_between_0_and_255',
-    'swap_user',
-    'enter_to_swap_user',
-    'lock',
-    'stopped',
-    'locked',
-    'all_end',
-    'enter_to_change_asset',
-    'setname',
-    'no_stylechange',
-    'enter_to_set_style',
-    'assetpath',
-    'set_playlist',
-    'please_enter_valid_number',
-    'playing',
-    'listening',
-    'watching',
-    'full',
-    'contains',
-    'starts',
-    'ends',
-    'web',
-    'web_running',
-    'web_login',
-    'web_logout',
-    'web_logged',
-    'web_not_logged',
-    'invalid_password',
-    'main_page',
-    'config_editor',
-    'commands_editor',
-    'replies_editor',
-    'party_viewer',
-    'password',
-    'web_save',
-    'web_save_reload',
-    'web_saved',
-    'web_back',
-    'account_not_exists',
-    'account_not_loaded',
-    'party_moving',
-    'loading',
-    'command',
-    'run',
-    'result',
-    'web_notfound',
-    'web_already_running',
-    'failed_to_run_web',
-    'this_field_is_required',
-    'this_field_fix_required',
-    'trigger',
-    'text',
-    'cannot_be_empty',
-    'restart',
-    'config_fortnite_email',
-    'config_fortnite_owner',
-    'config_fortnite_platform',
-    'config_fortnite_outfit',
-    'config_fortnite_outfit_style',
-    'config_fortnite_backpack',
-    'config_fortnite_backpack_style',
-    'config_fortnite_pickaxe',
-    'config_fortnite_pickaxe_style',
-    'config_fortnite_emote',
-    'config_fortnite_playlist',
-    'config_fortnite_banner',
-    'config_fortnite_banner_color',
-    'config_fortnite_avatar_id',
-    'config_fortnite_avatar_color',
-    'config_fortnite_level',
-    'config_fortnite_tier',
-    'config_fortnite_xpboost',
-    'config_fortnite_friendxpboost',
-    'config_fortnite_status',
-    'config_fortnite_privacy',
-    'config_fortnite_whisper',
-    'config_fortnite_partychat',
-    'config_fortnite_disablewhisperperfectly',
-    'config_fortnite_disablepartychatperfectly',
-    'config_fortnite_ignorebot',
-    'config_fortnite_joinmessage',
-    'config_fortnite_joinmessageenable',
-    'config_fortnite_randommessage',
-    'config_fortnite_randommessageenable',
-    'config_fortnite_joinemote',
-    'config_fortnite_click_invite',
-    'config_fortnite_disable_voice',
-    'config_fortnite_outfitmimic',
-    'config_fortnite_backpackmimic',
-    'config_fortnite_pickaxemimic',
-    'config_fortnite_emotemimic',
-    'config_fortnite_mimic-ignorebot',
-    'config_fortnite_mimic-ignoreblacklist',
-    'config_fortnite_outfitlock',
-    'config_fortnite_backpacklock',
-    'config_fortnite_pickaxelock',
-    'config_fortnite_emotelock',
-    'config_fortnite_acceptinvite',
-    'config_fortnite_acceptfriend',
-    'config_fortnite_addfriend',
-    'config_fortnite_invite-ownerdecline',
-    'config_fortnite_inviteinterval',
-    'config_fortnite_interval',
-    'config_fortnite_waitinterval',
-    'config_fortnite_hide-user',
-    'config_fortnite_hide-blacklist',
-    'config_fortnite_show-owner',
-    'config_fortnite_show-whitelist',
-    'config_fortnite_show-bot',
-    'config_fortnite_blacklist',
-    'config_fortnite_blacklist-declineinvite',
-    'config_fortnite_blacklist-autoblock',
-    'config_fortnite_blacklist-autokick',
-    'config_fortnite_blacklist-autochatban',
-    'config_fortnite_blacklist-ignorecommand',
-    'config_fortnite_whitelist',
-    'config_fortnite_whitelist-allowinvite',
-    'config_fortnite_whitelist-declineinvite',
-    'config_fortnite_whitelist-ignorelock',
-    'config_fortnite_whitelist-ownercommand',
-    'config_fortnite_whitelist-ignoreng',
-    'config_fortnite_invitelist',
-    'config_fortnite_otherbotlist',
-    'config_discord_enabled',
-    'config_discord_token',
-    'config_discord_owner',
-    'config_discord_channels',
-    'config_discord_status',
-    'config_discord_status_type',
-    'config_discord_discord',
-    'config_discord_disablediscordperfectly',
-    'config_discord_ignorebot',
-    'config_discord_blacklist',
-    'config_discord_blacklist-ignorecommand',
-    'config_discord_whitelist',
-    'config_discord_whitelist-ignorelock',
-    'config_discord_whitelist-ownercommand',
-    'config_discord_whitelist-ignoreng',
-    'config_web_enabled',
-    'config_web_ip',
-    'config_web_port',
-    'config_web_password',
-    'config_web_login_required',
-    'config_web_web',
-    'config_web_log',
-    'config_replies-matchmethod',
-    'config_ng-words',
-    'config_ng-word-matchmethod',
-    'config_ng-word-kick',
-    'config_ng-word-chatban',
-    'config_ng-word-blacklist',
-    'config_lang',
-    'config_restart_in',
-    'config_search_max',
-    'config_search-lang',
-    'config_no-logs',
-    'config_ingame-error',
-    'config_discord-log',
-    'config_omit-over2000',
-    'config_skip-if-overflow',
-    'config_hide-email',
-    'config_hide-token',
-    'config_hide-webhook',
-    'config_webhook',
-    'config_caseinsensitive',
-    'config_loglevel',
-    'config_debug',
-    'bool_true',
-    'bool_false',
-    'bool_none',
-    'boot_switch',
-    'info_closed',
-    'info_booting',
-    'info_ready'
-]
 error_config = []
 error_commands = []
 
@@ -7885,7 +7448,7 @@ if data.get("status",1) != 0:
             data["search-lang"]
         ]
         store_item_data(langs)
-    except Exception:
+    except Exception:	
         send(l('bot'),l('api_downing'),red)
     items = {}
     styles = {}
