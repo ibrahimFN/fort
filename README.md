@@ -351,7 +351,6 @@ INDIGO
 "avatar_color": "#ff0000,#00ff00,#0000ff"
 ```
 
-```
 プラットフォーム  
 ```
 Windows     : WIN
