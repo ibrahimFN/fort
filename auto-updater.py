@@ -13,7 +13,7 @@ def AddNewKey(data: dict, new: dict) -> dict:
         result.setdefault(key, value)
     return result
 
-def CheckUpdate(filename: str, githuburl: str) -> bool:
+def CheckUpdate(filename: str, githuburl: str, overwrite: bool = False) -> bool:
     print(f'{filename} の更新を確認中...')
     print(f'Checking update for {filename}...')
     try:
@@ -26,7 +26,7 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
                 break
         else:
             extension = ""
-        if extension in [".py", ".bat", ".txt", ".md", ".html", ""]:
+        if extension in [".py", ".bat", ".txt", ".md", ".html", ".toml", ""]:
             if os.path.isfile(filename):
                 with open(filename, "r", encoding='utf-8') as f:
                     current = f.read()
@@ -104,38 +104,68 @@ def CheckUpdate(filename: str, githuburl: str) -> bool:
                 return None
             github.encoding = github.apparent_encoding
             github = github.text
-            
             github = json.loads(github)
-            new = AddNewKey(current, github)
-            if current != new:
-                print(f'{filename} の更新を確認しました!')
-                print(f'{filename} をバックアップ中...')
-                print(f'Update found for {filename}!')
-                print(f'Backuping {filename}...\n')
-                try:
+
+            if overwrite:
+                if current != github:
+                    print(f'{filename} の更新を確認しました!')
+                    print(f'{filename} をバックアップ中...')
+                    print(f'Update found for {filename}!')
+                    print(f'Backuping {filename}...\n')
                     if os.path.isfile(f'{filename_}_old{extension}'):
                         try:
                             os.remove(f'{filename_}_old{extension}')
                         except PermissionError:
-                            print(f'{filename_}_old{extension} ファイルを削除できませんでした')
-                            print(f'Failed to remove file {filename_}_old{extension}')
-                            print(f'{traceback.format_exc()}\n')
-                    os.rename(filename, f'{filename_}_old{extension}')
-                except PermissionError:
-                    print(f'{filename} ファイルをバックアップできませんでした')
-                    print(f'Failed to backup file {filename}')
-                    print(f'{traceback.format_exc()}\n')
-                    return None
+                            print(f'{filename} ファイルを削除できませんでした')
+                            print(f'Failed to remove file {filename}\n')
+                            print(traceback.format_exc())
+                    try:
+                        os.rename(filename, f'{filename_}_old{extension}')
+                    except PermissionError:
+                        print(f'{filename} ファイルをバックアップできませんでした')
+                        print(f'Failed to backup file {filename}\n')
+                        print(traceback.format_exc())
+                    else:
+                        with open(filename, "w") as f:
+                            json.dump(github, f, indent=4, ensure_ascii=False)
+                        print(f'{filename} の更新が完了しました!')
+                        print(f'Update for {filename} done!\n')
+                        return True
                 else:
-                    with open(filename, 'w', encoding="utf-8") as f:
-                        json.dump(new, f, indent=4, ensure_ascii=False)
-                    print(f'{filename} の更新が完了しました!')
-                    print(f'Update for {filename} done!\n')
-                    return True
+                    print(f'{filename} の更新はありません!')
+                    print(f'No update for {filename}!\n')
+                    return False
             else:
-                print(f'{filename} の更新はありません!')
-                print(f'No update for {filename}!\n')
-                return False
+                new = AddNewKey(current, github)
+                if current != new:
+                    print(f'{filename} の更新を確認しました!')
+                    print(f'{filename} をバックアップ中...')
+                    print(f'Update found for {filename}!')
+                    print(f'Backuping {filename}...\n')
+                    try:
+                        if os.path.isfile(f'{filename_}_old{extension}'):
+                            try:
+                                os.remove(f'{filename_}_old{extension}')
+                            except PermissionError:
+                                print(f'{filename_}_old{extension} ファイルを削除できませんでした')
+                                print(f'Failed to remove file {filename_}_old{extension}')
+                                print(f'{traceback.format_exc()}\n')
+                        os.rename(filename, f'{filename_}_old{extension}')
+                    except PermissionError:
+                        print(f'{filename} ファイルをバックアップできませんでした')
+                        print(f'Failed to backup file {filename}')
+                        print(f'{traceback.format_exc()}\n')
+                        return None
+                    else:
+                        with open(filename, 'w', encoding="utf-8") as f:
+                            json.dump(new, f, indent=4, ensure_ascii=False)
+                        print(f'{filename} の更新が完了しました!')
+                        print(f'Update for {filename} done!\n')
+                        return True
+                else:
+                    print(f'{filename} の更新はありません!')
+                    print(f'No update for {filename}!\n')
+                    return False
         elif extension == ".png":
             if os.path.isfile(filename):
                 with open(filename, "rb") as f:
@@ -215,9 +245,9 @@ if CheckUpdate("requirements.txt", githuburl):
 
 CheckUpdate("config.json", githuburl)
 CheckUpdate("commands.json", githuburl)
-CheckUpdate("lang/en.json", githuburl)
-CheckUpdate("lang/es.json", githuburl)
-CheckUpdate("lang/ja.json", githuburl)
+CheckUpdate("lang/en.json", githuburl, True)
+CheckUpdate("lang/es.json", githuburl, True)
+CheckUpdate("lang/ja.json", githuburl, True)
 CheckUpdate("LICENSE", githuburl)
 
 CheckUpdate("templates/boot_switch.html", githuburl)
