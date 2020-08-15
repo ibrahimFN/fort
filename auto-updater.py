@@ -26,7 +26,7 @@ def CheckUpdate(filename: str, githuburl: str, overwrite: bool = False) -> bool:
                 break
         else:
             extension = ""
-        if extension in [".py", ".bat", ".txt", ".md", ".html", ".toml", ""]:
+        if extension in [".py", ".bat", ".txt", ".md", ".html", ""]:
             if os.path.isfile(filename):
                 with open(filename, "r", encoding='utf-8') as f:
                     current = f.read()
@@ -126,7 +126,7 @@ def CheckUpdate(filename: str, githuburl: str, overwrite: bool = False) -> bool:
                         print(f'Failed to backup file {filename}\n')
                         print(traceback.format_exc())
                     else:
-                        with open(filename, "w") as f:
+                        with open(filename, "w", encoding="utf-8") as f:
                             json.dump(github, f, indent=4, ensure_ascii=False)
                         print(f'{filename} の更新が完了しました!')
                         print(f'Update for {filename} done!\n')
