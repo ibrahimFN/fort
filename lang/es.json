@@ -1,6 +1,5 @@
 {
     "bot": "Bot",
-    "account_incorrect": "Esta cuenta no es correcta",
     "avatar": "Avatar",
     "color_must_be": "El color debe ser uno de estos [TEAL,SWEET_RED,LIGHT_ORANGE,GREEN,LIGHT_BLUE,DARK_BLUE,PING,RED,GRAY,ORANGE,DARK_PURPLE,LIME,INDIGO]",
     "hide_user": "Esconder {0}",
@@ -21,10 +20,10 @@
     "on": "ON",
     "off": "OFF",
     "booting": "Iniciando...",
-    "get_code": "Inicia sesión en {0} \nluego abre:\n{1}\nhaga clic en confirmar",
-    "authorization_expired": "Autorización expirada",
-    "waiting_for_authorization": "Esperando autorización...",
-    "logged_in_as": "Iniciado como {0}. Estás seguro? Y/N\n",
+    "get_code": "Inicia sesión en {0} en \nhttps://www.epicgames.com\ny abre \nhttps://www.epicgames.com/id/api/redirect?clientId=3446cd72694c4a4485d81b77adbb2141&responseType=code\nluego pega la respuesta",
+    "get_code2": "Inicia sesión en {0} en \n<a href='https://www.epicgames.com'>https://www.epicgames.com</a>and open\n<a href='https://www.epicgames.com/id/api/redirect?clientId=3446cd72694c4a4485d81b77adbb2141&responseType=code'>https://www.epicgames.com/id/api/redirect?clientId=3446cd72694c4a4485d81b77adbb2141&responseType=code</a>\nluego pega la respuesta",
+    "unauthorized": "No has iniciado sesión",
+    "account_incorrect": "Esta cuenta ('{0}') no es '{1}'",
     "login": "Iniciar sesión",
     "all_login": "Todas las cuentas iniciadas",
     "relogin": "Relogin completado",
@@ -415,6 +414,5 @@
     "this_field_fix_required": "Este espacio necesita solución! {0}",
     "config_restart_in": "Tiempo hasta reiniciar",
     "config_search_max": "Cantidad máxima de búsqueda",
-    "config_search-lang": "Idioma de búsqueda de artículos",
-    "get_code2": "Iniciando sesión en {0} \n<a href='https://www.epicgames.com'>https://www.epicgames.com</a>\nand open\n<a href='{1}'>{1}</a>\nhaga clic en confirmar"
+    "config_search-lang": "Idioma de búsqueda de artículos"
 }
