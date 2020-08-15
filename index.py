@@ -1876,9 +1876,13 @@ if True: #Functions
         try:
             with open(filename,encoding='utf-8') as f:
                 data = json.load(f)
-        except json.decoder.JSONDecodeError:
-            with open(filename,encoding='utf-8-sig') as f:
-                data = json.load(f)
+        except (json.decoder.JSONDecodeError, UnicodeDecodeError):
+            try:
+                with open(filename,encoding='utf-8-sig') as f:
+                    data = json.load(f)
+            except (json.decoder.JSONDecodeError, UnicodeDecodeError):
+                with open(filename,encoding='shift_jis') as f:
+                    data = json.load(f)
         return data
 
     def load_config(client: Optional[fortnitepy.Client] = None) -> bool:
