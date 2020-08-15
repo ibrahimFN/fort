@@ -2623,6 +2623,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
         client = message.client
         client.add_cache(message.author)
         if ((data['discord']['enabled'] and not dclient.isready)
+            or (message.author.id == client.user.id)
             or (message.author.id in blacklist and data['fortnite']['blacklist-ignorecommand'])
             or (message.author.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['ignorebot'])):
             return
@@ -2758,7 +2759,8 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
         send(name(message.author),content,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {name(message.author)} | {x}',add_d=lambda x:f'[{client.user.display_name}] {x}')
     elif isinstance(message, AllMessage):
         client = message.client
-        if data['discord']['enabled'] and not dclient.isready:
+        if (data['discord']['enabled'] and not dclient.isready
+            or message.author.id == client.user.id):
             return
 
         if (len(con) > 1
@@ -2859,74 +2861,6 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             elif args[0] in commands[command]:
                 await reply(message, client, l("this_command_owneronly"))
                 return
-
-    reply_flag = False
-    for key,value in replies.items():
-        reply_flag_ = False
-
-        if data["replies-matchmethod"] == "contains":
-            if [k for k in key.split(',') if k in content]:
-                reply_flag_ = True
-        elif data["replies-matchmethod"] == "full":
-            if [k for k in key.split(',') if k == content]:
-                reply_flag_ = True
-        elif data["replies-matchmethod"] == "starts":
-            if [k for k in key.split(',') if content.startswith(k)]:
-                reply_flag_ = True
-        elif data["replies-matchmethod"] == "ends":
-            if [k for k in key.split(',') if content.endswith(k)]:
-                reply_flag_ = True
-        if reply_flag_:
-            reply_flag = True
-            await reply(message, client, value)
-
-    if check_ng:
-        flag = False
-        if data["ng-word-matchmethod"] == "contains":
-            if [ng for ng in data["ng-words"] if ng in content]:
-                flag = True
-        elif data["ng-word-matchmethod"] == "full":
-            if [ng for ng in data["ng-words"] if ng == content]:
-                flag = True
-        elif data["ng-word-matchmethod"] == "starts":
-            if [ng for ng in data["ng-words"] if content.startswith(ng)]:
-                flag = True
-        elif data["ng-word-matchmethod"] == "ends":
-            if [ng for ng in data["ng-words"] if content.endswith(ng)]:
-                flag = True
-        if flag:
-            if data["ng-word-blacklist"]:
-                if isinstance(message, fortnitepy.message.MessageBase):
-                    blacklist.append(message.author.id)
-                    data_ = load_json("config.json")
-                    data_["fortnite"]["blacklist"].append(message.author.id)
-                    with open("config.json", "w", encoding="utf-8") as f:
-                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                elif isinstance(message, discord.Message):
-                    blacklist_.append(message.author.id)
-                    data_ = load_json("config.json") 
-                    data_["discord"]["blacklist"].append(message.author.id)
-                    with open("config.json", "w", encoding="utf-8") as f:
-                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-            member = client.party.members.get(message.author.id)
-            if member and client.party.me.leader:
-                if data["ng-word-kick"]:
-                    try:
-                        await member.kick()
-                    except Exception as e:
-                        if data["loglevel"] == "debug":
-                            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                            await reply(message, client, f"{l('error')}\n{traceback.format_exc()}")
-                elif data["ng-word-chatban"]:
-                    try:
-                        await member.chatban()
-                    except Exception as e:
-                        if data["loglevel"] == "debug":
-                            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                            await reply(message, client, f"{l('error')}\n{traceback.format_exc()}")
-            return
-    if reply_flag:
-        return
 
     if args[0] in commands['prev']:
         c = client.prevmessage.get(message.author.id)
@@ -6213,6 +6147,73 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     await reply(message, client, l('error'))
                 return
 
+        reply_flag = False
+        for key,value in replies.items():
+            reply_flag_ = False
+
+            if data["replies-matchmethod"] == "contains":
+                if [k for k in key.split(',') if k in content]:
+                    reply_flag_ = True
+            elif data["replies-matchmethod"] == "full":
+                if [k for k in key.split(',') if k == content]:
+                    reply_flag_ = True
+            elif data["replies-matchmethod"] == "starts":
+                if [k for k in key.split(',') if content.startswith(k)]:
+                    reply_flag_ = True
+            elif data["replies-matchmethod"] == "ends":
+                if [k for k in key.split(',') if content.endswith(k)]:
+                    reply_flag_ = True
+            if reply_flag_:
+                reply_flag = True
+                await reply(message, client, value)
+
+        if check_ng:
+            flag = False
+            if data["ng-word-matchmethod"] == "contains":
+                if [ng for ng in data["ng-words"] if ng in content]:
+                    flag = True
+            elif data["ng-word-matchmethod"] == "full":
+                if [ng for ng in data["ng-words"] if ng == content]:
+                    flag = True
+            elif data["ng-word-matchmethod"] == "starts":
+                if [ng for ng in data["ng-words"] if content.startswith(ng)]:
+                    flag = True
+            elif data["ng-word-matchmethod"] == "ends":
+                if [ng for ng in data["ng-words"] if content.endswith(ng)]:
+                    flag = True
+            if flag:
+                if data["ng-word-blacklist"]:
+                    if isinstance(message, fortnitepy.message.MessageBase):
+                        blacklist.append(message.author.id)
+                        data_ = load_json("config.json")
+                        data_["fortnite"]["blacklist"].append(message.author.id)
+                        with open("config.json", "w", encoding="utf-8") as f:
+                            json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                    elif isinstance(message, discord.Message):
+                        blacklist_.append(message.author.id)
+                        data_ = load_json("config.json") 
+                        data_["discord"]["blacklist"].append(message.author.id)
+                        with open("config.json", "w", encoding="utf-8") as f:
+                            json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                member = client.party.members.get(message.author.id)
+                if member and client.party.me.leader:
+                    if data["ng-word-kick"]:
+                        try:
+                            await member.kick()
+                        except Exception as e:
+                            if data["loglevel"] == "debug":
+                                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                                await reply(message, client, f"{l('error')}\n{traceback.format_exc()}")
+                    elif data["ng-word-chatban"]:
+                        try:
+                            await member.chatban()
+                        except Exception as e:
+                            if data["loglevel"] == "debug":
+                                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                                await reply(message, client, f"{l('error')}\n{traceback.format_exc()}")
+                return
+        if reply_flag:
+            return
 
         if ': ' in message.content:
             return
