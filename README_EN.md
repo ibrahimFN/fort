@@ -27,7 +27,7 @@ Copy
 https://github.com/gomashio1596/Fortnite-LobbyBot  
 and paste this to "Paste any repository URL"  
 Press "Import from GitHub"  
-Press "run▶" on the site which opened(Call this repl page) on top  
+Press "runâ–¶" on the site which opened(Call this repl page) on top  
 Create account in [Uptimerobot](https://uptimerobot.com "Uptimerobot") 
 and press "Dashboard"  
 Press "\+ Monitor" and back to repl.it, then open "web" tab and copy URL  
@@ -51,7 +51,7 @@ You can write other details by reload tab
 # config
 ```
 Fortnite
-email                     : Email address for bot account. You can set multiple by split in ,
+email                     : Email address for bot account. Can be multiple
 owner                     : Owner's name or ID
 platform                  : Bot's platform. See below
 outfit                    : Bot's default outfit. Name or ID
@@ -80,8 +80,8 @@ joinemote                 : Whether bot re dance emote when someone joined to th
 click_invite              : Whether bot will send 'Click here to invite'
 disable_voice             : Whether disable voice chat of party. true or false
 ignorebot                 : Whether bot will ignore command from bots. true or false
-joinmessage               : Message when someone joined to the party. \n to line break
-randommessage             : Random message when someone joined to the party. \n to line break
+joinmessage               : Message when someone joined to the party. \n to line break. Can use variables. See below
+randommessage             : Random message when someone joined to the party. \n to line break. Can use variables. See below
 joinmessageenable         : Whether bot will send message when someone joined to the party. true or false
 randommessageenable       : Whether bot will send random message when someone joined to the party. true or false
 outfitmimic               : Whether bot will mimic other player's outfit. true or false or user's name or ID
@@ -318,6 +318,16 @@ If you set multiple, add , like below
 }
 ```
 
+Usable variables
+In addition to variables can be used in status
+```
+author_display_name             : Message author's display_name
+author_id                       : Message author's id
+```
+
+Usable functions
+Same as functions can be used in status
+
 # Other
 Avatar ID  
 Usable variables  
@@ -389,7 +399,7 @@ Example
 Friend count: {friend_count}
 ```
 
-Usable variables  
+Usable functions  
 ```
 get_client_data(id)              : Get bot's info with specified ID
 Content
@@ -409,6 +419,17 @@ Example
 Bot1's friend count: {get_client_data('Bot1ID')['friend_count']}
 Guild1's member count: {get_guild_member_count(Guild1ID)}
 ```
+
+joinmessage & randommessage
+Usable variables
+In addition to variables can be used in status
+```
+member_display_name             : Member's display_name
+member_id                       : Member's id
+```
+
+Usable functions
+Same as functions can be used in status
 
 Channel name  
 Usable variables  

@@ -379,7 +379,7 @@ if True: #Classes
         def is_most(self) -> None:
             name = self.user.display_name
             member_joined_at_most = [self.user.id, getattr(getattr(self.party,"me",None),"joined_at",datetime.datetime.now())]
-            for member_ in self.party.members.copy().values():
+            for member_ in self.party.members:
                 self.add_cache(member_)
                 if member_.id in [i.user.id for i in loadedclients]:
                     if member_.id != self.user.id:
@@ -408,6 +408,8 @@ if True: #Classes
                 {
                     "friend_count": len(self.friends),
                     "pending_count": len(self.pending_friends),
+                    "incoming_pending_count": len(self.incoming_pending_friends),
+                    "outgoing_pending_count": len(self.outgoing_pending_friends),
                     "block_count": len(self.blocked_users),
                     "display_name": self.user.display_name,
                     "id": self.user.id,
@@ -425,6 +427,8 @@ if True: #Classes
                     "get_client_data": get_client_data,
                     "all_friend_count": sum([len(client_.friends) for client_ in clients]),
                     "all_pending_count": sum([len(client_.pending_friends) for client_ in clients]),
+                    "all_incoming_pending_count": sum([len(client_.incoming_pending_friends) for client_ in clients]),
+                    "all_outgoing_pending_count": sum([len(client_.outgoing_pending_friends) for client_ in clients]),
                     "all_block_count": sum([len(client_.blocked_users) for client_ in clients])
                 }
             )
@@ -443,7 +447,7 @@ if True: #Classes
                 self.status = status
                 status = self.party.construct_presence(status)
                 try:
-                    await self.send_status(status)
+                    await self.send_presence(status)
                 except Exception:
                     if data['loglevel'] == 'debug':
                         send(self.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -451,7 +455,7 @@ if True: #Classes
                 status = eval_format(self.status_,var)
                 self.status = status
                 try:
-                    await self.send_status(status)
+                    await self.send_presence(status)
                 except Exception:
                     if data['loglevel'] == 'debug':
                         send(self.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -711,21 +715,21 @@ if True: #Classes
                 num += 1
                 if data['fortnite']['show-owner']:
                     for owner in self.owner:
-                        if self.party.members.get(owner.id):
+                        if self.party.get_member(owner.id):
                             squad_assignments.append({"memberId": owner.id, "absoluteMemberIdx": num})
                             num += 1
                 if data['fortnite']['show-whitelist']:
                     for whitelistuser in whitelist:
-                        if self.party.members.get(whitelistuser):
+                        if self.party.get_member(whitelistuser):
                             squad_assignments.append({"memberId": whitelistuser, "absoluteMemberIdx": num})
                             num += 1
                 if data['fortnite']['show-bot']:
                     for botuser in (otherbotlist + [i.user.id for i in loadedclients]):
-                        if self.party.members.get(botuser):
+                        if self.party.get_member(botuser):
                             squad_assignments.append({"memberId": botuser, "absoluteMemberIdx": num})
                             num += 1
             else:
-                member = self.party.members.get(member_id)
+                member = self.party.get_member(member_id)
                 if not member:
                     raise fortnitepy.NotFound("This member is not a part of this party.")
                 squad_assignments = self.visual_members
@@ -742,12 +746,12 @@ if True: #Classes
                 raise fortnitepy.Forbidden("You must be the party leader to perform this action.")
             real_members = self.party.meta.squad_assignments
             if not member_id:
-                member_indexes = [member.position for member in self.party.members.values() if isinstance(member.position,int)]
+                member_indexes = [member.position for member in self.party.members if isinstance(member.position,int)]
                 available_indexes = [num for num in range(15) if num not in member_indexes]
 
                 num = 0
                 squad_assignments = []
-                for member in self.party.members.values():
+                for member in self.party.members:
                     if isinstance(member.position,int):
                         squad_assignments.append(
                             {
@@ -768,7 +772,7 @@ if True: #Classes
                 squad_members = [member["memberId"] for member in squad_assignments]
                 member_indexes = [member["absoluteMemberIdx"] for member in squad_assignments]
                 available_indexes = [num for num in range(15) if num not in member_indexes]
-                member = self.party.members.get(member_id)
+                member = self.party.get_member(member_id)
                 if not member:
                     raise fortnitepy.NotFound("This member is not a part of this party.")
                 if member.id not in squad_members:
@@ -918,7 +922,7 @@ if True: #Classes
             loadedclients.append(self)
             client_name[self.user.display_name] = self
             self.add_cache(self.user)
-            for user in [list(self.friends.values()) + list(self.pending_friends.values()) + list(self.blocked_users.values())]:
+            for user in [list(self.friends) + list(self.pending_friends) + list(self.blocked_users)]:
                 self.add_cache(user)
             loop.create_task(self.status_loop())
             try:
@@ -935,7 +939,7 @@ if True: #Classes
                 user = self.get_user(owner) or self.get_cache_user(owner)
                 if not user:
                     try:
-                        user = await self.fetch_profile(owner)
+                        user = await self.fetch_user(owner)
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -969,7 +973,7 @@ if True: #Classes
                 user = self.get_user(listuser) or self.get_cache_user(listuser)
                 if not user:
                     try:
-                        user = await self.fetch_profile(listuser)
+                        user = await self.fetch_user(listuser)
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -998,7 +1002,6 @@ if True: #Classes
                 send(display_name,f'invitelist {self.invitelist}',yellow,add_d=lambda x:f'```\n{x}\n```')
 
             if data['fortnite']['acceptfriend']:
-                pendings = [i for i in self.pending_friends.values() if i.incoming]
                 async def _(pending: fortnitepy.IncomingPendingFriend) -> None:
                     if self.acceptfriend is True:
                         try:
@@ -1018,7 +1021,7 @@ if True: #Classes
                             if data['loglevel'] == 'debug':
                                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 try:
-                    await asyncio.gather(*[_(pending) for pending in pendings])
+                    await asyncio.gather(*[_(pending) for pending in client.incoming_pending_friends])
                 except Exception:
                     data["discord"]["enabled"] = False
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -1033,7 +1036,7 @@ if True: #Classes
                     user = self.get_user(listuser) or self.get_cache_user(listuser)
                     if not user:
                         try:
-                            user = await self.fetch_profile(listuser)
+                            user = await self.fetch_user(listuser)
                         except fortnitepy.HTTPException:
                             if data['loglevel'] == 'debug':
                                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -1070,7 +1073,7 @@ if True: #Classes
                         user = self.get_user(mimic) or self.get_cache_user(mimic)
                         if not user:
                             try:
-                                user = await self.fetch_profile(data['fortnite'][mimic])
+                                user = await self.fetch_user(data['fortnite'][mimic])
                             except fortnitepy.HTTPException:
                                 if data['loglevel'] == 'debug':
                                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -1096,7 +1099,7 @@ if True: #Classes
                         data["discord"]["enabled"] = False
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
-        async def event_close(self) -> None:
+        async def event_before_close(self) -> None:
             self.isready = False
             self.boot_time = None
             send(name(self.user),f'{l("closing")}: {self.user.display_name}',green,add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
@@ -1123,10 +1126,10 @@ if True: #Classes
             else:
                 send(display_name,l("invite_from2",f'{name(invitation.sender)} [{platform_to_str(invitation.sender.platform)}]',invitation.party.id),add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
             for owner in self.owner:
-                if owner.id in self.party.members.keys() and data['fortnite']['invite-ownerdecline']:
+                if self.party.get_member(owner.id) and data['fortnite']['invite-ownerdecline']:
                     await self.invitation_decline_owner(invitation)
                     return
-            if True in [memberid in whitelist for memberid in self.party.members.keys()] and data['fortnite']['whitelist-declineinvite']:
+            if True in [member.id in whitelist for member in self.party.members] and data['fortnite']['whitelist-declineinvite']:
                 await self.invitation_decline_whitelist(invitation)
             elif not self.acceptinvite:
                 await self.invitation_decline(invitation)
@@ -1249,10 +1252,10 @@ if True: #Classes
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             
             if data['fortnite']['addfriend']:
-                for member_ in member.party.members.copy().keys():
+                for member_ in member.party.members:
                     try:
-                        if not self.has_friend(member_) and not self.is_pending(member_) and not self.is_blocked(member_) and member_ != self.user.id:
-                            await self.add_friend(member_)
+                        if not self.has_friend(member_.id) and not self.is_pending(member_.id) and not self.is_blocked(member_.id) and member_.id != self.user.id:
+                            await self.add_friend(member_.id)
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -1261,16 +1264,42 @@ if True: #Classes
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
             if self.joinmessageenable:
+                var = defaultdict(lambda: None)
+                var.update(self.get_client_data())
+                var.update(
+                    {
+                        "get_client_data": get_client_data,
+                        "all_friend_count": sum([len(client_.friends) for client_ in clients]),
+                        "all_pending_count": sum([len(client_.pending_friends) for client_ in clients]),
+                        "all_block_count": sum([len(client_.blocked_users) for client_ in clients]),
+                        "member_display_name": member.display_name,
+                        "member_id": member.id
+                    }
+                )
                 try:
-                    await self.party.send(data['fortnite']['joinmessage'])
+                    mes = eval_format(data['fortnite']['joinmessage'],var)
+                    await self.party.send(mes)
                 except Exception:
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             if self.randommessageenable:
+                var = defaultdict(lambda: None)
+                var.update(self.get_client_data())
+                var.update(
+                    {
+                        "get_client_data": get_client_data,
+                        "all_friend_count": sum([len(client_.friends) for client_ in clients]),
+                        "all_pending_count": sum([len(client_.pending_friends) for client_ in clients]),
+                        "all_block_count": sum([len(client_.blocked_users) for client_ in clients]),
+                        "member_display_name": member.display_name,
+                        "member_id": member.id
+                    }
+                )
                 try:
                     randommessage = random.choice(data['fortnite']['randommessage'])
-                    send(display_name,f'{l("random_message")}: {randommessage}',add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
-                    await self.party.send(randommessage)
+                    mes = mes = eval_format(randommessage,var)
+                    send(display_name,f'{l("random_message")}: {mes}',add_p=lambda x:f'[{now()}] [{self.user.display_name}] {x}')
+                    await self.party.send(mes)
                 except Exception:
                     if data['loglevel'] == 'debug':
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -1335,10 +1364,10 @@ if True: #Classes
                     send(display_name_,l("party_member_left",f'{name(member)} [{platform_to_str(member.platform)}/{member.input}]',member.party.member_count),magenta,lambda x:f'[{now()}] [{l("party")}] [{display_name_}] {x}')
 
             if data['fortnite']['addfriend']:
-                for member in member.party.members.copy().keys():
-                    if not self.has_friend(member) and not self.is_pending(member) and not self.is_blocked(member) and member != self.user.id:
+                for member in member.party.members:
+                    if not self.has_friend(member.id) and not self.is_pending(member.id) and not self.is_blocked(member.id) and member.id != self.user.id:
                         try:
-                            await self.add_friend(member)
+                            await self.add_friend(member.id)
                         except fortnitepy.HTTPException:
                             if data['loglevel'] == 'debug':
                                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -1433,7 +1462,7 @@ if True: #Classes
                     await client.party.set_privacy(data['fortnite']['privacy'].value)
                     if data["fortnite"]["disable_voice"]:
                         await self.disable_voice()
-                    for member in self.party.members.copy().values():
+                    for member in self.party.members:
                         if member.id in blacklist:
                             if data['fortnite']['blacklist-autokick']:
                                 try:
@@ -1510,7 +1539,7 @@ if True: #Classes
                 return
             await self.party_member_emote_change(member)
 
-        async def event_party_member_disconnect(self, member: fortnitepy.PartyMember) -> None:
+        async def event_party_member_zombie(self, member: fortnitepy.PartyMember) -> None:
             if not self.isready or not member:
                 return
             self.add_cache(member)
@@ -1725,6 +1754,8 @@ if True: #Functions
             {
                 "friend_count": len(client.friends),
                 "pending_count": len(client.pending_friends),
+                "incoming_pending_count": len(client.incoming_pending_friends),
+                "outgoing_pending_count": len(client.outgoing_pending_friends),
                 "block_count": len(client.blocked_users),
                 "display_name": client.user.display_name,
                 "id": client.user.id
@@ -2623,7 +2654,6 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
         client = message.client
         client.add_cache(message.author)
         if ((data['discord']['enabled'] and not dclient.isready)
-            or (message.author.id == client.user.id)
             or (message.author.id in blacklist and data['fortnite']['blacklist-ignorecommand'])
             or (message.author.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['ignorebot'])):
             return
@@ -2759,8 +2789,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
         send(name(message.author),content,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {name(message.author)} | {x}',add_d=lambda x:f'[{client.user.display_name}] {x}')
     elif isinstance(message, AllMessage):
         client = message.client
-        if (data['discord']['enabled'] and not dclient.isready
-            or message.author.id == client.user.id):
+        if data['discord']['enabled'] and not dclient.isready:
             return
 
         if (len(con) > 1
@@ -2861,6 +2890,87 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             elif args[0] in commands[command]:
                 await reply(message, client, l("this_command_owneronly"))
                 return
+
+    reply_flag = False
+    for key,value in replies.items():
+        reply_flag_ = False
+
+        if data["replies-matchmethod"] == "contains":
+            if [k for k in key.split(',') if k in content]:
+                reply_flag_ = True
+        elif data["replies-matchmethod"] == "full":
+            if [k for k in key.split(',') if k == content]:
+                reply_flag_ = True
+        elif data["replies-matchmethod"] == "starts":
+            if [k for k in key.split(',') if content.startswith(k)]:
+                reply_flag_ = True
+        elif data["replies-matchmethod"] == "ends":
+            if [k for k in key.split(',') if content.endswith(k)]:
+                reply_flag_ = True
+        if reply_flag_:
+            reply_flag = True
+            var = defaultdict(lambda: None)
+            var.update(client.get_client_data())
+            var.update(
+                {
+                    "get_client_data": get_client_data,
+                    "all_friend_count": sum([len(client_.friends) for client_ in clients]),
+                    "all_pending_count": sum([len(client_.pending_friends) for client_ in clients]),
+                    "all_block_count": sum([len(client_.blocked_users) for client_ in clients]),
+                    "author_display_name": message.author.display_name,
+                    "author_id": message.author.id
+                }
+            )
+            mes = eval_format(value,var)
+            await reply(message, client, mes)
+
+    if check_ng:
+        flag = False
+        if data["ng-word-matchmethod"] == "contains":
+            if [ng for ng in data["ng-words"] if ng in content]:
+                flag = True
+        elif data["ng-word-matchmethod"] == "full":
+            if [ng for ng in data["ng-words"] if ng == content]:
+                flag = True
+        elif data["ng-word-matchmethod"] == "starts":
+            if [ng for ng in data["ng-words"] if content.startswith(ng)]:
+                flag = True
+        elif data["ng-word-matchmethod"] == "ends":
+            if [ng for ng in data["ng-words"] if content.endswith(ng)]:
+                flag = True
+        if flag:
+            if data["ng-word-blacklist"]:
+                if isinstance(message, fortnitepy.message.MessageBase):
+                    blacklist.append(message.author.id)
+                    data_ = load_json("config.json")
+                    data_["fortnite"]["blacklist"].append(message.author.id)
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+                elif isinstance(message, discord.Message):
+                    blacklist_.append(message.author.id)
+                    data_ = load_json("config.json") 
+                    data_["discord"]["blacklist"].append(message.author.id)
+                    with open("config.json", "w", encoding="utf-8") as f:
+                        json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
+            member = client.party.get_member(message.author.id)
+            if member and client.party.me.leader:
+                if data["ng-word-kick"]:
+                    try:
+                        await member.kick()
+                    except Exception as e:
+                        if data["loglevel"] == "debug":
+                            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                            await reply(message, client, f"{l('error')}\n{traceback.format_exc()}")
+                elif data["ng-word-chatban"]:
+                    try:
+                        await member.chatban()
+                    except Exception as e:
+                        if data["loglevel"] == "debug":
+                            send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
+                            await reply(message, client, f"{l('error')}\n{traceback.format_exc()}")
+            return
+    if reply_flag:
+        return
 
     if args[0] in commands['prev']:
         c = client.prevmessage.get(message.author.id)
@@ -3090,7 +3200,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 user = client.get_user(owner) or client.get_cache_user(owner)
                 if not user:
                     try:
-                        user = await client.fetch_profile(owner)
+                        user = await client.fetch_user(owner)
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -3129,7 +3239,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 user = client.get_user(listuser) or client.get_cache_user(listuser)
                 if not user:
                     try:
-                        user = await client.fetch_profile(listuser)
+                        user = await client.fetch_user(listuser)
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -3166,7 +3276,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     user = client.get_user(mimic) or client.get_cache_user(mimic)
                     if not user:
                         try:
-                            user = await client.fetch_profile(data['fortnite'][mimic])
+                            user = await client.fetch_user(data['fortnite'][mimic])
                         except fortnitepy.HTTPException:
                             if data['loglevel'] == 'debug':
                                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -3189,7 +3299,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 user = client.get_user(listuser) or client.get_cache_user(listuser)
                 if not user:
                     try:
-                        user = await client.fetch_profile(listuser)
+                        user = await client.fetch_user(listuser)
                     except fortnitepy.HTTPException:
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -3218,7 +3328,6 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 send(display_name,f'invitelist {client.invitelist}',yellow,add_d=lambda x:f'```\n{x}\n```')
 
             if data['fortnite']['acceptfriend']:
-                pendings = [i for i in client.pending_friends.values() if i.incoming]
                 async def _(pending: fortnitepy.IncomingPendingFriend) -> None:
                     if client.acceptfriend is True:
                         try:
@@ -3238,7 +3347,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                             if data['loglevel'] == 'debug':
                                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 try:
-                    await asyncio.gather(*[_(pending) for pending in pendings])
+                    await asyncio.gather(*[_(pending) for pending in client.incoming_pending_friends])
                 except Exception:
                     data["discord"]["enabled"] = False
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -3300,7 +3409,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             else:
                 users = {str(user.display_name): user for user in cache_users.values() if content_ in str(name) and user.id != client.user.id and user.id not in blacklist}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
                     if user.id not in blacklist:
                         users[str(user.display_name)] = user
@@ -3373,7 +3482,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             else:
                 users = {str(user.display_name): user for user in cache_users.values() if content_ in str(user.display_name) and user.id != client.user.id and user.id in blacklist}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if not user:
                     if user.id in blacklist:
                         users[str(user.display_name)] = user
@@ -3446,7 +3555,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             else:
                 users = {str(user.display_name): user for user in cache_users.values() if content_ in str(user.display_name) and user.id != client.user.id and user.id not in whitelist}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
                     if user.id not in whitelist:
                         users[str(user.display_name)] = user
@@ -3519,7 +3628,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             else:
                 users = {str(user.display_name): user for user in cache_users.values() if content_ in str(user.display_name) and user.id != client.user.id and user.id in whitelist}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
                     if user.id in whitelist:
                         users[str(user.display_name)] = user
@@ -3592,7 +3701,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             else:
                 users = {str(user.display_name): user for user in cache_users.values() if content_ in str(user.display_name) and user.id != client.user.id and user.id not in client.invitelist}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
                     if user.id not in client.invitelist:
                         users[str(user.display_name)] = user
@@ -3665,7 +3774,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             else:
                 users = {str(user.display_name): user for user in cache_users.values() if content_ in str(user.display_name) and user.id != client.user.id and user.id in client.invitelist}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
                     if user.id in client.invitelist:
                         users[str(user.display_name)] = user
@@ -3734,13 +3843,13 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 await reply(message, client, f"[{commands['get']}] [{l('name_or_id')}]")
                 return
             if data["caseinsensitive"]:
-                users = {str(member.display_name): member for member in client.party.members.values() if content_ in jaconv.kata2hira(str(member.display_name).lower())}
+                users = {str(member.display_name): member for member in client.party.members if content_ in jaconv.kata2hira(str(member.display_name).lower())}
             else:
-                users = {str(member.display_name): member for member in client.party.members.values() if content_ in str(member.display_name)}
+                users = {str(member.display_name): member for member in client.party.members if content_ in str(member.display_name)}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
-                    if client.party.members.get(user.id):
+                    if client.party.get_member(user.id):
                         users[str(user.display_name)] = user
                         client.add_cache(user)
             except fortnitepy.HTTPException:
@@ -3755,7 +3864,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 return
             if len(users) == 1:
                 user = tuple(users.values())[0]
-                member = client.party.members.get(user.id)
+                member = client.party.get_member(user.id)
                 if not member:
                     await reply(message, client, l("user_not_in_party"))
                     return
@@ -3767,7 +3876,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 client.select[message.author.id] = {
                     "exec": [
                         """\
-        member = client.party.members.get(user.id)
+        member = client.party.get_member(user.id)
         if not member:
             await reply(message, client, l("user_not_in_party"))
             return
@@ -3799,10 +3908,8 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
 
     elif args[0] in commands['pendingcount']:
         try:
-            outgoing = [i for i in client.pending_friends.values() if i.outgoing]
-            incoming = [i for i in client.pending_friends.values() if i.incoming]
-            send(display_name,f"{l('pendingcount')}: {len(client.pending_friends)}\n{l('outbound')}: {len(outgoing)}\n{l('inbound')}: {len(incoming)}",add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
-            await reply(message, client, f"{l('pendingcount')}: {len(client.pending_friends)}\n{l('outbound')}: {len(outgoing)}\n{l('inbound')}: {len(incoming)}")
+            send(display_name,f"{l('pendingcount')}: {len(client.pending_friends)}\n{l('outbound')}: {len(client.outgoing_pending_friends)}\n{l('inbound')}: {len(client.incoming_pending_friends)}",add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
+            await reply(message, client, f"{l('pendingcount')}: {len(client.pending_friends)}\n{l('outbound')}: {len(client.outgoing_pending_friends)}\n{l('inbound')}: {len(client.incoming_pending_friends)}")
         except Exception:
             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
             await reply(message, client, l('error'))
@@ -3818,7 +3925,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
     elif args[0] in commands['friendlist']:
         try:
             text = ''
-            for friend in client.friends.values():
+            for friend in client.friends:
                 client.add_cache(friend)
                 text += f'\n{name(friend)}'
             send(display_name,text,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
@@ -3831,7 +3938,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
         try:
             outgoing = ''
             incoming = ''
-            for pending in client.pending_friends.values():
+            for pending in client.pending_friends:
                 client.add_cache(pending)
                 if pending.outgoing:
                     outgoing += f'\n{name(pending)}'
@@ -3846,7 +3953,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
     elif args[0] in commands['blocklist']:
         try:
             text = ''
-            for block in client.blocked_users.values():
+            for block in client.blocked_users:
                 client.add_cache(block)
                 text += f'\n{name(block)}'
             send(display_name,text,add_p=lambda x:f'[{now()}] [{client.user.display_name}] {x}')
@@ -3888,7 +3995,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             else:
                 users = {str(user.display_name): user for user in cache_users.values() if content_ in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id)}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
                     if client.has_friend(user.id):
                         users[str(user.display_name)] = user
@@ -3968,7 +4075,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
 
     elif args[0] in commands['joinid']:
         try:
-            await client.join_to_party(party_id=args[1])
+            await client.join_party(party_id=args[1])
         except fortnitepy.PartyError:
             if data['loglevel'] == 'debug':
                 send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -4011,7 +4118,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             else:
                 users = {str(user.display_name): user for user in cache_users.values() if content_ in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id)}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
                     if client.has_friend(user.id):
                         users[str(user.display_name)] = user
@@ -4090,7 +4197,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             else:
                 users = {str(user.display_name): user for user in cache_users.values() if text[0] in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id)}
             try:
-                user = await client.fetch_profile(text[0])
+                user = await client.fetch_user(text[0])
                 if user:
                     if client.has_friend(user.id):
                         users[str(user.display_name)] = user
@@ -4305,7 +4412,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             else:
                 users = {str(user.display_name): user for user in cache_users.values() if content_ in str(user.display_name) and user.id != client.user.id}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
                     users[str(user.display_name)] = user
                     client.add_cache(user)
@@ -4338,7 +4445,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             else:
                 users = {str(user.display_name): user for user in cache_users.values() if content_ in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id)}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
                     if client.has_friend(user.id):
                         users[str(user.display_name)] = user
@@ -4382,7 +4489,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             else:
                 users = {str(user.display_name): user for user in cache_users.values() if content_ in str(user.display_name) and user.id != client.user.id and client.is_pending(user.id)}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
                     if client.is_pending(user.id):
                         users[str(user.display_name)] = user
@@ -4419,7 +4526,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             else:
                 users = {str(user.display_name): user for user in cache_users.values() if content_ in str(user.display_name) and user.id != client.user.id and client.is_blocked(user.id)}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
                     if client.is_blocked(user.id):
                         users[str(user.display_name)] = user
@@ -4451,7 +4558,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             if args[1] in commands['info_party']:
                 text = str()
                 text += f"{client.party.id}\n{l('member_count')}: {client.party.member_count}\n{client.party.playlist_info[0]}"
-                for member in client.party.members.copy().values():
+                for member in client.party.members:
                     client.add_cache(member)
                     if data['loglevel'] == 'normal':
                         text += f'\n{str(member.display_name)}'
@@ -4536,7 +4643,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
     elif args[0] in commands['pending']:
         try:
             pendings = []
-            for pending in client.pending_friends.values():
+            for pending in client.pending_friends:
                 client.add_cache(pending)
                 if pending.incoming:
                     pendings.append(pending)
@@ -4579,7 +4686,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
     elif args[0] in commands['removepending']:
         try:
             pendings = []
-            for pending in client.pending_friends.values():
+            for pending in client.pending_friends:
                 client.add_cache(pending)
                 if pending.outgoing:
                     pendings.append(pending)
@@ -4610,7 +4717,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             else:
                 users = {str(user.display_name): user for user in cache_users.values() if content_ in str(user.display_name) and user.id != client.user.id and not client.has_friend(user.id)}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
                     if not client.has_friend(user.id):
                         users[str(user.display_name)] = user
@@ -4674,7 +4781,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             else:
                 users = {str(user.display_name): user for user in cache_users.values() if content_ in str(user.display_name) and user.id != client.user.id and client.has_friend(user.id)}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
                     if client.has_friend(user.id):
                         users[str(user.display_name)] = user
@@ -4781,7 +4888,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 
             tasks = []
             val = len(client.friends)
-            for num,friend in enumerate(client.friends.copy().values()):
+            for num,friend in enumerate(client.friends):
                 if worker >= max_worker:
                     await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
                 worker += 1
@@ -4813,7 +4920,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             else:
                 users = {str(user.display_name): user for user in cache_users.values() if content_ in str(user.display_name) and user.id != client.user.id and client.is_pending(user.id)}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
                     if client.is_pending(user.id):
                         users[str(user.display_name)] = user
@@ -4877,7 +4984,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             else:
                 users = {str(user.display_name): user for user in cache_users.values() if content_ in str(user.display_name) and user.id != client.user.id and client.is_pending(user.id)}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
                     if client.is_pending(user.id):
                         users[str(user.display_name)] = user
@@ -4941,7 +5048,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             else:
                 users = {str(user.display_name): user for user in cache_users.values() if content_ in str(user.display_name) and user.id != client.user.id and not client.is_blocked(user.id)}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
                     if not client.is_blocked(user.id):
                         users[str(user.display_name)] = user
@@ -5005,7 +5112,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             else:
                 users = {str(user.display_name): user for user in cache_users.values() if content_ in str(user.display_name) and user.id != client.user.id and client.is_blocked(user.id)}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
                     if client.is_blocked(user.id):
                         users[str(user.display_name)] = user
@@ -5091,13 +5198,13 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 await reply(message, client, f"[{commands['chatban']}] [{l('name_or_id')}] : [{l('reason')}({l('optional')})]")
                 return
             if data['caseinsensitive']:
-                users = {str(member.display_name): member for member in client.party.members.values() if content_ in jaconv.kata2hira(str(member.display_name).lower())}
+                users = {str(member.display_name): member for member in client.party.members if content_ in jaconv.kata2hira(str(member.display_name).lower())}
             else:
-                users = {str(member.display_name): member for member in client.party.members.values() if content_ in str(member.display_name)}
+                users = {str(member.display_name): member for member in client.party.members if content_ in str(member.display_name)}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
-                    if client.party.members.get(user.id):
+                    if client.party.get_member(user.id):
                         users[str(user.display_name)] = user
                         client.add_cache(user)
             except fortnitepy.HTTPException:
@@ -5112,7 +5219,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 return
             if len(users) == 1:
                 user = tuple(users.values())[0]
-                member = client.party.members.get(user.id)
+                member = client.party.get_member(user.id)
                 if not member:
                     await reply(message, client, l('user_not_in_party'))
                     return
@@ -5126,7 +5233,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     "exec": [
                         """\
         try:
-            member = client.party.members.get(user.id)
+            member = client.party.get_member(user.id)
             if not member:
                 await reply(message, client, l('user_not_in_party'))
                 return 
@@ -5179,13 +5286,13 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 await reply(message, client, f"[{commands['promote']}] [{l('name_or_id')}]")
                 return
             if data['caseinsensitive']:
-                users = {str(member.display_name): member for member in client.party.members.values() if content_ in jaconv.kata2hira(str(member.display_name).lower())}
+                users = {str(member.display_name): member for member in client.party.members if content_ in jaconv.kata2hira(str(member.display_name).lower())}
             else:
-                users = {str(member.display_name): member for member in client.party.members.values() if content_ in str(member.display_name)}
+                users = {str(member.display_name): member for member in client.party.members if content_ in str(member.display_name)}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
-                    if client.party.members.get(user.id):
+                    if client.party.get_member(user.id):
                         users[str(user.display_name)] = user
                         client.add_cache(user)
             except fortnitepy.HTTPException:
@@ -5200,7 +5307,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 return
             if len(users) == 1:
                 user = tuple(users.values())[0]
-                member = client.party.members.get(user.id)
+                member = client.party.get_member(user.id)
                 if not member:
                     await reply(message, client, l('user_not_in_party'))
                     return
@@ -5211,7 +5318,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     "exec": [
                         """\
         try:
-            member = client.party.members.get(user.id)
+            member = client.party.get_member(user.id)
             if not member:
                 await reply(message, client, l('user_not_in_party'))
                 return
@@ -5261,13 +5368,13 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 await reply(message, client, f"[{commands['kick']}] [{l('name_or_id')}]")
                 return
             if data['caseinsensitive']:
-                users = {str(member.display_name): member for member in client.party.members.values() if content_ in jaconv.kata2hira(str(member.display_name).lower())}
+                users = {str(member.display_name): member for member in client.party.members if content_ in jaconv.kata2hira(str(member.display_name).lower())}
             else:
-                users = {str(member.display_name): member for member in client.party.members.values() if content_ in str(member.display_name)}
+                users = {str(member.display_name): member for member in client.party.members if content_ in str(member.display_name)}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
-                    if client.party.members.get(user.id):
+                    if client.party.get_member(user.id):
                         users[str(user.display_name)] = user
                         client.add_cache(user)
             except fortnitepy.HTTPException:
@@ -5282,7 +5389,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 return
             if len(users) == 1:
                 user = tuple(users.values())[0]
-                member = client.party.members.get(user.id)
+                member = client.party.get_member(user.id)
                 if not member:
                     await reply(message, client, l('user_not_in_party'))
                     return
@@ -5293,7 +5400,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     "exec": [
                         """\
         try:
-            member = client.party.members.get(user.id)
+            member = client.party.get_member(user.id)
             if not member:
                 await reply(message, client, l('user_not_in_party'))
                 return
@@ -5343,13 +5450,13 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 await reply(message, client, l('hide_all_user'))
             else:
                 if data['caseinsensitive']:
-                    users = {str(member.display_name): member for member in client.party.members.values() if content_ in jaconv.kata2hira(str(member.display_name).lower())}
+                    users = {str(member.display_name): member for member in client.party.members if content_ in jaconv.kata2hira(str(member.display_name).lower())}
                 else:
-                    users = {str(member.display_name): member for member in client.party.members.values() if content_ in str(member.display_name)}
+                    users = {str(member.display_name): member for member in client.party.members if content_ in str(member.display_name)}
                 try:
-                    user = await client.fetch_profile(rawcontent)
+                    user = await client.fetch_user(rawcontent)
                     if user:
-                        if client.party.members.get(user.id):
+                        if client.party.get_member(user.id):
                             users[str(user.display_name)] = user
                             client.add_cache(user)
                 except fortnitepy.HTTPException:
@@ -5364,7 +5471,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     return
                 if len(users) == 1:
                     user = tuple(users.values())[0]
-                    member = client.party.members.get(user.id)
+                    member = client.party.get_member(user.id)
                     if not member:
                         await reply(message, client, l('user_not_in_party'))
                         return
@@ -5375,7 +5482,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                         "exec": [
                             """\
             try:
-                member = client.party.members.get(user.id)
+                member = client.party.get_member(user.id)
                 if not member:
                     await reply(message, client, l('user_not_in_party'))
                     return
@@ -5417,13 +5524,13 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 await reply(message, client, l('show_all_user'))
             else:
                 if data['caseinsensitive']:
-                    users = {str(member.display_name): member for member in client.party.members.values() if content_ in jaconv.kata2hira(str(member.display_name).lower())}
+                    users = {str(member.display_name): member for member in client.party.members if content_ in jaconv.kata2hira(str(member.display_name).lower())}
                 else:
-                    users = {str(member.display_name): member for member in client.party.members.values() if content_ in str(member.display_name)}
+                    users = {str(member.display_name): member for member in client.party.members if content_ in str(member.display_name)}
                 try:
-                    user = await client.fetch_profile(rawcontent)
+                    user = await client.fetch_user(rawcontent)
                     if user:
-                        if client.party.members.get(user.id):
+                        if client.party.get_member(user.id):
                             users[str(user.display_name)] = user
                             client.add_cache(user)
                 except fortnitepy.HTTPException:
@@ -5438,7 +5545,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     return
                 if len(users) == 1:
                     user = tuple(users.values())[0]
-                    member = client.party.members.get(user.id)
+                    member = client.party.get_member(user.id)
                     if not member:
                         await reply(message, client, l('user_not_in_party'))
                         return
@@ -5449,7 +5556,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                         "exec": [
                             """\
             try:
-                member = client.party.members.get(user.id)
+                member = client.party.get_member(user.id)
                 if not member:
                     await reply(message, client, l('user_not_in_party'))
                     return
@@ -5537,13 +5644,13 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 await reply(message, client, f"[{commands['swap']}] [{l('name_or_id')}]")
                 return
             if data['caseinsensitive']:
-                users = {str(member.display_name): member for member in client.party.members.values() if content_ in jaconv.kata2hira(str(member.display_name).lower())}
+                users = {str(member.display_name): member for member in client.party.members if content_ in jaconv.kata2hira(str(member.display_name).lower())}
             else:
-                users = {str(member.display_name): member for member in client.party.members.values() if content_ in str(member.display_name)}
+                users = {str(member.display_name): member for member in client.party.members if content_ in str(member.display_name)}
             try:
-                user = await client.fetch_profile(rawcontent)
+                user = await client.fetch_user(rawcontent)
                 if user:
-                    if client.party.members.get(user.id):
+                    if client.party.get_member(user.id):
                         users[str(user.display_name)] = user
                         client.add_cache(user)
             except fortnitepy.HTTPException:
@@ -5558,7 +5665,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 return
             if len(users) == 1:
                 user = tuple(users.values())[0]
-                member = client.party.members.get(user.id)
+                member = client.party.get_member(user.id)
                 if not member:
                     await reply(message, client, l('user_not_in_party'))
                     return
@@ -5577,7 +5684,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     "exec": [
                         """\
         try:
-            member = client.party.members.get(user.id)
+            member = client.party.get_member(user.id)
             if not member:
                 await reply(message, client, l('user_not_in_party'))
                 return
@@ -6061,11 +6168,11 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                         await reply(message, client, l('set_to', value[1], l('off')))
                     else:
                         if data['caseinsensitive']:
-                            users = {str(user.display_name): user for user in client.party.members.values() if content_ in jaconv.kata2hira(str(user.display_name).lower())}
+                            users = {str(user.display_name): user for user in client.party.members if content_ in jaconv.kata2hira(str(user.display_name).lower())}
                         else:
-                            users = {str(user.display_name): user for user in client.party.members.values() if content_ in str(user.display_name)}
+                            users = {str(user.display_name): user for user in client.party.members if content_ in str(user.display_name)}
                         try:
-                            user = await client.fetch_profile(rawcontent)
+                            user = await client.fetch_user(rawcontent)
                             if user:
                                 users[str(user.display_name)] = user
                                 client.add_cache(user)
@@ -6147,73 +6254,6 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     await reply(message, client, l('error'))
                 return
 
-        reply_flag = False
-        for key,value in replies.items():
-            reply_flag_ = False
-
-            if data["replies-matchmethod"] == "contains":
-                if [k for k in key.split(',') if k in content]:
-                    reply_flag_ = True
-            elif data["replies-matchmethod"] == "full":
-                if [k for k in key.split(',') if k == content]:
-                    reply_flag_ = True
-            elif data["replies-matchmethod"] == "starts":
-                if [k for k in key.split(',') if content.startswith(k)]:
-                    reply_flag_ = True
-            elif data["replies-matchmethod"] == "ends":
-                if [k for k in key.split(',') if content.endswith(k)]:
-                    reply_flag_ = True
-            if reply_flag_:
-                reply_flag = True
-                await reply(message, client, value)
-
-        if check_ng:
-            flag = False
-            if data["ng-word-matchmethod"] == "contains":
-                if [ng for ng in data["ng-words"] if ng in content]:
-                    flag = True
-            elif data["ng-word-matchmethod"] == "full":
-                if [ng for ng in data["ng-words"] if ng == content]:
-                    flag = True
-            elif data["ng-word-matchmethod"] == "starts":
-                if [ng for ng in data["ng-words"] if content.startswith(ng)]:
-                    flag = True
-            elif data["ng-word-matchmethod"] == "ends":
-                if [ng for ng in data["ng-words"] if content.endswith(ng)]:
-                    flag = True
-            if flag:
-                if data["ng-word-blacklist"]:
-                    if isinstance(message, fortnitepy.message.MessageBase):
-                        blacklist.append(message.author.id)
-                        data_ = load_json("config.json")
-                        data_["fortnite"]["blacklist"].append(message.author.id)
-                        with open("config.json", "w", encoding="utf-8") as f:
-                            json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                    elif isinstance(message, discord.Message):
-                        blacklist_.append(message.author.id)
-                        data_ = load_json("config.json") 
-                        data_["discord"]["blacklist"].append(message.author.id)
-                        with open("config.json", "w", encoding="utf-8") as f:
-                            json.dump(data_, f, ensure_ascii=False, indent=4, sort_keys=False)
-                member = client.party.members.get(message.author.id)
-                if member and client.party.me.leader:
-                    if data["ng-word-kick"]:
-                        try:
-                            await member.kick()
-                        except Exception as e:
-                            if data["loglevel"] == "debug":
-                                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                                await reply(message, client, f"{l('error')}\n{traceback.format_exc()}")
-                    elif data["ng-word-chatban"]:
-                        try:
-                            await member.chatban()
-                        except Exception as e:
-                            if data["loglevel"] == "debug":
-                                send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                                await reply(message, client, f"{l('error')}\n{traceback.format_exc()}")
-                return
-        if reply_flag:
-            return
 
         if ': ' in message.content:
             return
@@ -7375,7 +7415,7 @@ if True: #Web
                                 "pickaxe_variants": i.pickaxe_variants,
                                 "contrail": member_asset(i, "contrail"),
                                 "emote": member_asset(i, "emote")
-                            } for i in client.party.members.copy().values()
+                            } for i in client.party.members
                         ]
                     }
                 )

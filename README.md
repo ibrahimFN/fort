@@ -53,7 +53,7 @@ Remixを押してRemixする
 # config
 ```
 Fortnite
-email                     : ボット用アカウントのメールアドレス。 , で区切ることで複数設定可
+email                     : ボット用アカウントのメールアドレス。 複数設定可能
 owner                     : 所有者として設定したいユーザーの名前またはID
 platform                  : ボットのプラットフォーム。 後述
 outfit                    : ボットの初期コスチューム。名前かID
@@ -72,7 +72,7 @@ level                     : ボットの初期レベル
 tier                      : ボットの初期ティア
 xpboost                   : ボットの初期XPブースト
 friendxpboost             : ボットの初期フレンドXPブースト
-status                    : ボットの初期ステータス。 変数が使えます。 後述
+status                    : ボットの初期ステータス。 変数が使える。 後述
 privacy                   : ボットの初期のプライバシー。 後述
 whisper                   : ボットが囁きからコマンドを受け付けるかどうか。 true か false
 partychat                 : ボットがパーティーチャットからコマンドを受け付けるかどうか。 true か false
@@ -82,8 +82,8 @@ joinemote                 : ボットのパーティーに誰かが参加した�
 click_invite              : 'ここをクリックして招待'を送信するかどうか。 true か false
 disable_voice             : パーティーのボイスチャットを無効化するかどうか。 true か false
 ignorebot                 : ボットからのコマンドを無視するかどうか。 true か false
-joinmessage               : ボットのパーティーに誰かが参加した時のメッセージ。 \n で改行
-randommessage             : ボットのパーティーに誰かが参加した時のランダムメッセージ。 , で区切る \n で改行
+joinmessage               : ボットのパーティーに誰かが参加した時のメッセージ。 \n で改行。 変数が使える。 後述
+randommessage             : ボットのパーティーに誰かが参加した時のランダムメッセージ。 \n で改行。 変数が使える。 後述
 joinmessageenable         : ボットのパーティーに誰かが参加した時にメッセージを出すかどうか。 true か false
 randommessageenable       : ボットのパーティーに誰かが参加した時にランダムメッセージを出すかどうか。 true か false
 outfitmimic               : 他人のコスチュームを真似るかどうか。 true か false か ユーザーの名前またはID
@@ -321,6 +321,16 @@ emoteasset                                : emoteasset [アセットパス] エ�
 }
 ```
 
+使用可能な変数
+ステータスで使える変数に加えて
+```
+author_display_name              : メッセージの送り主のディスプレイネーム
+author_id                        : メッセージの送り主のID
+``
+
+使用可能な関数
+ステータスで使える関数と同じ
+
 # その他
 アバターID  
 使用可能な変数  
@@ -412,6 +422,17 @@ get_guild_member_count(id)       : 指定したIDのDiscordサーバーのメン
 ボット1のフレンド数: {get_client_data('Bot1ID')['friend_count']}
 サーバー1のメンバー数: {get_guild_member_count(Guild1ID)}
 ```
+
+joinmessage & randommessage
+使用可能な変数
+ステータスで使える変数に加えて
+```
+member_display_name              : 参加してきたメンバーのディスプレイネーム
+member_id                        : 参加してきたメンバーのID
+``
+
+使用可能な関数
+ステータスで使える関数と同じ
 
 チャンネル名  
 使用可能な変数  
