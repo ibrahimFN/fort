@@ -46,7 +46,7 @@ Puedes aplicar los detalles refrescando el proyecto
 # configuración
 ```
 Fortnite
-email                     : Dirección de correo electrónico para el bot. Puedes poner varios dividiendolos con  ,
+email                     : Dirección de correo electrónico para el bot. Pueden ser múltiples
 owner                     : Nombre del Owner o el ID
 platform                  : Plataforma del Bot. Revise abajo para información
 outfit                    : Skin por defecto del bot. Nombre o ID
@@ -74,8 +74,8 @@ joinemote                 : Determina si el bot hará de neuvo el emote actual c
 click_invite              : Determina si el bot enviará 'Click here to invite'
 disable_voice             : Determina si se desactiva el chat de voz. true o false
 ignorebot                 : Determina si el bot ignorará otros bots. true o false
-joinmessage               : Mensaje enviado cuando alguien entra a la sala. \n para salto de linea
-randommessage             : Mensaje al azar para cuando alguien entra a la sala. \n para salto de linea
+joinmessage               : Mensaje enviado cuando alguien entra a la sala. Usa \n para salto de linea. Variables utilizables. Mira abajo
+randommessage             : Mensaje al azar para cuando alguien entra a la sala. \n para salto de linea. Variables utilizables. Mira abajo
 joinmessageenable         : Determina si el bot enviará mensaje cuando alguien se una a la sala. true o false
 randommessageenable       : Determina si el bot enviará mensaje al azar cuando alguien se una a la sala. true o false
 outfitmimic               : Determina si el bot se cambiará a la skin a otra que un miembro se cambie. true o false o nombre de usuario o el ID
@@ -310,6 +310,16 @@ Puedes poner varios, como por ejemplo:
 }
 ```
 
+Variables utilizables
+Además de las variables se pueden utilizar en el estado
+```
+author_display_name             : Nombre del autor del mensaje
+author_id                       : ID del autor del mensaje
+```
+
+Funciones utilizables
+Al igual que las funciones se pueden utilizar en el estado
+
 # Otros
 ID de Avatar  
 Variables disponibles
@@ -401,6 +411,17 @@ Ejemplo
 Número de amigos del bot 1: {get_client_data('Bot1ID')['friend_count']}
 Miembros del servidor 1: {get_guild_member_count(Guild1ID)}
 ```
+
+joinmessage y randommessage
+Variables utilizables
+Además de las variables se pueden utilizar en el estado
+```
+member_display_name             : Nombre del miembro
+member_id                       : ID del miembro
+```
+
+Funciones utilizables
+Al igual que las funciones se pueden utilizar en el estado
 
 Nombre del canal
 Variables para usar 
