@@ -326,7 +326,7 @@ emoteasset                                : emoteasset [アセットパス] エ�
 ```
 author_display_name              : メッセージの送り主のディスプレイネーム
 author_id                        : メッセージの送り主のID
-``
+```
 
 使用可能な関数
 ステータスで使える関数と同じ
@@ -429,7 +429,7 @@ joinmessage & randommessage
 ```
 member_display_name              : 参加してきたメンバーのディスプレイネーム
 member_id                        : 参加してきたメンバーのID
-``
+```
 
 使用可能な関数
 ステータスで使える関数と同じ

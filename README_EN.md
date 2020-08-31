@@ -420,16 +420,16 @@ Bot1's friend count: {get_client_data('Bot1ID')['friend_count']}
 Guild1's member count: {get_guild_member_count(Guild1ID)}
 ```
 
-joinmessage & randommessage
-Usable variables
-In addition to variables can be used in status
+joinmessage & randommessage  
+Usable variables  
+In addition to variables can be used in status  
 ```
 member_display_name             : Member's display_name
 member_id                       : Member's id
 ```
 
-Usable functions
-Same as functions can be used in status
+Usable functions  
+Same as functions can be used in status  
 
 Channel name  
 Usable variables  
