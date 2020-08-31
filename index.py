@@ -413,7 +413,12 @@ if True: #Classes
                     "block_count": len(self.blocked_users),
                     "display_name": self.user.display_name,
                     "id": self.user.id,
-                    "boot_time": int(time.time() - self.boot_time)
+                    "boot_time": int(time.time() - self.boot_time),
+                    "client": self,
+                    "whitelist": whitelist,
+                    "whitelist_": whitelist_,
+                    "blacklist": blacklist,
+                    "blacklist_": blacklist_
                 }
             )
             return var
@@ -437,7 +442,8 @@ if True: #Classes
                 var.update(
                     {
                         "guild_count": len(dclient.guilds),
-                        "get_guild_member_count": get_guild_member_count
+                        "get_guild_member_count": get_guild_member_count,
+                        "dclient": dclient
                     }
                 )
 
@@ -613,6 +619,8 @@ if True: #Classes
                 send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
         async def change_asset(self, author_id: str, type_: str, id_: str, variants: Optional[list] = None, enlightenment: Optional[Union[tuple, list]] = None) -> None:
+            if not enlightenment:
+                enlightenment = None
             if type_ == "Outfit":
                 if self.outfitlock and self.lock_check(author_id):
                     return False
@@ -1273,7 +1281,8 @@ if True: #Classes
                         "all_pending_count": sum([len(client_.pending_friends) for client_ in clients]),
                         "all_block_count": sum([len(client_.blocked_users) for client_ in clients]),
                         "member_display_name": member.display_name,
-                        "member_id": member.id
+                        "member_id": member.id,
+                        "member": member
                     }
                 )
                 try:
@@ -1292,7 +1301,8 @@ if True: #Classes
                         "all_pending_count": sum([len(client_.pending_friends) for client_ in clients]),
                         "all_block_count": sum([len(client_.blocked_users) for client_ in clients]),
                         "member_display_name": member.display_name,
-                        "member_id": member.id
+                        "member_id": member.id,
+                        "member": member
                     }
                 )
                 try:
@@ -1758,7 +1768,8 @@ if True: #Functions
                 "outgoing_pending_count": len(client.outgoing_pending_friends),
                 "block_count": len(client.blocked_users),
                 "display_name": client.user.display_name,
-                "id": client.user.id
+                "id": client.user.id,
+                "boot_time": int(time.time() - dclient.boot_time)
             }
         )
         return var
@@ -6348,7 +6359,7 @@ blacklist = []
 blacklist_ = []
 otherbotlist = []
 storedlogs = []
-format_pattern = re.compile(r"""\{([a-zA-Z0-9\s_\(\)\[\]\.,"'!\?=]*)\}""")
+format_pattern = re.compile(r"""\{(.*?)\}""")
 
 config_tags={
     "['fortnite']": [dict],
