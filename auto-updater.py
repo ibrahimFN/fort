@@ -26,7 +26,7 @@ def CheckUpdate(filename: str, githuburl: str, overwrite: bool = False) -> bool:
                 break
         else:
             extension = ""
-        if extension in [".py", ".bat", ".txt", ".md", ".html", ""]:
+        if extension in [".py", ".bat", ".txt", ".md", ".html", ".toml", ""]:
             if os.path.isfile(filename):
                 with open(filename, "r", encoding='utf-8') as f:
                     current = f.read()
