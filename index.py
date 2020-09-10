@@ -7504,7 +7504,7 @@ if data.get('web',{}).get('enabled',True) is True or data.get('status',1)  == 0:
 Thread(target=dprint,args=(),daemon=True).start()
 Thread(target=store_banner_data).start()
 if data.get("status",1) != 0:
-    """try:
+    try:
         langs = [
             data["search-lang"],
             data["sub-search-lang"] 
@@ -7513,7 +7513,7 @@ if data.get("status",1) != 0:
         ]
         store_item_data(langs)
     except Exception:	
-        send(l('bot'),l('api_downing'),red)"""
+        send(l('bot'),l('api_downing'),red)
     langs = [
         data["search-lang"],
         data["sub-search-lang"] 
