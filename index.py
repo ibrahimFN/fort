@@ -41,7 +41,6 @@ try:
     import webbrowser
     from collections import defaultdict
     from concurrent.futures import ThreadPoolExecutor, as_completed
-    from enum import Enum
     from functools import partial, wraps
     from glob import glob
     from threading import Thread, Timer
@@ -65,7 +64,7 @@ try:
     import sanic.response
     from aioconsole import ainput
     from crayons import cyan, green, magenta, red, yellow
-    from fortnitepy import ClientPartyMember
+    from fortnitepy import ClientPartyMember, Enum
     from jinja2 import Environment, FileSystemLoader
     from sanic import Sanic
     from sanic.request import Request
@@ -618,7 +617,7 @@ if True: #Classes
                     await invitation.sender.send(l("error"))
                 send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
-        async def change_asset(self, author_id: str, type_: str, id_: str, variants: Optional[list] = None, enlightenment: Optional[Union[tuple, list]] = None) -> None:
+        async def change_asset(self, author_id: str, type_: str, id_: str, variants: Optional[list] = [], enlightenment: Optional[Union[tuple, list]] = None) -> None:
             if not enlightenment:
                 enlightenment = None
             if type_ == "Outfit":
@@ -626,9 +625,10 @@ if True: #Classes
                     return False
                 else:
                     if 'banner' in id_:
-                        variants_ = self.party.me.create_variants(item="AthenaCharacter", profile_banner='ProfileBanner')
-                        variants = variants_ + (variants or [])
-                    await self.party.me.edit_and_keep(partial(self.party.me.set_outfit, asset=id_, variants=variants, enlightenment=enlightenment))
+                        variants += self.party.me.create_variants(item="AthenaCharacter", profile_banner='ProfileBanner', enlightenment=enlightenment)
+                    if not variants:
+                        variants = None
+                    await self.party.me.edit_and_keep(partial(self.party.me.set_outfit, asset=id_, variants=variants))
                     try:
                         if data['fortnite']['avatar_id'] == "{bot}":
                             self.set_avatar(fortnitepy.Avatar(asset=self.party.me.outfit, background_colors=data['fortnite']['avatar_color']))
@@ -640,24 +640,21 @@ if True: #Classes
                     return False
                 else:
                     if 'banner' in id_:
-                        variants_ = self.party.me.create_variants(item="AthenaBackpack", profile_banner='ProfileBanner')
-                        variants += variants_ 
-                    await self.party.me.edit_and_keep(partial(self.party.me.set_backpack, asset=id_, variants=variants, enlightenment=enlightenment))
+                        variants += self.party.me.create_variants(item="AthenaBackpack", profile_banner='ProfileBanner', enlightenment=enlightenment)
+                    await self.party.me.edit_and_keep(partial(self.party.me.set_backpack, asset=id_, variants=variants))
             elif type_ == "Pet":
                 if self.backpacklock and self.lock_check(author_id):
                     return False
                 else:
                     if 'banner' in id_:
-                        variants_ = self.party.me.create_variants(item="AthenaBackpack", profile_banner='ProfileBanner')
-                        variants += variants_ 
+                        variants += self.party.me.create_variants(item="AthenaBackpack", profile_banner='ProfileBanner', enlightenment=enlightenment)
                     await self.party.me.edit_and_keep(partial(self.party.me.set_pet, asset=id_, variants=variants))
             elif type_ == "Harvesting Tool":
                 if self.pickaxelock and self.lock_check(author_id):
                     return False
                 else:
                     if 'banner' in id_:
-                        variants_ = self.party.me.create_variants(item="AthenaPickaxe", profile_banner='ProfileBanner')
-                        variants += variants_
+                        variants += self.party.me.create_variants(item="AthenaPickaxe", profile_banner='ProfileBanner', enlightenment=enlightenment)
                     await self.party.me.edit_and_keep(partial(self.party.me.set_pickaxe, asset=id_, variants=variants))
                     await self.party.me.set_emote("EID_IceKing")
             elif type_ == "Emote":
@@ -1899,7 +1896,18 @@ if True: #Functions
         result = []
         for variant in variants:
             for option in variant['options']:
-                result.append({"name": option['name'], 'variants': [{'item': type_, 'channel': variant['channel'], 'variant': option['tag']}]})
+                result.append(
+                    {
+                        "name": option['name'],
+                        'variants': [
+                            {
+                                'c': variant['channel'],
+                                'v': option['tag'],
+                                'dE': 0
+                            }
+                        ]
+                    }
+                )
         return result
 
     def get_device_auth_details() -> None:
@@ -6079,7 +6087,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     break
             type_ = convert_to_type(args[1])
             id_ = member_asset(client.party.me, convert_to_asset(args[1]))
-            variants = client.party.me.create_variants(item='AthenaCharacter',**variantdict)
+            variants = client.party.me.create_variants(item='AthenaCharacter', enlightenment=enlightenment, **variantdict)
             type_ = convert_to_new_type(type_)
             if type_ == "Back Bling" and (id_.startswith("pet_carrier_") or id_.startswith("pet_")):
                 type_ = "Pet"
@@ -6113,7 +6121,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     break
             type_ = convert_to_type(args[1])
             id_ = member_asset(client.party.me, convert_to_asset(args[1]))
-            variants = client.party.me.create_variants(item='AthenaCharacter',**variantdict)
+            variants = client.party.me.create_variants(item='AthenaCharacter', enlightenment=enlightenment, **variantdict)
             variants += eval(f"client.party.me.{convert_to_asset(args[1])}_variants")
             type_ = convert_to_new_type(type_)
             if type_ == "Back Bling" and (id_.startswith("pet_carrier_") or id_.startswith("pet_")):
@@ -7496,7 +7504,7 @@ if data.get('web',{}).get('enabled',True) is True or data.get('status',1)  == 0:
 Thread(target=dprint,args=(),daemon=True).start()
 Thread(target=store_banner_data).start()
 if data.get("status",1) != 0:
-    try:
+    """try:
         langs = [
             data["search-lang"],
             data["sub-search-lang"] 
@@ -7505,7 +7513,13 @@ if data.get("status",1) != 0:
         ]
         store_item_data(langs)
     except Exception:	
-        send(l('bot'),l('api_downing'),red)
+        send(l('bot'),l('api_downing'),red)"""
+    langs = [
+        data["search-lang"],
+        data["sub-search-lang"] 
+    ] if data["sub-search-lang"] and data["sub-search-lang"] != data["search-lang"] else [
+        data["search-lang"]
+    ]
     items = {}
     styles = {}
     with ThreadPoolExecutor() as executor:
