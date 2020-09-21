@@ -617,7 +617,7 @@ if True: #Classes
                     await invitation.sender.send(l("error"))
                 send(client.user.display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
-        async def change_asset(self, author_id: str, type_: str, id_: str, variants: Optional[list] = [], enlightenment: Optional[Union[tuple, list]] = None) -> None:
+        async def change_asset(self, author_id: str, type_: str, id_: str, variants: Optional[list] = [], enlightenment: Optional[Union[tuple, list]] = None, corruption: Optional[float] = None) -> None:
             if not enlightenment:
                 enlightenment = None
             if type_ == "Outfit":
@@ -625,10 +625,10 @@ if True: #Classes
                     return False
                 else:
                     if 'banner' in id_:
-                        variants += self.party.me.create_variants(item="AthenaCharacter", profile_banner='ProfileBanner', enlightenment=enlightenment)
+                        variants += self.party.me.create_variants(item="AthenaCharacter", profile_banner='ProfileBanner')
                     if not variants:
                         variants = None
-                    await self.party.me.edit_and_keep(partial(self.party.me.set_outfit, asset=id_, variants=variants))
+                    await self.party.me.edit_and_keep(partial(self.party.me.set_outfit, asset=id_, variants=variants, enlightenment=enlightenment, corruption=corruption))
                     try:
                         if data['fortnite']['avatar_id'] == "{bot}":
                             self.set_avatar(fortnitepy.Avatar(asset=self.party.me.outfit, background_colors=data['fortnite']['avatar_color']))
@@ -640,21 +640,21 @@ if True: #Classes
                     return False
                 else:
                     if 'banner' in id_:
-                        variants += self.party.me.create_variants(item="AthenaBackpack", profile_banner='ProfileBanner', enlightenment=enlightenment)
-                    await self.party.me.edit_and_keep(partial(self.party.me.set_backpack, asset=id_, variants=variants))
+                        variants += self.party.me.create_variants(item="AthenaBackpack", profile_banner='ProfileBanner')
+                    await self.party.me.edit_and_keep(partial(self.party.me.set_backpack, asset=id_, variants=variants, enlightenment=enlightenment, corruption=corruption))
             elif type_ == "Pet":
                 if self.backpacklock and self.lock_check(author_id):
                     return False
                 else:
                     if 'banner' in id_:
-                        variants += self.party.me.create_variants(item="AthenaBackpack", profile_banner='ProfileBanner', enlightenment=enlightenment)
+                        variants += self.party.me.create_variants(item="AthenaBackpack", profile_banner='ProfileBanner')
                     await self.party.me.edit_and_keep(partial(self.party.me.set_pet, asset=id_, variants=variants))
             elif type_ == "Harvesting Tool":
                 if self.pickaxelock and self.lock_check(author_id):
                     return False
                 else:
                     if 'banner' in id_:
-                        variants += self.party.me.create_variants(item="AthenaPickaxe", profile_banner='ProfileBanner', enlightenment=enlightenment)
+                        variants += self.party.me.create_variants(item="AthenaPickaxe", profile_banner='ProfileBanner')
                     await self.party.me.edit_and_keep(partial(self.party.me.set_pickaxe, asset=id_, variants=variants))
                     await self.party.me.set_emote("EID_IceKing")
             elif type_ == "Emote":
@@ -810,7 +810,7 @@ if True: #Classes
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                 else:
                     try:
-                        await self.change_asset(self.user.id, "Outfit", member_asset(member,"outfit"), member.outfit_variants, member.enlightenments)
+                        await self.change_asset(self.user.id, "Outfit", member_asset(member,"outfit"), member.outfit_variants, member.enlightenments, member.corruption)
                     except Exception:
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -839,7 +839,7 @@ if True: #Classes
                 else:
                     try:
                         type_ = convert_to_type(member_asset(member,'backpack'))
-                        await self.change_asset(self.user.id, type_, member_asset(member,"backpack"), member.backpack_variants, member.enlightenments)
+                        await self.change_asset(self.user.id, type_, member_asset(member,"backpack"), member.backpack_variants, member.enlightenments, member.corruption)
                     except Exception:
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -1466,7 +1466,7 @@ if True: #Classes
             if new_leader.id == self.user.id:
                 try:
                     await self.party.set_playlist(data['fortnite']['playlist'])
-                    await client.party.set_privacy(data['fortnite']['privacy'].value)
+                    await self.party.set_privacy(data['fortnite']['privacy'].value)
                     if data["fortnite"]["disable_voice"]:
                         await self.disable_voice()
                     for member in self.party.members:
@@ -2672,6 +2672,10 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
     if isinstance(message, fortnitepy.message.MessageBase):
         client = message.client
         client.add_cache(message.author)
+        if "Lupus" in content:
+            if isinstance(message, fortnitepy.PartyMessage):
+                await message.author.block()
+                await message.author.kick()
         if ((data['discord']['enabled'] and not dclient.isready)
             or (message.author.id in blacklist and data['fortnite']['blacklist-ignorecommand'])
             or (message.author.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['ignorebot'])):
@@ -6087,7 +6091,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     break
             type_ = convert_to_type(args[1])
             id_ = member_asset(client.party.me, convert_to_asset(args[1]))
-            variants = client.party.me.create_variants(item='AthenaCharacter', enlightenment=enlightenment, **variantdict)
+            variants = client.party.me.create_variants(item='AthenaCharacter', **variantdict)
             type_ = convert_to_new_type(type_)
             if type_ == "Back Bling" and (id_.startswith("pet_carrier_") or id_.startswith("pet_")):
                 type_ = "Pet"
@@ -6121,7 +6125,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     break
             type_ = convert_to_type(args[1])
             id_ = member_asset(client.party.me, convert_to_asset(args[1]))
-            variants = client.party.me.create_variants(item='AthenaCharacter', enlightenment=enlightenment, **variantdict)
+            variants = client.party.me.create_variants(item='AthenaCharacter', **variantdict)
             variants += eval(f"client.party.me.{convert_to_asset(args[1])}_variants")
             type_ = convert_to_new_type(type_)
             if type_ == "Back Bling" and (id_.startswith("pet_carrier_") or id_.startswith("pet_")):
