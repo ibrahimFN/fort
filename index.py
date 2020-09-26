@@ -6008,7 +6008,9 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                                 await reply(message, client, l('locked'))""" for item in result
                         ],
                         "variable": [
-                            {"item": item}
+                            {
+                                "item": item
+                            } for item in result
                         ]
                     }
         except fortnitepy.HTTPException:
