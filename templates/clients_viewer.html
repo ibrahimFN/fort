@@ -74,7 +74,7 @@
 
                         var image = document.createElement("img");
                         if (member["banner"]) {
-                            image.setAttribute("src","https://benbotfn.tk/api/v1/exportAsset?path=" + member["banner"]["LargeImage"]["assetPath"]);
+                            image.setAttribute("src",member["banner"]);
                         } else {
                             image.setAttribute("src","https://benbotfn.tk/api/v1/exportAsset?path=Game/UI/Foundation/Textures/Banner/Standard/T-Banners-Icons-Waves-L.T-Banners-Icons-Waves-L");
                         }
@@ -92,7 +92,7 @@
                     } else {
                         var image = document.createElement("img");
                         if (member["banner"]) {
-                            image.setAttribute("src","https://benbotfn.tk/api/v1/exportAsset?path=" + member["banner"]["LargeImage"]["assetPath"]);
+                            image.setAttribute("src",member["banner"]);
                         } else {
                             image.setAttribute("src","https://benbotfn.tk/api/v1/exportAsset?path=Game/UI/Foundation/Textures/Banner/Standard/T-Banners-Icons-Waves-L.T-Banners-Icons-Waves-L");
                         }

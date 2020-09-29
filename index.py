@@ -2366,19 +2366,19 @@ if True: #Functions
             return variants
 
     def get_banner_data() -> dict:
-        res = requests.get("https://benbotfn.tk/api/v1/exportAsset?path=FortniteGame/Content/Banners/BannerIcons")
+        res = requests.get("https://fortnite-api.com/v1/banners")
         if res.status_code == 200:
-            return res.json()
+            return res.json()["data"]
         return None
     
     def store_banner_data() -> None:
         data = get_banner_data()
+        data = {banner["id"].lower(): banner["images"]["icon"] for banner in data}
         with open("items/banners.json","w",encoding="utf-8") as f:
             json.dump(data,f,indent=4,ensure_ascii=False)
 
     def search_banner(id_: str) -> Optional[dict]:
         data_ = load_json("items/banners.json")
-        data_ = {k.lower():v for k,v in data_.items()}
         return data_.get(id_.lower())
 
     def restart(sleep_time: Optional[Union[int,float]] = 0) -> None:
@@ -2950,16 +2950,16 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
     if check_ng:
         flag = False
         if data["ng-word-matchmethod"] == "contains":
-            if [ng for ng in data["ng-words"] if ng in content]:
+            if len([ng for ng in data["ng-words"] if ng in content]) != 0:
                 flag = True
         elif data["ng-word-matchmethod"] == "full":
-            if [ng for ng in data["ng-words"] if ng == content]:
+            if len([ng for ng in data["ng-words"] if ng == content]) != 0:
                 flag = True
         elif data["ng-word-matchmethod"] == "starts":
-            if [ng for ng in data["ng-words"] if content.startswith(ng)]:
+            if len([ng for ng in data["ng-words"] if content.startswith(ng)]) != 0:
                 flag = True
         elif data["ng-word-matchmethod"] == "ends":
-            if [ng for ng in data["ng-words"] if content.endswith(ng)]:
+            if len([ng for ng in data["ng-words"] if content.endswith(ng)]) != 0:
                 flag = True
         if flag:
             if data["ng-word-blacklist"]:
