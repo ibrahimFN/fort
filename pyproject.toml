@@ -7,7 +7,7 @@ authors = ["gomashio1596","pdf114514"]
 [tool.poetry.dependencies]
 python = "^3.7"
 fortnitepy = "^3.3.0"
-"discord.py" = "^1.4.1"
+"discord.py" = "^1.4.2"
 requests = "^2.24.0"
 crayons = "^0.3.1"
 jaconv = "^0.2.4"
