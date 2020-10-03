@@ -2052,7 +2052,7 @@ if True: #Functions
             error_config.append("['discord']['status_type']")
         set_default(['web'],{})
         set_default(['web','ip'],'{ip}')
-        set_default(['web','port'],8080)
+        set_default(['web','port'],8000)
         set_default(['web','login_required'],False)
         set_default(['lang'],'en')
         set_default(['caseinsensitive'],False)
