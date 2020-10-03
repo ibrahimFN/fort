@@ -292,8 +292,8 @@ if True: #Classes
         pass
 
     class Client(fortnitepy.Client):
-        def __init__(self, emote: str, **kwargs: Any) -> None:
-            self.email  =  email
+        def __init__(self, email: str, emote: str, **kwargs: Any) -> None:
+            self.email = email
             self.status_ = data['fortnite']['status']
             self.eid = emote
             self.boot_time = None
@@ -7549,6 +7549,8 @@ if data.get("status",1) != 0:
             if not device_auth_details:
                 device_auth_details = loop.run_until_complete(generate_device_auth_and_store(email))
             client = Client(
+                email=email,
+                emote=items.get("emote",{}).get("id",data["fortnite"]["emote"]),
                 auth=fortnitepy.DeviceAuth(
                     **device_auth_details
                 ),
@@ -7564,8 +7566,7 @@ if data.get("status",1) != 0:
                         partial(ClientPartyMember.set_banner, icon=data['fortnite']['banner'], color=data['fortnite']['banner_color'], season_level=data['fortnite']['level'])
                     ]
                 ),
-                platform=fortnitepy.Platform(data['fortnite']['platform'].upper()),
-                emote=items.get("emote",{}).get("id",data["fortnite"]["emote"])
+                platform=fortnitepy.Platform(data['fortnite']['platform'].upper())
             )
         except ValueError:
             send(l("bot"),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
