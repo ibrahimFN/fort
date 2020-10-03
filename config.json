@@ -108,7 +108,7 @@
     "web": {
         "enabled": true,
         "ip": "{ip}",
-        "port": 8080,
+        "port": 8000,
         "password": "",
         "login_required": true,
         "web": true,
