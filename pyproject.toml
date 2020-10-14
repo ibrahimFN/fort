@@ -6,7 +6,6 @@ authors = ["gomashio1596","pdf114514"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
-#fortnitepy = "3.3.0"
 fortnitepy = { git = "https://github.com/gomashio1596/fortnitepy" }
 "discord.py" = "1.4.2"
 requests = "^2.24.0"
