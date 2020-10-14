@@ -237,7 +237,7 @@ if CheckUpdate("auto-updater.py", githuburl):
     os.execv(os.sys.executable,['python', *sys.argv])
 
 flag = False
-CheckUpdate("index.py", githuburl)
+CheckUpdate("index", githuburl)
 if CheckUpdate("requirements.txt", githuburl):
     print("requirements.txtの更新を確認しました。INSTALLを実行します")
     print("requirements.txt got updated. Run INSTALL\n")
