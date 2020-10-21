@@ -1028,7 +1028,6 @@ if True: #Classes
                 try:
                     await asyncio.gather(*[_(pending) for pending in client.incoming_pending_friends])
                 except Exception:
-                    data["discord"]["enabled"] = False
                     send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
             if flag:
