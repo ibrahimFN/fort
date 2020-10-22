@@ -25,6 +25,7 @@ def CheckUpdate(filename: str, githuburl: str, overwrite: bool = False) -> bool:
                 extension = filename[-count-1:]
                 break
         else:
+            filename_ = filename
             extension = ""
         if extension in [".py", ".bat", ".txt", ".md", ".html", ".toml", ""]:
             if os.path.isfile(filename):
