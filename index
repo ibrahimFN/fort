@@ -44,7 +44,7 @@ try:
     from functools import partial, wraps
     from glob import glob
     from threading import Thread, Timer
-    from typing import Any, Callable, List, Optional, Type, Union
+    from typing import Any, Callable, Dict, List, Optional, Type, Union
 except ModuleNotFoundError as e:
     import traceback
     print(traceback.format_exc())
@@ -291,10 +291,74 @@ if True: #Classes
     class CanBeMultiple:
         pass
 
+    class MyClientParty(fortnitepy.ClientParty):
+        def __init__(self, client: 'Client', data: dict) -> None:
+            super().__init__(client,data)
+            self._hides = []
+
+        def update_hide_users(self, user_ids: List[str]) -> None:
+            self._hides = user_ids
+
+        def add_hide_user(self, user_id: str) -> bool:
+            if user_id not in self._hides:
+                self._hides.append(user_id)
+                return True
+            return False
+
+        def remove_hide_user(self, user_id: str) -> bool:
+            if user_id in self._hides:
+                self._hides.remove(user_id)
+                return True
+            return False
+
+        async def hide(self, member: fortnitepy.PartyMember) -> None:
+            if self.me is not None and not self.me.leader:
+                raise fortnitepy.Forbidden('You have to be leader for this action to work.')
+
+            self.add_hide_user(member.id)
+            if member.id in self._members.keys():
+                await self.refresh_squad_assignments()
+
+        async def show(self, member: fortnitepy.PartyMember) -> None:
+            if self.me is not None and not self.me.leader:
+                raise fortnitepy.Forbidden('You have to be leader for this action to work.')
+
+            self.remove_hide_user(member.id)
+            if member.id in self._members.keys():
+                await self.refresh_squad_assignments()
+
+        async def refresh_squad_assignments(self,
+                                            new_positions: Dict[str, int] = {},
+                                            could_be_edit: bool = False) -> None:
+            self.construct_squad_assignments(new_positions=new_positions)
+
+            members = []
+            sub = 0
+            for m in self.meta.squad_assignments:
+                if m['memberId'] in self._hides:
+                    sub += 1
+                    continue
+
+                members.append({
+                    'memberId': m['memberId'],
+                    'absoluteMemberIdx': m['absoluteMemberIdx'] - sub
+                })
+
+            prop_final = {
+                'Default:RawSquadAssignments_j': json.dumps({
+                    'RawSquadAssignments': members
+                })
+            }
+
+            check = not self.edit_lock.locked() if could_be_edit else True
+            if check:
+                return await self.patch(updated=prop_final)
+
     class Client(fortnitepy.Client):
         def __init__(self, email: str, emote: str, **kwargs: Any) -> None:
             self.email = email
             self.status_ = data['fortnite']['status']
+            self.hides = []
             self.eid = emote
             self.boot_time = None
             self.booted_utc = None
@@ -1208,7 +1272,19 @@ if True: #Classes
             loop = asyncio.get_event_loop()
             loop.create_task(self.change_status())
             
-            if self.party.me.leader and (data['fortnite']['hide-user'] or data['fortnite']['hide-blacklist']):
+            if not self.party.me.leader and (data['fortnite']['hide-user'] or data['fortnite']['hide-blacklist']):
+                if data['fortnite']['hide-user']:
+                    if (not member.id in [owner.id for owner in self.owner] and data['fortnite']['show-owner']
+                        and not (member.id in whitelist and data['fortnite']['show-whitelist'])
+                        and not (member.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['show-bot'])
+                        and member.id != self.user.id):
+                        self.hides.append(member.id)
+                        self.party.update_hide_users(self.hides)
+                elif data['fortnite']['hide-blacklist']:
+                    if member.id in blacklist:
+                        self.hides.append(member.id)
+                        self.party.update_hide_users(self.hides)
+            """if self.party.me.leader and (data['fortnite']['hide-user'] or data['fortnite']['hide-blacklist']):
                 async def _() -> None:
                     nonlocal member
                     try:
@@ -1235,7 +1311,7 @@ if True: #Classes
                     except Exception:
                         if data['loglevel'] == 'debug':
                             send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                loop.create_task(_())
+                loop.create_task(_())"""
             if display_name_:
                 if data['loglevel'] == 'normal':
                     send(display_name_,l('party_member_joined',name(member),member.party.member_count),magenta,add_p=lambda x:f'[{now()}] [{l("party")}] [{display_name_}] {x}')
@@ -1348,7 +1424,7 @@ if True: #Classes
             loop = asyncio.get_event_loop()
             loop.create_task(self.change_status())
 
-            if self.party.me.leader and (data['fortnite']['hide-user'] or data['fortnite']['hide-blacklist']):
+            """if self.party.me.leader and (data['fortnite']['hide-user'] or data['fortnite']['hide-blacklist']):
                 async def _() -> None:
                     nonlocal member
                     try:
@@ -1362,7 +1438,7 @@ if True: #Classes
                     except Exception:
                         if data['loglevel'] == 'debug':
                             send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                loop.create_task(_())
+                loop.create_task(_())"""
             if display_name_:
                 if data['loglevel'] == 'normal':
                     send(display_name_,l("party_member_left",name(member),member.party.member_count),magenta,lambda x:f'[{now()}] [{l("party")}] [{display_name_}] {x}')
@@ -1399,6 +1475,19 @@ if True: #Classes
                         send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
                     send(display_name,l("error_while_declining_partyrequest"),red,add_d=lambda x:f'>>> {x}')
             else:
+                if data['fortnite']['hide-user'] or data['fortnite']['hide-blacklist']:
+                    if data['fortnite']['hide-user']:
+                        if (not confirmation.user.id in [owner.id for owner in self.owner] and data['fortnite']['show-owner']
+                            and not (confirmation.user.id in whitelist and data['fortnite']['show-whitelist'])
+                            and not (confirmation.user.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['show-bot'])
+                            and member.id != self.user.id):
+                            self.hides.append(confirmation.user.id)
+                            self.party.update_hide_users(self.hides)
+                    elif data['fortnite']['hide-blacklist']:
+                        if confirmation.user.id in blacklist:
+                            self.hides.append(confirmation.user.id)
+                            self.party.update_hide_users(self.hides)
+
                 try:
                     await confirmation.confirm()
                 except fortnitepy.HTTPException:
@@ -1420,7 +1509,7 @@ if True: #Classes
             if not self.isready or not member:
                 return
             self.add_cache(member)
-            if self.party.me.leader and member.id != self.user.id and (data['fortnite']['hide-user'] or data['fortnite']['hide-blacklist']):
+            """if self.party.me.leader and member.id != self.user.id and (data['fortnite']['hide-user'] or data['fortnite']['hide-blacklist']):
                 async def _() -> None:
                     nonlocal member
                     try:
@@ -1434,7 +1523,7 @@ if True: #Classes
                     except Exception:
                         if data['loglevel'] == 'debug':
                             send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
-                loop.create_task(_())
+                loop.create_task(_())"""
             display_name_ = self.is_most()
             if display_name_:
                 if data['loglevel'] == 'normal':
@@ -1450,9 +1539,12 @@ if True: #Classes
             display_name = name(self.user)
             display_name_ = self.is_most()
             try:
-                if new_leader.id == self.user.id:
+                if self.party.me.leader:
+                    self.party.update_hide_users(self.hides)
+                    await self.party.refresh_squad_assignments()
+                """if new_leader.id == self.user.id:
                     if data['fortnite']['hide-user']:
-                        await self.hide()
+                        await self.hide()"""
             except Exception:
                 if data['loglevel'] == 'debug':
                     send(name(self.user),traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
@@ -5497,7 +5589,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     if not member:
                         await reply(message, client, l('user_not_in_party'))
                         return
-                    await client.hide(member.id)
+                    await client.party.hide(member)
                     await reply(message, client, l('hide_user', f'{name(user)}'))
                 else:
                     client.select[message.author.id] = {
@@ -5508,7 +5600,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if not member:
                     await reply(message, client, l('user_not_in_party'))
                     return
-                await client.hide(member.id)
+                await client.party.hide(member)
                 await reply(message, client, l('hide_user', f'{name(user)}'))
             except fortnitepy.Forbidden:
                 if data['loglevel'] == 'debug':
@@ -5571,7 +5663,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     if not member:
                         await reply(message, client, l('user_not_in_party'))
                         return
-                    await client.show(member.id)
+                    await client.party.show(member)
                     await reply(message, client, l('show_user', f'{name(user)}'))
                 else:
                     client.select[message.author.id] = {
@@ -5582,7 +5674,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                 if not member:
                     await reply(message, client, l('user_not_in_party'))
                     return
-                await client.show(member.id)
+                await client.party.show(member)
                 await reply(message, client, l('show_user', f'{name(user)}'))
             except fortnitepy.Forbidden:
                 if data['loglevel'] == 'debug':
@@ -7554,6 +7646,7 @@ if data.get("status",1) != 0:
                     **device_auth_details
                 ),
                 default_party_config=fortnitepy.DefaultPartyConfig(
+                    cls=MyClientParty,
                     privacy=data['fortnite']['privacy']
                 ),
                 default_party_member_config=fortnitepy.DefaultPartyMemberConfig(
