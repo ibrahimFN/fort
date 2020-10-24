@@ -1480,7 +1480,7 @@ if True: #Classes
                         if (not confirmation.user.id in [owner.id for owner in self.owner] and data['fortnite']['show-owner']
                             and not (confirmation.user.id in whitelist and data['fortnite']['show-whitelist'])
                             and not (confirmation.user.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['show-bot'])
-                            and member.id != self.user.id):
+                            and confirmation.user.id != self.user.id):
                             self.hides.append(confirmation.user.id)
                             self.party.update_hide_users(self.hides)
                     elif data['fortnite']['hide-blacklist']:
