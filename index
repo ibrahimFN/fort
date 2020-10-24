@@ -1274,7 +1274,7 @@ if True: #Classes
             
             if not self.party.me.leader and (data['fortnite']['hide-user'] or data['fortnite']['hide-blacklist']):
                 if data['fortnite']['hide-user']:
-                    if (not member.id in [owner.id for owner in self.owner] and data['fortnite']['show-owner']
+                    if (not (member.id in [owner.id for owner in self.owner] and data['fortnite']['show-owner')]
                         and not (member.id in whitelist and data['fortnite']['show-whitelist'])
                         and not (member.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['show-bot'])
                         and member.id != self.user.id):
@@ -1477,7 +1477,7 @@ if True: #Classes
             else:
                 if data['fortnite']['hide-user'] or data['fortnite']['hide-blacklist']:
                     if data['fortnite']['hide-user']:
-                        if (not confirmation.user.id in [owner.id for owner in self.owner] and data['fortnite']['show-owner']
+                        if (not (confirmation.user.id in [owner.id for owner in self.owner] and data['fortnite']['show-owner'])
                             and not (confirmation.user.id in whitelist and data['fortnite']['show-whitelist'])
                             and not (confirmation.user.id in (otherbotlist + [i.user.id for i in loadedclients]) and data['fortnite']['show-bot'])
                             and confirmation.user.id != self.user.id):
