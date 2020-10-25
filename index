@@ -33,6 +33,7 @@ try:
     import random
     import re
     import socket
+    import ssl
     import string
     import sys
     import time
@@ -766,13 +767,13 @@ if True: #Classes
             if not self.party.me.leader:
                 raise fortnitepy.Forbidden("You must be the party leader to perform this action.")
             prop = self.party.meta.set_voicechat_implementation('None')
-            await client.party.patch(updated=prop)
+            await self.party.patch(updated=prop)
 
         async def enable_voice(self) -> None:
             if not self.party.me.leader:
                 raise fortnitepy.Forbidden("You must be the party leader to perform this action.")
             prop = self.party.meta.set_voicechat_implementation('VivoxVoiceChat')
-            await client.party.patch(updated=prop)
+            await self.party.patch(updated=prop)
 
         async def hide(self, member_id: Optional[str] = None) -> None:
             if not self.party.me.leader:
@@ -2572,100 +2573,107 @@ if True: #Asynchronous functions
 
     async def get_token() -> tuple:
         async with aiohttp.ClientSession() as session:
-            data = await session.post(
-                oauth_url,
-                headers={
-                    "Authorization": f"basic {launcher_token}"
-                },
-                data={
-                    "grant_type": "client_credentials",
-                    "token_type": "eg1"
-                }
-            )
-            data = await data.json()
-            return data["access_token"], datetime.datetime.fromisoformat(data["expires_at"].replace("Z",""))
+            async with session.post(
+                        oauth_url,
+                        headers={
+                            "Authorization": f"basic {launcher_token}"
+                        },
+                        data={
+                            "grant_type": "client_credentials",
+                            "token_type": "eg1"
+                        },
+                        ssl=ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+                    ) as data:
+                data = await data.json()
+                return data["access_token"], datetime.datetime.fromisoformat(data["expires_at"].replace("Z",""))
 
     async def get_fortnite_token(access_token: str) -> tuple:
         exchange_code = await exchange(access_token)
         async with aiohttp.ClientSession() as session:
-            data = await session.post(
-                fortnite_token_url,
-                headers={
-                    "Authorization": f"basic {fortnite_token}"
-                },
-                data={
-                    "grant_type": "exchange_code",
-                    "token_type": "eg1",
-                    "exchange_code": exchange_code
-                }
-            )
-            data = await data.json()
-            return data["access_token"], datetime.datetime.fromisoformat(data["expires_at"].replace("Z",""))
+            async with session.post(
+                        fortnite_token_url,
+                        headers={
+                            "Authorization": f"basic {fortnite_token}"
+                        },
+                        data={
+                            "grant_type": "exchange_code",
+                            "token_type": "eg1",
+                            "exchange_code": exchange_code
+                        },
+                        ssl=ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+                    ) as data:
+                data = await data.json()
+                return data["access_token"], datetime.datetime.fromisoformat(data["expires_at"].replace("Z",""))
 
     async def authorization_code_auth(authorization_code: str) -> Optional[tuple]:
         async with aiohttp.ClientSession() as session:
-            data = await session.post(
-                oauth_url,
-                headers={
-                    "Authorization": f"basic {launcher_token}"
-                },
-                data={
-                    "grant_type": "authorization_code",
-                    "code": authorization_code,
-                    "token_type": "eg1"
-                }
-            )
-            return await data.json()
+            async with session.post(
+                        oauth_url,
+                        headers={
+                            "Authorization": f"basic {launcher_token}"
+                        },
+                        data={
+                            "grant_type": "authorization_code",
+                            "code": authorization_code,
+                            "token_type": "eg1"
+                        },
+                        ssl=ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+                    ) as data:
+                return await data.json()
 
     async def exchange_code_auth(exchange_code: str) -> tuple:
         async with aiohttp.ClientSession() as session:
-            data = await session.post(
-                exchange_auth_url,
-                headers={
-                    "Authorization": f"basic {launcher_token}"
-                },
-                data={
-                    "grant_type": "exchange_code",
-                    "exchange_code": exchange_code,
-                    "token_type": "eg1"
-                }
-            )
-            data = await data.json()
-            return data["access_token"], data["account_id"]
+            async with session.post(
+                        exchange_auth_url,
+                        headers={
+                            "Authorization": f"basic {launcher_token}"
+                        },
+                        data={
+                            "grant_type": "exchange_code",
+                            "exchange_code": exchange_code,
+                            "token_type": "eg1"
+                        },
+                        ssl=ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+                    ) as data:
+                data = await data.json()
+                return data["access_token"], data["account_id"]
 
     async def exchange(access_token: str) -> str:
         async with aiohttp.ClientSession() as session:
-            data = await session.get(
-                exchange_url,
-                headers={
-                    "Authorization": f"bearer {access_token}"
-                }
-            )
-            data = await data.json()
-            return data["code"]
+            async with session.get(
+                        exchange_url,
+                        headers={
+                            "Authorization": f"bearer {access_token}"
+                        },
+                        ssl=ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+                    ) as data:
+                data = await data.json()
+                return data["code"]
 
     async def lookup_user(user_id: str, fortnite_access_token: str) -> dict:
         async with aiohttp.ClientSession() as session:
-            data = await session.get(
-                user_lookup_url.format(user_id=user_id),
-                headers={
-                    "Authorization": f"bearer {fortnite_access_token}"
-                }
-            )
-            data = await data.json()
-            return data
+            async with session.get(
+                        user_lookup_url.format(user_id=user_id),
+                        headers={
+                            "Authorization": f"bearer {fortnite_access_token}"
+                        },
+                        ssl=ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+                    ) as data:
+                data = await data.json()
+                return data
 
     async def generate_device_auth(client_id: str, access_token: str) -> dict:
         async with aiohttp.ClientSession() as session:
-            data = await session.post(
-                f"https://account-public-service-prod.ol.epicgames.com/account/api/public/account/{client_id}/deviceAuth",
-                headers={
-                    "Authorization": f"Bearer {access_token}",
-                    "Content-Type": "application/json"
-                }
-            )
-            data = await data.json()
-            return {"device_id": data["deviceId"], "account_id": data["accountId"], "secret": data["secret"]}
+            async with session.post(
+                        f"https://account-public-service-prod.ol.epicgames.com/account/api/public/account/{client_id}/deviceAuth",
+                        headers={
+                            "Authorization": f"Bearer {access_token}",
+                            "Content-Type": "application/json"
+                        },
+                        ssl=ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+                    ) as data:
+                data = await data.json()
+                return {"device_id": data["deviceId"], "account_id": data["accountId"], "secret": data["secret"]}
 
     async def run_bot() -> None:
         for client in clients:
