@@ -966,6 +966,29 @@ if True: #Classes
                         if data['loglevel'] == 'debug':
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
+        async def ng_cosmetic_check(self, member: fortnitepy.PartyMember) -> None:
+            checks = [
+                "outfit",
+                "backpack",
+                "pickaxe",
+                "emote"
+            ]
+            for check in checks:
+                asset = member_asset(member, check)
+                if asset and asset.lower() in [i.lower() for i in data['fortnite']['ng_cosmetics']]:
+                    if self.party.me.leader:
+                        if data['fortnite']['ng_cosmetic_kick']:
+                            await member.kick()
+                        elif data['fortnite']['ng_cosmetic_chatban']:
+                            await member.chatban()
+                        friend = self.get_friend(member.id)
+                        if friend is not None:
+                            await friend.send(data['fortnite']['ng_cosmetic_reply'])
+                        else:
+                            if not data['fortnite']['ng_cosmetic_kick'] and not data['fortnite']['ng_cosmetic_chatban']:
+                                await self.party.send(data['fortnite']['ng_cosmetic_reply'])
+                        break
+
         #Events
         async def event_device_auth_generate(self, details: dict, email: str) -> None:
             store_device_auth_details(email, details)
@@ -1272,6 +1295,8 @@ if True: #Classes
             display_name_ = self.is_most()
             loop = asyncio.get_event_loop()
             loop.create_task(self.change_status())
+
+            await self.ng_cosmetic_check(member)
             
             if not self.party.me.leader and (data['fortnite']['hide-user'] or data['fortnite']['hide-blacklist']):
                 if data['fortnite']['hide-user']:
@@ -1562,6 +1587,7 @@ if True: #Classes
                     if data["fortnite"]["disable_voice"]:
                         await self.disable_voice()
                     for member in self.party.members:
+                        await self.ng_cosmetic_check(member)
                         if member.id in blacklist:
                             if data['fortnite']['blacklist-autokick']:
                                 try:
@@ -1592,6 +1618,7 @@ if True: #Classes
             display_name_ = self.is_most()
             if display_name_ and data['loglevel'] != 'normal':
                 send(display_name_,l("party_member_update", f"{name(member)} [{platform_to_str(member.platform)}/{member.input}]"),magenta,add_p=lambda x:f'[{now()}] [{l("party")}/{self.party.id}] [{display_name_}] {x}')
+            await self.ng_cosmetic_check(member)
             if member.id == self.user.id:
                 return
             if member.id in blacklist and self.party.me.leader:
@@ -6486,6 +6513,10 @@ config_tags={
     "['fortnite']['pickaxe']": [str],
     "['fortnite']['pickaxe_style']": [str],
     "['fortnite']['emote']": [str],
+    "['fortnite']['ng_cosmetics']": [str,"can_be_multiple"],
+    "['fortnite']['ng_cosmetic_kick']": [bool_,"select_bool"],
+    "['fortnite']['ng_cosmetic_chatban']": [bool_,"select_bool"],
+    "['fortnite']['ng_cosmetic_reply']": [str],
     "['fortnite']['playlist']": [str],
     "['fortnite']['banner']": [str],
     "['fortnite']['banner_color']": [str],
