@@ -11,6 +11,12 @@
         "pickaxe": "Pickaxe_ID_071_StreetRacer",
         "pickaxe_style": "",
         "emote": "EID_ElectroShuffle_V2",
+        "ng_cosmetics": [
+            "CID_429_Athena_Commando_F_NeonLines"
+        ],
+        "ng_cosmetic_kick": true,
+        "ng_cosmetic_chatban": false,
+        "ng_cosmetic_reply": "You using ng cosmetic",
         "playlist": "Playlist_Tutorial_1",
         "banner": "InfluencerBanner33",
         "banner_color": "defaultcolor22",
