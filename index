@@ -967,6 +967,9 @@ if True: #Classes
                             send(display_name,traceback.format_exc(),red,add_d=lambda x:f'>>> {x}')
 
         async def ng_cosmetic_check(self, member: fortnitepy.PartyMember) -> None:
+            if (member.id in (otherbotlist + [i.user.id for i in loadedclients])
+                    or member.id in [i.id for i in self.owner]):
+                return
             checks = [
                 "outfit",
                 "backpack",
