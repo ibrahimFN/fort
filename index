@@ -4463,7 +4463,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
             elif len(args) == 2:
                 background_colors = None
             else:
-                background_colors = getattr(fortnitepy.KairosBackgroundColorPreset, args[2])
+                background_colors = getattr(fortnitepy.KairosBackgroundColorPreset, args[2].upper())
             avatar = fortnitepy.Avatar(asset=args[1], background_colors=background_colors)
             client.set_avatar(avatar)
             await reply(message, client, l('set_to', l('avatar'), f"{args[1]}, {background_colors}"))
