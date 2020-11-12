@@ -1,4 +1,3 @@
-aiohttp==3.6.3
 crayons
 discord.py==1.4.2
 #fortnitepy==3.3.0
