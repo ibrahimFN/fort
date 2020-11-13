@@ -5935,11 +5935,12 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                          + store.special_featured_items
                          + store.special_daily_items):
                 for grant in item.grants:
-                    if convert_backend_type(grant["type"]) in ignoretype:
+                    type_ = convert_backend_type(grant["type"])
+                    if type_ is None or type_ in ignoretype:
                         continue
                     item = {
                         "id": grant["asset"],
-                        "type": convert_to_asset(convert_to_old_type(convert_backend_type(grant["type"]))),
+                        "type": convert_to_asset(convert_to_old_type(type_)),
                         "backendType": grant["type"]
                     }
                     items.append(item)
