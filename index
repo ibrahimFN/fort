@@ -6225,7 +6225,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     break
             type_ = convert_to_type(args[1])
             id_ = member_asset(client.party.me, convert_to_asset(args[1]))
-            variants = client.party.me.create_variants(item='AthenaCharacter', **variantdict)
+            variants = client.party.me.create_variants(**variantdict)
             type_ = convert_to_new_type(type_)
             if type_ == "Back Bling" and (id_.startswith("pet_carrier_") or id_.startswith("pet_")):
                 type_ = "Pet"
@@ -6259,7 +6259,7 @@ async def process_command(message: Union[fortnitepy.FriendMessage, fortnitepy.Pa
                     break
             type_ = convert_to_type(args[1])
             id_ = member_asset(client.party.me, convert_to_asset(args[1]))
-            variants = client.party.me.create_variants(item='AthenaCharacter', **variantdict)
+            variants = client.party.me.create_variants(**variantdict)
             variants += eval(f"client.party.me.{convert_to_asset(args[1])}_variants")
             type_ = convert_to_new_type(type_)
             if type_ == "Back Bling" and (id_.startswith("pet_carrier_") or id_.startswith("pet_")):
