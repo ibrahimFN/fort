@@ -1,4 +1,7 @@
 # Fortnite-LobbyBot
+**Fortnite-LobbyBotはメンテナンスされていません**  
+**[Fortnite-LobbyBot-v2](https://github.com/gomashio1596/Fortnite-LobbyBot-v2)を使用してください**  
+
 [![Python Versions](https://img.shields.io/badge/3.7%20%7C%203.8-blue)](https://www.python.org/downloads/)  
 <a href="https://discord.gg/NEnka5N"><img src="https://discordapp.com/api/guilds/718709023427526697/widget.png?style=banner2" /></a>  
 English is [Here](https://github.com/gomashio1596/Fortnite-LobbyBot/blob/master/README_EN.md "README_EN.md")  
