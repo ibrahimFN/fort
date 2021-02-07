@@ -1,4 +1,6 @@
 # Fortnite-LobbyBot
+**[Fortnite-LobbyBot-v2](https://github.com/gomashio1596/Fortnite-LobbyBot-v2)**
+
 [![Versiones de Python](https://img.shields.io/badge/3.7%20%7C%203.8-blue)](https://www.python.org/downloads/)  
 <a href="https://discord.gg/NEnka5N"><img src="https://discordapp.com/api/guilds/718709023427526697/widget.png?style=banner2"></img></a>  
 Un bot de Fortnite que utiliza fortnitepy 
